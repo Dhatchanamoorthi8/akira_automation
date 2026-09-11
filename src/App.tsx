@@ -4,6 +4,8 @@ import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
 import { EnquiryModal } from './components/common/EnquiryModal';
 import { EnquiryProvider } from './context/EnquiryContext';
+import { ImageViewerModal } from './components/common/ImageViewerModal';
+import { ImageViewerProvider } from './context/ImageViewerContext';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { PageLoader } from './components/common/PageLoader';
 
@@ -35,34 +37,37 @@ const ScrollToTop: React.FC = () => {
 export const App: React.FC = () => {
   return (
     <EnquiryProvider>
-      <Router>
-        <ScrollToTop />
-        <div className="min-h-screen flex flex-col bg-industrial-bg w-full max-w-full overflow-x-hidden">
-          <Header />
-          <main className="flex-grow w-full max-w-full overflow-x-hidden">
-            <ErrorBoundary>
-              <Suspense fallback={<PageLoader />}>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/solutions" element={<Solutions />} />
-                  <Route path="/solutions/:category" element={<Solutions />} />
-                  <Route path="/products" element={<Products />} />
-                  <Route path="/products/:slug" element={<ProductDetail />} />
-                  <Route path="/industries" element={<Industries />} />
-                  <Route path="/services" element={<Services />} />
-                  <Route path="/why-choose-us" element={<WhyChooseUs />} />
-                  <Route path="/why-milestone" element={<Navigate to="/why-choose-us" replace />} />
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Suspense>
-            </ErrorBoundary>
-          </main>
-          <Footer />
-          <EnquiryModal />
-        </div>
-      </Router>
+      <ImageViewerProvider>
+        <Router>
+          <ScrollToTop />
+          <div className="min-h-screen flex flex-col bg-industrial-bg w-full max-w-full overflow-x-hidden">
+            <Header />
+            <main className="flex-grow w-full max-w-full overflow-x-hidden">
+              <ErrorBoundary>
+                <Suspense fallback={<PageLoader />}>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/solutions" element={<Solutions />} />
+                    <Route path="/solutions/:category" element={<Solutions />} />
+                    <Route path="/products" element={<Products />} />
+                    <Route path="/products/:slug" element={<ProductDetail />} />
+                    <Route path="/industries" element={<Industries />} />
+                    <Route path="/services" element={<Services />} />
+                    <Route path="/why-choose-us" element={<WhyChooseUs />} />
+                    <Route path="/why-milestone" element={<Navigate to="/why-choose-us" replace />} />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </Suspense>
+              </ErrorBoundary>
+            </main>
+            <Footer />
+            <EnquiryModal />
+            <ImageViewerModal />
+          </div>
+        </Router>
+      </ImageViewerProvider>
     </EnquiryProvider>
   );
 };

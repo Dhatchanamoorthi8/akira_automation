@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
-import { ArrowRight, CheckCircle2, Cpu } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Cpu, ZoomIn } from 'lucide-react';
 import { useEnquiry } from '../../context/EnquiryContext';
+import { useImageViewer } from '../../context/ImageViewerContext';
 import { SectionReveal } from '../animation/SectionReveal';
 import { Reveal } from '../animation/Reveal';
 
 export const MultigaugingShowcase: React.FC = () => {
   const [activeStation, setActiveStation] = useState<'engine' | 'camshaft'>('engine');
   const { openEnquiry } = useEnquiry();
+  const { openImageViewer } = useImageViewer();
   const shouldReduceMotion = useReducedMotion();
 
   return (
@@ -82,7 +84,33 @@ export const MultigaugingShowcase: React.FC = () => {
             >
             {/* Left: Image with Subtle Scanning Laser Indicator */}
             <div className="lg:col-span-6 relative">
-              <div className="relative rounded-2xl overflow-hidden border-2 border-slate-700 shadow-2xl bg-slate-900 p-2 group">
+              <div 
+                onClick={() => openImageViewer({
+                  src: "/assets/multigauging/engine-block-liner-station.webp",
+                  title: "Engine Block Liner Bore Multigauging Station",
+                  category: "Automated Multi-Gauging",
+                  description: "Complete turnkey metrology station for 6 Liner ID diameter measurements across X and Y axes at 3 levels.",
+                  productSlug: "engine-block-liner-multigauging-station",
+                  badge: "Turnkey Metrology Bench"
+                })}
+                className="relative rounded-2xl overflow-hidden border-2 border-slate-700 shadow-2xl bg-slate-900 p-2 group cursor-pointer"
+                title="Click to view full-resolution station"
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    openImageViewer({
+                      src: "/assets/multigauging/engine-block-liner-station.webp",
+                      title: "Engine Block Liner Bore Multigauging Station",
+                      category: "Automated Multi-Gauging",
+                      description: "Complete turnkey metrology station for 6 Liner ID diameter measurements across X and Y axes at 3 levels.",
+                      productSlug: "engine-block-liner-multigauging-station",
+                      badge: "Turnkey Metrology Bench"
+                    });
+                  }
+                }}
+              >
                 <img
                   src="/assets/multigauging/engine-block-liner-station.webp"
                   alt="Engine Block Liner Bore Multigauging Station"
@@ -104,6 +132,12 @@ export const MultigaugingShowcase: React.FC = () => {
                     aria-hidden="true"
                   />
                 )}
+                <div className="absolute bottom-4 right-4 z-10">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900/85 text-white text-xs font-semibold shadow-md backdrop-blur-md border border-slate-700/80 group-hover:bg-industrial-primary transition-colors">
+                    <ZoomIn className="w-3.5 h-3.5 text-sky-400 group-hover:text-white" />
+                    <span>Click to Inspect</span>
+                  </span>
+                </div>
               </div>
               <div className="mt-3 flex items-center justify-between text-xs text-slate-400 px-1">
                 <span>Suspended 12-Jet Special Air Plug Gauge</span>
@@ -198,12 +232,44 @@ export const MultigaugingShowcase: React.FC = () => {
           >
             {/* Left: Images (Station photo + CAD schematic) */}
             <div className="lg:col-span-6 space-y-4">
-              <div className="rounded-2xl overflow-hidden border-2 border-slate-700 shadow-2xl bg-slate-900 p-2">
+              <div 
+                onClick={() => openImageViewer({
+                  src: "/assets/multigauging/camshaft-multigauging-station.webp",
+                  title: "Camshaft Dia Multigauging Station",
+                  category: "Automated Multi-Gauging",
+                  description: "Dedicated inspection bench for Camshaft OD diameter measurement across 6 bearing journals simultaneously.",
+                  productSlug: "camshaft-multigauging-station",
+                  badge: "6 OD Diameters Bench"
+                })}
+                className="relative rounded-2xl overflow-hidden border-2 border-slate-700 shadow-2xl bg-slate-900 p-2 group cursor-pointer"
+                title="Click to view full-resolution station"
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    openImageViewer({
+                      src: "/assets/multigauging/camshaft-multigauging-station.webp",
+                      title: "Camshaft Dia Multigauging Station",
+                      category: "Automated Multi-Gauging",
+                      description: "Dedicated inspection bench for Camshaft OD diameter measurement across 6 bearing journals simultaneously.",
+                      productSlug: "camshaft-multigauging-station",
+                      badge: "6 OD Diameters Bench"
+                    });
+                  }
+                }}
+              >
                 <img
                   src="/assets/multigauging/camshaft-multigauging-station.webp"
                   alt="Camshaft Dia Multigauging Station"
-                  className="w-full h-auto object-contain rounded-xl max-h-[380px]"
+                  className="w-full h-auto object-contain rounded-xl max-h-[380px] transition-transform duration-500 group-hover:scale-[1.02]"
                 />
+                <div className="absolute bottom-4 right-4 z-10">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900/85 text-white text-xs font-semibold shadow-md backdrop-blur-md border border-slate-700/80 group-hover:bg-industrial-primary transition-colors">
+                    <ZoomIn className="w-3.5 h-3.5 text-sky-400 group-hover:text-white" />
+                    <span>Click to Inspect</span>
+                  </span>
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-2 rounded-xl bg-slate-800/80 border border-slate-700 flex items-center gap-3">

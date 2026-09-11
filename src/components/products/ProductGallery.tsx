@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { ZoomIn } from 'lucide-react';
+import { useImageViewer } from '../../context/ImageViewerContext';
 
 interface ProductGalleryProps {
   mainImage: string;
@@ -17,6 +19,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({
   cadImage,
 }) => {
   const [activeImage, setActiveImage] = useState<string>(mainImage);
+  const { openImageViewer } = useImageViewer();
 
   useEffect(() => {
     setActiveImage(mainImage);
@@ -24,10 +27,32 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({
 
   const hasMultipleMedia = !!(secondaryImages?.length || specsImage || cadImage);
 
+  const handleOpenViewer = () => {
+    openImageViewer({
+      src: activeImage,
+      title: title,
+      category: "Technical Inspection",
+      description: `High-resolution factory view of ${title}. Traceable dimensional accuracy and OEM build standards.`,
+      badge: "Inspection Standard"
+    });
+  };
+
   return (
     <div className="space-y-4">
       {/* Primary Display */}
-      <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 flex items-center justify-center min-h-[400px] shadow-sm relative group overflow-hidden">
+      <div 
+        onClick={handleOpenViewer}
+        className="rounded-2xl border border-slate-200 bg-slate-50 p-6 flex items-center justify-center min-h-[400px] shadow-sm relative group overflow-hidden cursor-pointer"
+        title="Click to view full-resolution image"
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleOpenViewer();
+          }
+        }}
+      >
         <AnimatePresence mode="wait">
           <motion.img
             key={activeImage}
@@ -43,6 +68,14 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({
         <div className="absolute top-4 left-4 z-10">
           <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-industrial-dark text-white">
             Factory Verified
+          </span>
+        </div>
+
+        {/* Hover / Touch Inspect Badge */}
+        <div className="absolute bottom-4 right-4 z-10">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900/85 text-white text-xs font-semibold shadow-md backdrop-blur-md border border-slate-700/80 group-hover:bg-industrial-primary transition-colors">
+            <ZoomIn className="w-3.5 h-3.5 text-sky-400 group-hover:text-white" />
+            <span>Click to Inspect</span>
           </span>
         </div>
       </div>

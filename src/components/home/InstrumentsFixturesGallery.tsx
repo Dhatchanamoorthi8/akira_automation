@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ZoomIn } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useEnquiry } from '../../context/EnquiryContext';
+import { useImageViewer } from '../../context/ImageViewerContext';
 import { SectionReveal } from '../animation/SectionReveal';
 import { Reveal } from '../animation/Reveal';
 import { SpotlightCard } from '../animation/SpotlightCard';
@@ -93,6 +94,7 @@ const items: GalleryItem[] = [
 export const InstrumentsFixturesGallery: React.FC = () => {
   const [filter, setFilter] = useState<'all' | 'instruments' | 'fixtures'>('all');
   const { openEnquiry } = useEnquiry();
+  const { openImageViewer } = useImageViewer();
 
   const filtered = filter === 'all' ? items : items.filter(i => i.category === filter);
 
@@ -166,16 +168,48 @@ export const InstrumentsFixturesGallery: React.FC = () => {
                   className="card-base card-hover overflow-hidden flex flex-col justify-between group border-slate-200 bg-white h-full"
                 >
                   <div>
-                    <div className="relative h-56 bg-slate-50 overflow-hidden flex items-center justify-center p-4 border-b border-slate-100">
+                    <div 
+                      onClick={() => openImageViewer({
+                        src: item.image,
+                        title: item.name,
+                        category: item.categoryLabel,
+                        description: item.description,
+                        badge: "Workshop Tested"
+                      })}
+                      className="relative h-56 bg-slate-50 overflow-hidden flex items-center justify-center p-4 border-b border-slate-100 cursor-pointer group/img"
+                      title="Click to view full-resolution image"
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          openImageViewer({
+                            src: item.image,
+                            title: item.name,
+                            category: item.categoryLabel,
+                            description: item.description,
+                            badge: "Workshop Tested"
+                          });
+                        }
+                      }}
+                    >
                       <img
                         src={item.image}
                         alt={item.name}
-                        className="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-105"
+                        className="max-h-full max-w-full object-contain transition-transform duration-500 group-hover/img:scale-105"
                         loading="lazy"
                       />
-                      <div className="absolute top-3 left-3">
+                      <div className="absolute top-3 left-3 z-10">
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-white/90 text-industrial-dark backdrop-blur-sm border border-slate-200">
                           {item.categoryLabel}
+                        </span>
+                      </div>
+
+                      {/* Hover / Touch Pill Overlay */}
+                      <div className="absolute inset-0 bg-industrial-dark/20 opacity-0 group-hover/img:opacity-100 transition-opacity duration-200 flex items-center justify-center pointer-events-none">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/90 text-white text-xs font-semibold shadow-lg backdrop-blur-md border border-white/20 transform translate-y-1 group-hover/img:translate-y-0 transition-transform">
+                          <ZoomIn className="w-3.5 h-3.5 text-sky-400" />
+                          <span>Click to View</span>
                         </span>
                       </div>
                     </div>

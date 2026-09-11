@@ -1,8 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { CheckCircle2, Eye, ArrowRight } from 'lucide-react';
+import { CheckCircle2, Eye, ArrowRight, ZoomIn } from 'lucide-react';
 import { ProductSummary } from '../../types';
 import { useEnquiry } from '../../context/EnquiryContext';
+import { useImageViewer } from '../../context/ImageViewerContext';
 import { SpotlightCard } from '../animation/SpotlightCard';
 
 interface ProductCardProps {
@@ -17,25 +18,57 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   className = '',
 }) => {
   const { openEnquiry } = useEnquiry();
+  const { openImageViewer } = useImageViewer();
   const highlightCount = variant === 'featured' ? 2 : 3;
   const HeadingTag = variant === 'featured' ? 'h3' : 'h2';
+
+  const handleImageClick = () => {
+    openImageViewer({
+      src: product.image,
+      title: product.title,
+      category: product.category,
+      description: product.description,
+      productSlug: product.slug,
+      badge: "Factory Verified"
+    });
+  };
 
   return (
     <SpotlightCard
       className={`card-base card-hover overflow-hidden flex flex-col justify-between group border-slate-200 bg-white ${className}`}
     >
       <div>
-        {/* Image Area */}
-        <div className="relative h-64 bg-slate-50 overflow-hidden flex items-center justify-center p-6 border-b border-slate-100">
+        {/* Image Area with Click to View Option */}
+        <div 
+          onClick={handleImageClick}
+          className="relative h-64 bg-slate-50 overflow-hidden flex items-center justify-center p-6 border-b border-slate-100 cursor-pointer group/img"
+          title="Click to view full-resolution image"
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleImageClick();
+            }
+          }}
+        >
           <img
             src={product.image}
             alt={product.title}
-            className="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-103"
+            className="max-h-full max-w-full object-contain transition-transform duration-500 group-hover/img:scale-105"
             loading="lazy"
           />
-          <div className="absolute top-3 left-3">
-            <span className="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-white text-industrial-dark shadow-subtle border border-slate-200">
+          <div className="absolute top-3 left-3 z-10">
+            <span className="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-white/95 text-industrial-dark shadow-subtle border border-slate-200 backdrop-blur-sm">
               {product.category}
+            </span>
+          </div>
+
+          {/* Hover / Touch "Click to View" Pill Overlay */}
+          <div className="absolute inset-0 bg-industrial-dark/20 opacity-0 group-hover/img:opacity-100 transition-opacity duration-200 flex items-center justify-center pointer-events-none">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/90 text-white text-xs font-semibold shadow-lg backdrop-blur-md border border-white/20 transform translate-y-1 group-hover/img:translate-y-0 transition-transform">
+              <ZoomIn className="w-3.5 h-3.5 text-sky-400" />
+              <span>Click to View</span>
             </span>
           </div>
         </div>
