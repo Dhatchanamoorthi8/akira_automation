@@ -101,15 +101,15 @@ export const AboutSection: React.FC = () => {
             </ScaleReveal>
 
             {/* Visual Fact Card */}
-            <div className="absolute -bottom-6 -left-6 bg-industrial-dark text-white p-5 rounded-2xl shadow-elevated border border-slate-700 max-w-xs">
+            <div className="mt-4 sm:mt-0 sm:absolute sm:-bottom-6 sm:-left-6 bg-industrial-dark text-white p-4 sm:p-5 rounded-2xl shadow-elevated border border-slate-700 w-full sm:max-w-xs z-10">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-industrial-primary flex items-center justify-center text-white shrink-0 font-bold">
-                  <Award className="w-6 h-6" />
+                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-industrial-primary flex items-center justify-center text-white shrink-0 font-bold">
+                  <Award className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
                 <div>
-                  <p className="text-xs text-slate-400 uppercase tracking-widest font-semibold">Brand Promise</p>
-                  <p className="text-lg font-black font-heading tracking-tight text-white">{company.name}</p>
-                  <p className="text-[10px] text-sky-400 font-medium mt-0.5">{company.slogan}</p>
+                  <p className="text-[11px] sm:text-xs text-slate-400 uppercase tracking-widest font-semibold">Brand Promise</p>
+                  <p className="text-base sm:text-lg font-black font-heading tracking-tight text-white">{company.name}</p>
+                  <p className="text-[10px] sm:text-[11px] text-sky-400 font-medium mt-0.5">{company.slogan}</p>
                 </div>
               </div>
             </div>

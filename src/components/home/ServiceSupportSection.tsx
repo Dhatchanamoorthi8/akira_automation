@@ -21,10 +21,10 @@ export const ServiceSupportSection: React.FC = () => {
   const { openEnquiry } = useEnquiry();
 
   return (
-    <SectionReveal className="py-20 bg-industrial-bg border-b border-slate-200">
+    <SectionReveal className="py-12 sm:py-16 lg:py-20 bg-industrial-bg border-b border-slate-200">
       <div className="industrial-container">
         {/* Section Header */}
-        <Reveal direction="up" className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+        <Reveal direction="up" className="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-12 gap-6">
           <div>
             <span className="section-tag">
               Lifecycle Engineering Support
@@ -32,7 +32,7 @@ export const ServiceSupportSection: React.FC = () => {
             <h2 className="section-title mt-3">
               Service & Support
             </h2>
-            <p className="mt-2 text-lg font-bold text-industrial-primary font-heading">
+            <p className="mt-2 text-base sm:text-lg font-bold text-industrial-primary font-heading">
               "We support beyond sales."
             </p>
             <p className="section-subtitle">
@@ -98,19 +98,27 @@ export const ServiceSupportSection: React.FC = () => {
         </StaggerContainer>
 
         {/* Hotline Banner */}
-        <Reveal direction="up" delay={0.2} className="mt-12 p-5 rounded-xl bg-white border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
-          <div className="flex items-center gap-3 text-xs text-slate-700">
-            <div className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+        <Reveal direction="up" delay={0.2} className="mt-8 sm:mt-12 p-5 sm:p-6 rounded-2xl bg-white border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+          <div className="flex items-start sm:items-center gap-3.5 text-xs text-slate-700">
+            <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 shadow-sm">
               <Phone className="w-5 h-5" />
             </div>
-            <div>
-              <p className="font-bold text-industrial-dark">Direct Technical Support Hotline</p>
-              <p className="text-slate-500 font-mono text-xs">{companyData.phones[0]} / {companyData.phones[1]}</p>
+            <div className="space-y-0.5">
+              <p className="font-bold text-sm text-industrial-dark font-heading">Direct Technical Support Hotline</p>
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 font-mono text-xs text-industrial-primary font-semibold">
+                <a href={`tel:${companyData.phones[0].replace(/\s+/g, '')}`} className="hover:underline">
+                  {companyData.phones[0]}
+                </a>
+                <span className="text-slate-400">/</span>
+                <a href={`tel:${companyData.phones[1].replace(/\s+/g, '')}`} className="hover:underline">
+                  {companyData.phones[1]}
+                </a>
+              </div>
             </div>
           </div>
-          <div className="text-xs text-industrial-muted">
-            Service available across all automotive and industrial corridors in India.
-          </div>
+          <p className="text-xs text-slate-500 sm:text-right max-w-xs leading-relaxed border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-100">
+            Service available across all automotive and industrial manufacturing corridors in India.
+          </p>
         </Reveal>
 
       </div>

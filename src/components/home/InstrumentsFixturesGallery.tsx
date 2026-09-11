@@ -97,13 +97,13 @@ export const InstrumentsFixturesGallery: React.FC = () => {
   const filtered = filter === 'all' ? items : items.filter(i => i.category === filter);
 
   return (
-    <SectionReveal className="py-20 bg-white border-b border-slate-200">
+    <SectionReveal className="py-12 sm:py-16 lg:py-20 bg-white border-b border-slate-200">
       <div className="industrial-container">
         {/* Header */}
-        <Reveal direction="up" className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
+        <Reveal direction="up" className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-10 gap-6">
           <div>
             <span className="section-tag">
-              Slide 24 & 25 Gallery
+              Precision Tooling & Fixtures
             </span>
             <h2 className="section-title mt-3">
               Measuring Instruments, Special Gauges & Fixtures

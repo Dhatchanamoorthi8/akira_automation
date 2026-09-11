@@ -69,29 +69,29 @@ export const Header: React.FC = () => {
   return (
     <header className="sticky top-0 z-50 w-full transition-all duration-300">
       {/* Top Utility Bar */}
-      <div className="bg-industrial-dark text-slate-300 text-xs border-b border-slate-800">
-        <div className="industrial-container py-2 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
-            <span className="inline-flex items-center gap-1.5 text-slate-300 font-medium">
+      <div className="bg-industrial-dark text-slate-300 text-[11px] sm:text-xs border-b border-slate-800">
+        <div className="industrial-container py-1.5 sm:py-2 flex items-center justify-between gap-2 sm:gap-4">
+          <div className="flex items-center gap-3 sm:gap-6 min-w-0">
+            <span className="hidden md:inline-flex items-center gap-1.5 text-slate-300 font-medium shrink-0">
               <Award className="w-3.5 h-3.5 text-industrial-primary" />
               Sales & Service
             </span>
             <span className="hidden md:inline-block text-slate-500">|</span>
             <a 
               href={`mailto:${companyData.emails[0]}`} 
-              className="inline-flex items-center gap-1.5 hover:text-white transition-colors"
+              className="inline-flex items-center gap-1.5 hover:text-white transition-colors truncate"
             >
-              <Mail className="w-3.5 h-3.5 text-industrial-highlight" />
-              <span>{companyData.emails[0]}</span>
+              <Mail className="w-3.5 h-3.5 text-industrial-highlight shrink-0" />
+              <span className="truncate">{companyData.emails[0]}</span>
             </a>
           </div>
 
-          <div className="flex items-center gap-4 sm:gap-6 ml-auto">
+          <div className="flex items-center gap-3 sm:gap-6 shrink-0">
             <a 
               href={`tel:${companyData.phones[0].replace(/\s+/g, '')}`} 
               className="inline-flex items-center gap-1.5 hover:text-white transition-colors font-mono"
             >
-              <Phone className="w-3.5 h-3.5 text-industrial-highlight" />
+              <Phone className="w-3.5 h-3.5 text-industrial-highlight shrink-0" />
               <span>{companyData.phones[0]}</span>
             </a>
             <span className="hidden sm:inline-block text-slate-500">/</span>

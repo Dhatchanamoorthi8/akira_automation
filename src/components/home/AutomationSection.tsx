@@ -22,11 +22,11 @@ export const AutomationSection: React.FC = () => {
           {/* Left Column: Automation Cell Visualization from PPT Slide 12 (5 cols) */}
           <div className="lg:col-span-5 relative order-2 lg:order-1">
             <ScaleReveal>
-              <div className="relative rounded-2xl overflow-hidden border border-slate-700 shadow-2xl bg-industrial-dark group">
+              <div className="relative rounded-2xl overflow-hidden border border-slate-700 shadow-2xl bg-industrial-dark group aspect-[4/3] sm:aspect-[16/10] min-h-[260px]">
                 <img
                   src="/assets/solutions/automation-cell.webp"
                   alt="Multi-Gauging Automation Station with Robotic Integration"
-                  className="w-full h-auto object-cover max-h-[440px] transition-transform duration-700 group-hover:scale-105"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-industrial-dark/90 via-transparent to-transparent" />
