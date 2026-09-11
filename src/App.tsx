@@ -40,9 +40,9 @@ export const App: React.FC = () => {
       <ImageViewerProvider>
         <Router>
           <ScrollToTop />
-          <div className="min-h-screen flex flex-col bg-industrial-bg w-full max-w-full overflow-x-hidden">
+          <div className="min-h-screen flex flex-col bg-industrial-bg w-full">
             <Header />
-            <main className="flex-grow w-full max-w-full overflow-x-hidden">
+            <main className="flex-grow w-full">
               <ErrorBoundary>
                 <Suspense fallback={<PageLoader />}>
                   <Routes>
