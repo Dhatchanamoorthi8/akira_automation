@@ -30,6 +30,7 @@ coverage/
 *.sw?
 *.jpeg
 *.jpg
+!public/**
 *.code-workspace
 
 # Android Build & IDE files

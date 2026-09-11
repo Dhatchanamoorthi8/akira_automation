@@ -22,8 +22,8 @@ export const companyData: ContactInformation = {
     fullAddress: "41, Bajanai Kovil Street, Mamandur Village, Tiruttani, Tiruvallur District, Tamil Nadu, PIN 631201." // Flagged for confirmation
   },
   emails: [
-    "milestonegauges@gmail.com", // Flagged for confirmation
-    "messalessarvices@gmail.com"  // Flagged for confirmation
+    company.primaryEmail,
+    company.ccEmail
   ],
   phones: [
     "+91 94457 30673", // Flagged for confirmation
