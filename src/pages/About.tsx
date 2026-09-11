@@ -166,7 +166,7 @@ export const About: React.FC = () => {
         <div className="industrial-container">
           <Reveal direction="up" className="max-w-3xl mb-14 text-center mx-auto">
             <span className="section-tag">
-              Slide 7 Direct Framework
+              Foundational Principles
             </span>
             <h2 className="section-title mt-2">
               Commitment to Excellence

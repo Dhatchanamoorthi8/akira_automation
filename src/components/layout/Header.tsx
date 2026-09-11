@@ -224,7 +224,7 @@ export const Header: React.FC = () => {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 4 }}
                       transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-                      className="absolute top-full -left-20 w-[620px] bg-white rounded-xl shadow-elevated border border-slate-200 p-4 grid grid-cols-2 gap-3 z-50"
+                      className="absolute top-full -left-28 w-[720px] bg-white rounded-xl shadow-elevated border border-slate-200 p-4 grid grid-cols-2 gap-4 z-50"
                     >
                       <div className="space-y-1">
                         <span className="text-[10px] font-bold tracking-wider text-slate-400 uppercase px-2">Gauging & Tooling</span>
@@ -232,10 +232,10 @@ export const Header: React.FC = () => {
                           <Link
                             key={p.slug}
                             to={`/products/${p.slug}`}
-                            className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 text-xs font-medium text-industrial-dark hover:text-industrial-primary transition-colors"
+                            className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 text-xs font-medium text-industrial-dark hover:text-industrial-primary transition-colors gap-2"
                           >
-                            <span className="truncate">{p.title}</span>
-                            <ArrowRight className="w-3 h-3 text-slate-300" />
+                            <span className="line-clamp-2 leading-tight">{p.title}</span>
+                            <ArrowRight className="w-3 h-3 text-slate-300 shrink-0" />
                           </Link>
                         ))}
                       </div>
@@ -245,10 +245,10 @@ export const Header: React.FC = () => {
                           <Link
                             key={p.slug}
                             to={`/products/${p.slug}`}
-                            className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 text-xs font-medium text-industrial-dark hover:text-industrial-primary transition-colors"
+                            className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 text-xs font-medium text-industrial-dark hover:text-industrial-primary transition-colors gap-2"
                           >
-                            <span className="truncate">{p.title}</span>
-                            <ArrowRight className="w-3 h-3 text-slate-300" />
+                            <span className="line-clamp-2 leading-tight">{p.title}</span>
+                            <ArrowRight className="w-3 h-3 text-slate-300 shrink-0" />
                           </Link>
                         ))}
                       </div>

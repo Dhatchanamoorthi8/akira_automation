@@ -149,17 +149,17 @@ export const Solutions: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="pt-3 flex flex-wrap items-center gap-4">
+                    <div className="pt-3 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                       <Link
                         to={`/contact?solution=${sol.slug}`}
-                        className="btn-primary text-xs py-2.5"
+                        className="btn-primary text-xs py-2.5 w-full sm:w-auto text-center"
                       >
                         <span>Enquire About {sol.title}</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
+                        <ArrowRight className="w-3.5 h-3.5 shrink-0" />
                       </Link>
                       <Link
                         to="/products"
-                        className="inline-flex items-center gap-1.5 text-xs font-bold text-industrial-primary hover:underline"
+                        className="inline-flex items-center justify-center sm:justify-start gap-1.5 text-xs font-bold text-industrial-primary hover:underline py-1"
                       >
                         <Eye className="w-3.5 h-3.5" />
                         <span>View Related Products</span>
@@ -180,7 +180,7 @@ export const Solutions: React.FC = () => {
                       <div className="absolute inset-0 bg-gradient-to-t from-industrial-dark/80 via-transparent to-transparent" />
                       <div className="absolute bottom-3 left-3 right-3 p-3 rounded-lg bg-white/90 backdrop-blur-sm text-xs font-bold text-industrial-dark flex items-center justify-between">
                         <span>{sol.title}</span>
-                        <span className="text-[10px] text-industrial-primary font-mono">PPT Sourced</span>
+                        <span className="text-[10px] text-industrial-primary font-mono">Precision Standard</span>
                       </div>
                     </div>
                   </div>

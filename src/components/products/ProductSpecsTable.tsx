@@ -15,7 +15,7 @@ export const ProductSpecsTable: React.FC<ProductSpecsTableProps> = ({ specificat
         <h3 className="text-sm font-bold text-industrial-dark font-heading uppercase tracking-wider text-slate-500">
           Engineering Specifications
         </h3>
-        <span className="text-[11px] font-mono text-slate-400">Authentic PPT Data</span>
+        <span className="text-[11px] font-mono text-slate-400">Standard Calibration Data</span>
       </div>
 
       <div className="border border-slate-200 rounded-xl overflow-hidden shadow-subtle">

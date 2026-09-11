@@ -116,14 +116,14 @@ export const ProductDetail: React.FC = () => {
               </p>
             </div>
 
-            <div className="flex items-center gap-3 shrink-0">
+            <div className="flex items-center gap-3 shrink-0 w-full sm:w-auto mt-2 sm:mt-0">
               <button
                 type="button"
                 onClick={() => openEnquiry(product.title)}
-                className="btn-primary text-xs py-2.5 px-5 bg-sky-500 hover:bg-sky-400 text-white group"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-sky-500 hover:bg-sky-400 text-white font-semibold text-xs transition-all shadow-md active:scale-[0.98] group"
               >
                 <span>Enquire About This Model</span>
-                <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1 shrink-0" />
               </button>
             </div>
           </Reveal>

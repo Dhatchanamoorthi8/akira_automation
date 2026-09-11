@@ -72,7 +72,7 @@ export const SolutionsGrid: React.FC = () => {
                       <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-1" />
                     </Link>
                     <span className="text-[10px] font-mono text-slate-400 font-normal">
-                      PPT Specified
+                      Precision Standard
                     </span>
                   </div>
                 </SpotlightCard>

@@ -42,7 +42,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({
         </AnimatePresence>
         <div className="absolute top-4 left-4 z-10">
           <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-industrial-dark text-white">
-            PPT Verified
+            Factory Verified
           </span>
         </div>
       </div>

@@ -45,7 +45,8 @@ const strengths = [
 
 export const TrustStrip: React.FC = () => {
   return (
-    <section className="bg-white border-b border-slate-200 py-8 relative z-20">
+    <section className="bg-white border-b border-slate-200 py-8 relative z-20" aria-labelledby="trust-strip-heading">
+      <h2 id="trust-strip-heading" className="sr-only">Our Core Engineering Strengths</h2>
       <div className="industrial-container">
         <StaggerContainer className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {strengths.map((item, idx) => {

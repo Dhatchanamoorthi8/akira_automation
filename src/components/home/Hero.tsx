@@ -67,17 +67,17 @@ export const Hero: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-1 text-xs text-slate-300"
+              className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 pt-1 text-xs text-slate-300"
             >
-              <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg p-2.5 transition-colors hover:bg-white/10">
+              <div className="flex items-center gap-2.5 bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 transition-colors hover:bg-white/10">
                 <CheckCircle2 className="w-4 h-4 text-sky-400 shrink-0" />
                 <span>Automated Multi-Gauging</span>
               </div>
-              <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg p-2.5 transition-colors hover:bg-white/10">
+              <div className="flex items-center gap-2.5 bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 transition-colors hover:bg-white/10">
                 <CheckCircle2 className="w-4 h-4 text-sky-400 shrink-0" />
                 <span>Compressed Air Technology</span>
               </div>
-              <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg p-2.5 col-span-2 sm:col-span-1 transition-colors hover:bg-white/10">
+              <div className="flex items-center gap-2.5 bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 transition-colors hover:bg-white/10">
                 <CheckCircle2 className="w-4 h-4 text-sky-400 shrink-0" />
                 <span>Tailored Fixtures</span>
               </div>
@@ -88,32 +88,33 @@ export const Hero: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-wrap items-center gap-4 pt-4"
+              className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-4 w-full sm:w-auto"
             >
               <Link
                 to="/solutions"
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg bg-industrial-primary text-white font-bold text-sm tracking-wide transition-all duration-200 hover:bg-sky-600 shadow-lg shadow-blue-900/30 hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-sky-400 group"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg bg-industrial-primary text-white font-bold text-sm tracking-wide transition-all duration-200 hover:bg-sky-600 shadow-lg shadow-blue-900/30 hover:scale-[1.01] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-sky-400 group text-center"
               >
                 <span>Explore Solutions</span>
-                <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
+                <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1 shrink-0" />
               </Link>
               <button
+                type="button"
                 onClick={() => openEnquiry()}
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg bg-white/10 text-white font-semibold text-sm border border-white/20 backdrop-blur-sm transition-all duration-200 hover:bg-white/20 hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-sky-400"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg bg-white/10 text-white font-semibold text-sm border border-white/20 backdrop-blur-sm transition-all duration-200 hover:bg-white/20 hover:scale-[1.01] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-sky-400 text-center"
               >
                 <span>Request an Enquiry</span>
-                <Sliders className="w-4 h-4 text-sky-300" />
+                <Sliders className="w-4 h-4 text-sky-300 shrink-0" />
               </button>
             </motion.div>
 
             {/* Micro Metrology Indicator Strip */}
-            <div className="pt-4 border-t border-slate-800 flex items-center gap-6 text-xs text-slate-400">
-              <div className="flex items-center gap-2 font-mono">
-                <span className="w-2.5 h-2.5 rounded-sm bg-tolerance-green inline-block" />
+            <div className="pt-4 border-t border-slate-800 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-slate-400">
+              <div className="flex items-center gap-2 font-mono whitespace-nowrap">
+                <span className="w-2.5 h-2.5 rounded-sm bg-tolerance-green inline-block shrink-0" />
                 <span>Tolerance: Tri-Colour Status</span>
               </div>
-              <div className="flex items-center gap-2 font-mono">
-                <span className="w-2.5 h-2.5 rounded-sm bg-sky-400 inline-block" />
+              <div className="flex items-center gap-2 font-mono whitespace-nowrap">
+                <span className="w-2.5 h-2.5 rounded-sm bg-sky-400 inline-block shrink-0" />
                 <span>Resolution: Up to 0.1 µm</span>
               </div>
             </div>

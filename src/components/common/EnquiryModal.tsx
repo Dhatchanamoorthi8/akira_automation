@@ -96,23 +96,23 @@ export const EnquiryModal: React.FC = () => {
         tabIndex={-1}
       >
         {/* Modal Header */}
-        <div className="bg-industrial-dark text-white p-6 sticky top-0 z-10 flex items-start justify-between border-b border-slate-800">
+        <div className="bg-industrial-dark text-white p-4 sm:p-6 sticky top-0 z-10 flex items-start justify-between border-b border-slate-800">
           <div>
             <div className="inline-flex items-center gap-2 text-xs font-semibold text-industrial-highlight uppercase tracking-wider mb-1">
               <ShieldCheck className="w-4 h-4" />
               Technical Sales & Engineering Enquiry
             </div>
-            <h2 id="enquiry-modal-title" className="text-xl font-bold font-heading">
+            <h2 id="enquiry-modal-title" className="text-lg sm:text-xl font-bold font-heading">
               Request Technical Proposal & Quotation
             </h2>
-            <p id="enquiry-modal-subtitle" className="text-xs text-slate-300 mt-1">
+            <p id="enquiry-modal-subtitle" className="text-xs text-slate-300 mt-0.5 sm:mt-1">
               {company.name} • Precision Gauging & Fixture Systems
             </p>
           </div>
           <button
             type="button"
             onClick={closeEnquiry}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors focus:outline-none focus:ring-2 focus:ring-industrial-primary"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors focus:outline-none focus:ring-2 focus:ring-industrial-primary shrink-0 ml-2"
             aria-label="Close enquiry modal"
           >
             <X className="w-5 h-5" />
@@ -120,7 +120,7 @@ export const EnquiryModal: React.FC = () => {
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 sm:px-8 sm:py-6">
+        <div className="p-4 sm:px-8 sm:py-6">
           <EnquiryForm
             variant="modal"
             idPrefix="modal-"
