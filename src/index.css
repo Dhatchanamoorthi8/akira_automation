@@ -1,0 +1,125 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  body {
+    @apply bg-industrial-bg text-industrial-text antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Manrope', 'Inter', system-ui, sans-serif;
+    letter-spacing: -0.02em;
+  }
+}
+
+/* Custom Industrial Metrology Tokens & Utility Classes */
+@layer components {
+  .industrial-container {
+    @apply max-w-site mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-tag {
+    @apply inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase bg-industrial-accent text-industrial-primary border border-industrial-primary/20;
+  }
+
+  .section-title {
+    @apply text-2xl sm:text-3xl lg:text-4xl font-extrabold text-industrial-dark tracking-tight leading-tight;
+  }
+
+  .section-subtitle {
+    @apply mt-4 text-base sm:text-lg text-industrial-muted max-w-3xl leading-relaxed;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-industrial-primary text-white font-semibold text-sm transition-all duration-200 shadow-sm hover:bg-industrial-hover hover:shadow-md active:translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-industrial-primary focus:ring-offset-2;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-white text-industrial-dark font-semibold text-sm border border-slate-300 transition-all duration-200 shadow-sm hover:bg-slate-50 hover:border-slate-400 active:translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-industrial-primary focus:ring-offset-2;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-transparent text-industrial-primary font-semibold text-sm border-2 border-industrial-primary transition-all duration-200 hover:bg-industrial-primary hover:text-white active:translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-industrial-primary focus:ring-offset-2;
+  }
+
+  .btn-dark {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-industrial-dark text-white font-semibold text-sm transition-all duration-200 shadow-sm hover:bg-industrial-darkhover active:translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-industrial-primary focus:ring-offset-2;
+  }
+
+  .card-base {
+    @apply bg-white rounded-xl border border-slate-200/80 shadow-card transition-all duration-300;
+  }
+
+  .card-hover {
+    @apply hover:shadow-card-hover hover:border-industrial-primary/30 hover:-translate-y-1;
+  }
+
+  .table-cell-header {
+    @apply px-4 py-3 bg-slate-100 text-left text-xs font-semibold text-industrial-dark uppercase tracking-wider border-b border-slate-200;
+  }
+
+  .table-cell {
+    @apply px-4 py-3 text-sm text-industrial-text border-b border-slate-100 font-mono;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* Technical Precision Grid Pattern */
+.bg-tech-grid {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(0, 85, 165, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 85, 165, 0.04) 1px, transparent 1px);
+}
+
+.bg-dark-grid {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,119 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowRight, Wrench, GraduationCap, Compass, Zap, Headphones, Phone } from 'lucide-react';
+import { servicesData } from '../../data/services';
+import { useEnquiry } from '../../context/EnquiryContext';
+import { companyData } from '../../data/company';
+import { SectionReveal } from '../animation/SectionReveal';
+import { Reveal } from '../animation/Reveal';
+import { StaggerContainer } from '../animation/StaggerContainer';
+import { StaggerItem } from '../animation/StaggerItem';
+import { SpotlightCard } from '../animation/SpotlightCard';
+
+const iconMap: Record<string, React.ElementType> = {
+  Wrench,
+  GraduationCap,
+  Compass,
+  Zap
+};
+
+export const ServiceSupportSection: React.FC = () => {
+  const { openEnquiry } = useEnquiry();
+
+  return (
+    <SectionReveal className="py-20 bg-industrial-bg border-b border-slate-200">
+      <div className="industrial-container">
+        {/* Section Header */}
+        <Reveal direction="up" className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+          <div>
+            <span className="section-tag">
+              Lifecycle Engineering Support
+            </span>
+            <h2 className="section-title mt-3">
+              Service & Support
+            </h2>
+            <p className="mt-2 text-lg font-bold text-industrial-primary font-heading">
+              "We support beyond sales."
+            </p>
+            <p className="section-subtitle">
+              Our commitment begins before commissioning and continues through operator training, routine calibration, and fast emergency service response.
+            </p>
+          </div>
+          <button
+            onClick={() => openEnquiry("Service & Technical Support")}
+            className="btn-primary shrink-0 self-start md:self-end"
+          >
+            <Headphones className="w-4 h-4" />
+            <span>Talk to Our Technical Team</span>
+          </button>
+        </Reveal>
+
+        {/* 4 Cards Grid */}
+        <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {servicesData.map((srv) => {
+            const Icon = iconMap[srv.iconName] || Wrench;
+            return (
+              <StaggerItem key={srv.id}>
+                <SpotlightCard
+                  spotlightColor="rgba(14, 116, 144, 0.08)"
+                  className="card-base card-hover p-6 flex flex-col justify-between group border-slate-200 bg-white h-full"
+                >
+                  <div className="space-y-4">
+                    <div className="w-12 h-12 rounded-xl bg-industrial-accent text-industrial-primary flex items-center justify-center group-hover:bg-industrial-primary group-hover:text-white transition-colors duration-300">
+                      <Icon className="w-6 h-6" />
+                    </div>
+
+                    <div>
+                      <h3 className="text-base font-bold text-industrial-dark font-heading group-hover:text-industrial-primary transition-colors">
+                        {srv.title}
+                      </h3>
+                      <p className="text-xs text-industrial-muted mt-2 leading-relaxed">
+                        {srv.description}
+                      </p>
+                    </div>
+
+                    <div className="pt-3 border-t border-slate-100 space-y-1.5">
+                      {srv.details.slice(0, 2).map((d, idx) => (
+                        <p key={idx} className="text-[11px] text-slate-600 flex items-start gap-1.5">
+                          <span className="text-industrial-primary font-bold">•</span>
+                          <span className="line-clamp-2">{d}</span>
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="pt-4 mt-4 border-t border-slate-100">
+                    <Link
+                      to="/services"
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-industrial-primary group-hover:text-industrial-hover transition-colors"
+                    >
+                      <span>Full Service Details</span>
+                      <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+                    </Link>
+                  </div>
+                </SpotlightCard>
+              </StaggerItem>
+            );
+          })}
+        </StaggerContainer>
+
+        {/* Hotline Banner */}
+        <Reveal direction="up" delay={0.2} className="mt-12 p-5 rounded-xl bg-white border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+          <div className="flex items-center gap-3 text-xs text-slate-700">
+            <div className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+              <Phone className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="font-bold text-industrial-dark">Direct Technical Support Hotline</p>
+              <p className="text-slate-500 font-mono text-xs">{companyData.phones[0]} / {companyData.phones[1]}</p>
+            </div>
+          </div>
+          <div className="text-xs text-industrial-muted">
+            Service available across all automotive and industrial corridors in India.
+          </div>
+        </Reveal>
+
+      </div>
+    </SectionReveal>
+  );
+};
