@@ -9,7 +9,7 @@ import { ScaleReveal } from '../animation/ScaleReveal';
 
 export const AboutSection: React.FC = () => {
   return (
-    <SectionReveal className="py-20 bg-industrial-bg relative overflow-hidden">
+    <SectionReveal className="py-12 sm:py-16 lg:py-20 bg-industrial-bg relative overflow-hidden">
       <div className="industrial-container">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           

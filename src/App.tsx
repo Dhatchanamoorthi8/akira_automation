@@ -37,9 +37,9 @@ export const App: React.FC = () => {
     <EnquiryProvider>
       <Router>
         <ScrollToTop />
-        <div className="min-h-screen flex flex-col bg-industrial-bg">
+        <div className="min-h-screen flex flex-col bg-industrial-bg w-full max-w-full overflow-x-hidden">
           <Header />
-          <main className="flex-grow">
+          <main className="flex-grow w-full max-w-full overflow-x-hidden">
             <ErrorBoundary>
               <Suspense fallback={<PageLoader />}>
                 <Routes>

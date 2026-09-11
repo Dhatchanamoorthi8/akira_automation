@@ -18,10 +18,10 @@ const iconMap: Record<string, React.ElementType> = {
 
 export const IndustriesSection: React.FC = () => {
   return (
-    <SectionReveal className="py-20 bg-industrial-bg border-b border-slate-200">
+    <SectionReveal className="py-12 sm:py-16 lg:py-20 bg-industrial-bg border-b border-slate-200 overflow-hidden">
       <div className="industrial-container">
         {/* Header */}
-        <Reveal direction="up" className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+        <Reveal direction="up" className="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-10 gap-6">
           <div>
             <span className="section-tag">
               Industrial Sectors

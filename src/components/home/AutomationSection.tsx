@@ -12,7 +12,7 @@ import { ShinyText } from '../animation/ShinyText';
 
 export const AutomationSection: React.FC = () => {
   return (
-    <SectionReveal className="py-20 bg-gradient-to-br from-industrial-dark via-[#0d2238] to-industrial-dark text-white relative overflow-hidden">
+    <SectionReveal className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-industrial-dark via-[#0d2238] to-industrial-dark text-white relative overflow-hidden">
       <div className="absolute inset-0 bg-dark-grid opacity-25 pointer-events-none" />
       <div className="absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-industrial-primary/20 blur-3xl pointer-events-none" />
 

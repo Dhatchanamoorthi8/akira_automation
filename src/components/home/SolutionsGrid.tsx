@@ -26,10 +26,10 @@ const iconMap: Record<string, React.ElementType> = {
 
 export const SolutionsGrid: React.FC = () => {
   return (
-    <SectionReveal className="py-20 bg-white border-y border-slate-200">
+    <SectionReveal className="py-12 sm:py-16 lg:py-20 bg-white border-y border-slate-200 overflow-hidden">
       <div className="industrial-container">
         {/* Section Header */}
-        <Reveal direction="up" className="max-w-3xl mb-12">
+        <Reveal direction="up" className="max-w-3xl mb-8 sm:mb-12">
           <span className="section-tag">
             Core Solution Capabilities
           </span>

@@ -18,10 +18,10 @@ const benefitIcons = [
 
 export const CustomerBenefits: React.FC = () => {
   return (
-    <SectionReveal className="py-20 bg-white border-b border-slate-200">
+    <SectionReveal className="py-12 sm:py-16 lg:py-20 bg-white border-b border-slate-200 overflow-hidden">
       <div className="industrial-container">
         {/* Header */}
-        <Reveal direction="up" className="text-center max-w-3xl mx-auto mb-14">
+        <Reveal direction="up" className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
           <span className="section-tag">
             Measurable Manufacturing Value
           </span>
@@ -34,7 +34,7 @@ export const CustomerBenefits: React.FC = () => {
         </Reveal>
 
         {/* 5 Cards Grid */}
-        <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+        <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6">
           {companyIntro.customerBenefits.map((b, idx) => {
             const Icon = benefitIcons[idx] || ShieldCheck;
             return (

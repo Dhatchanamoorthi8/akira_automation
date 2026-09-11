@@ -19,10 +19,10 @@ interface ContactSectionProps {
 
 export const ContactSection: React.FC<ContactSectionProps> = ({ isStandalone = false }) => {
   return (
-    <SectionReveal id="contact-section" className={`py-20 ${isStandalone ? 'bg-white' : 'bg-industrial-bg'} border-b border-slate-200`}>
+    <SectionReveal id="contact-section" className={`py-12 sm:py-16 lg:py-20 ${isStandalone ? 'bg-white' : 'bg-industrial-bg'} border-b border-slate-200 overflow-hidden`}>
       <div className="industrial-container">
         {/* Section Header */}
-        <Reveal direction="up" className="max-w-3xl mb-14">
+        <Reveal direction="up" className="max-w-3xl mb-8 sm:mb-12">
           <span className="section-tag">
             Official Registered Details & Inquiries
           </span>

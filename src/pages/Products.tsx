@@ -96,7 +96,7 @@ export const Products: React.FC = () => {
             </div>
 
             {/* Category Filter Buttons */}
-            <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
+            <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 no-scrollbar max-w-full">
               {productCategories.map((cat) => (
                 <button
                   key={cat.slug}

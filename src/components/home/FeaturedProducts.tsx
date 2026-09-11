@@ -17,10 +17,10 @@ export const FeaturedProducts: React.FC = () => {
     : productSummaries.filter(p => p.categorySlug === activeTab);
 
   return (
-    <SectionReveal className="py-20 bg-industrial-bg relative">
+    <SectionReveal className="py-12 sm:py-16 lg:py-20 bg-industrial-bg relative overflow-hidden">
       <div className="industrial-container">
         {/* Section Header */}
-        <Reveal direction="up" className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
+        <Reveal direction="up" className="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-10 gap-6">
           <div>
             <span className="section-tag">
               Featured Metrology Products
@@ -39,7 +39,7 @@ export const FeaturedProducts: React.FC = () => {
         </Reveal>
 
         {/* Filter Tabs with Mechanical Sliding layoutId Indicator */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-8 scrollbar-none">
+        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-8 no-scrollbar w-full max-w-full">
           <button
             onClick={() => setActiveTab('all')}
             className={`relative px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors z-10 ${

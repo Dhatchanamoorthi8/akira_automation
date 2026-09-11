@@ -33,7 +33,7 @@ const coreStrengthDetails = [
 
 export const WhyChooseUsSection: React.FC = () => {
   return (
-    <SectionReveal className="py-20 bg-white border-b border-slate-200">
+    <SectionReveal className="py-12 sm:py-16 lg:py-20 bg-white border-b border-slate-200 overflow-hidden">
       <div className="industrial-container">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           
@@ -106,7 +106,7 @@ export const WhyChooseUsSection: React.FC = () => {
             </ScaleReveal>
 
             {/* Floating Metric Card */}
-            <Reveal direction="right" delay={0.2} className="absolute -top-4 -left-4 bg-white text-industrial-dark rounded-xl p-3.5 shadow-card border border-slate-200 flex items-center gap-3">
+            <Reveal direction="right" delay={0.2} className="absolute -top-4 -left-4 bg-white text-industrial-dark rounded-xl p-3.5 shadow-card border border-slate-200 hidden sm:flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
                 <ShieldCheck className="w-6 h-6" />
               </div>

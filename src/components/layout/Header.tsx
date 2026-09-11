@@ -67,11 +67,11 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full transition-all duration-300">
+    <header className="sticky top-0 z-50 w-full max-w-full transition-all duration-300">
       {/* Top Utility Bar */}
-      <div className="bg-industrial-dark text-slate-300 text-[11px] sm:text-xs border-b border-slate-800">
-        <div className="industrial-container py-1.5 sm:py-2 flex items-center justify-between gap-2 sm:gap-4">
-          <div className="flex items-center gap-3 sm:gap-6 min-w-0">
+      <div className="bg-industrial-dark text-slate-300 text-[11px] sm:text-xs border-b border-slate-800 w-full overflow-hidden">
+        <div className="industrial-container py-1.5 sm:py-2 flex items-center justify-between gap-2 sm:gap-4 max-w-full min-w-0">
+          <div className="flex items-center gap-2 sm:gap-6 min-w-0 flex-1 sm:flex-initial">
             <span className="hidden md:inline-flex items-center gap-1.5 text-slate-300 font-medium shrink-0">
               <Award className="w-3.5 h-3.5 text-industrial-primary" />
               Sales & Service
@@ -79,17 +79,18 @@ export const Header: React.FC = () => {
             <span className="hidden md:inline-block text-slate-500">|</span>
             <a 
               href={`mailto:${companyData.emails[0]}`} 
-              className="inline-flex items-center gap-1.5 hover:text-white transition-colors truncate"
+              className="inline-flex items-center gap-1.5 hover:text-white transition-colors truncate min-w-0"
+              title={companyData.emails[0]}
             >
               <Mail className="w-3.5 h-3.5 text-industrial-highlight shrink-0" />
               <span className="truncate">{companyData.emails[0]}</span>
             </a>
           </div>
 
-          <div className="flex items-center gap-3 sm:gap-6 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-6 shrink-0 text-[10px] sm:text-xs">
             <a 
               href={`tel:${companyData.phones[0].replace(/\s+/g, '')}`} 
-              className="inline-flex items-center gap-1.5 hover:text-white transition-colors font-mono"
+              className="inline-flex items-center gap-1.5 hover:text-white transition-colors font-mono whitespace-nowrap"
             >
               <Phone className="w-3.5 h-3.5 text-industrial-highlight shrink-0" />
               <span>{companyData.phones[0]}</span>
@@ -97,7 +98,7 @@ export const Header: React.FC = () => {
             <span className="hidden sm:inline-block text-slate-500">/</span>
             <a 
               href={`tel:${companyData.phones[1].replace(/\s+/g, '')}`} 
-              className="hidden sm:inline-flex items-center gap-1.5 hover:text-white transition-colors font-mono"
+              className="hidden sm:inline-flex items-center gap-1.5 hover:text-white transition-colors font-mono whitespace-nowrap"
             >
               <span>{companyData.phones[1]}</span>
             </a>
@@ -118,7 +119,7 @@ export const Header: React.FC = () => {
             <img
               src="/assets/company/akira-automation-logo.jpeg"
               alt="AKIRA AUTOMATION logo"
-              className="h-10 sm:h-12 md:h-13 w-auto object-contain max-w-[260px] sm:max-w-[320px] transition-transform duration-300 group-hover:scale-[1.01]"
+              className="h-9 sm:h-12 md:h-13 w-auto object-contain max-w-[190px] sm:max-w-[320px] transition-transform duration-300 group-hover:scale-[1.01]"
               loading="eager"
             />
           </Link>
@@ -326,7 +327,7 @@ export const Header: React.FC = () => {
       {/* Mobile Navigation Drawer with AnimatePresence */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <div className="xl:hidden fixed inset-0 top-[104px] z-40">
+          <div className="xl:hidden fixed inset-0 top-[104px] z-40 overflow-hidden">
             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}

@@ -97,7 +97,7 @@ export const InstrumentsFixturesGallery: React.FC = () => {
   const filtered = filter === 'all' ? items : items.filter(i => i.category === filter);
 
   return (
-    <SectionReveal className="py-12 sm:py-16 lg:py-20 bg-white border-b border-slate-200">
+    <SectionReveal className="py-12 sm:py-16 lg:py-20 bg-white border-b border-slate-200 overflow-hidden">
       <div className="industrial-container">
         {/* Header */}
         <Reveal direction="up" className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-10 gap-6">
@@ -114,7 +114,7 @@ export const InstrumentsFixturesGallery: React.FC = () => {
           </div>
 
           {/* Filter Pills */}
-          <div className="flex items-center gap-2 self-start md:self-end">
+          <div className="flex flex-wrap items-center gap-2 self-start md:self-end">
             <button
               onClick={() => setFilter('all')}
               className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
