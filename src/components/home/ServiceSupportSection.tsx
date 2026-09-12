@@ -21,10 +21,10 @@ export const ServiceSupportSection: React.FC = () => {
   const { openEnquiry } = useEnquiry();
 
   return (
-    <SectionReveal className="py-12 sm:py-16 lg:py-20 bg-industrial-bg border-b border-slate-200 overflow-hidden">
+    <SectionReveal className="py-10 sm:py-16 lg:py-20 bg-industrial-bg border-b border-slate-200 overflow-hidden">
       <div className="industrial-container">
         {/* Section Header */}
-        <Reveal direction="up" className="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-12 gap-6">
+        <Reveal direction="up" className="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-12 gap-6">
           <div>
             <span className="section-tag">
               Lifecycle Engineering Support
@@ -41,7 +41,7 @@ export const ServiceSupportSection: React.FC = () => {
           </div>
           <button
             onClick={() => openEnquiry("Service & Technical Support")}
-            className="btn-primary shrink-0 self-start md:self-end"
+            className="btn-primary w-full sm:w-auto text-center justify-center shrink-0 self-start md:self-end"
           >
             <Headphones className="w-4 h-4" />
             <span>Talk to Our Technical Team</span>
@@ -49,14 +49,14 @@ export const ServiceSupportSection: React.FC = () => {
         </Reveal>
 
         {/* 4 Cards Grid */}
-        <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {servicesData.map((srv) => {
             const Icon = iconMap[srv.iconName] || Wrench;
             return (
               <StaggerItem key={srv.id}>
                 <SpotlightCard
                   spotlightColor="rgba(14, 116, 144, 0.08)"
-                  className="card-base card-hover p-6 flex flex-col justify-between group border-slate-200 bg-white h-full"
+                  className="card-base card-hover p-4 sm:p-6 flex flex-col justify-between group border-slate-200 bg-white h-full"
                 >
                   <div className="space-y-4">
                     <div className="w-12 h-12 rounded-xl bg-industrial-accent text-industrial-primary flex items-center justify-center group-hover:bg-industrial-primary group-hover:text-white transition-colors duration-300">
@@ -98,7 +98,7 @@ export const ServiceSupportSection: React.FC = () => {
         </StaggerContainer>
 
         {/* Hotline Banner */}
-        <Reveal direction="up" delay={0.2} className="mt-8 sm:mt-12 p-5 sm:p-6 rounded-2xl bg-white border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+        <Reveal direction="up" delay={0.2} className="mt-6 sm:mt-12 p-4 sm:p-6 rounded-2xl bg-white border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
           <div className="flex items-start sm:items-center gap-3.5 text-xs text-slate-700">
             <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 shadow-sm">
               <Phone className="w-5 h-5" />

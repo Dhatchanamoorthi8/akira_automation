@@ -88,7 +88,7 @@ export const EnquiryModal: React.FC = () => {
     >
       <div 
         ref={modalRef}
-        className="bg-white rounded-2xl shadow-elevated border border-slate-200 w-full max-w-2xl max-h-[90vh] overflow-y-auto relative animate-in zoom-in-95 duration-200 focus:outline-none"
+        className="bg-white rounded-xl shadow-elevated border border-slate-200 w-full max-w-2xl max-h-[90vh] overflow-y-auto relative animate-in zoom-in-95 duration-200 focus:outline-none"
         role="dialog"
         aria-modal="true"
         aria-labelledby="enquiry-modal-title"
@@ -98,8 +98,8 @@ export const EnquiryModal: React.FC = () => {
         {/* Modal Header */}
         <div className="bg-industrial-dark text-white p-4 sm:p-6 sticky top-0 z-10 flex items-start justify-between border-b border-slate-800">
           <div>
-            <div className="inline-flex items-center gap-2 text-xs font-semibold text-industrial-highlight uppercase tracking-wider mb-1">
-              <ShieldCheck className="w-4 h-4" />
+            <div className="inline-flex items-center gap-1.5 text-[11px] font-mono font-semibold text-industrial-highlight uppercase tracking-wider mb-1">
+              <ShieldCheck className="w-3.5 h-3.5" />
               Technical Sales & Engineering Enquiry
             </div>
             <h2 id="enquiry-modal-title" className="text-lg sm:text-xl font-bold font-heading">

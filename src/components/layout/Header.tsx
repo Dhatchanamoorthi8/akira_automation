@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -27,6 +27,9 @@ export const Header: React.FC = () => {
   const [productsDropdown, setProductsDropdown] = useState(false);
   const [mobileAccordion, setMobileAccordion] = useState<string | null>(null);
 
+  const triggerButtonRef = useRef<HTMLButtonElement>(null);
+  const drawerRef = useRef<HTMLDivElement>(null);
+
   const { openEnquiry } = useEnquiry();
   const location = useLocation();
 
@@ -49,18 +52,59 @@ export const Header: React.FC = () => {
     setProductsDropdown(false);
   }, [location.pathname]);
 
-  // Handle Escape key
+  // Handle Escape key, body scroll lock, and keyboard focus trap for mobile drawer
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setMobileMenuOpen(false);
-        setSolutionsDropdown(false);
-        setProductsDropdown(false);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+    if (mobileMenuOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          setMobileMenuOpen(false);
+          return;
+        }
+
+        if (e.key === 'Tab' && drawerRef.current) {
+          const focusables = Array.from(
+            drawerRef.current.querySelectorAll<HTMLElement>(
+              'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+            )
+          );
+          if (focusables.length === 0) return;
+
+          const first = focusables[0];
+          const last = focusables[focusables.length - 1];
+
+          if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
+      };
+
+      window.addEventListener('keydown', handleKeyDown);
+
+      return () => {
+        document.body.style.overflow = originalOverflow;
+        window.removeEventListener('keydown', handleKeyDown);
+        if (triggerButtonRef.current) {
+          triggerButtonRef.current.focus();
+        }
+      };
+    } else {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          setSolutionsDropdown(false);
+          setProductsDropdown(false);
+        }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [mobileMenuOpen]);
 
   const toggleAccordion = (name: string) => {
     setMobileAccordion(mobileAccordion === name ? null : name);
@@ -68,41 +112,41 @@ export const Header: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full max-w-full transition-all duration-300">
-      {/* Top Utility Bar */}
-      <div className="bg-industrial-dark text-slate-300 text-[11px] sm:text-xs border-b border-slate-800 w-full overflow-hidden">
-        <div className="industrial-container py-1.5 sm:py-2 flex items-center justify-between gap-2 sm:gap-4 max-w-full min-w-0">
-          <div className="flex items-center gap-2 sm:gap-6 min-w-0 flex-1 sm:flex-initial">
+      {/* Top Utility Bar - Compact Engineering Status Bar */}
+      <div className="bg-industrial-dark text-slate-300 text-[10px] sm:text-xs border-b border-slate-800 w-full overflow-hidden">
+        <div className="industrial-container py-1 sm:py-1.5 flex items-center justify-between gap-2 sm:gap-4 max-w-full min-w-0">
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1 sm:flex-initial">
             <span className="hidden md:inline-flex items-center gap-1.5 text-slate-300 font-medium shrink-0">
               <Award className="w-3.5 h-3.5 text-industrial-primary" />
               Sales & Service
             </span>
-            <span className="hidden md:inline-block text-slate-500">|</span>
+            <span className="hidden md:inline-block text-slate-600">|</span>
             <a 
               href={`mailto:${companyData.emails[0]}`} 
-              className="inline-flex items-center gap-1.5 hover:text-white transition-colors truncate min-w-0"
+              className="inline-flex items-center gap-1.5 hover:text-white transition-colors truncate min-w-0 font-mono text-[10px] sm:text-xs"
               title={companyData.emails[0]}
             >
-              <Mail className="w-3.5 h-3.5 text-industrial-highlight shrink-0" />
+              <Mail className="w-3 h-3 text-industrial-highlight shrink-0" />
               <span className="truncate">{companyData.emails[0]}</span>
             </a>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-6 shrink-0 text-[10px] sm:text-xs">
+          <div className="flex items-center gap-2 sm:gap-4 shrink-0 text-[10px] sm:text-xs">
             <a 
               href={`tel:${companyData.phones[0].replace(/\s+/g, '')}`} 
               className="inline-flex items-center gap-1.5 hover:text-white transition-colors font-mono whitespace-nowrap"
             >
-              <Phone className="w-3.5 h-3.5 text-industrial-highlight shrink-0" />
+              <Phone className="w-3 h-3 text-industrial-highlight shrink-0" />
               <span>{companyData.phones[0]}</span>
             </a>
-            <span className="hidden sm:inline-block text-slate-500">/</span>
+            <span className="hidden sm:inline-block text-slate-600">/</span>
             <a 
               href={`tel:${companyData.phones[1].replace(/\s+/g, '')}`} 
               className="hidden sm:inline-flex items-center gap-1.5 hover:text-white transition-colors font-mono whitespace-nowrap"
             >
               <span>{companyData.phones[1]}</span>
             </a>
-            <span className="hidden lg:inline-block px-2 py-0.5 rounded bg-slate-800 text-[10px] text-slate-300 uppercase tracking-wider font-semibold">
+            <span className="hidden lg:inline-block px-2 py-0.5 rounded bg-slate-800 text-[10px] text-slate-300 uppercase tracking-wider font-semibold font-mono">
               Smart Solutions
             </span>
           </div>
@@ -110,16 +154,16 @@ export const Header: React.FC = () => {
       </div>
 
       {/* Main Navbar */}
-      <div className={`w-full bg-white transition-all duration-300 border-b border-slate-200 shadow-sm ${
-        isScrolled ? 'py-2.5 shadow-md' : 'py-3.5'
+      <div className={`w-full bg-white transition-all duration-300 border-b border-slate-200/90 shadow-subtle ${
+        isScrolled ? 'py-1.5 sm:py-2.5 shadow-sm' : 'py-2 sm:py-3.5'
       }`}>
         <div className="industrial-container flex items-center justify-between">
           {/* Logo / Brand Area */}
-          <Link to="/" className="flex items-center group focus:outline-none focus:ring-2 focus:ring-industrial-primary rounded-lg py-1 px-1 transition-opacity hover:opacity-95" aria-label="AKIRA AUTOMATION Home">
+          <Link to="/" className="flex items-center group focus:outline-none focus:ring-2 focus:ring-industrial-primary rounded-lg py-0.5 px-0.5 transition-opacity hover:opacity-95" aria-label="AKIRA AUTOMATION Home">
             <img
               src="/assets/company/akira-automation-logo.jpeg"
               alt="AKIRA AUTOMATION logo"
-              className="h-9 sm:h-12 md:h-13 w-auto object-contain max-w-[190px] sm:max-w-[320px] transition-transform duration-300 group-hover:scale-[1.01]"
+              className="h-8 sm:h-11 md:h-12 w-auto object-contain max-w-[165px] sm:max-w-[300px] transition-transform duration-300 group-hover:scale-[1.01]"
               loading="eager"
             />
           </Link>
@@ -315,19 +359,26 @@ export const Header: React.FC = () => {
 
           {/* Mobile Menu Toggle Button */}
           <button
+            ref={triggerButtonRef}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="xl:hidden p-2 rounded-lg text-industrial-dark hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-industrial-primary"
-            aria-label="Toggle Navigation Menu"
+            className="xl:hidden p-2 rounded-lg text-industrial-dark hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-industrial-primary min-w-[44px] min-h-[44px] flex items-center justify-center transition-colors"
+            aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={mobileMenuOpen}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Navigation Drawer with AnimatePresence */}
+      {/* Mobile Navigation Drawer Overlay */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <div className="xl:hidden fixed inset-0 top-[104px] z-40 overflow-hidden">
+          <div 
+            className="xl:hidden fixed inset-0 z-50 overflow-hidden flex justify-end"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Mobile Navigation Menu"
+          >
             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -335,20 +386,36 @@ export const Header: React.FC = () => {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               onClick={() => setMobileMenuOpen(false)}
-              className="absolute inset-0 bg-industrial-dark/50 backdrop-blur-sm"
+              className="fixed inset-0 bg-industrial-dark/60 backdrop-blur-sm"
               aria-hidden="true"
             />
+
             {/* Slide Drawer */}
             <motion.div
+              ref={drawerRef}
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              transition={{ ease: [0.16, 1, 0.3, 1], duration: 0.3 }}
-              className="relative bg-white h-full w-4/5 max-w-sm ml-auto p-6 overflow-y-auto shadow-2xl flex flex-col justify-between z-10"
+              transition={{ ease: [0.16, 1, 0.3, 1], duration: 0.28 }}
+              className="relative bg-white h-full w-full max-w-sm sm:max-w-md p-5 sm:p-6 overflow-y-auto shadow-2xl flex flex-col justify-between z-10 border-l border-slate-200"
             >
               <div className="space-y-4">
-                <div className="border-b border-slate-100 pb-3">
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Navigation</p>
+                {/* Drawer Header */}
+                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                  <div className="flex items-center gap-2">
+                    <img
+                      src="/assets/company/akira-automation-logo.jpeg"
+                      alt="AKIRA AUTOMATION"
+                      className="h-8 w-auto object-contain"
+                    />
+                  </div>
+                  <button
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="p-2 rounded-lg text-slate-500 hover:text-industrial-dark hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-industrial-primary min-w-[44px] min-h-[44px] flex items-center justify-center"
+                    aria-label="Close navigation menu"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
                 </div>
 
                 <motion.div 
@@ -358,18 +425,29 @@ export const Header: React.FC = () => {
                     hidden: { opacity: 0 },
                     visible: {
                       opacity: 1,
-                      transition: { staggerChildren: 0.03, delayChildren: 0.05 }
+                      transition: { staggerChildren: 0.03, delayChildren: 0.04 }
                     }
                   }}
                   className="flex flex-col gap-1 text-sm font-medium"
                 >
                   <motion.div variants={{ hidden: { opacity: 0, x: 10 }, visible: { opacity: 1, x: 0 } }}>
-                    <Link to="/" className="block px-3 py-2.5 rounded-lg hover:bg-slate-50 text-industrial-dark font-medium">
+                    <Link 
+                      to="/" 
+                      className={`block px-3.5 py-2.5 rounded-lg transition-colors font-medium ${
+                        location.pathname === '/' ? 'bg-industrial-accent text-industrial-primary font-semibold' : 'hover:bg-slate-50 text-industrial-dark'
+                      }`}
+                    >
                       Home
                     </Link>
                   </motion.div>
+
                   <motion.div variants={{ hidden: { opacity: 0, x: 10 }, visible: { opacity: 1, x: 0 } }}>
-                    <Link to="/about" className="block px-3 py-2.5 rounded-lg hover:bg-slate-50 text-industrial-dark font-medium">
+                    <Link 
+                      to="/about" 
+                      className={`block px-3.5 py-2.5 rounded-lg transition-colors font-medium ${
+                        location.pathname === '/about' ? 'bg-industrial-accent text-industrial-primary font-semibold' : 'hover:bg-slate-50 text-industrial-dark'
+                      }`}
+                    >
                       About Us
                     </Link>
                   </motion.div>
@@ -378,20 +456,23 @@ export const Header: React.FC = () => {
                   <motion.div variants={{ hidden: { opacity: 0, x: 10 }, visible: { opacity: 1, x: 0 } }}>
                     <button 
                       onClick={() => toggleAccordion('solutions')}
-                      className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-slate-50 text-industrial-dark font-medium"
+                      className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg transition-colors font-medium ${
+                        location.pathname.startsWith('/solutions') ? 'bg-industrial-accent text-industrial-primary font-semibold' : 'hover:bg-slate-50 text-industrial-dark'
+                      }`}
+                      aria-expanded={mobileAccordion === 'solutions'}
                     >
                       <span>Solutions</span>
-                      <ChevronDown className={`w-4 h-4 transition-transform ${mobileAccordion === 'solutions' ? 'rotate-180' : ''}`} />
+                      <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${mobileAccordion === 'solutions' ? 'rotate-180 text-industrial-primary' : ''}`} />
                     </button>
                     {mobileAccordion === 'solutions' && (
-                      <div className="pl-4 py-1 space-y-1 bg-slate-50 rounded-lg mt-1 text-xs">
+                      <div className="pl-4 py-1.5 space-y-1 bg-slate-50 rounded-lg mt-1 text-xs border border-slate-100">
                         {solutions.slice(0, 6).map((sol) => (
                           <Link key={sol.id} to={`/solutions#${sol.slug}`} className="block py-1.5 px-2 text-slate-700 hover:text-industrial-primary">
                             {sol.title}
                           </Link>
                         ))}
-                        <Link to="/solutions" className="block py-1.5 px-2 text-industrial-primary font-semibold">
-                          View All Solutions →
+                        <Link to="/solutions" className="block py-1.5 px-2 text-industrial-primary font-semibold hover:underline">
+                          View All 12 Solutions →
                         </Link>
                       </div>
                     )}
@@ -401,19 +482,22 @@ export const Header: React.FC = () => {
                   <motion.div variants={{ hidden: { opacity: 0, x: 10 }, visible: { opacity: 1, x: 0 } }}>
                     <button 
                       onClick={() => toggleAccordion('products')}
-                      className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-slate-50 text-industrial-dark font-medium"
+                      className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg transition-colors font-medium ${
+                        location.pathname.startsWith('/products') ? 'bg-industrial-accent text-industrial-primary font-semibold' : 'hover:bg-slate-50 text-industrial-dark'
+                      }`}
+                      aria-expanded={mobileAccordion === 'products'}
                     >
                       <span>Products</span>
-                      <ChevronDown className={`w-4 h-4 transition-transform ${mobileAccordion === 'products' ? 'rotate-180' : ''}`} />
+                      <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${mobileAccordion === 'products' ? 'rotate-180 text-industrial-primary' : ''}`} />
                     </button>
                     {mobileAccordion === 'products' && (
-                      <div className="pl-4 py-1 space-y-1 bg-slate-50 rounded-lg mt-1 text-xs">
+                      <div className="pl-4 py-1.5 space-y-1 bg-slate-50 rounded-lg mt-1 text-xs border border-slate-100">
                         {productSummaries.slice(0, 6).map((prod) => (
                           <Link key={prod.slug} to={`/products/${prod.slug}`} className="block py-1.5 px-2 text-slate-700 hover:text-industrial-primary">
                             {prod.title}
                           </Link>
                         ))}
-                        <Link to="/products" className="block py-1.5 px-2 text-industrial-primary font-semibold">
+                        <Link to="/products" className="block py-1.5 px-2 text-industrial-primary font-semibold hover:underline">
                           View Full Catalogue →
                         </Link>
                       </div>
@@ -421,48 +505,78 @@ export const Header: React.FC = () => {
                   </motion.div>
 
                   <motion.div variants={{ hidden: { opacity: 0, x: 10 }, visible: { opacity: 1, x: 0 } }}>
-                    <Link to="/industries" className="block px-3 py-2.5 rounded-lg hover:bg-slate-50 text-industrial-dark font-medium">
+                    <Link 
+                      to="/industries" 
+                      className={`block px-3.5 py-2.5 rounded-lg transition-colors font-medium ${
+                        location.pathname === '/industries' ? 'bg-industrial-accent text-industrial-primary font-semibold' : 'hover:bg-slate-50 text-industrial-dark'
+                      }`}
+                    >
                       Industries
                     </Link>
                   </motion.div>
+
                   <motion.div variants={{ hidden: { opacity: 0, x: 10 }, visible: { opacity: 1, x: 0 } }}>
-                    <Link to="/services" className="block px-3 py-2.5 rounded-lg hover:bg-slate-50 text-industrial-dark font-medium">
+                    <Link 
+                      to="/services" 
+                      className={`block px-3.5 py-2.5 rounded-lg transition-colors font-medium ${
+                        location.pathname === '/services' ? 'bg-industrial-accent text-industrial-primary font-semibold' : 'hover:bg-slate-50 text-industrial-dark'
+                      }`}
+                    >
                       Services
                     </Link>
                   </motion.div>
+
                   <motion.div variants={{ hidden: { opacity: 0, x: 10 }, visible: { opacity: 1, x: 0 } }}>
-                    <Link to="/why-choose-us" className="block px-3 py-2.5 rounded-lg hover:bg-slate-50 text-industrial-dark font-medium">
+                    <Link 
+                      to="/why-choose-us" 
+                      className={`block px-3.5 py-2.5 rounded-lg transition-colors font-medium ${
+                        location.pathname === '/why-choose-us' ? 'bg-industrial-accent text-industrial-primary font-semibold' : 'hover:bg-slate-50 text-industrial-dark'
+                      }`}
+                    >
                       Why Choose Us
                     </Link>
                   </motion.div>
+
                   <motion.div variants={{ hidden: { opacity: 0, x: 10 }, visible: { opacity: 1, x: 0 } }}>
-                    <Link to="/contact" className="block px-3 py-2.5 rounded-lg hover:bg-slate-50 text-industrial-dark font-medium">
+                    <Link 
+                      to="/contact" 
+                      className={`block px-3.5 py-2.5 rounded-lg transition-colors font-medium ${
+                        location.pathname === '/contact' ? 'bg-industrial-accent text-industrial-primary font-semibold' : 'hover:bg-slate-50 text-industrial-dark'
+                      }`}
+                    >
                       Contact
                     </Link>
                   </motion.div>
                 </motion.div>
               </div>
 
-              <div className="pt-6 border-t border-slate-200 space-y-3">
+              <div className="pt-5 border-t border-slate-200 space-y-3">
                 <button
+                  type="button"
                   onClick={() => {
                     setMobileMenuOpen(false);
                     openEnquiry();
                   }}
                   className="w-full btn-primary text-center"
                 >
-                  Enquire Now
+                  <span>Enquire Now</span>
+                  <ArrowRight className="w-4 h-4" />
                 </button>
-                <div className="text-xs text-industrial-muted space-y-1">
-                  <p className="font-semibold text-industrial-dark">Direct Lines:</p>
-                  <p className="font-mono">{companyData.phones[0]}</p>
-                  <p className="font-mono">{companyData.phones[1]}</p>
+                <div className="text-[11px] text-industrial-muted space-y-1 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                  <p className="font-bold text-industrial-dark uppercase tracking-wider text-[10px]">Direct Lines:</p>
+                  <a href={`tel:${companyData.phones[0].replace(/\s+/g, '')}`} className="font-mono text-industrial-dark hover:text-industrial-primary block">
+                    {companyData.phones[0]}
+                  </a>
+                  <a href={`tel:${companyData.phones[1].replace(/\s+/g, '')}`} className="font-mono text-industrial-dark hover:text-industrial-primary block">
+                    {companyData.phones[1]}
+                  </a>
                 </div>
               </div>
             </motion.div>
           </div>
         )}
       </AnimatePresence>
+
     </header>
   );
 };

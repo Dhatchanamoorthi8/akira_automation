@@ -38,10 +38,14 @@ export const ImageViewerProvider: React.FC<{ children: React.ReactNode }> = ({ c
   );
 };
 
-export const useImageViewer = () => {
+const defaultImageViewerContext: ImageViewerContextType = {
+  isOpen: false,
+  imageDetails: null,
+  openImageViewer: () => {},
+  closeImageViewer: () => {},
+};
+
+export const useImageViewer = (): ImageViewerContextType => {
   const context = useContext(ImageViewerContext);
-  if (!context) {
-    throw new Error('useImageViewer must be used within an ImageViewerProvider');
-  }
-  return context;
+  return context || defaultImageViewerContext;
 };

@@ -84,19 +84,12 @@ export const PrecisionText: React.FC<PrecisionTextProps> = ({
       {highlightText && (
         <>
           {' '}
-          <span className={highlightClassName}>
-            {highlightText.split(' ').map((hWord, hIdx) => (
-              <React.Fragment key={hIdx}>
-                <motion.span
-                  variants={wordVariants}
-                  className="inline-block"
-                >
-                  {hWord}
-                </motion.span>
-                {hIdx < highlightText.split(' ').length - 1 && ' '}
-              </React.Fragment>
-            ))}
-          </span>
+          <motion.span
+            variants={wordVariants}
+            className={`inline-block ${highlightClassName}`}
+          >
+            {highlightText}
+          </motion.span>
         </>
       )}
     </motion.span>

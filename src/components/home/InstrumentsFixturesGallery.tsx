@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ArrowRight, ZoomIn } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useEnquiry } from '../../context/EnquiryContext';
@@ -99,10 +100,10 @@ export const InstrumentsFixturesGallery: React.FC = () => {
   const filtered = filter === 'all' ? items : items.filter(i => i.category === filter);
 
   return (
-    <SectionReveal className="py-12 sm:py-16 lg:py-20 bg-white border-b border-slate-200 overflow-hidden">
+    <SectionReveal className="py-10 sm:py-16 lg:py-20 bg-white border-b border-slate-200 overflow-hidden">
       <div className="industrial-container">
         {/* Header */}
-        <Reveal direction="up" className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-10 gap-6">
+        <Reveal direction="up" className="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-10 gap-6">
           <div>
             <span className="section-tag">
               Precision Tooling & Fixtures
@@ -151,9 +152,9 @@ export const InstrumentsFixturesGallery: React.FC = () => {
         </Reveal>
 
         {/* Gallery Grid */}
-        <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
+        <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 sm:gap-6">
           <AnimatePresence>
-            {filtered.map((item) => (
+            {filtered.map((item, idx) => (
               <motion.div
                 key={item.id}
                 layout
@@ -161,7 +162,7 @@ export const InstrumentsFixturesGallery: React.FC = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                className="h-full"
+                className={idx >= 4 ? "hidden sm:block h-full" : "h-full"}
               >
                 <SpotlightCard
                   spotlightColor="rgba(14, 116, 144, 0.08)"
@@ -207,7 +208,7 @@ export const InstrumentsFixturesGallery: React.FC = () => {
 
                       {/* Hover / Touch Pill Overlay */}
                       <div className="absolute inset-0 bg-industrial-dark/20 opacity-0 group-hover/img:opacity-100 transition-opacity duration-200 flex items-center justify-center pointer-events-none">
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/90 text-white text-xs font-semibold shadow-lg backdrop-blur-md border border-white/20 transform translate-y-1 group-hover/img:translate-y-0 transition-transform">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-900/90 text-white text-[11px] font-mono font-medium shadow-lg backdrop-blur-md border border-white/20 transform translate-y-1 group-hover/img:translate-y-0 transition-transform">
                           <ZoomIn className="w-3.5 h-3.5 text-sky-400" />
                           <span>Click to View</span>
                         </span>
@@ -238,6 +239,17 @@ export const InstrumentsFixturesGallery: React.FC = () => {
             ))}
           </AnimatePresence>
         </motion.div>
+
+        {/* Mobile View Complete Tooling Catalogue Link */}
+        <div className="mt-6 text-center sm:hidden">
+          <Link
+            to="/products"
+            className="w-full py-2.5 px-4 rounded-lg bg-slate-100 hover:bg-slate-200 text-industrial-primary font-bold text-xs border border-slate-200/80 transition-colors inline-flex items-center justify-center gap-1.5"
+          >
+            <span>Explore Complete Tooling & Fixtures ({items.length} Items)</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
 
       </div>
     </SectionReveal>

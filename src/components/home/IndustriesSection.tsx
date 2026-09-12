@@ -18,7 +18,7 @@ const iconMap: Record<string, React.ElementType> = {
 
 export const IndustriesSection: React.FC = () => {
   return (
-    <SectionReveal className="py-12 sm:py-16 lg:py-20 bg-industrial-bg border-b border-slate-200 overflow-hidden">
+    <SectionReveal className="py-10 sm:py-16 lg:py-20 bg-industrial-bg border-b border-slate-200 overflow-hidden">
       <div className="industrial-container">
         {/* Header */}
         <Reveal direction="up" className="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-10 gap-6">
@@ -40,11 +40,11 @@ export const IndustriesSection: React.FC = () => {
         </Reveal>
 
         {/* Large Cards Grid */}
-        <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {industries.map((ind) => {
+        <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
+          {industries.map((ind, idx) => {
             const Icon = iconMap[ind.iconName] || Cpu;
             return (
-              <StaggerItem key={ind.id}>
+              <StaggerItem key={ind.id} className={idx >= 3 ? "hidden sm:block" : "block"}>
                 <SpotlightCard
                   spotlightColor="rgba(14, 116, 144, 0.08)"
                   className="card-base card-hover overflow-hidden flex flex-col justify-between group border-slate-200 bg-white h-full"
@@ -74,7 +74,7 @@ export const IndustriesSection: React.FC = () => {
                     )}
 
                     {/* Card Body */}
-                    <div className="p-6 space-y-3">
+                    <div className="p-4 sm:p-6 space-y-2.5 sm:space-y-3">
                       <p className="text-xs text-industrial-muted leading-relaxed">
                         {ind.description}
                       </p>
@@ -93,7 +93,7 @@ export const IndustriesSection: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="p-6 pt-0 border-t border-slate-100 mt-2">
+                  <div className="p-4 sm:p-6 pt-0 border-t border-slate-100 mt-2">
                     <Link
                       to={`/industries#${ind.slug}`}
                       className="inline-flex items-center gap-1.5 text-xs font-bold text-industrial-primary group-hover:text-industrial-hover transition-colors"
@@ -107,6 +107,17 @@ export const IndustriesSection: React.FC = () => {
             );
           })}
         </StaggerContainer>
+
+        {/* Mobile View All Industries Link */}
+        <div className="mt-6 text-center sm:hidden">
+          <Link
+            to="/industries"
+            className="w-full py-2.5 px-4 rounded-lg bg-white hover:bg-slate-50 text-industrial-primary font-bold text-xs border border-slate-200 transition-colors inline-flex items-center justify-center gap-1.5 shadow-sm"
+          >
+            <span>Explore All 5 Industry Sectors</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
 
       </div>
     </SectionReveal>

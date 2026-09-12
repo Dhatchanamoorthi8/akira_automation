@@ -17,7 +17,7 @@ export const NotFound: React.FC = () => {
       <section className="py-24 bg-industrial-bg min-h-[65vh] flex items-center">
         <div className="industrial-container max-w-lg mx-auto text-center space-y-6">
           <ScaleReveal>
-            <div className="w-20 h-20 rounded-2xl bg-industrial-accent text-industrial-primary flex items-center justify-center mx-auto shadow-sm">
+            <div className="w-20 h-20 rounded-xl bg-industrial-accent text-industrial-primary flex items-center justify-center mx-auto shadow-sm">
               <Gauge className="w-10 h-10" />
             </div>
           </ScaleReveal>

@@ -45,19 +45,19 @@ const strengths = [
 
 export const TrustStrip: React.FC = () => {
   return (
-    <section className="bg-white border-b border-slate-200 py-8 relative z-20 overflow-hidden" aria-labelledby="trust-strip-heading">
+    <section className="bg-white border-b border-slate-200 py-6 sm:py-8 relative z-20 overflow-hidden" aria-labelledby="trust-strip-heading">
       <h2 id="trust-strip-heading" className="sr-only">Our Core Engineering Strengths</h2>
       <div className="industrial-container">
-        <StaggerContainer className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <StaggerContainer className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
           {strengths.map((item, idx) => {
             const Icon = item.icon;
             return (
               <StaggerItem key={idx}>
                 <div 
-                  className="p-4 rounded-xl bg-slate-50/80 border border-slate-200/70 hover:border-industrial-primary/40 hover:bg-white hover:shadow-card hover:-translate-y-1 transition-all duration-200 group text-center sm:text-left h-full flex flex-col justify-between"
+                  className="p-3 sm:p-4 rounded-xl bg-slate-50/80 border border-slate-200/70 hover:border-industrial-primary/40 hover:bg-white hover:shadow-card hover:-translate-y-1 transition-all duration-200 group text-center sm:text-left h-full flex flex-col justify-between"
                 >
                   <div>
-                    <div className="w-10 h-10 rounded-lg bg-industrial-accent text-industrial-primary flex items-center justify-center mb-3 group-hover:bg-industrial-primary group-hover:text-white transition-colors duration-200 mx-auto sm:mx-0">
+                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-industrial-accent text-industrial-primary flex items-center justify-center mb-2 sm:mb-3 group-hover:bg-industrial-primary group-hover:text-white transition-colors duration-200 mx-auto sm:mx-0">
                       <Icon className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" />
                     </div>
                     <h3 className="text-xs font-bold text-industrial-dark font-heading group-hover:text-industrial-primary transition-colors">

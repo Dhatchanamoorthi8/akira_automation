@@ -45,7 +45,7 @@ export const Services: React.FC = () => {
         <div className="industrial-container relative z-10">
           <Breadcrumb items={[{ label: 'Services' }]} />
           <Reveal direction="up" className="max-w-3xl mt-4">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase bg-industrial-primary/30 text-sky-300 border border-sky-400/30">
+            <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-[11px] font-mono font-semibold tracking-wider uppercase bg-sky-950/70 text-sky-300 border border-sky-800/70">
               <Headphones className="w-3.5 h-3.5" />
               Comprehensive Technical Backing
             </span>
@@ -76,7 +76,7 @@ export const Services: React.FC = () => {
                   >
                     <div className="space-y-4">
                       <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 rounded-2xl bg-industrial-accent text-industrial-primary flex items-center justify-center shrink-0">
+                        <div className="w-12 h-12 rounded-xl bg-industrial-accent text-industrial-primary flex items-center justify-center shrink-0">
                           <Icon className="w-7 h-7" />
                         </div>
                         <div>
@@ -123,7 +123,7 @@ export const Services: React.FC = () => {
 
           {/* Direct Support Card */}
           <Reveal direction="up" delay={0.2}>
-            <div className="p-8 rounded-2xl bg-white border border-slate-200 shadow-card flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="p-8 rounded-xl bg-white border border-slate-200 shadow-card flex flex-col md:flex-row items-center justify-between gap-6">
               <div className="space-y-2 text-center md:text-left">
                 <h3 className="text-xl font-bold font-heading text-industrial-dark">
                   Require Immediate Technical Support or Calibration?

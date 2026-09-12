@@ -60,7 +60,7 @@ export const WhyChooseUs: React.FC = () => {
         <div className="industrial-container relative z-10">
           <Breadcrumb items={[{ label: 'Why Choose Us' }]} />
           <Reveal direction="up" className="max-w-3xl mt-4">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase bg-industrial-primary/30 text-sky-300 border border-sky-400/30">
+            <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-[11px] font-mono font-semibold tracking-wider uppercase bg-sky-950/70 text-sky-300 border border-sky-800/70">
               <Award className="w-3.5 h-3.5" />
               Strategic Advantages
             </span>
@@ -90,8 +90,8 @@ export const WhyChooseUs: React.FC = () => {
                 {company.name} provides advanced solutions in Multi gauging, Fixtures, Air gauges, Electronic Gauges, Air plug & Air Ring Gauges, Attribute Gauges, Plug gauges, Snap gauges, Ring gauges, Special Gauges, Assembly, and Work holding which is our major strength.
               </p>
               
-              <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-subtle flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-industrial-primary text-white flex items-center justify-center font-bold text-lg font-heading shrink-0">
+              <div className="p-5 rounded-xl bg-white border border-slate-200 shadow-subtle flex items-center gap-4">
+                <div className="w-12 h-12 rounded-lg bg-industrial-primary text-white flex items-center justify-center font-bold text-lg font-heading shrink-0">
                   <Award className="w-6 h-6" />
                 </div>
                 <div>
@@ -104,7 +104,7 @@ export const WhyChooseUs: React.FC = () => {
 
             <div className="lg:col-span-6">
               <ScaleReveal>
-                <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-card bg-slate-900">
+                <div className="rounded-xl overflow-hidden border border-slate-200 shadow-card bg-slate-900">
                   <img
                     src="/assets/solutions/air-gauging-tooling.webp"
                     alt={`${company.name} Precision Tooling`}

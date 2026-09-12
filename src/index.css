@@ -36,7 +36,11 @@
   }
 
   .section-tag {
-    @apply inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase bg-industrial-accent text-industrial-primary border border-industrial-primary/20;
+    @apply inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-[11px] font-semibold tracking-wider uppercase bg-industrial-accent text-industrial-primary border border-industrial-primary/25 font-mono;
+  }
+
+  .badge-tech {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] sm:text-[11px] font-mono font-semibold tracking-wider uppercase bg-sky-950/60 text-sky-300 border border-sky-800/60;
   }
 
   .section-title {
@@ -44,31 +48,39 @@
   }
 
   .section-subtitle {
-    @apply mt-4 text-base sm:text-lg text-industrial-muted max-w-3xl leading-relaxed;
+    @apply mt-3 text-sm sm:text-base text-industrial-muted max-w-3xl leading-relaxed;
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-industrial-primary text-white font-semibold text-sm transition-all duration-200 shadow-sm hover:bg-industrial-hover hover:shadow-md active:translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-industrial-primary focus:ring-offset-2;
+    @apply inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 min-h-[46px] rounded-lg bg-industrial-primary text-white font-semibold text-xs sm:text-sm tracking-wide transition-all duration-200 shadow-sm hover:bg-industrial-hover active:translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-industrial-primary focus:ring-offset-2;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-white text-industrial-dark font-semibold text-sm border border-slate-300 transition-all duration-200 shadow-sm hover:bg-slate-50 hover:border-slate-400 active:translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-industrial-primary focus:ring-offset-2;
+    @apply inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 min-h-[46px] rounded-lg bg-white text-industrial-dark font-semibold text-xs sm:text-sm border border-slate-300 transition-all duration-200 shadow-sm hover:bg-slate-50 hover:border-slate-400 active:translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-industrial-primary focus:ring-offset-2;
+  }
+
+  .btn-subtle {
+    @apply inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 min-h-[46px] rounded-lg bg-slate-800/80 text-slate-200 font-semibold text-xs sm:text-sm border border-slate-700 transition-all duration-200 hover:bg-slate-700/80 hover:text-white hover:border-slate-600 active:translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-sky-400;
   }
 
   .btn-outline {
-    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-transparent text-industrial-primary font-semibold text-sm border-2 border-industrial-primary transition-all duration-200 hover:bg-industrial-primary hover:text-white active:translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-industrial-primary focus:ring-offset-2;
+    @apply inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 min-h-[42px] rounded-lg bg-transparent text-industrial-primary font-semibold text-xs sm:text-sm border-2 border-industrial-primary transition-all duration-200 hover:bg-industrial-primary hover:text-white active:translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-industrial-primary focus:ring-offset-2;
   }
 
   .btn-dark {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-industrial-dark text-white font-semibold text-sm transition-all duration-200 shadow-sm hover:bg-industrial-darkhover active:translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-industrial-primary focus:ring-offset-2;
+    @apply inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 min-h-[46px] rounded-lg bg-industrial-dark text-white font-semibold text-xs sm:text-sm transition-all duration-200 shadow-sm hover:bg-industrial-darkhover active:translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-industrial-primary focus:ring-offset-2;
   }
 
   .card-base {
-    @apply bg-white rounded-xl border border-slate-200/80 shadow-card transition-all duration-300;
+    @apply bg-white rounded-xl border border-slate-200/90 shadow-subtle transition-all duration-300;
   }
 
   .card-hover {
-    @apply hover:shadow-card-hover hover:border-industrial-primary/30 hover:-translate-y-1;
+    @apply hover:shadow-card hover:border-industrial-primary/30 hover:-translate-y-0.5;
+  }
+
+  .spec-block {
+    @apply rounded-lg border border-slate-800/80 bg-slate-900/60 p-3 sm:p-4 backdrop-blur-sm;
   }
 
   .table-cell-header {

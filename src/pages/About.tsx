@@ -32,7 +32,7 @@ export const About: React.FC = () => {
         <div className="industrial-container relative z-10">
           <Breadcrumb items={[{ label: 'About Us' }]} />
           <Reveal direction="up" className="max-w-3xl mt-4">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase bg-industrial-primary/30 text-sky-300 border border-sky-400/30">
+            <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-[11px] font-mono font-semibold tracking-wider uppercase bg-sky-950/70 text-sky-300 border border-sky-800/70">
               <Award className="w-3.5 h-3.5" />
               Corporate Profile & Heritage
             </span>
@@ -68,7 +68,7 @@ export const About: React.FC = () => {
               </p>
 
               {/* Motto Box */}
-              <div className="p-6 rounded-2xl bg-industrial-accent/40 border border-industrial-primary/20 space-y-2">
+              <div className="p-6 rounded-xl bg-industrial-accent/40 border border-industrial-primary/20 space-y-2">
                 <div className="flex items-center gap-2 text-xs font-bold text-industrial-primary uppercase tracking-wider">
                   <Award className="w-4 h-4" />
                   <span>Company Motto</span>
@@ -100,7 +100,7 @@ export const About: React.FC = () => {
 
             <div className="lg:col-span-5 relative">
               <ScaleReveal>
-                <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-card bg-slate-900">
+                <div className="rounded-xl overflow-hidden border border-slate-200 shadow-card bg-slate-900">
                   <img
                     src="/assets/company/inspection-workbench.webp"
                     alt={`${company.name} Metrology Facility`}

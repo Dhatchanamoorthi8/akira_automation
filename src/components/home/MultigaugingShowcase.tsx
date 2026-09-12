@@ -14,27 +14,27 @@ export const MultigaugingShowcase: React.FC = () => {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <SectionReveal className="py-12 sm:py-16 lg:py-20 bg-industrial-dark text-white relative overflow-hidden">
+    <SectionReveal className="py-10 sm:py-16 lg:py-20 bg-industrial-dark text-white relative overflow-hidden">
       <div className="absolute inset-0 bg-dark-grid opacity-20 pointer-events-none" />
       <div className="absolute top-1/2 right-0 w-96 h-96 rounded-full bg-industrial-primary/15 blur-3xl pointer-events-none" />
 
       <div className="industrial-container relative z-10">
         {/* Section Header */}
-        <Reveal direction="up" className="max-w-3xl mb-6 sm:mb-10">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase bg-industrial-primary/20 text-sky-400 border border-sky-400/30">
+        <Reveal direction="up" className="max-w-3xl mb-5 sm:mb-10">
+          <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-[11px] font-mono font-semibold tracking-wider uppercase bg-industrial-primary/20 text-sky-400 border border-sky-400/30">
             <Cpu className="w-3.5 h-3.5" />
             Specialized Automated Multi-Gauging
           </span>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-heading text-white mt-3">
             Production-Line Multigauging Stations
           </h2>
-          <p className="mt-4 text-slate-300 text-sm sm:text-base leading-relaxed">
+          <p className="mt-3 text-slate-300 text-sm sm:text-base leading-relaxed">
             Engineered for high-volume automotive manufacturing lines. Simultaneous multi-point dimensional checking, instant tri-colour tolerance verdict, and automated serial data logging.
           </p>
         </Reveal>
 
         {/* Station Tabs with Mechanical Sliding layoutId Indicator */}
-        <div className="flex border-b border-slate-700 mb-8 gap-2 overflow-x-auto no-scrollbar max-w-full w-full">
+        <div className="flex border-b border-slate-700 mb-6 sm:mb-8 gap-2 overflow-x-auto no-scrollbar max-w-full w-full">
           <button
             onClick={() => setActiveStation('engine')}
             className={`relative px-4 sm:px-6 py-3 sm:py-3.5 text-xs sm:text-sm font-bold transition-colors whitespace-nowrap shrink-0 ${
@@ -80,7 +80,7 @@ export const MultigaugingShowcase: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center"
+              className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center"
             >
             {/* Left: Image with Subtle Scanning Laser Indicator */}
             <div className="lg:col-span-6 relative">
@@ -93,7 +93,7 @@ export const MultigaugingShowcase: React.FC = () => {
                   productSlug: "engine-block-liner-multigauging-station",
                   badge: "Turnkey Metrology Bench"
                 })}
-                className="relative rounded-2xl overflow-hidden border-2 border-slate-700 shadow-2xl bg-slate-900 p-2 group cursor-pointer"
+                className="relative rounded-xl overflow-hidden border border-slate-700 shadow-2xl bg-slate-900 p-2 group cursor-pointer"
                 title="Click to view full-resolution station"
                 role="button"
                 tabIndex={0}
@@ -160,7 +160,7 @@ export const MultigaugingShowcase: React.FC = () => {
               </div>
 
               {/* Technical Specifications Matrix */}
-              <div className="grid grid-cols-2 gap-3 text-xs bg-slate-800/60 p-4 rounded-xl border border-slate-700">
+              <div className="grid grid-cols-2 gap-2 sm:gap-3 text-[11px] sm:text-xs bg-slate-800/60 p-3 sm:p-4 rounded-xl border border-slate-700">
                 <div className="space-y-1">
                   <p className="text-slate-400">Display Units</p>
                   <p className="font-semibold text-white">Tri-Colour Six Digit Display</p>
@@ -203,17 +203,17 @@ export const MultigaugingShowcase: React.FC = () => {
                 </div>
               </div>
 
-              <div className="pt-2 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+              <div className="pt-2 flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-4">
                 <Link
                   to="/products/engine-block-liner-multigauging-station"
-                  className="btn-primary bg-sky-500 hover:bg-sky-400 text-white w-full sm:w-auto text-center"
+                  className="btn-primary bg-sky-500 hover:bg-sky-400 text-white w-full sm:w-auto text-center justify-center"
                 >
                   <span>View Full Station Details</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <button
                   onClick={() => openEnquiry("Engine Block Liner Bore Multigauging Station")}
-                  className="btn-secondary bg-transparent text-white border-slate-600 hover:bg-slate-800 w-full sm:w-auto text-center"
+                  className="btn-secondary bg-transparent text-white border-slate-600 hover:bg-slate-800 w-full sm:w-auto text-center justify-center"
                 >
                   Inquire About This Station
                 </button>
@@ -228,7 +228,7 @@ export const MultigaugingShowcase: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center"
+            className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center"
           >
             {/* Left: Images (Station photo + CAD schematic) */}
             <div className="lg:col-span-6 space-y-4">
@@ -241,7 +241,7 @@ export const MultigaugingShowcase: React.FC = () => {
                   productSlug: "camshaft-multigauging-station",
                   badge: "6 OD Diameters Bench"
                 })}
-                className="relative rounded-2xl overflow-hidden border-2 border-slate-700 shadow-2xl bg-slate-900 p-2 group cursor-pointer"
+                className="relative rounded-xl overflow-hidden border border-slate-700 shadow-2xl bg-slate-900 p-2 group cursor-pointer"
                 title="Click to view full-resolution station"
                 role="button"
                 tabIndex={0}
@@ -348,17 +348,17 @@ export const MultigaugingShowcase: React.FC = () => {
                 </div>
               </div>
 
-              <div className="pt-2 flex flex-wrap items-center gap-4">
+              <div className="pt-2 flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-4">
                 <Link
                   to="/products/camshaft-multigauging-station"
-                  className="btn-primary bg-sky-500 hover:bg-sky-400 text-white"
+                  className="btn-primary bg-sky-500 hover:bg-sky-400 text-white w-full sm:w-auto text-center justify-center"
                 >
                   <span>View Full Station Details</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <button
                   onClick={() => openEnquiry("Camshaft Dia Multigauging Station")}
-                  className="btn-secondary bg-transparent text-white border-slate-600 hover:bg-slate-800"
+                  className="btn-secondary bg-transparent text-white border-slate-600 hover:bg-slate-800 w-full sm:w-auto text-center justify-center"
                 >
                   Inquire About This Station
                 </button>

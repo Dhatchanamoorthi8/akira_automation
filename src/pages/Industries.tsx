@@ -39,7 +39,7 @@ export const Industries: React.FC = () => {
         <div className="industrial-container relative z-10">
           <Breadcrumb items={[{ label: 'Industries' }]} />
           <Reveal direction="up" className="max-w-3xl mt-4">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase bg-industrial-primary/30 text-sky-300 border border-sky-400/30">
+            <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-[11px] font-mono font-semibold tracking-wider uppercase bg-sky-950/70 text-sky-300 border border-sky-800/70">
               <Car className="w-3.5 h-3.5" />
               Manufacturing Sectors
             </span>
@@ -130,7 +130,7 @@ export const Industries: React.FC = () => {
 
                   {/* Image (5 cols) */}
                   <div className={`lg:col-span-5 ${isReversed ? 'lg:order-1' : 'lg:order-2'}`}>
-                    <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-card bg-slate-900 group">
+                    <div className="rounded-xl overflow-hidden border border-slate-200 shadow-card bg-slate-900 group">
                       <img
                         src={ind.image}
                         alt={ind.name}

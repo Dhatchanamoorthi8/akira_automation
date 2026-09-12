@@ -33,12 +33,12 @@ const coreStrengthDetails = [
 
 export const WhyChooseUsSection: React.FC = () => {
   return (
-    <SectionReveal className="py-12 sm:py-16 lg:py-20 bg-white border-b border-slate-200 overflow-hidden">
+    <SectionReveal className="py-10 sm:py-16 lg:py-20 bg-white border-b border-slate-200 overflow-hidden">
       <div className="industrial-container">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
           
           {/* Left Column: Typography & Vertical Feature List (7 cols) */}
-          <div className="lg:col-span-7 space-y-6">
+          <div className="lg:col-span-7 space-y-4 sm:space-y-6">
             <Reveal direction="up">
               <span className="section-tag">
                 Our Differentiators
@@ -52,11 +52,13 @@ export const WhyChooseUsSection: React.FC = () => {
             </Reveal>
 
             {/* Vertical Feature List */}
-            <StaggerContainer className="space-y-4 pt-2">
+            <StaggerContainer className="space-y-3 sm:space-y-4 pt-1 sm:pt-2">
               {coreStrengthDetails.map((item, idx) => (
                 <StaggerItem key={idx}>
                   <div 
-                    className="flex items-start gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200/80 hover:border-industrial-primary/30 hover:bg-slate-50/50 transition-colors group"
+                    className={`items-start gap-3.5 sm:gap-4 p-3.5 sm:p-4 rounded-xl bg-slate-50 border border-slate-200/80 hover:border-industrial-primary/30 hover:bg-slate-50/50 transition-colors group ${
+                      idx >= 3 ? "hidden sm:flex" : "flex"
+                    }`}
                   >
                     <div className="w-8 h-8 rounded-lg bg-industrial-accent text-industrial-primary flex items-center justify-center shrink-0 group-hover:bg-industrial-primary group-hover:text-white transition-colors mt-0.5">
                       <CheckCircle2 className="w-4 h-4" />
@@ -75,7 +77,7 @@ export const WhyChooseUsSection: React.FC = () => {
             </StaggerContainer>
 
             <Reveal direction="up" className="pt-2">
-              <Link to="/why-choose-us" className="btn-outline">
+              <Link to="/why-choose-us" className="btn-outline w-full sm:w-auto inline-flex justify-center text-center">
                 <span>Read More About Our Core Strengths</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>

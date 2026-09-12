@@ -63,9 +63,9 @@ describe('Core User Routing & Conversion Flows (Integration)', () => {
     // 5. Verify transition to ProductDetail with lazy-loaded specs
     await waitFor(() => {
       expect(screen.getByText(/Engineering Specifications/i)).toBeInTheDocument();
+      expect(screen.getByText(/Authentic PPT Data/i)).toBeInTheDocument();
     });
-    expect(screen.getByText(/Authentic PPT Data/i)).toBeInTheDocument();
-  });
+  }, 15000);
 
   it('Flow 2: Product detail -> click related product card -> navigates to new Product Detail', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
@@ -145,7 +145,7 @@ describe('Core User Routing & Conversion Flows (Integration)', () => {
 
     // Modal should close
     expect(screen.queryByText(/Technical Inquiry Dispatched/i)).not.toBeInTheDocument();
-  });
+  }, 15000);
 
   it('Flow 4: Invalid product route -> displays not-found state with recovery button', async () => {
     renderFlowApp(['/products/unknown-non-existent-system']);

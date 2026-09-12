@@ -11,16 +11,17 @@ import { StaggerItem } from '../animation/StaggerItem';
 
 export const FeaturedProducts: React.FC = () => {
   const [activeTab, setActiveTab] = useState('all');
+  const [showAllMobile, setShowAllMobile] = useState(false);
 
   const filteredProducts = activeTab === 'all' 
     ? productSummaries.filter(p => p.isFeatured)
     : productSummaries.filter(p => p.categorySlug === activeTab);
 
   return (
-    <SectionReveal className="py-12 sm:py-16 lg:py-20 bg-industrial-bg relative overflow-hidden">
+    <SectionReveal className="py-10 sm:py-16 lg:py-20 bg-industrial-bg relative overflow-hidden">
       <div className="industrial-container">
         {/* Section Header */}
-        <Reveal direction="up" className="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-10 gap-6">
+        <Reveal direction="up" className="flex flex-col md:flex-row md:items-end justify-between mb-5 sm:mb-10 gap-6">
           <div>
             <span className="section-tag">
               Featured Metrology Products
@@ -39,9 +40,12 @@ export const FeaturedProducts: React.FC = () => {
         </Reveal>
 
         {/* Filter Tabs with Mechanical Sliding layoutId Indicator */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-8 no-scrollbar w-full max-w-full">
+        <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-6 sm:pb-4 sm:mb-8 no-scrollbar w-full max-w-full">
           <button
-            onClick={() => setActiveTab('all')}
+            onClick={() => {
+              setActiveTab('all');
+              setShowAllMobile(false);
+            }}
             className={`relative px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors z-10 ${
               activeTab === 'all'
                 ? 'text-white'
@@ -60,7 +64,10 @@ export const FeaturedProducts: React.FC = () => {
           {productCategories.filter(c => c.slug !== 'all').map((cat) => (
             <button
               key={cat.slug}
-              onClick={() => setActiveTab(cat.slug)}
+              onClick={() => {
+                setActiveTab(cat.slug);
+                setShowAllMobile(false);
+              }}
               className={`relative px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors z-10 ${
                 activeTab === cat.slug
                   ? 'text-white'
@@ -80,13 +87,27 @@ export const FeaturedProducts: React.FC = () => {
         </div>
 
         {/* Editorial Product Cards Grid */}
-        <StaggerContainer key={activeTab} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredProducts.map((prod) => (
-            <StaggerItem key={prod.id}>
+        <StaggerContainer key={activeTab} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
+          {filteredProducts.map((prod, idx) => (
+            <StaggerItem key={prod.id} className={idx >= 4 && !showAllMobile ? "hidden sm:block" : "block"}>
               <ProductCard product={prod} variant="featured" />
             </StaggerItem>
           ))}
         </StaggerContainer>
+
+        {/* Mobile View More Products Button */}
+        {!showAllMobile && filteredProducts.length > 4 && (
+          <div className="mt-6 text-center sm:hidden">
+            <button
+              type="button"
+              onClick={() => setShowAllMobile(true)}
+              className="w-full py-2.5 px-4 rounded-lg bg-white hover:bg-slate-50 text-industrial-primary font-bold text-xs border border-slate-200 transition-colors inline-flex items-center justify-center gap-1.5 shadow-sm"
+            >
+              <span>View All {filteredProducts.length} Systems</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
 
       </div>
     </SectionReveal>

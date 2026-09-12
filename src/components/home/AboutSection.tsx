@@ -9,12 +9,12 @@ import { ScaleReveal } from '../animation/ScaleReveal';
 
 export const AboutSection: React.FC = () => {
   return (
-    <SectionReveal className="py-12 sm:py-16 lg:py-20 bg-industrial-bg relative overflow-hidden">
+    <SectionReveal className="py-10 sm:py-16 lg:py-20 bg-industrial-bg relative overflow-hidden">
       <div className="industrial-container">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
           
           {/* Left Column: Company Introduction */}
-          <div className="lg:col-span-7 space-y-6">
+          <div className="lg:col-span-7 space-y-4 sm:space-y-6">
             <Reveal direction="up">
               <span className="section-tag">
                 About {company.name}
@@ -33,7 +33,7 @@ export const AboutSection: React.FC = () => {
             </p>
 
             {/* Core Values & Motto */}
-            <div className="p-5 rounded-xl bg-white border border-slate-200/80 shadow-subtle space-y-4">
+            <div className="p-4 sm:p-5 rounded-xl bg-white border border-slate-200/80 shadow-subtle space-y-4">
               <div className="flex items-center gap-3 border-b border-slate-100 pb-3">
                 <div className="w-9 h-9 rounded-lg bg-industrial-accent text-industrial-primary flex items-center justify-center shrink-0">
                   <Award className="w-5 h-5" />
@@ -72,7 +72,7 @@ export const AboutSection: React.FC = () => {
             </div>
 
             <div className="pt-2">
-              <Link to="/about" className="btn-outline">
+              <Link to="/about" className="btn-outline w-full sm:w-auto inline-flex justify-center text-center">
                 <span>Learn More About Our Company</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
@@ -82,7 +82,7 @@ export const AboutSection: React.FC = () => {
           {/* Right Column: Large PPT Metrology Inspection Workbench Image */}
           <div className="lg:col-span-5 relative">
             <ScaleReveal>
-              <div className="relative rounded-2xl overflow-hidden border border-slate-200 shadow-card bg-white group">
+              <div className="relative rounded-xl overflow-hidden border border-slate-200/90 shadow-subtle bg-white group">
                 <img
                   src="/assets/company/inspection-workbench.webp"
                   alt={`${company.name} Precision Metrology Workshop`}
@@ -101,13 +101,13 @@ export const AboutSection: React.FC = () => {
             </ScaleReveal>
 
             {/* Visual Fact Card */}
-            <div className="mt-4 sm:mt-0 sm:absolute sm:-bottom-6 sm:-left-6 bg-industrial-dark text-white p-4 sm:p-5 rounded-2xl shadow-elevated border border-slate-700 w-full sm:max-w-xs z-10">
+            <div className="mt-4 sm:mt-0 sm:absolute sm:-bottom-6 sm:-left-6 bg-industrial-dark text-white p-4 sm:p-5 rounded-xl shadow-elevated border border-slate-700 w-full sm:max-w-xs z-10">
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-industrial-primary flex items-center justify-center text-white shrink-0 font-bold">
-                  <Award className="w-5 h-5 sm:w-6 sm:h-6" />
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-industrial-primary flex items-center justify-center text-white shrink-0 font-bold">
+                  <Award className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-[11px] sm:text-xs text-slate-400 uppercase tracking-widest font-semibold">Brand Promise</p>
+                  <p className="text-[10px] sm:text-[11px] text-slate-400 uppercase tracking-widest font-semibold font-mono">Brand Promise</p>
                   <p className="text-base sm:text-lg font-black font-heading tracking-tight text-white">{company.name}</p>
                   <p className="text-[10px] sm:text-[11px] text-sky-400 font-medium mt-0.5">{company.slogan}</p>
                 </div>

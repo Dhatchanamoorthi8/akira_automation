@@ -21,7 +21,7 @@ export const Contact: React.FC = () => {
         <div className="industrial-container relative z-10">
           <Breadcrumb items={[{ label: 'Contact Us' }]} />
           <Reveal direction="up" className="max-w-3xl mt-4">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase bg-industrial-primary/30 text-sky-300 border border-sky-400/30">
+            <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-[11px] font-mono font-semibold tracking-wider uppercase bg-sky-950/70 text-sky-300 border border-sky-800/70">
               <Mail className="w-3.5 h-3.5" />
               Technical Sales & Factory Desk
             </span>

@@ -105,7 +105,7 @@ export const ProductDetail: React.FC = () => {
           />
           <Reveal direction="up" className="mt-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-industrial-primary/30 text-sky-300 border border-sky-400/30">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-mono font-semibold uppercase tracking-wider bg-sky-950/70 text-sky-300 border border-sky-800/70">
                 {product.category}
               </span>
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-heading text-white mt-2">
