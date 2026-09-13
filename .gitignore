@@ -17,6 +17,9 @@ dist-ssr
 .env.*
 !.env.example
 coverage/
+test-results/
+playwright-report/
+scratch/
 
 # Editor directories and files
 .vscode/*
@@ -30,6 +33,8 @@ coverage/
 *.sw?
 *.jpeg
 *.jpg
+*.webp
+*.mp4
 !public/**
 *.code-workspace
 

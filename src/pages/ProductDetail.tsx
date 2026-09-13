@@ -37,18 +37,21 @@ export const ProductDetail: React.FC = () => {
     let isMounted = true;
     setIsLoading(true);
 
-    productService.getProductBySlug(slug).then((foundProduct) => {
+    productService.getProductBySlug(slug).then(async (foundProduct) => {
       if (!isMounted) return;
 
       if (foundProduct) {
         setProduct(foundProduct);
-        productService.getRelatedProducts(foundProduct).then((related) => {
+        try {
+          const related = await productService.getRelatedProducts(foundProduct);
           if (isMounted) setRelatedProducts(related);
-        });
+        } catch {
+          if (isMounted) setRelatedProducts([]);
+        }
       } else {
         setProduct(null);
       }
-      setIsLoading(false);
+      if (isMounted) setIsLoading(false);
     }).catch(() => {
       if (isMounted) {
         setProduct(null);

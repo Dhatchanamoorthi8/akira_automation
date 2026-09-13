@@ -1,6 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { EnquiryFormData } from '../types';
 import { emailService } from '../services/emailService';
+import { enquiryService } from '../services/enquiryService';
+import { isSupabaseConfigured } from '../lib/supabase';
 
 const initialFormState: EnquiryFormData = {
   name: '',
@@ -27,6 +29,7 @@ export function useEnquiryForm(options: UseEnquiryFormOptions = {}) {
   const [isSuccess, setIsSuccess] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [mailtoFallbackUrl, setMailtoFallbackUrl] = useState<string>('');
+  const lastSubmitTimeRef = useRef<number>(0);
 
   const recipientEmail = emailService.getRecipientEmail();
   const ccEmail = emailService.getCcEmail();
@@ -94,13 +97,41 @@ export function useEnquiryForm(options: UseEnquiryFormOptions = {}) {
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
+    // Accidental double-click throttling (2-second window)
+    const now = Date.now();
+    if (now - lastSubmitTimeRef.current < 2000) {
+      return;
+    }
+    lastSubmitTimeRef.current = now;
+
     if (!validate()) return;
 
     setIsSubmitting(true);
     setServerError(null);
 
     try {
-      await emailService.sendEnquiry(formData);
+      // 1. Submit directly to Supabase as the primary source of truth
+      if (isSupabaseConfigured()) {
+        const dbRes = await enquiryService.createEnquiry({
+          name: formData.name,
+          companyName: formData.companyName,
+          email: formData.email,
+          phone: formData.phone,
+          industry: formData.industry,
+          productCategory: formData.productCategory,
+          specificProduct: formData.specificProduct,
+          requirement: formData.requirement,
+          message: formData.message,
+          source: 'website',
+        });
+
+        if (dbRes.error) {
+          throw new Error(dbRes.error);
+        }
+      }
+
       setIsSuccess(true);
       // Pre-generate mailto link in case the client wants a direct sent copy
       setMailtoFallbackUrl(emailService.generateMailtoFallback(formData));
@@ -118,7 +149,7 @@ export function useEnquiryForm(options: UseEnquiryFormOptions = {}) {
     } finally {
       setIsSubmitting(false);
     }
-  }, [validate, formData, onSuccess]);
+  }, [validate, formData, onSuccess, isSubmitting]);
 
   return {
     formData,

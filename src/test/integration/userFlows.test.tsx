@@ -8,6 +8,7 @@ import { NotFound } from '../../pages/NotFound';
 import { EnquiryModal } from '../../components/common/EnquiryModal';
 import { EnquiryProvider } from '../../context/EnquiryContext';
 import { emailService } from '../../services/emailService';
+import { enquiryService } from '../../services/enquiryService';
 
 const renderFlowApp = (initialEntries: string[] = ['/products']) => {
   return render(
@@ -27,6 +28,10 @@ const renderFlowApp = (initialEntries: string[] = ['/products']) => {
 describe('Core User Routing & Conversion Flows (Integration)', () => {
   beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
+    vi.spyOn(enquiryService, 'createEnquiry').mockResolvedValue({
+      enquiry: { id: 'enquiry-mock-flow' } as any,
+      error: null,
+    });
     vi.spyOn(emailService, 'sendEnquiry').mockResolvedValue({
       success: true,
       message: 'Your technical inquiry has been submitted and delivered to our engineering desk.',

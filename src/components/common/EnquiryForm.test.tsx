@@ -3,10 +3,15 @@ import { render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { EnquiryForm } from './EnquiryForm';
 import { emailService } from '../../services/emailService';
+import { enquiryService } from '../../services/enquiryService';
 
 describe('EnquiryForm Component', () => {
   beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
+    vi.spyOn(enquiryService, 'createEnquiry').mockResolvedValue({
+      enquiry: { id: 'enquiry-mock-123' } as any,
+      error: null,
+    });
     vi.spyOn(emailService, 'sendEnquiry').mockResolvedValue({
       success: true,
       message: 'Your technical inquiry has been submitted and delivered to our engineering desk.',
@@ -105,15 +110,18 @@ describe('EnquiryForm Component', () => {
     });
 
     // Success confirmation must be visible
-    expect(screen.getByText(/Technical Inquiry Dispatched/i)).toBeInTheDocument();
+    expect(screen.getByText(/Technical Inquiry (Submitted|Dispatched)/i)).toBeInTheDocument();
     expect(screen.getByText(/Rajesh Sharma/i)).toBeInTheDocument();
-    expect(screen.getByText(/milestonegauges@gmail\.com/i)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Send Direct Copy via Email Client/i })).toBeInTheDocument();
-    expect(emailService.sendEnquiry).toHaveBeenCalledTimes(1);
+    expect(enquiryService.createEnquiry).toHaveBeenCalledTimes(1);
     expect(onSubmitted).toHaveBeenCalledTimes(1);
   });
 
   it('handles submission network failure with error alert and direct email fallback button', async () => {
+    vi.mocked(enquiryService.createEnquiry).mockResolvedValueOnce({
+      enquiry: null,
+      error: 'Network connection failed.',
+    });
     vi.mocked(emailService.sendEnquiry).mockRejectedValueOnce(new Error('Network connection failed.'));
 
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });

@@ -109,4 +109,39 @@ describe('productService', () => {
       }
     });
   });
+
+  describe('Admin Product Utilities & Slug Generation', () => {
+    it('generates a URL-safe slug from product name according to Step 10 specification', () => {
+      // Step 10 specific example
+      const slug = productService.generateSlug('Dial Indicator 0.001 mm');
+      expect(slug).toBe('dial-indicator-0001-mm');
+
+      const slug2 = productService.generateSlug('Multi-Channel Electronic Column Gauge (V-Series)!');
+      expect(slug2).toBe('multi-channel-electronic-column-gauge-v-series');
+    });
+
+    it('strips special symbols and trims extra hyphens', () => {
+      expect(productService.generateSlug('  ---High Precision Air Ring Gauge #42---  ')).toBe('high-precision-air-ring-gauge-42');
+      expect(productService.generateSlug('Product @ 100% Quality & Reliability')).toBe('product-100-quality-reliability');
+    });
+
+    it('validates product creation requires non-empty name', async () => {
+      const result = await productService.createProduct({
+        name: '   ',
+        category: 'Air Gauging',
+      });
+      expect(result.product).toBeNull();
+      expect(result.error).toContain('name is required');
+    });
+
+    it('validates product creation rejects invalid empty slug', async () => {
+      const result = await productService.createProduct({
+        name: 'Valid Name',
+        slug: '   $$$   ',
+        category: 'Air Gauging',
+      });
+      expect(result.product).toBeNull();
+      expect(result.error).toContain('slug is required');
+    });
+  });
 });

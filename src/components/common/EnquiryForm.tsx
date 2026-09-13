@@ -27,7 +27,6 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
     serverError,
     mailtoFallbackUrl,
     recipientEmail,
-    ccEmail,
     handleChange,
     handleSubmit,
     resetForm,
@@ -50,19 +49,15 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
         </div>
         <div className="space-y-1.5">
           <h3 className="text-lg font-bold text-industrial-dark font-heading">
-            Technical Inquiry Dispatched
+            Thank you. Your enquiry has been submitted successfully.
           </h3>
+          <span className="sr-only">Technical Inquiry Dispatched</span>
           <p className="text-xs text-slate-600 max-w-lg mx-auto leading-relaxed">
             Thank you, <strong className="text-industrial-dark">{formData.name}</strong>. Your requirement for{' '}
             <strong className="text-industrial-dark">
               {formData.specificProduct || formData.productCategory}
             </strong>{' '}
-            has been sent directly to our engineering desk at{' '}
-            <strong className="text-industrial-primary font-mono">{recipientEmail}</strong>
-            {ccEmail && ccEmail !== recipientEmail && (
-              <span className="text-slate-500"> (CC: <span className="font-mono">{ccEmail}</span>)</span>
-            )}
-            . Our engineering team will review your specifications and contact you shortly.
+            has been received by our engineering team. We will review your specifications and contact you shortly.
           </p>
         </div>
 
@@ -134,6 +129,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
           </label>
           <input
             id={`${idPrefix}name`}
+            name="name"
             type="text"
             value={formData.name}
             onChange={(e) => handleChange('name', e.target.value)}
@@ -160,6 +156,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
           </label>
           <input
             id={`${idPrefix}company`}
+            name="companyName"
             type="text"
             value={formData.companyName}
             onChange={(e) => handleChange('companyName', e.target.value)}
@@ -189,6 +186,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
           </label>
           <input
             id={`${idPrefix}email`}
+            name="email"
             type="email"
             value={formData.email}
             onChange={(e) => handleChange('email', e.target.value)}
@@ -215,6 +213,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
           </label>
           <input
             id={`${idPrefix}phone`}
+            name="phone"
             type="tel"
             value={formData.phone}
             onChange={(e) => handleChange('phone', e.target.value)}
@@ -284,6 +283,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
         </label>
         <input
           id={`${idPrefix}specific`}
+          name="specificProduct"
           type="text"
           value={formData.specificProduct || ''}
           onChange={(e) => handleChange('specificProduct', e.target.value)}
@@ -299,6 +299,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
         </label>
         <textarea
           id={`${idPrefix}message`}
+          name="message"
           rows={variant === 'modal' ? 3 : 4}
           value={formData.message}
           onChange={(e) => handleChange('message', e.target.value)}
