@@ -392,8 +392,8 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* ANALYTICS SECTION: PERFORMANCE OVERVIEW (2 cols) & PIPELINE VALUE (1 col) */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 min-w-0">
-          <div className="xl:col-span-2 min-w-0 max-w-full">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 min-w-0 items-stretch">
+          <div className="xl:col-span-2 min-w-0 max-w-full flex flex-col h-full">
             <EnquiryTrend
               data={trendData}
               isLoading={isLoading}
@@ -402,7 +402,7 @@ export const AdminDashboard: React.FC = () => {
               badgeLabel={presetLabels[selectedPreset]}
             />
           </div>
-          <div className="xl:col-span-1 min-w-0 max-w-full">
+          <div className="xl:col-span-1 min-w-0 max-w-full flex flex-col h-full">
             <EnquiryStatusSummary
               data={statusSummary}
               isLoading={isLoading}
@@ -426,15 +426,15 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* BOTTOM SPLIT: UPCOMING FOLLOW-UPS & RECENT AUDIT ACTIVITY */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-w-0">
-          <div className="min-w-0 max-w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-w-0 items-stretch">
+          <div className="min-w-0 max-w-full flex flex-col h-full">
             {isLoading ? (
-              <ActivitySkeleton items={3} />
+              <ActivitySkeleton items={4} />
             ) : (
               <UpcomingFollowups followups={upcomingFollowups} />
             )}
           </div>
-          <div className="min-w-0 max-w-full">
+          <div className="min-w-0 max-w-full flex flex-col h-full">
             {isLoading ? (
               <ActivitySkeleton items={4} />
             ) : (

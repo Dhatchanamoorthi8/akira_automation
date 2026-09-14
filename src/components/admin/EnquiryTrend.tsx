@@ -71,18 +71,18 @@ export const EnquiryTrend: React.FC<EnquiryTrendProps> = ({
 
   if (isLoading) {
     return (
-      <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs animate-pulse space-y-4 min-w-0 max-w-full overflow-hidden">
+      <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs animate-pulse space-y-4 min-w-0 max-w-full overflow-hidden h-full">
         <div className="flex items-center justify-between">
-          <div className="h-5 w-44 bg-slate-200 rounded-md" />
-          <div className="h-8 w-24 bg-slate-100 rounded-lg" />
+          <div className="h-5 w-48 bg-slate-200 rounded-md" />
+          <div className="h-5 w-24 bg-slate-100 rounded-md" />
         </div>
-        <div className="h-56 bg-slate-50 rounded-xl" />
+        <div className="h-60 bg-slate-50 rounded-xl" />
       </div>
     );
   }
 
   return (
-    <div className="bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 shadow-xs flex flex-col justify-between min-w-0 max-w-full overflow-hidden">
+    <div className="bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 shadow-xs flex flex-col justify-between min-w-0 max-w-full overflow-hidden h-full flex-1">
       {/* Header matching visual reference with responsive wrapping */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 min-w-0">
         <div className="min-w-0">

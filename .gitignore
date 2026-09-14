@@ -33,6 +33,7 @@ scratch/
 *.sw?
 *.jpeg
 *.jpg
+*.png
 *.webp
 *.mp4
 !public/**

@@ -85,6 +85,11 @@ describe('AdminEnquiries Component', () => {
       expect(screen.getAllByText('Tata Motors Pune').length).toBeGreaterThan(0);
       expect(screen.getAllByText('Priya Sharma').length).toBeGreaterThan(0);
       expect(screen.getAllByText('Bharat Forge Ltd').length).toBeGreaterThan(0);
+      expect(screen.getByText('Requirement')).toBeDefined();
+      expect(screen.getByText('Date & Time')).toBeDefined();
+      expect(screen.getByText('Assigned')).toBeDefined();
+      expect(screen.getByText('Amit Patel')).toBeDefined();
+      expect(screen.getByText('Unassigned')).toBeDefined();
     });
   });
 

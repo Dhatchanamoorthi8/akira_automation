@@ -38,9 +38,9 @@ export const AdminTableSkeleton: React.FC<{ rows?: number }> = ({ rows = 5 }) =>
 
 export const ActivitySkeleton: React.FC<{ items?: number }> = ({ items = 4 }) => {
   return (
-    <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs animate-pulse space-y-4">
+    <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs animate-pulse space-y-4 h-full flex flex-col">
       <div className="h-4 w-32 bg-slate-200 rounded-md" />
-      <div className="space-y-3.5">
+      <div className="space-y-3.5 flex-1">
         {Array.from({ length: items }).map((_, i) => (
           <div key={i} className="flex items-start gap-3">
             <div className="w-8 h-8 rounded-full bg-slate-100 shrink-0 mt-0.5" />

@@ -3,6 +3,7 @@ import { Enquiry, EnquiryStatus } from '../../types/database';
 import { formatDate } from '../../utils/date';
 import { Inbox, Search, ArrowUpRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { PersonAvatar, CompanyAvatar } from '../../utils/avatarHelper';
 
 interface RecentEnquiriesProps {
   enquiries: Enquiry[];
@@ -27,16 +28,6 @@ const statusLabels: Record<EnquiryStatus, string> = {
   closed: 'Closed',
 };
 
-// Avatar color assignment based on name
-const AVATAR_COLORS = [
-  'bg-blue-100 text-blue-700',
-  'bg-purple-100 text-purple-700',
-  'bg-emerald-100 text-emerald-700',
-  'bg-amber-100 text-amber-700',
-  'bg-indigo-100 text-indigo-700',
-  'bg-rose-100 text-rose-700',
-];
-
 export const RecentEnquiries: React.FC<RecentEnquiriesProps> = ({ enquiries, isLoading }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -55,22 +46,6 @@ export const RecentEnquiries: React.FC<RecentEnquiriesProps> = ({ enquiries, isL
       return matchesSearch && matchesStatus;
     });
   }, [enquiries, searchTerm, statusFilter]);
-
-  const getInitials = (name: string) => {
-    if (!name) return '??';
-    const parts = name.trim().split(' ');
-    if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
-    return (parts[0][0] + parts[1][0]).toUpperCase();
-  };
-
-  const getAvatarColor = (name: string) => {
-    let hash = 0;
-    for (let i = 0; i < name.length; i++) {
-      hash = name.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    const index = Math.abs(hash) % AVATAR_COLORS.length;
-    return AVATAR_COLORS[index];
-  };
 
   if (isLoading) {
     return (
@@ -173,22 +148,16 @@ export const RecentEnquiries: React.FC<RecentEnquiriesProps> = ({ enquiries, isL
               <tbody className="divide-y divide-slate-100/80">
                 {filteredEnquiries.map((enq) => {
                   const style = statusBadgeStyles[enq.status] || statusBadgeStyles.new;
-                  const initials = getInitials(enq.name);
-                  const avatarColor = getAvatarColor(enq.name);
 
                   return (
                     <tr
                       key={enq.id}
                       className="hover:bg-slate-50/70 transition-colors group cursor-pointer"
                     >
-                      {/* Customer with circular avatar */}
+                      {/* Customer with dicebear PersonAvatar */}
                       <td className="py-3.5 px-6 whitespace-nowrap">
                         <div className="flex items-center gap-3">
-                          <div
-                            className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-[11px] shrink-0 ${avatarColor}`}
-                          >
-                            {initials}
-                          </div>
+                          <PersonAvatar name={enq.name} size="sm" />
                           <div>
                             <div className="font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">
                               {enq.name}
@@ -202,7 +171,10 @@ export const RecentEnquiries: React.FC<RecentEnquiriesProps> = ({ enquiries, isL
 
                       {/* Company */}
                       <td className="py-3.5 px-6 text-slate-600 font-medium whitespace-nowrap">
-                        {enq.company || '—'}
+                        <div className="flex items-center gap-2">
+                          {enq.company && <CompanyAvatar company={enq.company} size="sm" />}
+                          <span>{enq.company || '—'}</span>
+                        </div>
                       </td>
 
                       {/* Product Requirement */}
@@ -237,18 +209,12 @@ export const RecentEnquiries: React.FC<RecentEnquiriesProps> = ({ enquiries, isL
           <div className="md:hidden divide-y divide-slate-100">
             {filteredEnquiries.map((enq) => {
               const style = statusBadgeStyles[enq.status] || statusBadgeStyles.new;
-              const initials = getInitials(enq.name);
-              const avatarColor = getAvatarColor(enq.name);
 
               return (
                 <div key={enq.id} className="p-4 space-y-2.5">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2.5">
-                      <div
-                        className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-[11px] shrink-0 ${avatarColor}`}
-                      >
-                        {initials}
-                      </div>
+                      <PersonAvatar name={enq.name} size="sm" />
                       <div>
                         <h4 className="text-xs font-bold text-slate-900">{enq.name}</h4>
                         <div className="text-[11px] text-slate-500">

@@ -28,7 +28,7 @@ export const EnquiryStatusSummary: React.FC<EnquiryStatusSummaryProps> = ({
 
   if (isLoading) {
     return (
-      <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs animate-pulse space-y-4 min-w-0 max-w-full overflow-hidden">
+      <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs animate-pulse space-y-4 min-w-0 max-w-full overflow-hidden h-full">
         <div className="flex items-center justify-between">
           <div className="h-5 w-36 bg-slate-200 rounded-md" />
           <div className="h-4 w-4 bg-slate-200 rounded" />
@@ -65,7 +65,7 @@ export const EnquiryStatusSummary: React.FC<EnquiryStatusSummaryProps> = ({
     });
 
   return (
-    <div className="bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 shadow-xs flex flex-col justify-between min-w-0 max-w-full overflow-hidden">
+    <div className="bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 shadow-xs flex flex-col justify-between min-w-0 max-w-full overflow-hidden h-full flex-1">
       {/* Header matching visual reference */}
       <div className="flex items-center justify-between pb-3 border-b border-slate-100 min-w-0">
         <div className="min-w-0">
@@ -86,7 +86,7 @@ export const EnquiryStatusSummary: React.FC<EnquiryStatusSummaryProps> = ({
       </div>
 
       {total === 0 ? (
-        <div className="h-60 flex flex-col items-center justify-center text-center p-6 border border-dashed border-slate-200 rounded-xl bg-slate-50/50 my-auto">
+        <div className="h-60 flex-1 flex flex-col items-center justify-center text-center p-6 border border-dashed border-slate-200 rounded-xl bg-slate-50/50 my-auto">
           <Layers className="w-8 h-8 text-slate-300 mb-2" />
           <p className="text-xs font-semibold text-slate-600">No Pipeline Records</p>
           <p className="text-[11px] text-slate-400 mt-0.5">
@@ -94,7 +94,7 @@ export const EnquiryStatusSummary: React.FC<EnquiryStatusSummaryProps> = ({
           </p>
         </div>
       ) : (
-        <div className="py-4 flex flex-col items-center min-w-0 max-w-full">
+        <div className="py-4 flex-1 flex flex-col items-center justify-center min-w-0 max-w-full">
           {/* Responsive Donut Ring Chart */}
           <div className="relative w-36 h-36 sm:w-44 sm:h-44 max-w-full flex items-center justify-center">
             <svg

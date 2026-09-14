@@ -19,9 +19,9 @@ function resolveActionIcon(action: string): React.ElementType {
 export const RecentActivity: React.FC<RecentActivityProps> = ({ logs, isLoading }) => {
   if (isLoading) {
     return (
-      <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-subtle animate-pulse space-y-4">
+      <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-subtle animate-pulse space-y-4 h-full flex flex-col">
         <div className="h-4 w-36 bg-slate-200 rounded" />
-        <div className="space-y-3">
+        <div className="space-y-3 flex-1">
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="h-10 bg-slate-100 rounded" />
           ))}
@@ -31,7 +31,7 @@ export const RecentActivity: React.FC<RecentActivityProps> = ({ logs, isLoading 
   }
 
   return (
-    <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs space-y-4">
+    <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs flex flex-col h-full flex-1 space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between pb-3 border-b border-slate-100">
         <div>
@@ -48,7 +48,7 @@ export const RecentActivity: React.FC<RecentActivityProps> = ({ logs, isLoading 
       </div>
 
       {logs.length === 0 ? (
-        <div className="h-44 flex flex-col items-center justify-center text-center p-4 border border-dashed border-slate-200 rounded-lg bg-slate-50/50">
+        <div className="flex-1 min-h-[180px] flex flex-col items-center justify-center text-center p-4 border border-dashed border-slate-200 rounded-lg bg-slate-50/50">
           <History className="w-8 h-8 text-slate-300 mb-2" />
           <p className="text-xs font-semibold text-slate-600">No recent activity.</p>
           <p className="text-[11px] text-slate-400 mt-0.5">
@@ -56,7 +56,7 @@ export const RecentActivity: React.FC<RecentActivityProps> = ({ logs, isLoading 
           </p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-3 flex-1">
           {logs.map((log) => {
             const Icon = resolveActionIcon(log.action);
 

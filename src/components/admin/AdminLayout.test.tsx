@@ -88,4 +88,24 @@ describe('AdminLayout Component', () => {
     fireEvent.click(screen.getByRole('menuitem', { name: /Sign Out/i }));
     expect(mockSignOut).toHaveBeenCalledTimes(1);
   });
+
+  it('21. toggles sidebar collapse mode with collapse/expand button', () => {
+    render(
+      <MemoryRouter initialEntries={['/admin/dashboard']}>
+        <AdminLayout />
+      </MemoryRouter>
+    );
+
+    const collapseBtn = screen.getByLabelText(/Collapse sidebar/i);
+    expect(collapseBtn).toBeInTheDocument();
+
+    fireEvent.click(collapseBtn);
+
+    const expandBtn = screen.getByLabelText(/Expand sidebar/i);
+    expect(expandBtn).toBeInTheDocument();
+
+    fireEvent.click(expandBtn);
+    expect(screen.getByLabelText(/Collapse sidebar/i)).toBeInTheDocument();
+  });
 });
+
