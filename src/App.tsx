@@ -38,6 +38,7 @@ const AdminFollowups = lazy(() => import('./pages/admin/AdminFollowups').then(m 
 const AdminActivity = lazy(() => import('./pages/admin/AdminActivity').then(m => ({ default: m.AdminActivity })));
 const AdminUsers = lazy(() => import('./pages/admin/AdminUsers').then(m => ({ default: m.AdminUsers })));
 const AdminFollowupDetail = lazy(() => import('./pages/admin/AdminFollowupDetail').then(m => ({ default: m.AdminFollowupDetail })));
+const AdminEmailSettings = lazy(() => import('./pages/admin/AdminEmailSettings').then(m => ({ default: m.AdminEmailSettings })));
 const StaffWorkspace = lazy(() => import('./pages/staff/StaffWorkspace').then(m => ({ default: m.StaffWorkspace })));
 
 // Scroll to top on route navigation
@@ -108,6 +109,8 @@ const AppShell: React.FC = () => {
                 <Route path="product-images" element={<AdminProductImages />} />
                 <Route path="products/new" element={<AdminProductForm />} />
                 <Route path="products/:id/edit" element={<AdminProductForm />} />
+                <Route path="settings/email" element={<AdminEmailSettings />} />
+                <Route path="email-settings" element={<Navigate to="/admin/settings/email" replace />} />
               </Route>
 
               {/* 404 Fallback Route */}

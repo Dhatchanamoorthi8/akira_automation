@@ -17,10 +17,12 @@ import {
 } from 'lucide-react';
 import { useEnquiry } from '../../context/EnquiryContext';
 import { companyData } from '../../data/company';
+import { useCompanyEmails } from '../../hooks/useCompanyEmails';
 import { solutions } from '../../data/solutions';
 import { productSummaries } from '../../data/productSummaries';
 
 export const Header: React.FC = () => {
+  const emails = useCompanyEmails();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [solutionsDropdown, setSolutionsDropdown] = useState(false);
@@ -122,12 +124,12 @@ export const Header: React.FC = () => {
             </span>
             <span className="hidden md:inline-block text-slate-600">|</span>
             <a 
-              href={`mailto:${companyData.emails[0]}`} 
+              href={`mailto:${emails[0]}`} 
               className="inline-flex items-center gap-1.5 hover:text-white transition-colors truncate min-w-0 font-mono text-[10px] sm:text-xs"
-              title={companyData.emails[0]}
+              title={emails[0]}
             >
               <Mail className="w-3 h-3 text-industrial-highlight shrink-0" />
-              <span className="truncate">{companyData.emails[0]}</span>
+              <span className="truncate">{emails[0]}</span>
             </a>
           </div>
 
@@ -563,13 +565,18 @@ export const Header: React.FC = () => {
                   <ArrowRight className="w-4 h-4" />
                 </button>
                 <div className="text-[11px] text-industrial-muted space-y-1 bg-slate-50 p-3 rounded-lg border border-slate-100">
-                  <p className="font-bold text-industrial-dark uppercase tracking-wider text-[10px]">Direct Lines:</p>
+                  <p className="font-bold text-industrial-dark uppercase tracking-wider text-[10px]">Direct Lines & Email:</p>
                   <a href={`tel:${companyData.phones[0].replace(/\s+/g, '')}`} className="font-mono text-industrial-dark hover:text-industrial-primary block">
                     {companyData.phones[0]}
                   </a>
                   <a href={`tel:${companyData.phones[1].replace(/\s+/g, '')}`} className="font-mono text-industrial-dark hover:text-industrial-primary block">
                     {companyData.phones[1]}
                   </a>
+                  {emails.map((email) => (
+                    <a key={email} href={`mailto:${email}`} className="font-mono text-industrial-dark hover:text-industrial-primary block truncate pt-1 border-t border-slate-200/60">
+                      {email}
+                    </a>
+                  ))}
                 </div>
               </div>
             </motion.div>

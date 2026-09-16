@@ -1,5 +1,6 @@
 import { ContactInformation } from '../types';
 import { company } from '../config/company';
+import { emailSettingsService } from '../services/emailSettingsService';
 
 export const companyData: ContactInformation = {
   companyName: company.name,
@@ -21,10 +22,14 @@ export const companyData: ContactInformation = {
     country: "India",
     fullAddress: "41, Bajanai Kovil Street, Mamandur Village, Tiruttani, Tiruvallur District, Tamil Nadu, PIN 631201." // Flagged for confirmation
   },
-  emails: [
-    company.primaryEmail,
-    company.ccEmail
-  ],
+  get emails(): string[] {
+    const primary = emailSettingsService.getPrimaryRecipient() || company.primaryEmail;
+    const cc = emailSettingsService.getSettingsSync().ccRecipients || company.ccEmail;
+    if (cc && cc.trim() && cc.trim() !== primary) {
+      return [primary, cc.trim()];
+    }
+    return [primary];
+  },
   phones: [
     "+91 94457 30673", // Flagged for confirmation
     "+91 82203 97439"  // Flagged for confirmation

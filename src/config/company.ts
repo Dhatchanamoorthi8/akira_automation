@@ -10,8 +10,8 @@ export const company = {
   slogan: "Automating Today... Building Tomorrow...",
   logo: "/assets/company/akira-automation-logo.jpeg",
   logoAlt: "AKIRA AUTOMATION logo",
-  primaryEmail: (import.meta.env?.VITE_CONTACT_EMAIL as string) || "moorthi832002@gmail.com",
-  ccEmail: (import.meta.env?.VITE_CONTACT_CC_EMAIL as string) || "moorthi832002@gmail.com",
+  primaryEmail: "milestonegauges@gmail.com",
+  ccEmail: "messalessarvices@gmail.com",
 } as const;
 
 export type CompanyConfig = typeof company;

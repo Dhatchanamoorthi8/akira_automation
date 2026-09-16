@@ -17,6 +17,7 @@ import {
   renderFollowupReminderEmail,
 } from '../templates/emailTemplates';
 import { Enquiry, Followup, StaffProfile } from '../types/database';
+import { emailSettingsService } from './emailSettingsService';
 
 export interface EmailDispatchResult {
   success: boolean;
@@ -39,19 +40,28 @@ export class EmailService {
   private defaultRecipient: string;
   private defaultCc: string;
   private defaultTimeout: number;
+  private isConfiguredExplicitly: boolean;
 
   constructor(config: EmailServiceConfig = {}) {
-    this.defaultRecipient = config.recipientEmail || company.primaryEmail;
-    this.defaultCc = config.ccEmail || company.ccEmail;
+    this.isConfiguredExplicitly = Boolean(config.recipientEmail || config.ccEmail);
+    this.defaultRecipient = (config.recipientEmail || company.primaryEmail || 'milestonegauges@gmail.com').replace(/,+$/, '').trim();
+    this.defaultCc = (config.ccEmail || company.ccEmail || 'messalessarvices@gmail.com').replace(/,+$/, '').trim();
     this.defaultTimeout = config.timeoutMs || 12000;
   }
 
   getRecipientEmail(): string {
-    return this.defaultRecipient;
+    if (this.isConfiguredExplicitly) {
+      return this.defaultRecipient;
+    }
+    return emailSettingsService.getPrimaryRecipient() || this.defaultRecipient;
   }
 
   getCcEmail(): string {
-    return this.defaultCc;
+    if (this.isConfiguredExplicitly) {
+      return this.defaultCc;
+    }
+    const cc = emailSettingsService.getSettingsSync().ccRecipients;
+    return cc !== undefined && cc.trim() ? cc : this.defaultCc;
   }
 
   getTimeoutMs(): number {
@@ -145,10 +155,15 @@ export class EmailService {
 
     // 1. Admin & Engineering notification (Reply-To = customer's email)
     const adminTemplate = renderNewEnquiryAdminEmail(templateData);
+    const resolvedPrimary = this.getRecipientEmail();
+    const resolvedCc = emailSettingsService.getCcRecipients() || (this.defaultCc ? [this.defaultCc] : undefined);
+    const shouldSendCustomerAck = emailSettingsService.getSettingsSync().sendCustomerConfirmation;
+
     const adminPromise = this.sendNotification({
       eventType: 'new_enquiry',
-      recipient: this.defaultRecipient,
-      cc: this.defaultCc,
+      enquiryId: enquiry.id,
+      recipient: resolvedPrimary,
+      cc: resolvedCc,
       replyTo: enquiry.email,
       subject: adminTemplate.subject,
       html: adminTemplate.html,
@@ -157,10 +172,15 @@ export class EmailService {
       idempotencyKey: `enq_admin_${enquiry.id}`,
     });
 
-    // 2. Customer acknowledgement
+    // 2. Customer acknowledgement (optional based on admin preference)
+    if (!shouldSendCustomerAck) {
+      return Promise.all([adminPromise]);
+    }
+
     const customerTemplate = renderNewEnquiryCustomerEmail(templateData);
     const customerPromise = this.sendNotification({
       eventType: 'new_enquiry_customer',
+      enquiryId: enquiry.id,
       recipient: enquiry.email,
       subject: customerTemplate.subject,
       html: customerTemplate.html,
@@ -198,6 +218,7 @@ export class EmailService {
     const template = renderEnquiryAssignedEmail(templateData);
     return this.sendNotification({
       eventType: 'enquiry_assigned',
+      enquiryId: enquiry.id,
       recipient: staff.email,
       subject: template.subject,
       html: template.html,
@@ -232,6 +253,7 @@ export class EmailService {
     const template = renderFollowupAssignedEmail(templateData);
     return this.sendNotification({
       eventType: 'followup_assigned',
+      enquiryId: enquiry.id,
       recipient: staff.email,
       subject: template.subject,
       html: template.html,
@@ -267,6 +289,7 @@ export class EmailService {
     const template = renderFollowupReminderEmail(templateData);
     return this.sendNotification({
       eventType: 'followup_reminder',
+      enquiryId: enquiry.id,
       recipient: staff.email,
       subject: template.subject,
       html: template.html,

@@ -16,10 +16,12 @@ import { ProductFeatures } from '../components/products/ProductFeatures';
 import { RelatedProducts } from '../components/products/RelatedProducts';
 import { SectionReveal } from '../components/animation/SectionReveal';
 import { Reveal } from '../components/animation/Reveal';
+import { useCompanyEmails } from '../hooks/useCompanyEmails';
 
 export const ProductDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const { openEnquiry } = useEnquiry();
+  const emails = useCompanyEmails();
 
   const [product, setProduct] = useState<Product | null | undefined>(undefined);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
@@ -160,7 +162,9 @@ export const ProductDetail: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <Mail className="w-3.5 h-3.5 text-industrial-primary" />
-                    <span>{companyData.emails[0]}</span>
+                    <a href={`mailto:${emails[0]}`} className="hover:underline hover:text-industrial-primary">
+                      {emails[0]}
+                    </a>
                   </div>
                 </div>
               </div>

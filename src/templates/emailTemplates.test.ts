@@ -5,12 +5,16 @@ import {
   renderEnquiryAssignedEmail,
   renderFollowupAssignedEmail,
   renderFollowupReminderEmail,
+  renderAdminReplyEmail,
+  renderTestEmail,
 } from './emailTemplates';
 import {
   NewEnquiryEmailData,
   EnquiryAssignedEmailData,
   FollowupAssignedEmailData,
   FollowupReminderEmailData,
+  AdminReplyEmailData,
+  TestEmailData,
 } from '../types/email';
 
 const mockEnquiryData: NewEnquiryEmailData = {
@@ -132,5 +136,47 @@ describe('Email Templates', () => {
     expect(email.subject).toContain('[REMINDER] DEMO');
     expect(email.html).toContain('TASK DUE TODAY');
     expect(email.html).toContain('badge-amber');
+  });
+
+  it('7. renders admin reply email to customer with enquiry reference and message', () => {
+    const mockAdminReply: AdminReplyEmailData = {
+      enquiryId: '12345678-abcd-ef00-1234-567890abcdef',
+      customerName: 'Rajesh Sharma',
+      customerEmail: 'rajesh.sharma@tatamotors.com',
+      subject: 'Air Plug Gauge Quotation and Tolerance Analysis',
+      message: 'We have analyzed your 0.001mm tolerance requirement. Please find our technical specification attached.',
+      senderName: 'Suresh Raina',
+      senderRole: 'Senior Metrology Applications Engineer',
+    };
+
+    const email = renderAdminReplyEmail(mockAdminReply);
+
+    expect(email.subject).toContain('Re: Air Plug Gauge Quotation');
+    expect(email.html).toContain('Dear Rajesh Sharma');
+    expect(email.html).toContain('#12345678');
+    expect(email.html).toContain('Suresh Raina');
+    expect(email.html).toContain('Senior Metrology Applications Engineer');
+    expect(email.html).toContain('support@akiraautomation.com');
+    expect(email.text).toContain('Rajesh Sharma');
+    expect(email.text).toContain('AKIRA AUTOMATION PRIVATE LIMITED');
+  });
+
+  it('8. renders system diagnostic test email with environment and provider metadata', () => {
+    const mockTestData: TestEmailData = {
+      recipientEmail: 'admin@akiraautomation.com',
+      triggeredBy: 'Administrator Console',
+      environment: 'Production',
+      timestamp: '2026-09-16T15:30:00Z',
+    };
+
+    const email = renderTestEmail(mockTestData);
+
+    expect(email.subject).toBe('AKIRA AUTOMATION — Test Email');
+    expect(email.html).toContain('Operational Diagnostic Test');
+    expect(email.html).toContain('admin@akiraautomation.com');
+    expect(email.html).toContain('send-email-notification');
+    expect(email.html).toContain('Resend (api.resend.com)');
+    expect(email.text).toContain('AKIRA AUTOMATION — Test Email');
+    expect(email.text).toContain('admin@akiraautomation.com');
   });
 });

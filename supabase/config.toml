@@ -417,3 +417,10 @@ enabled = true
 [functions.send-email-notification]
 verify_jwt = false
 
+[functions.resend-inbound-email]
+verify_jwt = false
+
+[functions.resend-webhook]
+verify_jwt = false
+
+

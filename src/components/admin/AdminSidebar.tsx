@@ -14,6 +14,7 @@ import {
   Users,
   ChevronsLeft,
   ChevronsRight,
+  MailCheck,
 } from 'lucide-react';
 import { useAuth } from '../../auth/useAuth';
 import { company } from '../../config/company';
@@ -101,6 +102,17 @@ const navGroups: NavGroupConfig[] = [
       },
     ],
   },
+  {
+    title: 'Configuration',
+    items: [
+      {
+        name: 'Email Settings',
+        to: '/admin/settings/email',
+        icon: MailCheck,
+        isImplemented: true,
+      },
+    ],
+  },
 ];
 
 export const AdminSidebar: React.FC<AdminSidebarProps> = ({
@@ -158,6 +170,9 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
     }
     if (to === '/admin/activity') {
       return location.pathname === '/admin/activity' || location.pathname.startsWith('/admin/activity/');
+    }
+    if (to === '/admin/settings/email') {
+      return location.pathname.startsWith('/admin/settings/email') || location.pathname.startsWith('/admin/email-settings');
     }
     return location.pathname === to;
   };

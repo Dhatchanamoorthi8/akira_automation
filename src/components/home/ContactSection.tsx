@@ -12,12 +12,14 @@ import { companyData } from '../../data/company';
 import { EnquiryForm } from '../common/EnquiryForm';
 import { SectionReveal } from '../animation/SectionReveal';
 import { Reveal } from '../animation/Reveal';
+import { useCompanyEmails } from '../../hooks/useCompanyEmails';
 
 interface ContactSectionProps {
   isStandalone?: boolean;
 }
 
 export const ContactSection: React.FC<ContactSectionProps> = ({ isStandalone = false }) => {
+  const emails = useCompanyEmails();
   return (
     <SectionReveal id="contact-section" className={`py-10 sm:py-16 lg:py-20 ${isStandalone ? 'bg-white' : 'bg-industrial-bg'} border-b border-slate-200 overflow-hidden`}>
       <div className="industrial-container">
@@ -78,18 +80,15 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ isStandalone = f
                 <div className="text-xs space-y-1">
                   <p className="font-bold text-industrial-dark">Official Inquiries & Sales:</p>
                   <div className="space-y-0.5">
-                    <a 
-                      href={`mailto:${companyData.emails[0]}`} 
-                      className="text-industrial-primary font-medium hover:underline block"
-                    >
-                      {companyData.emails[0]}
-                    </a>
-                    <a 
-                      href={`mailto:${companyData.emails[1]}`} 
-                      className="text-industrial-primary font-medium hover:underline block"
-                    >
-                      {companyData.emails[1]}
-                    </a>
+                    {emails.map((email) => (
+                      <a 
+                        key={email}
+                        href={`mailto:${email}`} 
+                        className="text-industrial-primary font-medium hover:underline block"
+                      >
+                        {email}
+                      </a>
+                    ))}
                   </div>
                 </div>
               </div>

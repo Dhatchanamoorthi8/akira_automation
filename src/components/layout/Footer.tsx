@@ -5,8 +5,10 @@ import { company } from '../../config/company';
 import { companyData } from '../../data/company';
 import { productCategories } from '../../data/productSummaries';
 import { Reveal } from '../animation/Reveal';
+import { useCompanyEmails } from '../../hooks/useCompanyEmails';
 
 export const Footer: React.FC = () => {
+  const emails = useCompanyEmails();
   return (
     <footer className="bg-industrial-dark text-slate-300 pt-16 pb-12 border-t border-slate-800">
       <div className="industrial-container">
@@ -132,12 +134,15 @@ export const Footer: React.FC = () => {
                 <div className="flex items-start gap-2.5">
                   <Mail className="w-4 h-4 text-industrial-primary shrink-0 mt-0.5" />
                   <div className="space-y-1 text-xs">
-                    <a href={`mailto:${companyData.emails[0]}`} className="hover:text-white block transition-colors">
-                      {companyData.emails[0]}
-                    </a>
-                    <a href={`mailto:${companyData.emails[1]}`} className="hover:text-white block transition-colors">
-                      {companyData.emails[1]}
-                    </a>
+                    {emails.map((email) => (
+                      <a 
+                        key={email}
+                        href={`mailto:${email}`} 
+                        className="hover:text-white block transition-colors"
+                      >
+                        {email}
+                      </a>
+                    ))}
                   </div>
                 </div>
 

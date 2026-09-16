@@ -231,6 +231,7 @@ export interface EnquiryWithDetails extends Enquiry {
   assigned_profile?: StaffProfile | null;
   followups?: Followup[];
   activity_logs?: ActivityLog[];
+  email_messages?: import('./email').EmailMessage[];
 }
 
 export interface FollowupWithEnquiry extends Followup {

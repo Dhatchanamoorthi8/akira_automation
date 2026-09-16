@@ -7,13 +7,14 @@
 -- 
 -- Contains:
 --   1. Extensions, helper functions, and updated_at triggers
---   2. 6 Core Relational Tables (profiles, products, product_images, enquiries, followups, activity_logs)
+--   2. 7 Core Relational Tables (profiles, products, product_images, enquiries, followups, activity_logs, email_messages)
 --   3. Row Level Security (RLS) policies for anonymous visitors and authenticated admins/staff
 --   4. auth.users profile auto-provisioning trigger
 --   5. Storage bucket ('product-images') setup & policies
 --   6. Phase 5 & Phase 6/7 Staff Assignment, Activity Audit Trail & Analytics RPCs
 --   7. Phase 8/9 Hardened Role Constraints ('staff', 'admin') and RLS Guards
---   8. Production Seed: All 16 Precision Metrology Products & 33 Image references
+--   8. Phase 10 Email Messages History, Threading & Status Tracking
+--   9. Production Seed: All 16 Precision Metrology Products & 33 Image references
 -- ============================================================
 
 -- ============================================================
@@ -889,6 +890,183 @@ CREATE POLICY "profiles_update_policy" ON public.profiles
 -- 5. RE-GRANT EXECUTE ON HELPER FUNCTIONS
 GRANT EXECUTE ON FUNCTION public.is_admin() TO authenticated, anon;
 GRANT EXECUTE ON FUNCTION public.is_staff() TO authenticated, anon;
+
+
+-- ============================================================
+-- AKIRA AUTOMATION — PHASE 10 DATABASE MIGRATION
+-- Dedicated Email Messages History, Threading & Delivery Status
+-- Migration: 20260916000001_phase10_email_messages.sql
+-- ============================================================
+
+-- 1. CREATE TABLE: email_messages
+CREATE TABLE IF NOT EXISTS public.email_messages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  enquiry_id UUID REFERENCES public.enquiries(id) ON DELETE CASCADE,
+  direction TEXT NOT NULL CHECK (direction IN ('OUTBOUND', 'INBOUND')),
+  from_email TEXT NOT NULL,
+  to_email TEXT NOT NULL,
+  cc_email TEXT,
+  reply_to TEXT,
+  subject TEXT NOT NULL,
+  body TEXT NOT NULL,
+  body_html TEXT,
+  provider TEXT NOT NULL DEFAULT 'resend',
+  provider_message_id TEXT,
+  message_id TEXT,
+  in_reply_to TEXT,
+  references_header TEXT,
+  status TEXT NOT NULL DEFAULT 'SENT' CHECK (status IN ('QUEUED', 'SENDING', 'SENT', 'DELIVERED', 'BOUNCED', 'FAILED', 'RECEIVED')),
+  error_message TEXT,
+  metadata JSONB DEFAULT '{}'::JSONB,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  sent_at TIMESTAMPTZ,
+  delivered_at TIMESTAMPTZ
+);
+
+-- 2. CREATE INDEXES FOR FAST RETRIEVAL & THREADING
+CREATE INDEX IF NOT EXISTS idx_email_messages_enquiry_id ON public.email_messages(enquiry_id);
+CREATE INDEX IF NOT EXISTS idx_email_messages_provider_msg_id ON public.email_messages(provider_message_id);
+CREATE INDEX IF NOT EXISTS idx_email_messages_direction ON public.email_messages(direction);
+CREATE INDEX IF NOT EXISTS idx_email_messages_status ON public.email_messages(status);
+CREATE INDEX IF NOT EXISTS idx_email_messages_created_at_desc ON public.email_messages(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_email_messages_message_id ON public.email_messages(message_id);
+CREATE INDEX IF NOT EXISTS idx_email_messages_in_reply_to ON public.email_messages(in_reply_to);
+
+-- ============================================================
+-- 3. ENSURE ROLE HELPER FUNCTIONS EXIST
+-- ============================================================
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  IF auth.uid() IS NULL THEN
+    RETURN false;
+  END IF;
+
+  RETURN EXISTS (
+    SELECT 1 FROM public.profiles
+    WHERE id = auth.uid()
+      AND role = 'admin'
+      AND active = true
+  );
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION public.is_staff()
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  IF auth.uid() IS NULL THEN
+    RETURN false;
+  END IF;
+
+  RETURN EXISTS (
+    SELECT 1 FROM public.profiles
+    WHERE id = auth.uid()
+      AND role IN ('staff', 'sales', 'manager')
+      AND active = true
+  );
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.is_admin() TO authenticated, anon;
+GRANT EXECUTE ON FUNCTION public.is_staff() TO authenticated, anon;
+
+-- ============================================================
+-- 4. ENABLE ROW LEVEL SECURITY
+-- ============================================================
+ALTER TABLE public.email_messages ENABLE ROW LEVEL SECURITY;
+
+-- ============================================================
+-- 5. RLS POLICIES FOR email_messages
+-- ============================================================
+-- Drop existing policies if re-running
+DROP POLICY IF EXISTS "email_messages_admin_all" ON public.email_messages;
+DROP POLICY IF EXISTS "email_messages_staff_select" ON public.email_messages;
+DROP POLICY IF EXISTS "email_messages_staff_insert" ON public.email_messages;
+
+-- Admins can read, insert, update, delete all email messages
+CREATE POLICY "email_messages_admin_all" ON public.email_messages
+  FOR ALL
+  TO authenticated
+  USING (public.is_admin())
+  WITH CHECK (public.is_admin());
+
+-- Staff can read email messages for enquiries assigned to them
+CREATE POLICY "email_messages_staff_select" ON public.email_messages
+  FOR SELECT
+  TO authenticated
+  USING (
+    public.is_staff() AND (
+      enquiry_id IS NOT NULL AND EXISTS (
+        SELECT 1 FROM public.enquiries e
+        WHERE e.id = email_messages.enquiry_id AND e.assigned_to = auth.uid()
+      )
+    )
+  );
+
+-- Staff can insert outbound emails for enquiries assigned to them
+CREATE POLICY "email_messages_staff_insert" ON public.email_messages
+  FOR INSERT
+  TO authenticated
+  WITH CHECK (
+    public.is_staff() AND (
+      direction = 'OUTBOUND' AND
+      enquiry_id IS NOT NULL AND EXISTS (
+        SELECT 1 FROM public.enquiries e
+        WHERE e.id = email_messages.enquiry_id AND e.assigned_to = auth.uid()
+      )
+    )
+  );
+
+
+-- ============================================================
+-- AKIRA AUTOMATION — APP SETTINGS TABLE
+-- Migration: 20260916000002_create_app_settings.sql
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS public.app_settings (
+  key TEXT PRIMARY KEY,
+  value JSONB NOT NULL DEFAULT '{}'::JSONB,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_by UUID REFERENCES auth.users(id) ON DELETE SET NULL
+);
+
+-- Enable RLS
+ALTER TABLE public.app_settings ENABLE ROW LEVEL SECURITY;
+
+-- Allow read access to authenticated staff/admins and anonymous visitors (for notification dispatch)
+DROP POLICY IF EXISTS "app_settings_read_policy" ON public.app_settings;
+CREATE POLICY "app_settings_read_policy" ON public.app_settings
+  FOR SELECT
+  TO anon, authenticated
+  USING (true);
+
+-- Allow write/update only to administrators
+DROP POLICY IF EXISTS "app_settings_admin_write_policy" ON public.app_settings;
+CREATE POLICY "app_settings_admin_write_policy" ON public.app_settings
+  FOR ALL
+  TO authenticated
+  USING (public.is_admin())
+  WITH CHECK (public.is_admin());
+
+-- Seed default email notification settings if not already set
+INSERT INTO public.app_settings (key, value)
+VALUES (
+  'notification_recipients',
+  '{
+    "primaryRecipient": "milestonegauges@gmail.com",
+    "ccRecipients": "messalessarvices@gmail.com",
+    "sendCustomerConfirmation": true
+  }'::JSONB
+)
+ON CONFLICT (key) DO NOTHING;
 
 
 --
