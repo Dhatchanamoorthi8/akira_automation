@@ -81,6 +81,7 @@ export const AdminLogin: React.FC = () => {
       <SEOHead
         title="Admin Portal Login | AKIRA AUTOMATION"
         description="Administrative authentication portal for AKIRA AUTOMATION staff and engineers."
+        noIndex={true}
       />
       <div className="min-h-[85vh] flex flex-col justify-center py-8 sm:py-14 px-4 sm:px-6 lg:px-8 bg-industrial-bg">
         <div className="w-full max-w-md mx-auto space-y-6">

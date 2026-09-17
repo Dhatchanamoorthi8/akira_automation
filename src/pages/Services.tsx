@@ -12,6 +12,7 @@ import {
 import { Breadcrumb } from '../components/layout/Breadcrumb';
 import { SEOHead } from '../components/layout/SEOHead';
 import { company } from '../config/company';
+import { createBreadcrumbSchema } from '../config/seo';
 import { servicesData } from '../data/services';
 import { companyData } from '../data/company';
 import { useEnquiry } from '../context/EnquiryContext';
@@ -37,6 +38,11 @@ export const Services: React.FC = () => {
         title="Service & Technical Support | Beyond Sales Commitment"
         description={`Comprehensive technical support, on-site installation, operator calibration training, and rapid service response from ${company.name}.`}
         keywords={`Metrology Calibration Service, Multi-Gauging Installation, Operator Training, Air Gauging Support India, ${company.name}`}
+        canonicalPath="/services"
+        structuredData={createBreadcrumbSchema([
+          { name: 'Home', url: '/' },
+          { name: 'Services', url: '/services' }
+        ])}
       />
 
       {/* Header */}

@@ -4,6 +4,7 @@ import { Search, PackageCheck } from 'lucide-react';
 import { Breadcrumb } from '../components/layout/Breadcrumb';
 import { SEOHead } from '../components/layout/SEOHead';
 import { company } from '../config/company';
+import { createBreadcrumbSchema } from '../config/seo';
 import { productService } from '../services/productService';
 import { EnquiryCTA } from '../components/home/EnquiryCTA';
 import { ProductCard } from '../components/common/ProductCard';
@@ -48,6 +49,11 @@ export const Products: React.FC = () => {
         title="Precision Gauging Product Catalogue"
         description="Comprehensive catalogue of air plug gauges, air ring gauges, electronic gauges, tri-colour digital display units, memory module units, and multigauging stations."
         keywords={`Air Plug Gauge, Air Ring Gauge, Digital Display Units, Tri-Colour Display, Memory Module Unit, Multigauging Station, ${company.name}`}
+        canonicalPath="/products"
+        structuredData={createBreadcrumbSchema([
+          { name: 'Home', url: '/' },
+          { name: 'Products', url: '/products' }
+        ])}
       />
 
       {/* Page Header */}

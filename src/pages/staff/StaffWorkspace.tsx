@@ -234,6 +234,7 @@ export const StaffWorkspace: React.FC = () => {
       <SEOHead
         title="Staff Workspace | AKIRA AUTOMATION"
         description="Assigned tasks, client inquiries, and follow-up management for sales engineers."
+        noIndex={true}
       />
 
       <div className="min-h-screen bg-industrial-bg">

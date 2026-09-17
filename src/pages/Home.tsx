@@ -14,17 +14,24 @@ import { ServiceSupportSection } from '../components/home/ServiceSupportSection'
 import { InstrumentsFixturesGallery } from '../components/home/InstrumentsFixturesGallery';
 import { EnquiryCTA } from '../components/home/EnquiryCTA';
 import { ContactSection } from '../components/home/ContactSection';
+import { createOrganizationSchema, createWebSiteSchema } from '../config/seo';
 
 export const Home: React.FC = () => {
+  const homeSchemas = [
+    createOrganizationSchema(),
+    createWebSiteSchema()
+  ];
+
   return (
     <>
       <SEOHead
-        title="Precision Gauging & Smart Automation Solutions"
-        description="AKIRA AUTOMATION provides precision gauging, automated multi-gauging systems, air plug gauges, air ring gauges, fixtures, and electronic displays."
-        keywords="AKIRA AUTOMATION, Akira Automation, Precision Gauging, Multi Gauging Solutions, Air Gauging, Fixtures, Air Plug Gauges, Air Ring Gauges"
+        title="AKIRA AUTOMATION | Precision • Innovation • Smart Solutions"
+        description="AKIRA AUTOMATION provides high-precision gauging fixtures, automated multi-gauging stations, air gauges, digital DRO displays, and work-holding solutions for manufacturing."
+        keywords="AKIRA AUTOMATION, Precision Gauging India, Multi Gauging Solutions, Air Gauging, Air Plug Gauge, Air Ring Gauge, Inspection Fixtures, Industrial Metrology"
+        canonicalPath="/"
+        structuredData={homeSchemas}
       />
       
-      {/* Exact Order specified in Requirement 45 */}
       {/* 1. Hero */}
       <Hero />
 

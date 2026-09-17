@@ -1,13 +1,21 @@
 import React, { useEffect } from 'react';
 import { company } from '../../config/company';
-import { companyData } from '../../data/company';
+import { 
+  getCanonicalUrl, 
+  formatTitle, 
+  getAbsoluteImageUrl, 
+  createOrganizationSchema 
+} from '../../config/seo';
 
-interface SEOProps {
+export interface SEOProps {
   title: string;
   description: string;
   keywords?: string;
   canonicalPath?: string;
   ogImage?: string;
+  ogType?: 'website' | 'article';
+  noIndex?: boolean;
+  structuredData?: object | object[];
 }
 
 export const SEOHead: React.FC<SEOProps> = ({
@@ -15,12 +23,15 @@ export const SEOHead: React.FC<SEOProps> = ({
   description,
   keywords,
   canonicalPath = '',
-  ogImage = '/assets/hero/hero-lab-gauging.webp',
+  ogImage,
+  ogType = 'website',
+  noIndex = false,
+  structuredData,
 }) => {
   useEffect(() => {
-    // 1. Title Tag
-    const fullTitle = `${title} | ${company.name}`;
-    document.title = fullTitle;
+    // 1. Document Title with smart brand formatting
+    const formattedTitle = formatTitle(title);
+    document.title = formattedTitle;
 
     // Helper to safely create or update <meta> tags
     const updateMetaTag = (attributeName: 'name' | 'property', attributeValue: string, content: string) => {
@@ -39,33 +50,41 @@ export const SEOHead: React.FC<SEOProps> = ({
       updateMetaTag('name', 'keywords', keywords);
     }
 
-    // 3. OpenGraph Meta Tags
-    updateMetaTag('property', 'og:title', fullTitle);
-    updateMetaTag('property', 'og:description', description);
-    updateMetaTag('property', 'og:image', ogImage);
-    updateMetaTag('property', 'og:type', 'website');
+    // 3. Search Engine Indexing & Robots Directives (auto-protect portal routes)
+    const isPortalRoute = typeof window !== 'undefined' && (
+      window.location.pathname.startsWith('/admin') || 
+      window.location.pathname.startsWith('/staff')
+    );
+    const shouldNoIndex = noIndex || isPortalRoute;
+    const robotsDirective = shouldNoIndex ? 'noindex, nofollow' : 'index, follow';
+    updateMetaTag('name', 'robots', robotsDirective);
 
-    // 4. Twitter / X Meta Tags (Requirement 11)
-    updateMetaTag('name', 'twitter:card', 'summary_large_image');
-    updateMetaTag('name', 'twitter:title', fullTitle);
-    updateMetaTag('name', 'twitter:description', description);
-    updateMetaTag('name', 'twitter:image', ogImage);
-
-    // 5. Canonical Link Hardening (Requirement 8)
-    // Remove any existing canonical tags to avoid duplicates
+    // 4. Hardened Canonical Link (Strictly Production Domain, No Query/Hash/Duplicates)
     const existingCanonicals = document.querySelectorAll('link[rel="canonical"]');
     existingCanonicals.forEach((el) => el.remove());
 
+    const canonicalHref = getCanonicalUrl(canonicalPath || window.location.pathname);
     const canonicalLink = document.createElement('link');
     canonicalLink.setAttribute('rel', 'canonical');
-    
-    // Construct valid canonical URL using origin and canonicalPath or current pathname
-    const origin = window.location.origin;
-    const resolvedPath = canonicalPath || window.location.pathname;
-    canonicalLink.setAttribute('href', `${origin}${resolvedPath}`);
+    canonicalLink.setAttribute('href', canonicalHref);
     document.head.appendChild(canonicalLink);
 
-    // 6. JSON-LD Structured Data for LocalBusiness & Organization
+    // 5. OpenGraph Meta Tags
+    const resolvedOgImage = getAbsoluteImageUrl(ogImage);
+    updateMetaTag('property', 'og:title', formattedTitle);
+    updateMetaTag('property', 'og:description', description);
+    updateMetaTag('property', 'og:image', resolvedOgImage);
+    updateMetaTag('property', 'og:url', canonicalHref);
+    updateMetaTag('property', 'og:type', ogType);
+    updateMetaTag('property', 'og:site_name', company.name);
+
+    // 6. Twitter / X Meta Tags
+    updateMetaTag('name', 'twitter:card', 'summary_large_image');
+    updateMetaTag('name', 'twitter:title', formattedTitle);
+    updateMetaTag('name', 'twitter:description', description);
+    updateMetaTag('name', 'twitter:image', resolvedOgImage);
+
+    // 7. Structured Data (JSON-LD)
     let scriptTag = document.getElementById('structured-data-jsonld') as HTMLScriptElement | null;
     if (!scriptTag) {
       scriptTag = document.createElement('script');
@@ -74,29 +93,24 @@ export const SEOHead: React.FC<SEOProps> = ({
       document.head.appendChild(scriptTag);
     }
 
-    const structuredData = {
-      "@context": "https://schema.org",
-      "@type": "LocalBusiness",
-      "name": company.name,
-      "image": company.logo,
-      "description": description,
-      "foundingDate": "2021",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": companyData.address.street,
-        "addressLocality": companyData.address.village ? `${companyData.address.village}, ${companyData.address.city}` : companyData.address.city,
-        "addressRegion": companyData.address.state,
-        "postalCode": companyData.address.pin,
-        "addressCountry": "IN"
-      },
-      "telephone": companyData.phones[0],
-      "email": companyData.emails[0],
-      "slogan": company.tagline
-    };
+    if (shouldNoIndex) {
+      // Do not output structured data on 404 or admin/private pages
+      scriptTag.textContent = '';
+    } else if (structuredData) {
+      if (Array.isArray(structuredData)) {
+        scriptTag.textContent = JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": structuredData
+        });
+      } else {
+        scriptTag.textContent = JSON.stringify(structuredData);
+      }
+    } else {
+      // Fallback default organization schema
+      scriptTag.textContent = JSON.stringify(createOrganizationSchema());
+    }
 
-    scriptTag.textContent = JSON.stringify(structuredData);
-
-  }, [title, description, keywords, canonicalPath, ogImage]);
+  }, [title, description, keywords, canonicalPath, ogImage, ogType, noIndex, structuredData]);
 
   return null;
 };

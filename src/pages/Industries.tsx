@@ -12,6 +12,7 @@ import {
 import { Breadcrumb } from '../components/layout/Breadcrumb';
 import { SEOHead } from '../components/layout/SEOHead';
 import { company } from '../config/company';
+import { createBreadcrumbSchema } from '../config/seo';
 import { industries } from '../data/industries';
 import { EnquiryCTA } from '../components/home/EnquiryCTA';
 import { Reveal } from '../components/animation/Reveal';
@@ -31,6 +32,11 @@ export const Industries: React.FC = () => {
         title="Industries We Serve | Automotive OEMs, Tier Suppliers & Automation"
         description={`${company.name} provides precision gauging and multi-gauging systems for Automotive OEMs, Tier-1 & Tier-2 suppliers, Automation machine builders, and Precision Engineering.`}
         keywords={`Automotive OEM Gauges, Tier-1 Supplier Gauging, Automation Machine Builders, Precision Engineering Gauges India, ${company.name}`}
+        canonicalPath="/industries"
+        structuredData={createBreadcrumbSchema([
+          { name: 'Home', url: '/' },
+          { name: 'Industries', url: '/industries' }
+        ])}
       />
 
       {/* Header */}

@@ -17,6 +17,7 @@ import { RelatedProducts } from '../components/products/RelatedProducts';
 import { SectionReveal } from '../components/animation/SectionReveal';
 import { Reveal } from '../components/animation/Reveal';
 import { useCompanyEmails } from '../hooks/useCompanyEmails';
+import { createBreadcrumbSchema, createProductSchema } from '../config/seo';
 
 export const ProductDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -73,6 +74,11 @@ export const ProductDetail: React.FC = () => {
   if (!product) {
     return (
       <div className="py-32 bg-industrial-bg text-center">
+        <SEOHead
+          title="Product Not Found"
+          description="The requested precision gauging system or product specification page does not exist."
+          noIndex={true}
+        />
         <div className="industrial-container max-w-md mx-auto space-y-4">
           <h1 className="text-2xl font-bold text-industrial-dark font-heading">
             Product Not Found
@@ -88,6 +94,24 @@ export const ProductDetail: React.FC = () => {
     );
   }
 
+  const breadcrumbs = [
+    { name: 'Home', url: '/' },
+    { name: 'Products', url: '/products' },
+    { name: product.category, url: `/products?category=${product.categorySlug}` },
+    { name: product.title, url: `/products/${product.slug}` }
+  ];
+
+  const productSchemas = [
+    createBreadcrumbSchema(breadcrumbs),
+    createProductSchema({
+      title: product.title,
+      description: product.description,
+      image: product.image,
+      category: product.category,
+      slug: product.slug
+    })
+  ];
+
   return (
     <>
       <SEOHead
@@ -96,6 +120,7 @@ export const ProductDetail: React.FC = () => {
         keywords={`${product.title}, ${product.category}, ${company.name}, Precision Gauging Specifications`}
         canonicalPath={`/products/${product.slug}`}
         ogImage={product.image}
+        structuredData={productSchemas}
       />
 
       {/* Header & Breadcrumb */}

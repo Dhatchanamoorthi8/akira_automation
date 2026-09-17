@@ -8,6 +8,7 @@ import {
   Bot
 } from 'lucide-react';
 import { company } from '../config/company';
+import { createBreadcrumbSchema } from '../config/seo';
 import { Breadcrumb } from '../components/layout/Breadcrumb';
 import { SEOHead } from '../components/layout/SEOHead';
 import { EnquiryCTA } from '../components/home/EnquiryCTA';
@@ -52,6 +53,11 @@ export const WhyChooseUs: React.FC = () => {
         title={`Why Choose ${company.name} | Core Strengths`}
         description={`Discover why leading OEMs and automotive suppliers choose ${company.name} for precision gauging, automated multi-gauging, and custom fixtures.`}
         keywords={`${company.name}, why choose ${company.name}, automated multi gauging expertise, OEM gauging solutions, custom metrology fixtures`}
+        canonicalPath="/why-choose-us"
+        structuredData={createBreadcrumbSchema([
+          { name: 'Home', url: '/' },
+          { name: 'Why Choose Us', url: '/why-choose-us' }
+        ])}
       />
 
       {/* Header */}

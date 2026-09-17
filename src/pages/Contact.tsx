@@ -2,6 +2,7 @@ import React from 'react';
 import { Breadcrumb } from '../components/layout/Breadcrumb';
 import { SEOHead } from '../components/layout/SEOHead';
 import { company } from '../config/company';
+import { createBreadcrumbSchema } from '../config/seo';
 import { ContactSection } from '../components/home/ContactSection';
 import { Mail } from 'lucide-react';
 import { Reveal } from '../components/animation/Reveal';
@@ -13,6 +14,11 @@ export const Contact: React.FC = () => {
         title="Contact Us & Engineering Inquiries | Connect With Us"
         description={`Connect with ${company.name} for technical inquiries, air gauges, multi-gauging, and precision inspection fixtures.`}
         keywords={`Contact ${company.name}, precision metrology, ${company.name} phone email address`}
+        canonicalPath="/contact"
+        structuredData={createBreadcrumbSchema([
+          { name: 'Home', url: '/' },
+          { name: 'Contact Us', url: '/contact' }
+        ])}
       />
 
       {/* Header */}

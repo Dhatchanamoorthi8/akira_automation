@@ -12,6 +12,7 @@ export const NotFound: React.FC = () => {
       <SEOHead
         title="404 - Page Not Found"
         description={`The requested page could not be located on ${company.name} website.`}
+        noIndex={true}
       />
 
       <section className="py-24 bg-industrial-bg min-h-[65vh] flex items-center">

@@ -16,14 +16,22 @@ import { ScaleReveal } from '../components/animation/ScaleReveal';
 import { StaggerContainer } from '../components/animation/StaggerContainer';
 import { StaggerItem } from '../components/animation/StaggerItem';
 import { SpotlightCard } from '../components/animation/SpotlightCard';
+import { createBreadcrumbSchema } from '../config/seo';
 
 export const About: React.FC = () => {
+  const breadcrumbItems = [
+    { name: 'Home', url: '/' },
+    { name: 'About Us', url: '/about' }
+  ];
+
   return (
     <>
       <SEOHead
         title="About Us | Precision Metrology & Multi-Gauging Systems"
         description={`${company.name} delivers precision metrology, automated multi-gauging systems, fixtures, and custom inspection solutions with a commitment to quality and customer success.`}
-        keywords={`About ${company.name}, metrology manufacturer, precision gauging India, automated gauging`}
+        keywords={`About ${company.name}, metrology manufacturer, precision gauging India, automated gauging, ${company.legalName}`}
+        canonicalPath="/about"
+        structuredData={createBreadcrumbSchema(breadcrumbItems)}
       />
 
       {/* Page Header */}
@@ -89,7 +97,7 @@ export const About: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {companyIntro.coreValues.map((val, idx) => (
                     <div key={idx} className="p-4 rounded-xl bg-slate-50 border border-slate-200">
-                      <p className="text-sm font-bold text-industrial-dark font-heading">{val.title}</p>
+                      <h4 className="text-sm font-bold text-industrial-dark font-heading">{val.title}</h4>
                       <p className="text-xs text-industrial-muted mt-1 leading-snug">{val.description}</p>
                     </div>
                   ))}
@@ -103,7 +111,7 @@ export const About: React.FC = () => {
                 <div className="rounded-xl overflow-hidden border border-slate-200 shadow-card bg-slate-900">
                   <img
                     src="/assets/company/inspection-workbench.webp"
-                    alt={`${company.name} Metrology Facility`}
+                    alt={`${company.name} Metrology Facility and Inspection Workbench`}
                     className="w-full h-auto object-cover max-h-[500px]"
                   />
                 </div>
@@ -161,7 +169,7 @@ export const About: React.FC = () => {
         </div>
       </SectionReveal>
 
-      {/* Three Pillars of Commitment (Slide 7) */}
+      {/* Three Pillars of Commitment */}
       <SectionReveal className="py-20 bg-white border-b border-slate-200">
         <div className="industrial-container">
           <Reveal direction="up" className="max-w-3xl mb-14 text-center mx-auto">
@@ -204,12 +212,12 @@ export const About: React.FC = () => {
         </div>
       </SectionReveal>
 
-      {/* Building Strong Partnerships (Slide 13) */}
+      {/* Building Strong Partnerships */}
       <SectionReveal className="py-20 bg-industrial-bg border-b border-slate-200">
         <div className="industrial-container">
           <Reveal direction="up" className="max-w-3xl mb-12">
             <span className="section-tag">
-              Slide 13 Values
+              Engineering Partnership Principles
             </span>
             <h2 className="section-title mt-2">
               Building Strong Partnerships
