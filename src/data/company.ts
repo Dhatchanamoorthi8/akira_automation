@@ -13,14 +13,13 @@ export const companyData: ContactInformation = {
     "Team Spirit"
   ],
   address: {
-    street: "41, Bajanai Kovil Street",
-    village: "Mamandur Village",
-    city: "Tiruttani",
-    district: "Tiruvallur District",
+    street: "No.18 2nd Street, Thamarai Street",
+    village: "Gerugambakkam",
+    city: "Chennai",
     state: "Tamil Nadu",
-    pin: "631201",
+    pin: "600 122",
     country: "India",
-    fullAddress: "41, Bajanai Kovil Street, Mamandur Village, Tiruttani, Tiruvallur District, Tamil Nadu, PIN 631201." // Flagged for confirmation
+    fullAddress: "No.18 2nd Street, Thamarai Street, Gerugambakkam, Chennai, Tamil Nadu - 600 122, India."
   },
   get emails(): string[] {
     const primary = emailSettingsService.getPrimaryRecipient() || company.primaryEmail;

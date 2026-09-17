@@ -8,7 +8,7 @@ import {
 import { Breadcrumb } from '../components/layout/Breadcrumb';
 import { SEOHead } from '../components/layout/SEOHead';
 import { company } from '../config/company';
-import { companyIntro } from '../data/company';
+import { companyIntro, companyData } from '../data/company';
 import { EnquiryCTA } from '../components/home/EnquiryCTA';
 import { SectionReveal } from '../components/animation/SectionReveal';
 import { Reveal } from '../components/animation/Reveal';
@@ -112,7 +112,7 @@ export const About: React.FC = () => {
               <div className="mt-4 p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 flex items-center justify-between">
                 <div>
                   <p className="font-bold text-industrial-dark">{company.name}</p>
-                  <p className="text-slate-500">Mamandur Village, Tiruttani, Tamil Nadu</p>
+                  <p className="text-slate-500">{companyData.address.village ? `${companyData.address.village}, ` : ''}{companyData.address.city}, {companyData.address.state}</p>
                 </div>
                 <span className="px-2.5 py-1 rounded bg-industrial-primary text-white font-mono font-bold text-[10px]">
                   SMART SOLUTIONS

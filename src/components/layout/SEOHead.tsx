@@ -84,7 +84,7 @@ export const SEOHead: React.FC<SEOProps> = ({
       "address": {
         "@type": "PostalAddress",
         "streetAddress": companyData.address.street,
-        "addressLocality": companyData.address.village,
+        "addressLocality": companyData.address.village ? `${companyData.address.village}, ${companyData.address.city}` : companyData.address.city,
         "addressRegion": companyData.address.state,
         "postalCode": companyData.address.pin,
         "addressCountry": "IN"

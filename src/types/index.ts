@@ -68,7 +68,7 @@ export interface ContactInformation {
     street: string;
     village: string;
     city: string;
-    district: string;
+    district?: string;
     state: string;
     pin: string;
     country: string;

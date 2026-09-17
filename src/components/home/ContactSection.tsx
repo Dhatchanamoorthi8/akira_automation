@@ -65,8 +65,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ isStandalone = f
                   <p className="font-bold text-industrial-dark">Registered Office Address:</p>
                   <p className="text-slate-600 leading-relaxed">
                     {companyData.address.street},<br />
-                    {companyData.address.village}, {companyData.address.city},<br />
-                    {companyData.address.district},<br />
+                    {companyData.address.village ? `${companyData.address.village}, ` : ''}{companyData.address.city},<br />
+                    {companyData.address.district && <>{companyData.address.district},<br /></>}
                     {companyData.address.state}, PIN {companyData.address.pin}, India.
                   </p>
                 </div>

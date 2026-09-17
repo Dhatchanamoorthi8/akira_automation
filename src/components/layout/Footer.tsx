@@ -125,8 +125,8 @@ export const Footer: React.FC = () => {
                   <MapPin className="w-4 h-4 text-industrial-primary shrink-0 mt-0.5" />
                   <p className="leading-snug text-xs">
                     {companyData.address.street},<br />
-                    {companyData.address.village}, {companyData.address.city},<br />
-                    {companyData.address.district},<br />
+                    {companyData.address.village ? `${companyData.address.village}, ` : ''}{companyData.address.city},<br />
+                    {companyData.address.district && <>{companyData.address.district},<br /></>}
                     {companyData.address.state} - {companyData.address.pin}
                   </p>
                 </div>
