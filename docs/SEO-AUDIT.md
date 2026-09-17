@@ -1,7 +1,8 @@
-# AKIRA AUTOMATION — Senior SEO Audit, Content Optimization & Production Technical Report
+# AKIRA PRECISION AUTOMATION LLP — Senior SEO Audit, Content Optimization & Production Technical Report
 
 **Website**: [https://akiraautomation.com](https://akiraautomation.com)  
-**Brand**: AKIRA AUTOMATION  
+**Brand**: AKIRA PRECISION AUTOMATION LLP  
+**Legal Entity**: Akira Precision Automation LLP  
 **Tagline**: PRECISION • INNOVATION • SMART SOLUTIONS  
 **Slogan**: "Automating Today... Building Tomorrow..."  
 **Domain**: Industrial Metrology, Automated Multi-Gauging, Air Gauging, Fixtures & Manufacturing Quality Solutions  

@@ -1,6 +1,6 @@
 /**
  * Centralized SEO Configuration & Utilities
- * AKIRA AUTOMATION — Production SEO Standards
+ * AKIRA PRECISION AUTOMATION LLP — Production SEO Standards
  */
 
 import { company } from './company';
@@ -61,13 +61,13 @@ export function getCanonicalUrl(pathOrUrl?: string): string {
 
 /**
  * Formats document titles cleanly:
- * Avoids redundant "| AKIRA AUTOMATION | AKIRA AUTOMATION"
+ * Avoids redundant "| AKIRA PRECISION AUTOMATION LLP"
  * Keeps titles concise and brand-aware.
  */
 export function formatTitle(title: string): string {
   const brand = company.name;
   if (!title) return `${brand} | ${company.tagline}`;
-  if (title.includes(brand)) {
+  if (title.toLowerCase().includes(brand.toLowerCase()) || title.toLowerCase().includes('akira precision automation')) {
     return title.trim();
   }
   // Check if adding brand exceeds typical SERP title limit (65 chars)
@@ -100,7 +100,7 @@ export function createOrganizationSchema() {
     "url": SITE_URL,
     "logo": getAbsoluteImageUrl(company.logo),
     "image": HERO_OG_IMAGE,
-    "description": "AKIRA AUTOMATION manufactures precision gauging fixtures, automated multi-gauging stations, air gauges, digital DRO displays, and work-holding solutions for automotive OEMs and precision manufacturing.",
+    "description": "Akira Precision Automation LLP manufactures precision gauging fixtures, automated multi-gauging stations, air gauges, digital DRO displays, and work-holding solutions for automotive OEMs and precision manufacturing.",
     "slogan": company.slogan,
     "foundingDate": "2021",
     "address": {

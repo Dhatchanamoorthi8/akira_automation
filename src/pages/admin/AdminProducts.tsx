@@ -342,7 +342,7 @@ export const AdminProducts: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="Product Catalogue | AKIRA AUTOMATION Admin"
+        title="Product Catalogue | Akira Precision Automation LLP Admin"
         description="Administrative control for precision metrology products, specifications, and images."
       />
 

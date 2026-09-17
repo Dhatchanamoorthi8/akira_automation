@@ -72,7 +72,7 @@ export class EmailMessageService {
         body: {
           eventType: 'admin_reply',
           enquiryId: params.enquiryId,
-          subject: params.subject?.trim() || 'Technical Response — AKIRA AUTOMATION',
+          subject: params.subject?.trim() || 'Technical Response — Akira Precision Automation LLP',
           message: params.message.trim(),
         },
       });
@@ -132,7 +132,7 @@ export class EmailMessageService {
         body: {
           eventType: 'test',
           recipient: recipientEmail.trim(),
-          subject: 'AKIRA AUTOMATION — Test Email',
+          subject: 'Akira Precision Automation LLP — Test Email',
         },
       });
 

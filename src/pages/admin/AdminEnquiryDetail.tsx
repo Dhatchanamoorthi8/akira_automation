@@ -149,7 +149,7 @@ export const AdminEnquiryDetail: React.FC = () => {
 
     const res = await emailMessageService.sendAdminReply({
       enquiryId: enquiry.id,
-      subject: emailSubject.trim() || `Re: [AKIRA AUTOMATION] ${enquiry.subject || 'Precision Metrology Inquiry'}`,
+      subject: emailSubject.trim() || `Re: [Akira Precision Automation LLP] ${enquiry.subject || 'Precision Metrology Inquiry'}`,
       message: emailMessage.trim(),
     });
 
@@ -334,7 +334,7 @@ export const AdminEnquiryDetail: React.FC = () => {
   return (
     <>
       <SEOHead
-        title={`Enquiry: ${enquiry.name} | AKIRA AUTOMATION Admin`}
+        title={`Enquiry: ${enquiry.name} | Akira Precision Automation LLP Admin`}
         description={`Customer dossier and communication timeline for ${enquiry.name}.`}
       />
 
@@ -379,7 +379,7 @@ export const AdminEnquiryDetail: React.FC = () => {
               <button
                 type="button"
                 onClick={() => {
-                  setEmailSubject(`Re: [AKIRA AUTOMATION] ${enquiry.subject || enquiry.specific_product || 'Precision Metrology Inquiry'}`);
+                  setEmailSubject(`Re: [Akira Precision Automation LLP] ${enquiry.subject || enquiry.specific_product || 'Precision Metrology Inquiry'}`);
                   setEmailMessage('');
                   setEmailFeedback(null);
                   setIsEmailModalOpen(true);
@@ -535,7 +535,7 @@ export const AdminEnquiryDetail: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => {
-                        setEmailSubject(`Re: [AKIRA AUTOMATION] ${enquiry.subject || enquiry.specific_product || 'Precision Metrology Inquiry'}`);
+                        setEmailSubject(`Re: [Akira Precision Automation LLP] ${enquiry.subject || enquiry.specific_product || 'Precision Metrology Inquiry'}`);
                         setEmailMessage('');
                         setEmailFeedback(null);
                         setIsEmailModalOpen(true);
@@ -565,7 +565,7 @@ export const AdminEnquiryDetail: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => {
-                        setEmailSubject(`Re: [AKIRA AUTOMATION] ${enquiry.subject || enquiry.specific_product || 'Precision Metrology Inquiry'}`);
+                        setEmailSubject(`Re: [Akira Precision Automation LLP] ${enquiry.subject || enquiry.specific_product || 'Precision Metrology Inquiry'}`);
                         setEmailMessage('');
                         setEmailFeedback(null);
                         setIsEmailModalOpen(true);
@@ -1184,9 +1184,9 @@ export const AdminEnquiryDetail: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => {
-                        setEmailSubject(`Re: [AKIRA AUTOMATION] Technical Drawing & Tolerance Request - #${enquiry.id.slice(0, 8)}`);
+                        setEmailSubject(`Re: [Akira Precision Automation LLP] Technical Drawing & Tolerance Request - #${enquiry.id.slice(0, 8)}`);
                         setEmailMessage(
-                          `Dear ${enquiry.name},\n\nThank you for reaching out to AKIRA AUTOMATION regarding your metrology requirement.\n\nTo ensure we provide the most precise gauging recommendation and quote for your application, could you kindly share:\n1. 2D component drawing with dimensional tolerances.\n2. Checking parameters (Bore diameter, taper, ovality, etc.).\n3. Target production cycle time / inspection throughput.\n\nLooking forward to your reply.\n\nRegards,\nAKIRA AUTOMATION Engineering Team`
+                          `Dear ${enquiry.name},\n\nThank you for reaching out to Akira Precision Automation LLP regarding your metrology requirement.\n\nTo ensure we provide the most precise gauging recommendation and quote for your application, could you kindly share:\n1. 2D component drawing with dimensional tolerances.\n2. Checking parameters (Bore diameter, taper, ovality, etc.).\n3. Target production cycle time / inspection throughput.\n\nLooking forward to your reply.\n\nRegards,\nAkira Precision Automation LLP Engineering Team`
                         );
                       }}
                       className="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-medium border border-slate-200 transition-colors"
@@ -1196,9 +1196,9 @@ export const AdminEnquiryDetail: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => {
-                        setEmailSubject(`Re: [AKIRA AUTOMATION] Formal Proposal & Commercial Discussion - #${enquiry.id.slice(0, 8)}`);
+                        setEmailSubject(`Re: [Akira Precision Automation LLP] Formal Proposal & Commercial Discussion - #${enquiry.id.slice(0, 8)}`);
                         setEmailMessage(
-                          `Dear ${enquiry.name},\n\nThank you for your interest in AKIRA AUTOMATION precision inspection systems.\n\nWe have reviewed your requirements for ${enquiry.specific_product || enquiry.product_category || 'industrial gauges'} and our applications team is currently compiling your formal technical proposal.\n\nCould we schedule a brief 15-minute discussion to review master setting ring specifications and calibration certificate preferences?\n\nRegards,\nAKIRA AUTOMATION Sales & Applications`
+                          `Dear ${enquiry.name},\n\nThank you for your interest in Akira Precision Automation LLP precision inspection systems.\n\nWe have reviewed your requirements for ${enquiry.specific_product || enquiry.product_category || 'industrial gauges'} and our applications team is currently compiling your formal technical proposal.\n\nCould we schedule a brief 15-minute discussion to review master setting ring specifications and calibration certificate preferences?\n\nRegards,\nAkira Precision Automation LLP Sales & Applications`
                         );
                       }}
                       className="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-medium border border-slate-200 transition-colors"
@@ -1208,9 +1208,9 @@ export const AdminEnquiryDetail: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => {
-                        setEmailSubject(`Re: [AKIRA AUTOMATION] Technical Video Demonstration - #${enquiry.id.slice(0, 8)}`);
+                        setEmailSubject(`Re: [Akira Precision Automation LLP] Technical Video Demonstration - #${enquiry.id.slice(0, 8)}`);
                         setEmailMessage(
-                          `Dear ${enquiry.name},\n\nWe would be delighted to demonstrate our ${enquiry.specific_product || 'electronic column & multi-jet gauging system'} live via a video consultation.\n\nPlease let us know your availability over the coming days for a 20-minute live demonstration of measurement repeatability and SPC data export.\n\nRegards,\nAKIRA AUTOMATION Metrology Team`
+                          `Dear ${enquiry.name},\n\nWe would be delighted to demonstrate our ${enquiry.specific_product || 'electronic column & multi-jet gauging system'} live via a video consultation.\n\nPlease let us know your availability over the coming days for a 20-minute live demonstration of measurement repeatability and SPC data export.\n\nRegards,\nAkira Precision Automation LLP Metrology Team`
                         );
                       }}
                       className="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-medium border border-slate-200 transition-colors"

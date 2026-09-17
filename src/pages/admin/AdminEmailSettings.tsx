@@ -140,7 +140,7 @@ export const AdminEmailSettings: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="Email System & Domain Settings | AKIRA AUTOMATION Admin"
+        title="Email System & Domain Settings | Akira Precision Automation LLP Admin"
         description="Production email system configuration, Resend domain verification, and delivery testing."
       />
 
@@ -483,7 +483,7 @@ export const AdminEmailSettings: React.FC = () => {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-slate-500">Subject:</span>
-                    <span className="font-semibold text-slate-800 truncate max-w-[180px]">AKIRA AUTOMATION — Test Email</span>
+                    <span className="font-semibold text-slate-800 truncate max-w-[180px]">Akira Precision Automation LLP — Test Email</span>
                   </div>
                 </div>
 

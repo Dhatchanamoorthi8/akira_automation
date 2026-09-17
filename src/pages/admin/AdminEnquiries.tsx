@@ -352,7 +352,7 @@ export const AdminEnquiries: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="People | AKIRA AUTOMATION CRM"
+        title="People | Akira Precision Automation LLP CRM"
         description="Enterprise CRM people and customer enquiries directory with precision metrology RFQs and lead management."
       />
 

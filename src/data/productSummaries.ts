@@ -287,7 +287,7 @@ export const productSummaries: ProductSummary[] = [
     categorySlug: "instruments",
     tagline: "All Type of Instruments: Coating Thickness, Slip Gauges, Magnetic Stands, Calipers & Balances",
     image: "/assets/company/inspection-workbench.webp",
-    description: "AKIRA AUTOMATION supplies all types of standard precision measuring instruments, calibration standards, and metrology accessories. Sourced to deliver dependable accuracy across shop-floor and standards room environments.",
+    description: "Akira Precision Automation LLP supplies all types of standard precision measuring instruments, calibration standards, and metrology accessories. Sourced to deliver dependable accuracy across shop-floor and standards room environments.",
     highlights: [
       "All type of Instruments, coating thickness, Slip gauge, magnetic stands etc.",
       "Digital Coating Thickness Gauge (60-140 rdg/min, IP54, 100,000 memory, C1/C2 probes)",
@@ -308,7 +308,7 @@ export const productSummaries: ProductSummary[] = [
     categorySlug: "fixtures",
     tagline: "Custom-Engineered Precision Gauging, Workholding & Multi-Feature Inspection Fixtures",
     image: "/assets/fixtures/multi-pin-gauging-fixture.webp",
-    description: "AKIRA AUTOMATION specializes in custom-built inspection fixtures, assembly tooling, and workholding solutions tailored to complex workpiece geometries. Designed and manufactured to withstand rigorous shop-floor production conditions while delivering repeatable micron-level accuracy.",
+    description: "Akira Precision Automation LLP specializes in custom-built inspection fixtures, assembly tooling, and workholding solutions tailored to complex workpiece geometries. Designed and manufactured to withstand rigorous shop-floor production conditions while delivering repeatable micron-level accuracy.",
     highlights: [
       "All type of special gauges & Fixtures",
       "Custom multi-pin dimensional inspection fixtures",

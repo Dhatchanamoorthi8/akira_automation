@@ -75,7 +75,7 @@ describe('Email Templates', () => {
 
     expect(email.subject).toContain('[New RFQ]');
     expect(email.subject).toContain('Tata Motors Limited');
-    expect(email.html).toContain('AKIRA AUTOMATION');
+    expect(email.html).toContain('AKIRA PRECISION AUTOMATION LLP');
     expect(email.html).toContain('Rajesh Sharma');
     expect(email.html).toContain('Tata Motors Limited');
     expect(email.html).toContain('rajesh.sharma@tatamotors.com');
@@ -87,7 +87,7 @@ describe('Email Templates', () => {
   it('2. renders new enquiry customer acknowledgement email with reference ID', () => {
     const email = renderNewEnquiryCustomerEmail(mockEnquiryData);
 
-    expect(email.subject).toContain('Acknowledgement: AKIRA AUTOMATION');
+    expect(email.subject).toContain('Acknowledgement: Akira Precision Automation LLP');
     expect(email.html).toContain('Dear Rajesh Sharma');
     expect(email.html).toContain('12345678');
     expect(email.html).toContain('Multi-Jet Air Plug Gauge');
@@ -97,13 +97,13 @@ describe('Email Templates', () => {
   it('3. renders enquiry assigned email with staff name and customer details', () => {
     const email = renderEnquiryAssignedEmail(mockEnquiryAssignedData);
 
-    expect(email.subject).toContain('New Enquiry Task Assigned - AKIRA AUTOMATION');
+    expect(email.subject).toContain('New Enquiry Task Assigned - Akira Precision Automation LLP');
     expect(email.html).toContain('Hello Arun Kumar');
     expect(email.html).toContain('Rajesh Sharma');
     expect(email.html).toContain('Tata Motors Limited');
     expect(email.html).toContain('/admin/login?redirect=/admin/enquiries/12345678-abcd-ef00-1234-567890abcdef');
     expect(email.text).toContain('Arun Kumar');
-    expect(email.text).toContain('New Enquiry Task Assigned - AKIRA AUTOMATION');
+    expect(email.text).toContain('New Enquiry Task Assigned - Akira Precision Automation LLP');
   });
 
   it('4. renders followup assigned email with schedule and task type', () => {
@@ -158,7 +158,7 @@ describe('Email Templates', () => {
     expect(email.html).toContain('Senior Metrology Applications Engineer');
     expect(email.html).toContain('support@akiraautomation.com');
     expect(email.text).toContain('Rajesh Sharma');
-    expect(email.text).toContain('AKIRA AUTOMATION PRIVATE LIMITED');
+    expect(email.text).toContain('Akira Precision Automation LLP');
   });
 
   it('8. renders system diagnostic test email with environment and provider metadata', () => {
@@ -171,12 +171,12 @@ describe('Email Templates', () => {
 
     const email = renderTestEmail(mockTestData);
 
-    expect(email.subject).toBe('AKIRA AUTOMATION — Test Email');
+    expect(email.subject).toBe('Akira Precision Automation LLP — Test Email');
     expect(email.html).toContain('Operational Diagnostic Test');
     expect(email.html).toContain('admin@akiraautomation.com');
     expect(email.html).toContain('send-email-notification');
     expect(email.html).toContain('Resend (api.resend.com)');
-    expect(email.text).toContain('AKIRA AUTOMATION — Test Email');
+    expect(email.text).toContain('AKIRA PRECISION AUTOMATION LLP — Test Email');
     expect(email.text).toContain('admin@akiraautomation.com');
   });
 });

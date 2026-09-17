@@ -166,7 +166,7 @@ describe('EmailMessageService', () => {
         body: {
           eventType: 'test',
           recipient: 'admin@akiraautomation.com',
-          subject: 'AKIRA AUTOMATION — Test Email',
+          subject: 'Akira Precision Automation LLP — Test Email',
         },
       });
       expect(res.success).toBe(true);

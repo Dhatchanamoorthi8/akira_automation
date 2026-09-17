@@ -40,7 +40,7 @@ serve(async (req: Request) => {
 
     const fromEmail = (typeof emailData.from === 'string' ? emailData.from : emailData.from?.email || emailData.from?.address || '').trim();
     const toEmail = Array.isArray(emailData.to) ? emailData.to.join(', ') : (emailData.to?.email || emailData.to || '').trim();
-    const subject = (emailData.subject || 'Re: AKIRA AUTOMATION Enquiry').trim();
+    const subject = (emailData.subject || 'Re: Akira Precision Automation LLP Enquiry').trim();
     const textBody = emailData.text || '';
     const htmlBody = emailData.html || null;
     const providerMessageId = emailData.id || emailData.message_id || payload.id || null;

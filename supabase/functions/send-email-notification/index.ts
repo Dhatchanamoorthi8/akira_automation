@@ -75,7 +75,7 @@ serve(async (req: Request) => {
     const emailFrom =
       configuredFrom && !configuredFrom.includes("onboarding@resend.dev")
         ? configuredFrom
-        : "AKIRA AUTOMATION <notifications@akiraautomation.com>";
+        : "Akira Precision Automation LLP <notifications@akiraautomation.com>";
 
     // Primary admin notification mailbox
     const adminRecipient = (
@@ -238,7 +238,7 @@ serve(async (req: Request) => {
     }
 
     // Header injection prevention: sanitize subject
-    let sanitizedSubject = (subject || "Technical Enquiry — AKIRA AUTOMATION")
+    let sanitizedSubject = (subject || "Technical Enquiry — Akira Precision Automation LLP")
       .replace(/[\r\n]/g, " ")
       .trim();
     if (sanitizedSubject.length > 200) {
@@ -337,7 +337,7 @@ serve(async (req: Request) => {
 <body style="margin:0;padding:24px;background:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,sans-serif;color:#1e293b;">
   <div style="max-width:600px;margin:0 auto;background:#fff;border-radius:12px;border:1px solid #e2e8f0;overflow:hidden;">
     <div style="background:#0f172a;padding:24px 32px;border-bottom:3px solid #2563eb;">
-      <h1 style="margin:0;font-size:20px;color:#fff;font-weight:700;">AKIRA AUTOMATION</h1>
+      <h1 style="margin:0;font-size:20px;color:#fff;font-weight:700;">AKIRA PRECISION AUTOMATION LLP</h1>
       <p style="margin:4px 0 0 0;font-size:11px;color:#94a3b8;letter-spacing:0.08em;font-weight:600;">PRECISION • INNOVATION • SMART SOLUTIONS</p>
     </div>
     <div style="padding:32px;">
@@ -346,7 +346,7 @@ serve(async (req: Request) => {
       <p style="margin:20px 0 0;font-size:13px;color:#64748b;">You can reply directly to this email to continue the technical discussion.</p>
     </div>
     <div style="background:#f8fafc;border-top:1px solid #e2e8f0;padding:20px 32px;font-size:12px;color:#64748b;">
-      <p style="margin:0 0 4px;"><strong>AKIRA AUTOMATION PRIVATE LIMITED</strong></p>
+      <p style="margin:0 0 4px;"><strong>Akira Precision Automation LLP</strong></p>
       <p style="margin:0;color:#94a3b8;">Multi-Jet Air Gauging, Electronic Gauging Columns & Precision Metrology Systems</p>
     </div>
   </div>
@@ -360,9 +360,9 @@ serve(async (req: Request) => {
           ? recipient
           : [recipient]
         : [adminRecipient];
-      sanitizedSubject = sanitizedSubject || "AKIRA AUTOMATION — Test Email";
+      sanitizedSubject = sanitizedSubject || "Akira Precision Automation LLP — Test Email";
       if (!text && !html) {
-        text = `This is a test email from the AKIRA AUTOMATION email system.\n\nTimestamp: ${new Date().toISOString()}\nEnvironment: Production\nEdge Function: send-email-notification`;
+        text = `This is a test email from the Akira Precision Automation LLP email system.\n\nTimestamp: ${new Date().toISOString()}\nEnvironment: Production\nEdge Function: send-email-notification`;
       }
     } else {
       // Staff notifications (enquiry_assigned, followup_assigned, followup_reminder)

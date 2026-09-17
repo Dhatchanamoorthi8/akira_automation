@@ -230,8 +230,8 @@ export const AdminProductImages: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="Product Image Library | AKIRA AUTOMATION"
-        description="Dedicated product image and CAD diagram manager for AKIRA AUTOMATION precision metrology catalogue."
+        title="Product Image Library | Akira Precision Automation LLP"
+        description="Dedicated product image and CAD diagram manager for Akira Precision Automation LLP precision metrology catalogue."
       />
 
       <div className="space-y-4 max-w-7xl mx-auto pb-12 font-sans text-gray-900">

@@ -16,6 +16,7 @@ import {
   Award
 } from 'lucide-react';
 import { useEnquiry } from '../../context/EnquiryContext';
+import { company } from '../../config/company';
 import { companyData } from '../../data/company';
 import { useCompanyEmails } from '../../hooks/useCompanyEmails';
 import { solutions } from '../../data/solutions';
@@ -161,10 +162,10 @@ export const Header: React.FC = () => {
       }`}>
         <div className="industrial-container flex items-center justify-between">
           {/* Logo / Brand Area */}
-          <Link to="/" className="flex items-center group focus:outline-none focus:ring-2 focus:ring-industrial-primary rounded-lg py-0.5 px-0.5 transition-opacity hover:opacity-95" aria-label="AKIRA AUTOMATION Home">
+          <Link to="/" className="flex items-center group focus:outline-none focus:ring-2 focus:ring-industrial-primary rounded-lg py-0.5 px-0.5 transition-opacity hover:opacity-95" aria-label={`${company.name} Home`}>
             <img
               src="/assets/company/akira-automation-logo.jpeg"
-              alt="AKIRA AUTOMATION logo"
+              alt={company.logoAlt}
               className="h-8 sm:h-11 md:h-12 w-auto object-contain max-w-[165px] sm:max-w-[300px] transition-transform duration-300 group-hover:scale-[1.01]"
               loading="eager"
             />
@@ -407,7 +408,7 @@ export const Header: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <img
                       src="/assets/company/akira-automation-logo.jpeg"
-                      alt="AKIRA AUTOMATION"
+                      alt={company.name}
                       className="h-8 w-auto object-contain"
                     />
                   </div>

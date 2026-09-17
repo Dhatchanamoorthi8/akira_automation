@@ -232,7 +232,7 @@ export const StaffWorkspace: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="Staff Workspace | AKIRA AUTOMATION"
+        title="Staff Workspace | Akira Precision Automation LLP"
         description="Assigned tasks, client inquiries, and follow-up management for sales engineers."
         noIndex={true}
       />

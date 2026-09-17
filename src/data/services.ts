@@ -46,7 +46,7 @@ export const servicesData: ServiceItem[] = [
     description: "Rapid technical assistance and field support to prevent production downtime and maintain line throughput.",
     iconName: "Zap",
     details: [
-      "Direct technical hotline access to AKIRA AUTOMATION engineering specialists",
+      "Direct technical hotline access to Akira Precision Automation LLP engineering specialists",
       "Prompt dispatch of service personnel for urgent shop-floor breakdowns",
       "Rapid turnaround on replacement air plug gauges, air ring gauges, and carbide wear tips",
       "Preventive maintenance scheduling for high-duty multi-gauging stations",

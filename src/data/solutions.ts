@@ -226,7 +226,7 @@ export const solutions: Solution[] = [
     slug: "special-gauges",
     title: "Special Gauges & Custom Fixtures",
     shortDescription: "Customized engineering solutions tailored to complex geometric profiles, datum structures, and multi-feature parts.",
-    fullDescription: "AKIRA AUTOMATION specializes in all types of special gauges and fixtures. Designed to inspect intricate automotive and industrial components where standard gauges cannot reach.",
+    fullDescription: "Akira Precision Automation LLP specializes in all types of special gauges and fixtures. Designed to inspect intricate automotive and industrial components where standard gauges cannot reach.",
     iconName: "Wrench",
     image: "/assets/fixtures/multi-pin-gauging-fixture.webp",
     features: [
@@ -247,7 +247,7 @@ export const solutions: Solution[] = [
     slug: "assembly-work-holding",
     title: "Assembly & Work Holding",
     shortDescription: "Manufacturing support solutions, precision work-holding fixtures, and assembly tooling.",
-    fullDescription: "AKIRA AUTOMATION provides comprehensive assembly and work-holding solutions that maintain workpiece rigidity and datum alignment during precision assembly and inspection operations.",
+    fullDescription: "Akira Precision Automation LLP provides comprehensive assembly and work-holding solutions that maintain workpiece rigidity and datum alignment during precision assembly and inspection operations.",
     iconName: "Anchor",
     image: "/assets/solutions/fixture-precision-spindle.webp",
     features: [

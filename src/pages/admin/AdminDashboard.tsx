@@ -141,8 +141,8 @@ export const AdminDashboard: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="Dashboard | AKIRA AUTOMATION"
-        description="Executive management and real-time CRM intelligence console for AKIRA AUTOMATION precision metrology systems."
+        title="Dashboard | Akira Precision Automation LLP"
+        description="Executive management and real-time CRM intelligence console for Akira Precision Automation LLP precision metrology systems."
       />
 
       <div className="space-y-6 max-w-7xl mx-auto w-full min-w-0">

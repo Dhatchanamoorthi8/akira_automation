@@ -29,7 +29,7 @@ export const Hero: React.FC = () => {
       src: "/assets/hero/desktop-hero-precision-gauging.webp",
       title: "Automated Multi-Gauging & Metrology Inspection Station",
       category: "Turnkey Metrology System",
-      description: "AKIRA AUTOMATION precision CNC station featuring automated touch-trigger probing, multi-channel electronic readouts, and sub-micron repeatability for OEM manufacturing.",
+      description: "Akira Precision Automation LLP precision CNC station featuring automated touch-trigger probing, multi-channel electronic readouts, and sub-micron repeatability for OEM manufacturing.",
       badge: "OEM Cleanroom Standard"
     });
   };
@@ -50,7 +50,7 @@ export const Hero: React.FC = () => {
       <div className="lg:hidden absolute inset-0 overflow-hidden pointer-events-none z-0">
         <img
           src="/assets/hero/mobile-hero-precision-gauging.webp"
-          alt="AKIRA AUTOMATION Precision Gauging Station"
+          alt="Akira Precision Automation LLP Precision Gauging Station"
           className="w-full h-full object-cover object-[right_top] opacity-90 filter contrast-105"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[#040d1a] via-[#040d1a]/80 via-45% to-transparent" />
@@ -61,7 +61,7 @@ export const Hero: React.FC = () => {
       <div className="hidden lg:block absolute right-0 top-0 bottom-0 w-[58%] xl:w-[55%] 2xl:w-[52%] overflow-hidden pointer-events-none z-0">
         <img
           src="/assets/hero/desktop-hero-precision-gauging.webp"
-          alt="AKIRA AUTOMATION Precision Gauging Station"
+          alt="Akira Precision Automation LLP Precision Gauging Station"
           className="w-full h-full object-cover object-[center_right] filter contrast-105"
         />
         {/* Seamless gradient fade into dark navy left space */}

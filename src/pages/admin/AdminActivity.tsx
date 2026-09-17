@@ -228,7 +228,7 @@ export const AdminActivity: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="System Activity Logs | AKIRA AUTOMATION Admin"
+        title="System Activity Logs | Akira Precision Automation LLP Admin"
         description="Immutable audit trail of enquiry lifecycle events, CRM touchpoints, auth, and catalogue changes."
       />
 

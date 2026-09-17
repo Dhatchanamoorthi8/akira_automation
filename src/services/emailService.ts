@@ -32,7 +32,7 @@ export interface EmailServiceConfig {
 }
 
 /**
- * Enterprise Email Notification Service for AKIRA AUTOMATION.
+ * Enterprise Email Notification Service for Akira Precision Automation LLP.
  * Dispatches transactional notifications via Supabase Edge Function (`send-email-notification`).
  * Keeps all API keys (Resend, SMTP) securely server-side with zero client-side secrets.
  */

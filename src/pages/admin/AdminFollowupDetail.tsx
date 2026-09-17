@@ -220,7 +220,7 @@ export const AdminFollowupDetail: React.FC = () => {
   return (
     <>
       <SEOHead
-        title={`Follow-up: ${followup.title || 'Task'} | AKIRA AUTOMATION`}
+        title={`Follow-up: ${followup.title || 'Task'} | Akira Precision Automation LLP`}
         description="Detailed CRM follow-up record and customer communication history."
       />
 

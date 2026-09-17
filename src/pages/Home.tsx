@@ -25,9 +25,9 @@ export const Home: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="AKIRA AUTOMATION | Precision • Innovation • Smart Solutions"
-        description="AKIRA AUTOMATION provides high-precision gauging fixtures, automated multi-gauging stations, air gauges, digital DRO displays, and work-holding solutions for manufacturing."
-        keywords="AKIRA AUTOMATION, Precision Gauging India, Multi Gauging Solutions, Air Gauging, Air Plug Gauge, Air Ring Gauge, Inspection Fixtures, Industrial Metrology"
+        title="Akira Precision Automation LLP | Precision • Innovation • Smart Solutions"
+        description="Akira Precision Automation LLP provides high-precision gauging fixtures, automated multi-gauging stations, air gauges, digital DRO displays, and work-holding solutions for manufacturing."
+        keywords="Akira Precision Automation LLP, AKIRA PRECISION AUTOMATION LLP, Precision Gauging India, Multi Gauging Solutions, Air Gauging, Air Plug Gauge, Air Ring Gauge, Inspection Fixtures, Industrial Metrology"
         canonicalPath="/"
         structuredData={homeSchemas}
       />

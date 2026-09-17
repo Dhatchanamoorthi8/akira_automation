@@ -291,14 +291,14 @@ function wrapHtmlTemplate(title: string, contentHtml: string): string {
     <div class="wrapper">
       <div class="accent-bar"></div>
       <div class="header">
-        <h1>AKIRA AUTOMATION</h1>
+        <h1>AKIRA PRECISION AUTOMATION LLP</h1>
         <p>PRECISION &bull; INNOVATION &bull; SMART SOLUTIONS</p>
       </div>
       <div class="content">
         ${contentHtml}
       </div>
       <div class="footer">
-        <p><strong>AKIRA AUTOMATION PRIVATE LIMITED</strong></p>
+        <p><strong>Akira Precision Automation LLP</strong></p>
         <p>Precision Metrology, Multi-Jet Air Gauging & Electronic Inspection Systems</p>
         <p class="footer-slogan">Automating Today... Building Tomorrow...</p>
       </div>
@@ -325,7 +325,7 @@ export function renderNewEnquiryAdminEmail(data: NewEnquiryEmailData): {
     `
     <span class="badge badge-blue">Inbound Technical RFQ</span>
     <h2>New Customer Enquiry Submitted</h2>
-    <p>A new engineering RFQ has been submitted via the <strong>AKIRA AUTOMATION</strong> web portal and requires initial technical qualification.</p>
+    <p>A new engineering RFQ has been submitted via the <strong>Akira Precision Automation LLP</strong> web portal and requires initial technical qualification.</p>
 
     <div class="card">
       <table class="spec-table" role="presentation" cellpadding="0" cellspacing="0">
@@ -374,8 +374,8 @@ ${data.message}
   );
 
   const text = `
-NEW TECHNICAL RFQ RECEIVED — AKIRA AUTOMATION
-=============================================
+NEW TECHNICAL RFQ RECEIVED — AKIRA PRECISION AUTOMATION LLP
+===========================================================
 A new customer enquiry has been registered:
 
 Customer: ${data.name}
@@ -400,7 +400,7 @@ export function renderNewEnquiryCustomerEmail(data: NewEnquiryEmailData): {
   html: string;
   text: string;
 } {
-  const subject = `Acknowledgement: AKIRA AUTOMATION Enquiry Received (${data.specificProduct || data.productCategory || 'Precision Gauging'})`;
+  const subject = `Acknowledgement: Akira Precision Automation LLP Enquiry Received (${data.specificProduct || data.productCategory || 'Precision Gauging'})`;
 
   const html = wrapHtmlTemplate(
     'Enquiry Received',
@@ -441,17 +441,17 @@ ${data.message}
     <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #EDF2F7; font-size: 13px; color: #475569;">
       Best Regards,<br />
       <strong>Technical Applications Engineering Team</strong><br />
-      <span style="color: #0284C7; font-weight: 600;">AKIRA AUTOMATION PRIVATE LIMITED</span>
+      <span style="color: #0284C7; font-weight: 600;">Akira Precision Automation LLP</span>
     </div>
     `
   );
 
   const text = `
-ENQUIRY ACKNOWLEDGEMENT — AKIRA AUTOMATION
-=========================================
+ENQUIRY ACKNOWLEDGEMENT — AKIRA PRECISION AUTOMATION LLP
+========================================================
 Dear ${data.name},
 
-Thank you for reaching out to AKIRA AUTOMATION. We have received your technical requirement:
+Thank you for reaching out to Akira Precision Automation LLP. We have received your technical requirement:
 Reference ID: ${data.enquiryId.slice(0, 8)}
 Product: ${data.specificProduct || data.productCategory || 'Precision Metrology'}
 
@@ -477,7 +477,7 @@ export function renderEnquiryAssignedEmail(data: EnquiryAssignedEmailData): {
   const assignedBy = data.assignedBy || 'AKIRA Operations Admin';
   const customerCompany = data.customerCompany || 'Direct Client';
 
-  const subject = `New Enquiry Task Assigned - AKIRA AUTOMATION`;
+  const subject = `New Enquiry Task Assigned - Akira Precision Automation LLP`;
 
   const html = wrapHtmlTemplate(
     'New Enquiry Task Assigned',
@@ -531,14 +531,14 @@ ${data.messageSnippet}
 
     <p style="margin-top: 24px; font-size: 13px; color: #475569;">
       Regards,<br />
-      <strong>AKIRA AUTOMATION</strong>
+      <strong>Akira Precision Automation LLP</strong>
     </p>
     `
   );
 
   const text = `
-New Enquiry Task Assigned - AKIRA AUTOMATION
-=============================================
+New Enquiry Task Assigned - Akira Precision Automation LLP
+==========================================================
 
 Hello ${data.assignedStaffName},
 
@@ -567,7 +567,7 @@ Login:
 ${loginUrl}
 
 Regards,
-AKIRA AUTOMATION
+Akira Precision Automation LLP
 `.trim();
 
   return { subject, html, text };
@@ -628,8 +628,8 @@ export function renderFollowupAssignedEmail(data: FollowupAssignedEmailData): {
   );
 
   const text = `
-FOLLOW-UP ASSIGNED — AKIRA AUTOMATION
-====================================
+FOLLOW-UP ASSIGNED — AKIRA PRECISION AUTOMATION LLP
+===================================================
 Hello ${data.assignedStaffName},
 
 Follow-up scheduled for ${data.customerName}:
@@ -696,8 +696,8 @@ export function renderFollowupReminderEmail(data: FollowupReminderEmailData): {
   );
 
   const text = `
-${badgeText} — AKIRA AUTOMATION
-==============================
+${badgeText} — AKIRA PRECISION AUTOMATION LLP
+=============================================
 Hello ${data.assignedStaffName},
 
 Follow-up for ${data.customerName}:
@@ -721,15 +721,15 @@ export function renderAdminReplyEmail(data: AdminReplyEmailData): {
   const portalUrl = data.portalUrl || DEFAULT_PORTAL_URL;
   const replySubject = data.subject.startsWith('Re:')
     ? data.subject
-    : `Re: ${data.subject || 'AKIRA AUTOMATION Enquiry'}`;
+    : `Re: ${data.subject || 'Akira Precision Automation LLP Enquiry'}`;
 
   const html = wrapHtmlTemplate(
     replySubject,
     `
     <span class="badge badge-blue">Customer Support / Technical Advisory</span>
-    <h2>Technical Response from AKIRA AUTOMATION</h2>
+    <h2>Technical Response from Akira Precision Automation LLP</h2>
     <p>Dear ${data.customerName},</p>
-    <p>Thank you for reaching out to AKIRA AUTOMATION. Our engineering and applications team has reviewed your enquiry.</p>
+    <p>Thank you for reaching out to Akira Precision Automation LLP. Our engineering and applications team has reviewed your enquiry.</p>
 
     <div class="card">
       <table class="spec-table" role="presentation" cellpadding="0" cellspacing="0">
@@ -763,15 +763,15 @@ ${data.message}
     <div style="margin-top: 28px; padding-top: 18px; border-top: 1px solid #EDF2F7; font-size: 13px; color: #475569;">
       <strong style="color: #0F172A; font-size: 14px;">${data.senderName}</strong><br />
       <span style="color: #64748B;">${data.senderRole || 'Technical Applications Team'}</span><br />
-      <strong style="color: #0284C7;">AKIRA AUTOMATION PRIVATE LIMITED</strong><br />
+      <strong style="color: #0284C7;">Akira Precision Automation LLP</strong><br />
       <span style="font-size: 12px; color: #94A3B8;">Web: <a href="${portalUrl}" style="color: #0284C7; text-decoration: none;">akiraautomation.com</a></span>
     </div>
     `
   );
 
   const text = `
-AKIRA AUTOMATION — TECHNICAL RESPONSE
-======================================
+AKIRA PRECISION AUTOMATION LLP — TECHNICAL RESPONSE
+===================================================
 Dear ${data.customerName},
 
 Enquiry Reference: #${data.enquiryId.slice(0, 8).toUpperCase()}
@@ -785,7 +785,7 @@ You may reply directly to this email or reach us at support@akiraautomation.com.
 
 Regards,
 ${data.senderName}
-AKIRA AUTOMATION PRIVATE LIMITED
+Akira Precision Automation LLP
 Precision Metrology & Industrial Inspection Systems
 https://akiraautomation.com
 `.trim();
@@ -801,7 +801,7 @@ export function renderTestEmail(data: TestEmailData): {
   html: string;
   text: string;
 } {
-  const subject = 'AKIRA AUTOMATION — Test Email';
+  const subject = 'Akira Precision Automation LLP — Test Email';
   const timestamp = data.timestamp || new Date().toISOString();
 
   const html = wrapHtmlTemplate(
@@ -809,7 +809,7 @@ export function renderTestEmail(data: TestEmailData): {
     `
     <span class="badge badge-emerald">Operational Diagnostic Test</span>
     <h2>AKIRA Email Delivery Test</h2>
-    <p>This is a test email dispatched from the <strong>AKIRA AUTOMATION</strong> email delivery engine to confirm live provider acceptance and end-to-end routing.</p>
+    <p>This is a test email dispatched from the <strong>Akira Precision Automation LLP</strong> email delivery engine to confirm live provider acceptance and end-to-end routing.</p>
 
     <div class="card" style="border-left-color: #059669;">
       <table class="spec-table" role="presentation" cellpadding="0" cellspacing="0">
@@ -851,9 +851,9 @@ export function renderTestEmail(data: TestEmailData): {
   );
 
   const text = `
-AKIRA AUTOMATION — Test Email
-==============================
-This is a test email from the AKIRA AUTOMATION email system.
+AKIRA PRECISION AUTOMATION LLP — Test Email
+===========================================
+This is a test email from the Akira Precision Automation LLP email system.
 
 Recipient: ${data.recipientEmail}
 Triggered By: ${data.triggeredBy}
