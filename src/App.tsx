@@ -1,5 +1,6 @@
 import React, { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
 import { EnquiryModal } from './components/common/EnquiryModal';
@@ -138,6 +139,7 @@ export const App: React.FC = () => {
           <Router>
             <ScrollToTop />
             <AppShell />
+            <Analytics />
           </Router>
         </ImageViewerProvider>
       </EnquiryProvider>
