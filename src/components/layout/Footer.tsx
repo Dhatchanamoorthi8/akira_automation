@@ -173,10 +173,16 @@ export const Footer: React.FC = () => {
             <p>
               © {new Date().getFullYear()} <strong>{company.name}</strong>. All rights reserved.
             </p>
-            <div className="flex items-center gap-6 text-slate-400">
-              <span>{company.slogan}</span>
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-slate-400">
+              <Link to="/privacy-policy" className="hover:text-white transition-colors">
+                Privacy Policy
+              </Link>
               <span>•</span>
-              <span>Technical Support • Quality Service • Team Spirit</span>
+              <Link to="/terms" className="hover:text-white transition-colors">
+                Terms of Service
+              </Link>
+              <span>•</span>
+              <span className="hidden md:inline">{company.slogan}</span>
             </div>
           </div>
         </Reveal>

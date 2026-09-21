@@ -16,15 +16,31 @@ const SITE_URL = 'https://akiraautomation.com';
 
 // 1. Static Core Public Routes
 const coreRoutes = [
-  { loc: `${SITE_URL}/`, priority: '1.0', changefreq: 'weekly' },
-  { loc: `${SITE_URL}/about`, priority: '0.8', changefreq: 'monthly' },
-  { loc: `${SITE_URL}/solutions`, priority: '0.9', changefreq: 'weekly' },
-  { loc: `${SITE_URL}/products`, priority: '0.9', changefreq: 'weekly' },
-  { loc: `${SITE_URL}/industries`, priority: '0.8', changefreq: 'monthly' },
-  { loc: `${SITE_URL}/services`, priority: '0.8', changefreq: 'monthly' },
-  { loc: `${SITE_URL}/why-choose-us`, priority: '0.8', changefreq: 'monthly' },
-  { loc: `${SITE_URL}/contact`, priority: '0.8', changefreq: 'monthly' },
+  { loc: `${SITE_URL}/`, priority: '1.0', changefreq: 'weekly', sourceFile: 'src/pages/Home.tsx' },
+  { loc: `${SITE_URL}/about`, priority: '0.8', changefreq: 'monthly', sourceFile: 'src/pages/About.tsx' },
+  { loc: `${SITE_URL}/solutions`, priority: '0.9', changefreq: 'weekly', sourceFile: 'src/data/solutions.ts' },
+  { loc: `${SITE_URL}/products`, priority: '0.9', changefreq: 'weekly', sourceFile: 'src/data/products.ts' },
+  { loc: `${SITE_URL}/industries`, priority: '0.8', changefreq: 'monthly', sourceFile: 'src/pages/Industries.tsx' },
+  { loc: `${SITE_URL}/services`, priority: '0.8', changefreq: 'monthly', sourceFile: 'src/pages/Services.tsx' },
+  { loc: `${SITE_URL}/why-choose-us`, priority: '0.8', changefreq: 'monthly', sourceFile: 'src/pages/WhyChooseUs.tsx' },
+  { loc: `${SITE_URL}/contact`, priority: '0.8', changefreq: 'monthly', sourceFile: 'src/pages/Contact.tsx' },
+  { loc: `${SITE_URL}/privacy-policy`, priority: '0.5', changefreq: 'yearly', sourceFile: 'src/pages/PrivacyPolicy.tsx' },
+  { loc: `${SITE_URL}/terms`, priority: '0.5', changefreq: 'yearly', sourceFile: 'src/pages/Terms.tsx' },
 ];
+
+// Helper to determine file lastmod date
+function getFileLastmod(relPath) {
+  try {
+    const fullPath = path.join(rootDir, relPath);
+    if (fs.existsSync(fullPath)) {
+      const stat = fs.statSync(fullPath);
+      return stat.mtime.toISOString().split('T')[0];
+    }
+  } catch {
+    // Fallback to today
+  }
+  return new Date().toISOString().split('T')[0];
+}
 
 // 2. Extract Solution Slugs from src/data/solutions.ts
 function extractSolutionSlugs() {
@@ -57,31 +73,37 @@ export function generateSitemapXml() {
   const solutionSlugs = extractSolutionSlugs();
   const productSlugs = extractProductSlugs();
 
+  const solutionsMtime = getFileLastmod('src/data/solutions.ts');
+  const productsMtime = getFileLastmod('src/data/products.ts');
+
   const solutionRoutes = solutionSlugs.map((slug) => ({
     loc: `${SITE_URL}/solutions/${slug}`,
     priority: '0.8',
-    changefreq: 'monthly'
+    changefreq: 'monthly',
+    lastmod: solutionsMtime
   }));
 
   const productRoutes = productSlugs.map((slug) => ({
     loc: `${SITE_URL}/products/${slug}`,
     priority: '0.8',
-    changefreq: 'monthly'
+    changefreq: 'monthly',
+    lastmod: productsMtime
   }));
 
   const allUrls = [
-    ...coreRoutes,
+    ...coreRoutes.map(r => ({
+      ...r,
+      lastmod: getFileLastmod(r.sourceFile)
+    })),
     ...solutionRoutes,
     ...productRoutes
   ];
-
-  const today = new Date().toISOString().split('T')[0];
 
   const xmlEntries = allUrls
     .map(
       (entry) => `  <url>
     <loc>${entry.loc}</loc>
-    <lastmod>${today}</lastmod>
+    <lastmod>${entry.lastmod}</lastmod>
     <changefreq>${entry.changefreq}</changefreq>
     <priority>${entry.priority}</priority>
   </url>`
@@ -108,7 +130,7 @@ const { sitemapXml, count, solutionsCount, productsCount } = generateSitemapXml(
 // 1. Write to public/sitemap.xml
 const publicSitemapPath = path.join(rootDir, 'public', 'sitemap.xml');
 fs.writeFileSync(publicSitemapPath, sitemapXml, 'utf-8');
-console.log(`[Sitemap] Generated ${publicSitemapPath} (${count} URLs: 8 core, ${solutionsCount} solutions, ${productsCount} products)`);
+console.log(`[Sitemap] Generated ${publicSitemapPath} (${count} URLs: ${coreRoutes.length} core, ${solutionsCount} solutions, ${productsCount} products)`);
 
 // 2. Write to dist/sitemap.xml if dist exists
 const distDir = path.join(rootDir, 'dist');

@@ -65,12 +65,36 @@ describe('AKIRA PRECISION AUTOMATION LLP — Senior SEO Audit Test Suite', () =>
       expect(company.slogan).toBe('Automating Today... Building Tomorrow...');
     });
 
-    it('ensures formatTitle avoids duplicate brand name appending', () => {
+    it('ensures formatTitle avoids duplicate brand name appending and prevents SERP truncation', () => {
       const alreadyBranded = 'AKIRA PRECISION AUTOMATION LLP | Precision Gauging Solutions';
       expect(formatTitle(alreadyBranded)).toBe('AKIRA PRECISION AUTOMATION LLP | Precision Gauging Solutions');
 
       const unbranded = 'Air Plug Gauges';
       expect(formatTitle(unbranded)).toBe('Air Plug Gauges | AKIRA PRECISION AUTOMATION LLP');
+
+      // Long titles (> 60 chars) should not have 33 characters blindly appended
+      const longTitle = 'Engine Block & Liner Multigauging Station | Technical Specifications';
+      expect(formatTitle(longTitle)).toBe('Engine Block & Liner Multigauging Station | Technical Specifications');
+      expect(formatTitle(longTitle).length).toBeLessThanOrEqual(70);
+    });
+
+    it('contains valid llms.txt and llms-full.txt for AI discoverability per llmstxt.org', () => {
+      const llmsPath = path.join(publicDir, 'llms.txt');
+      const llmsFullPath = path.join(publicDir, 'llms-full.txt');
+      expect(fs.existsSync(llmsPath)).toBe(true);
+      expect(fs.existsSync(llmsFullPath)).toBe(true);
+
+      const llmsContent = fs.readFileSync(llmsPath, 'utf-8');
+      expect(llmsContent).toContain('# AKIRA PRECISION AUTOMATION LLP');
+      expect(llmsContent).toContain('## Core Capabilities & Solutions');
+      expect(llmsContent).toContain('## Precision Products Catalogue');
+      expect(llmsContent).toContain('https://akiraautomation.com/products/air-plug-gauge');
+      expect(llmsContent).toContain('https://akiraautomation.com/llms-full.txt');
+
+      const llmsFullContent = fs.readFileSync(llmsFullPath, 'utf-8');
+      expect(llmsFullContent).toContain('Sub-micron repeatability');
+      expect(llmsFullContent).toContain('Linear Measurement Resolution');
+      expect(llmsFullContent).toContain('milestonegauges@gmail.com');
     });
   });
 
@@ -125,7 +149,7 @@ describe('AKIRA PRECISION AUTOMATION LLP — Senior SEO Audit Test Suite', () =>
   });
 
   describe('Phase 11: Production Sitemap Verification', () => {
-    it('contains all 36 public routes (8 core, 12 solutions, 16 products)', () => {
+    it('contains all 38 public routes (10 core, 12 solutions, 16 products)', () => {
       const sitemapPath = path.join(publicDir, 'sitemap.xml');
       expect(fs.existsSync(sitemapPath)).toBe(true);
       const sitemapContent = fs.readFileSync(sitemapPath, 'utf-8');
@@ -139,6 +163,8 @@ describe('AKIRA PRECISION AUTOMATION LLP — Senior SEO Audit Test Suite', () =>
       expect(sitemapContent).toContain('<loc>https://akiraautomation.com/services</loc>');
       expect(sitemapContent).toContain('<loc>https://akiraautomation.com/why-choose-us</loc>');
       expect(sitemapContent).toContain('<loc>https://akiraautomation.com/contact</loc>');
+      expect(sitemapContent).toContain('<loc>https://akiraautomation.com/privacy-policy</loc>');
+      expect(sitemapContent).toContain('<loc>https://akiraautomation.com/terms</loc>');
 
       // All 16 products
       products.forEach((p) => {
@@ -160,9 +186,20 @@ describe('AKIRA PRECISION AUTOMATION LLP — Senior SEO Audit Test Suite', () =>
   });
 
   describe('Phase 12: Structured Data (JSON-LD) Verification', () => {
-    it('generates valid Organization / LocalBusiness schema with authentic data', () => {
+    it('generates valid Organization / LocalBusiness schema with authentic data and sameAs', () => {
       const schema = createOrganizationSchema();
       expect(schema['@context']).toBe('https://schema.org');
+      expect(schema['@type']).toBe('LocalBusiness');
+      expect(schema.name).toBe('AKIRA PRECISION AUTOMATION LLP');
+      expect(schema.legalName).toBe('Akira Precision Automation LLP');
+      expect(schema.url).toBe('https://akiraautomation.com');
+      expect(schema.address['@type']).toBe('PostalAddress');
+      expect(schema.address.addressCountry).toBe('IN');
+      expect(schema.telephone).toBeTruthy();
+      expect(schema.email).toBeTruthy();
+      expect(schema.sameAs).toBeDefined();
+      expect(schema.contactPoint).toBeDefined();
+      expect(schema.contactPoint.length).toBeGreaterThan(0);
       expect(schema['@type']).toBe('LocalBusiness');
       expect(schema.name).toBe('AKIRA PRECISION AUTOMATION LLP');
       expect(schema.legalName).toBe('Akira Precision Automation LLP');

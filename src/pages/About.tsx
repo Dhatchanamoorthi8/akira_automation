@@ -3,7 +3,9 @@ import {
   ShieldCheck, 
   Award, 
   Handshake, 
-  Target 
+  Target,
+  CheckCircle2,
+  Gauge
 } from 'lucide-react';
 import { Breadcrumb } from '../components/layout/Breadcrumb';
 import { SEOHead } from '../components/layout/SEOHead';
@@ -209,6 +211,61 @@ export const About: React.FC = () => {
               </StaggerItem>
             ))}
           </StaggerContainer>
+        </div>
+      </SectionReveal>
+
+      {/* Metrology Standards, Calibration & Traceability (E-E-A-T) */}
+      <SectionReveal className="py-20 bg-white border-b border-slate-200">
+        <div className="industrial-container">
+          <Reveal direction="up" className="max-w-3xl mb-12">
+            <span className="section-tag">
+              Metrology Standards & Quality Assurance
+            </span>
+            <h2 className="section-title mt-2">
+              Traceable Accuracy & Quality Protocols
+            </h2>
+            <p className="section-subtitle">
+              Precision metrology demands rigorous calibration standards and verifiable traceability. Every gauging fixture and electronic readout manufactured by {company.name} adheres to stringent quality invariants:
+            </p>
+          </Reveal>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-industrial-accent text-industrial-primary flex items-center justify-center">
+                <Gauge className="w-5 h-5" />
+              </div>
+              <h3 className="text-base font-bold font-heading text-industrial-dark">
+                Sub-Micron Resolution & Repeatability
+              </h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Our electronic DRO systems and LVDT comparator probes provide resolution down to 0.1 µm with repeatability ≤ 0.5 µm under 20°C standard metrology room conditions.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-industrial-accent text-industrial-primary flex items-center justify-center">
+                <ShieldCheck className="w-5 h-5" />
+              </div>
+              <h3 className="text-base font-bold font-heading text-industrial-dark">
+                Traceable Master Calibration
+              </h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                All setting masters, air ring gauges, and setting plugs are manufactured from hardened tool steel or tungsten carbide, calibrated against masters traceable to national/international NABL / ISO/IEC 17025 accredited laboratories.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-industrial-accent text-industrial-primary flex items-center justify-center">
+                <CheckCircle2 className="w-5 h-5" />
+              </div>
+              <h3 className="text-base font-bold font-heading text-industrial-dark">
+                100% Pre-Dispatch Verification
+              </h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Every multi-gauging station undergoes comprehensive repeatability and reproducibility (Gage R&R) validation and continuous dry-run cycles before on-site customer commissioning.
+              </p>
+            </div>
+          </div>
         </div>
       </SectionReveal>
 

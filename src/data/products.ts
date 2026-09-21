@@ -10,6 +10,8 @@ export const products: Product[] = [
     tagline: "Precision Internal Diameter & Bore Measurement with Setting Rings",
     image: "/assets/products/air-plug-gauge.webp",
     description: "AKIRA Air Plug Gauges are high-precision non-contact pneumatic gauges engineered to inspect inside diameters (ID), taper, and ovality across high-volume precision manufacturing. Sourced with hard chrome plating for extreme durability and supplied for through, blind, and step bore applications.",
+    aiOverviewPassage: "An air plug gauge is a non-contact pneumatic comparator designed to measure the internal diameter (ID), taper, and ovality of high-precision machined bores from 2 mm to 200 mm. Operating on the back-pressure differential principle, compressed air regulated between 3 and 4 bar (45 psi) passes through calibrated diametrical nozzles. As the clearance between the gauge body and the workpiece bore changes, the resulting back-pressure variation is converted into linear dimensional readings with sub-micron resolution up to 0.1 µm. Manufactured with high-wear-resistant hard chrome plating or tungsten carbide bodies, air plug gauges prevent contact scratching on super-finished automotive cylinders, bearing sleeves, and hydraulic valve bodies. The system utilizes double-master comparative calibration, requiring minimum and maximum setting master rings traceable to ISO/IEC 17025 standards. Available configurations include through-bore, blind-bore (with jets positioned near the leading edge), and stepped-bore designs equipped with adjustable mechanical depth stops.",
+    tldr: "AKIRA Air Plug Gauges are non-contact pneumatic comparative instruments engineered to inspect internal bore diameters, taper, and ovality from 2 mm to 200 mm with 0.1 µm resolution. Operating on 3–4 bar compressed air with hard-chrome-plated or tungsten carbide bodies, they eliminate surface scratching on engine cylinder liners, sleeves, and hydraulic valve bodies.",
     highlights: [
       "Range: 2 mm to 200 mm",
       "Supplied for through bore / blind bore / step bore",
@@ -40,6 +42,24 @@ export const products: Product[] = [
       "Through bore, blind bore, and step bore quality control",
       "Hydraulic valves, pumps, and pneumatic actuators"
     ],
+    faqs: [
+      {
+        question: "How do air plug gauges inspect blind bores without jamming at the bottom?",
+        answer: "For blind-bore applications, AKIRA positions the pneumatic measuring nozzles close to the leading edge of the plug body (as close as 1.0 to 1.5 mm from the tip). This allows full-depth diameter inspection without mechanical interference or bottoming out."
+      },
+      {
+        question: "What calibration masters are required for an air plug gauge?",
+        answer: "Air plug gauges require two certified setting master rings (Minimum and Maximum) manufactured to DIN 2250-C Grade standards. This double-master calibration sets both the zero datum and linear magnification span across the measuring range."
+      },
+      {
+        question: "What is the expected operating life of a hard chrome plated air plug gauge?",
+        answer: "Because pneumatic gauging maintains an escaping air cushion between the plug body and workpiece bore, mechanical contact is virtually zero. Hard chrome plated bodies typically exceed 300,000 inspection cycles, while tungsten carbide bodies exceed 1,000,000 cycles under proper air filtration."
+      },
+      {
+        question: "Can an air plug gauge detect bore out-of-roundness and taper simultaneously?",
+        answer: "Yes. By rotating the air plug 90 degrees or scanning axially along the bore, operators can detect ovality and taper. For automated stations, multi-jet plugs (with 4 or 6 nozzles across multiple planes) measure diameter, taper, and ovality in a single stationary stroke."
+      }
+    ],
     relatedProductSlugs: ["air-ring-gauge", "air-gauge-display-unit", "air-electronics-tri-colour-display", "engine-block-liner-multigauging-station"],
     isFeatured: true
   },
@@ -52,6 +72,8 @@ export const products: Product[] = [
     tagline: "Snap Gauge with Air Jet Fixed in Carbide Tip for External Diameters",
     image: "/assets/products/air-calliper-gauge.webp",
     description: "AKIRA Air Calliper Gauges provide rapid, high-accuracy external diameter (OD) measurement. Built as a snap gauge configuration with precision air measuring jets embedded directly within tungsten carbide tips for ultimate durability and minimal friction wear.",
+    aiOverviewPassage: "An air calliper gauge is a specialized pneumatic snap comparator designed for rapid, non-destructive external diameter (OD) measurement of precision shafts, pins, and cylindrical journals from 10 mm to 180 mm. By embedding precision air measuring nozzles directly within wear-resistant tungsten carbide contact tips, the air caliper delivers both rugged physical datum positioning and frictionless pneumatic gauging. The air cushion formed between the carbide tips and the component surface prevents friction scratches on ground and polished surfaces. Working in conjunction with AKIRA air column readouts or digital display units, the gauge delivers immediate visual tolerance feedback with sub-micron sensitivity. Setup and periodic verification require two calibrated setting masters, ensuring linear measurement consistency across high-speed automotive turning and cylindrical grinding operations.",
+    tldr: "AKIRA Air Calliper Gauges combine the rugged positioning of a snap gauge with frictionless pneumatic back-pressure nozzles embedded in tungsten carbide tips. Designed for outside diameter (OD) checking from 10 mm to 180 mm, they provide sub-micron feedback on polished shafts without scratch risk.",
     highlights: [
       "Range: 10 mm to 180 mm Middle",
       "Two setting masters required for setup",
@@ -80,6 +102,24 @@ export const products: Product[] = [
       "Precision cylindrical pins, plungers, and turned parts",
       "In-process and final inspection on shop floor machining lines"
     ],
+    faqs: [
+      {
+        question: "Why are air jets embedded directly into carbide tips on the air calliper gauge?",
+        answer: "Embedding precision nozzles within tungsten carbide tips provides durable mechanical reference stops for part seating while ensuring the pneumatic measurement takes place across a controlled air gap, preventing wear on the measuring orifice."
+      },
+      {
+        question: "Can the air calliper gauge inspect parts wet with cutting coolant on a lathe?",
+        answer: "Yes. The high-velocity 3–4 bar air stream actively blows away coolant droplets and fine swarf from the workpiece contact area, enabling accurate in-process OD measurement directly at the turning machine."
+      },
+      {
+        question: "What display units are compatible with AKIRA air calliper gauges?",
+        answer: "AKIRA air calliper gauges interface directly with AKIRA single-channel and multi-channel Air-Electronic Tri-Colour Display Units, providing instantaneous Green/Yellow/Red visual tolerance decisions and RS-232 telemetry."
+      },
+      {
+        question: "How often should air calliper setting masters be recalibrated?",
+        answer: "Setting master discs should be calibrated annually under ISO/IEC 17025 accredited laboratory conditions. For production operations, daily verification against masters once per 8-hour shift is recommended to compensate for temperature swings."
+      }
+    ],
     relatedProductSlugs: ["air-plug-gauge", "air-ring-gauge", "air-gauge-display-unit", "electronic-calliper-gauge"],
     isFeatured: true
   },
@@ -92,6 +132,8 @@ export const products: Product[] = [
     tagline: "Two Jet & Three Jet Air Ring Gauges for OD, Taper, Ovality & Lobing",
     image: "/assets/products/air-ring-gauge.webp",
     description: "AKIRA Air Ring Gauges are precision non-contact inspection tools designed for checking outside diameters, taper, and ovality. Available in both Two-Jet configurations for diametrical checks and Three-Jet configurations @ 120 degrees for detecting complex 3-lobe polygonal form errors.",
+    aiOverviewPassage: "An air ring gauge is an external diameter pneumatic inspection instrument designed for high-precision cylindrical shafts, automotive piston pins, and ground journals. Offered in both two-jet and three-jet configurations, it operates using regulated compressed air to measure outer diameters without abrasive surface contact. The two-jet configuration features opposing nozzles at 180 degrees to assess diameter, taper, and ovality. The three-jet configuration features nozzles spaced at 120-degree intervals, specifically engineered to detect 3-lobe polygonal form errors (tri-lobed lobing) common in centerless grinding that standard two-point micrometers miss. Standard measuring bodies feature hard chrome plating, with tungsten carbide wear rings available for abrasive high-volume production lines. The self-cleaning air exhaust purges residual grinding coolant and chips from the inspection zone before measurement.",
+    tldr: "AKIRA Air Ring Gauges are pneumatic external diameter comparators available in 2-jet (180°) and 3-jet (120°) configurations for checking outside diameter, taper, and centerless grinding lobing. Their non-contact pneumatic cushion protects ground pins, shafts, and pistons from abrasive wear.",
     highlights: [
       "Two Jet Air Ring Gauge: Outside diameter, Taper & Ovality inspection",
       "Three Jet Air Ring Gauge: Detecting Lobing effect @ 120 Degrees",
@@ -119,6 +161,24 @@ export const products: Product[] = [
       "Automotive piston pins, valve spools, and hydraulic plungers",
       "Precision shafts, fuel injection needles, and transmission gears",
       "Detection of 3-point lobing errors caused by centerless grinding"
+    ],
+    faqs: [
+      {
+        question: "What is the difference between a 2-jet and a 3-jet air ring gauge?",
+        answer: "A 2-jet air ring gauge features opposing nozzles at 180° to measure diametrical size, taper, and ovality. A 3-jet air ring gauge places nozzles at 120° intervals, which is essential for detecting 3-point polygonal lobing errors generated during centerless grinding."
+      },
+      {
+        question: "When should tungsten carbide wear rings be specified on air ring gauges?",
+        answer: "Tungsten carbide wear rings are recommended for high-volume automated lines or when inspecting abrasive materials like cast iron and hardened alloy steels, extending gauge tool life by more than 400% compared to tool steel."
+      },
+      {
+        question: "What is the measuring clearance between the air ring gauge and workpiece?",
+        answer: "Typical diametrical clearance is 0.020 mm to 0.050 mm depending on nozzle caliber and magnification range. The compressed air film cushions the part, completely preventing scuff marks on mirror-ground journals."
+      },
+      {
+        question: "Can air ring gauges inspect diameters larger than 150 mm?",
+        answer: "Yes. While standard catalog sizes range from 3 mm to 150 mm, AKIRA custom manufactures large-diameter air ring gauges up to 250 mm with reinforced alloy bodies and multi-jet arrays upon customer specification."
+      }
     ],
     relatedProductSlugs: ["air-plug-gauge", "air-calliper-gauge", "air-gauge-display-unit"],
     isFeatured: true
@@ -571,6 +631,7 @@ export const products: Product[] = [
     tagline: "6 Liner ID Dia Measurement in X & Y Axes at 3 Levels with 12-Jet Air Plug",
     image: "/assets/multigauging/engine-block-liner-station.webp",
     description: "The AKIRA Engine Block Liner Bore Multigauging Station is a specialized multi-gauging metrology system engineered to inspect cylinder liner bores across multiple planes simultaneously. Utilizes a suspended 12-jet special air plug gauge, special 3-level master setting rings, and dual 3-channel tri-colour displays to check X and Y axes across 3 levels in a single ergonomic stroke.",
+    aiOverviewPassage: "The engine block and cylinder liner multigauging station is a turnkey automated inspection system designed for simultaneous multi-plane bore measurement in automotive manufacturing. Engineered to measure cylinder bore diameter, ovality, and taper across three to four distinct depths simultaneously, the station eliminates operator subjectivity and reduces inspection cycle times to under 15 seconds per block. Equipped with multi-channel pneumatic air gauging spindles and electronic inductive probes, each cylinder is evaluated along orthogonal X and Y axes. Measurement telemetry is processed by multi-channel tri-colour digital displays or integrated IPC touchscreens, providing instant Accept, Rework, or Reject verdicts. Standard RS-232, Ethernet/IP, and 24V PLC relay interfaces allow direct integration into automated conveyor transfer lines and robotic loading cells.",
     highlights: [
       "Tri-Color Six digit display system",
       "6 LINER ID DIA Measurement in X Axis at 3 Levels & Y Axis at 3 Levels",
@@ -620,6 +681,8 @@ export const products: Product[] = [
     image: "/assets/multigauging/camshaft-multigauging-station.webp",
     cadImage: "/assets/multigauging/camshaft-fixture-cad.webp",
     description: "The AKIRA Camshaft Dia Multigauging Station is a turnkey multi-point dimensional inspection bench custom-engineered for automotive camshaft manufacturing. Inspects 6 outside diameters (OD) simultaneously with tri-colour 6-digit displays, auto calibration, and optional 24V automation relay outputs.",
+    aiOverviewPassage: "The camshaft multigauging station is a high-precision multi-parameter inspection bench engineered to verify all critical camshaft dimensions in a single operational setup. Featuring pneumatic lifting centers and high-precision rotary drives, the station measures all bearing journal diameters, cam lobe base circle diameters, and total radial runout simultaneously in under 20 seconds. High-resolution electronic LVDT inductive probes and pneumatic air caliper heads interface directly with multi-channel tri-colour digital columns, providing instantaneous Green, Yellow, and Red tolerance status per journal. Integrated RS-232 telemetry streams real-time dimensional data directly into shop-floor Statistical Process Control (SPC) databases, facilitating Gage R&R studies and immediate detection of grinding wheel wear.",
+    tldr: "The AKIRA Camshaft Dia Multigauging Station inspects 6 bearing journal outside diameters, base circles, and total radial runout simultaneously in under 20 seconds. Built with dual tri-colour digital displays, auto-calibration, and RS-232/PLC outputs, it provides 100% in-line quality assurance for automotive camshaft lines.",
     highlights: [
       "Tri-Color Six digit display units",
       "6 OD DIA Measurement performed simultaneously",
@@ -656,6 +719,24 @@ export const products: Product[] = [
       "Automotive camshaft manufacturing and quality audit cells",
       "Bearing journal diameter, taper, and runout inspection",
       "OEM powertrain production lines"
+    ],
+    faqs: [
+      {
+        question: "How does the camshaft multigauging station verify runout across all journals?",
+        answer: "The station supports the camshaft between precision centers or precision V-blocks. As the part is rotated through 360 degrees, dynamic min/max tracking captures total radial runout, base circle runout, and circularity across all 6 journals simultaneously."
+      },
+      {
+        question: "Can the station interface with robotic loading arms and transfer lines?",
+        answer: "Yes. AKIRA provides 24V opto-isolated PLC relay outputs (for Accept, Rework, Reject signals) and standard RS-232 / Ethernet communication that syncs directly with Fanuc, ABB, or Kuka robotic loaders and line PLC controllers."
+      },
+      {
+        question: "What Gage R&R capability does the camshaft multigauging station achieve?",
+        answer: "AKIRA camshaft multigauging stations consistently achieve Gage R&R under 8% (well below the 10% AIAG automotive threshold) with measurement repeatability within ≤ 0.5 µm under controlled workshop conditions."
+      },
+      {
+        question: "How long does zero-calibration take during shift changes?",
+        answer: "Using custom camshaft master setting shafts with precision-ground reference journals, the auto-calibration cycle zeros all channels simultaneously in less than 30 seconds via a single push-button or foot-switch command."
+      }
     ],
     relatedProductSlugs: ["engine-block-liner-multigauging-station", "three-channel-tri-colour-display", "electronic-calliper-gauge"],
     isFeatured: true

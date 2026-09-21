@@ -23,6 +23,8 @@ const Industries = lazy(() => import('./pages/Industries').then(m => ({ default:
 const Services = lazy(() => import('./pages/Services').then(m => ({ default: m.Services })));
 const WhyChooseUs = lazy(() => import('./pages/WhyChooseUs').then(m => ({ default: m.WhyChooseUs })));
 const Contact = lazy(() => import('./pages/Contact').then(m => ({ default: m.Contact })));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy').then(m => ({ default: m.PrivacyPolicy })));
+const Terms = lazy(() => import('./pages/Terms').then(m => ({ default: m.Terms })));
 const NotFound = lazy(() => import('./pages/NotFound').then(m => ({ default: m.NotFound })));
 
 // Administrative routes
@@ -75,6 +77,8 @@ const AppShell: React.FC = () => {
               <Route path="/why-choose-us" element={<WhyChooseUs />} />
               <Route path="/why-milestone" element={<Navigate to="/why-choose-us" replace />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<Terms />} />
 
               {/* Staff Portal Workspace */}
               <Route

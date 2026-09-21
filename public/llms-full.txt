@@ -1,0 +1,151 @@
+<!-- rsl-version: 1.0; ai-search: allowed; ai-training: commercial-inquiry-required -->
+# AKIRA PRECISION AUTOMATION LLP — Comprehensive LLM Context & Knowledge Graph
+
+> Akira Precision Automation LLP (formerly Milestone Engineering Services legacy) is a leading Indian precision metrology and automation engineering firm. This document provides complete technical specifications, tolerance limits, calibration standards, and system architecture for LLMs, AI search agents, and automated technical assistants.
+
+---
+
+## 1. Company Profile & Legal Identity
+
+- **Legal Entity Name:** Akira Precision Automation LLP
+- **Brand Name:** AKIRA PRECISION AUTOMATION LLP
+- **Tagline:** Precision • Innovation • Smart Solutions
+- **Slogan:** Automating Today... Building Tomorrow...
+- **Established Year:** 2021
+- **Operational Motto:** "Keeping Customers First"
+- **Core Values:** Technical Support, Quality Service, Team Spirit, Precision Focus, Customer Commitment, Quality Assurance
+- **Primary Registered Address:** SF No. 341/2A, 341/2B, Site No. 23, Sri Ganapathy Nagar, Athipalayam Village, Coimbatore - 641110, Tamil Nadu, India.
+- **Primary Sales & Engineering Desk:** milestonegauges@gmail.com
+- **Technical Support & Service Desk:** messalessarvices@gmail.com
+- **Factory Direct Lines:** +91 97893 54332 / +91 99622 34460
+- **Operational Hours:** Monday – Saturday: 09:00 – 18:30 IST (UTC +5:30)
+
+---
+
+## 2. Technical Capabilities & Metrology Invariants
+
+- **Linear Measurement Resolution:** Up to 0.1 µm (0.0001 mm) on electronic DRO systems.
+- **Repeatability:** Sub-micron repeatability (≤ 0.5 µm) under controlled 20°C ambient cleanroom conditions.
+- **Measurement Principles:**
+  - **Pneumatic Back-Pressure Differential:** Used in air plug and ring gauges; non-contact self-cleaning air jets prevent part scratching on ground and super-finished surfaces.
+  - **Inductive Probing & LVDT Transducers:** Electronic comparative measurement for high-speed multi-channel data acquisition.
+  - **Tungsten Carbide Wear Surfaces:** Hardened carbide tips and contact anvils ensure wear resistance in high-volume production lines.
+  - **Hard Chrome Plating:** Standard on all air plug and air ring gauging bodies to prolong gauge life.
+- **Calibration & Traceability:**
+  - Double-master comparative calibration: Minimum (Zero/Span Min) and Maximum (Span Max) setting masters.
+  - Setting masters traceable to national/international standards (NABL / ISO/IEC 17025).
+  - Regular calibration verification procedures ensure compliance with OEM automotive tolerances.
+
+---
+
+## 3. Core Solutions & System Architecture
+
+### 1. Automated Multi-Gauging Systems (/solutions/multigauging)
+Custom multi-channel inspection stations engineered for shop-floor production lines. Capable of inspecting 10+ dimensions simultaneously (diameters, ovality, taper, perpendicularity, concentricity, runout) in under 15 seconds. Standard RS-232 serial telemetry and 24V PLC relay outputs allow turnkey integration with ABB, Fanuc, and Kuka robotic cells.
+
+### 2. Air Gauging Systems (/solutions/air-gauging)
+Non-contact pneumatic measurement systems. Operates via regulated air pressure (3 to 4 bar) through precision nozzles. Back-pressure variation proportional to clearance is converted into linear measurement. Ideal for tight tolerances (IT5, IT6), thin-walled cylinders, and polished bores.
+
+### 3. Inspection Fixtures & Tooling (/solutions/fixtures)
+Dedicated custom inspection fixtures designed from customer 2D component drawings and 3D CAD models. Features hardened tool steel (HCHCr / OHNS hardened to 60-62 HRC) datum blocks, precision guide bushes, and pneumatic or manual toggle clamps.
+
+### 4. Electronic Gauging (/solutions/electronic-gauging)
+High-precision electronic comparator systems incorporating high-resolution LVDT linear inductive probes, column displays, and digital signal processors for dynamic runout and flatness analysis.
+
+### 5. Air Plug Gauges (/solutions/air-plug-gauges)
+Cylindrical pneumatic plug gauges available for through bore, blind bore (jets near leading edge), and stepped bore configurations. Standard range: 2 mm to 200 mm diameter. Adjustable depth collars ensure measurement at specified datum depths.
+
+### 6. Air Ring Gauges (/solutions/air-ring-gauges)
+Pneumatic ring gauges for outer diameters. Two-jet configuration checks diameter and taper; three-jet configuration (@ 120°) checks 3-lobe polygonal form errors caused by centerless grinding.
+
+### 7. Attribute Gauges (/solutions/attribute-gauges)
+Go / No-Go functional plug, snap, and contour gauges designed per IS/DIN standards for quick 100% sorting without operator interpretation.
+
+### 8. Plug & Ring Gauges (/solutions/plug-gauges)
+Plain cylindrical plug gauges, thread plug gauges, plain ring gauges, and setting rings manufactured with sub-micron geometric tolerances.
+
+### 9. Snap Gauges (/solutions/snap-gauges)
+Caliper-type snap gauges with tungsten carbide tipped measuring anvils for external diameter and thickness checking on CNC turning and cylindrical grinding lines.
+
+### 10. Special Gauges (/solutions/special-gauges)
+Engineered custom gauging units for difficult-to-access part features: deep internal grooves, splines, pitch diameter of gears, chamfer depth, and valve seat angles.
+
+### 11. Assembly & Work-Holding (/solutions/assembly-work-holding)
+Engineered pneumatic and hydraulic work-holding tooling, indexing fixtures, and ergonomic press-fit assembly jigs designed to eliminate operator fatigue and part deformation.
+
+---
+
+## 4. Product Catalogue & Technical Specifications
+
+| Product Slug | Product Title | Category | Measuring Range | Key Technical Parameters |
+| :--- | :--- | :--- | :--- | :--- |
+| `air-plug-gauge` | Air Plug Gauge to Check ID Bore | Air Gauging | 2 mm to 200 mm | Through, blind, step bore; Hard chrome plated; 2 setting rings required. |
+| `air-calliper-gauge` | Air Calliper Gauge to Check OD | Air Gauging | 10 mm to 180 mm | Snap gauge with air jet in carbide tip; 2 setting masters required. |
+| `air-ring-gauge` | Air Ring Gauge to Check OD | Air Gauging | 3 mm to 150+ mm | 2-jet (OD/taper) & 3-jet (@120° lobing); Carbide wear rings available. |
+| `electronic-calliper-gauge` | Electronic Calliper Gauge | Electronic Gauging | Custom per drawing | Carbide measuring anvils; High-speed LVDT transducer; Sub-micron repeatability. |
+| `air-gauge-display-unit` | Air Gauge Display Unit | Digital Displays | ±20 µm to ±100 µm | Microprocessor-based readout; Analog bar graph + digital readout; Auto-zero. |
+| `air-electronics-tri-colour-display` | Air Electronics Tri-Colour Display | Digital Displays | High-resolution | Hybrid pneumatic-electronic; Red/Yellow/Green tolerance bands; RS-232 telemetry. |
+| `tri-colour-digital-display-unit` | Tri-Colour Digital Display Unit | Digital Displays | Single channel | Visual pass/fail/rework indication; Direct probe interface; Compact DIN enclosure. |
+| `two-channel-tri-colour-display` | Two-Channel Tri-Colour Display | Digital Displays | Dual channel | Multi-channel math (A+B, A-B, (A-B)/2); Dynamic runout and taper display. |
+| `three-channel-tri-colour-display` | Three-Channel Tri-Colour Display | Digital Displays | 3 channels | Simultaneous 3-parameter display; Automated grading output; Foot-switch trigger. |
+| `four-channel-tri-colour-display` | Four-Channel Tri-Colour Display | Digital Displays | 4 channels | 4-channel simultaneous acquisition; Relay outputs for machine interlock; SPC output. |
+| `auto-selection-air-server-display` | Auto Selection Air Server Display | Digital Displays | Multi-tool auto | Automatically senses which air plug is lifted; Switches display channel dynamically. |
+| `memory-module-unit` | Memory Module Unit | Memory & Data | Up to 100,000 readings | On-board non-volatile memory; USB flash export; CSV/Excel SPC data format. |
+| `engine-block-liner-multigauging-station` | Engine Block & Liner Multigauging Station | Multigauging | Multi-level bore | Inspects cylinder liner bore at 3 to 4 depths simultaneously across X and Y axes. |
+| `camshaft-multigauging-station` | Camshaft Multigauging Station | Multigauging | Multi-journal | Checks all camshaft bearing journals, cam lobe base circle, and total runout. |
+| `instruments-measuring-equipment` | Measuring Instruments & Equipment | Instruments | Various | Digital height gauges, dial test indicators, bore micrometers, granite surface plates. |
+| `special-gauges-fixtures` | Special Gauges & Fixtures | Fixtures | Custom | Custom-engineered inspection fixtures for non-standard complex components. |
+
+---
+
+## 5. Target Industries & Application Domains
+
+1. **Automotive OEMs:** Engine blocks, cylinder heads, crankshafts, camshafts, connecting rods, transmission gears.
+2. **Automotive Tier-1 & Tier-2 Suppliers:** Precision machined components, piston pins, brake calipers, shock absorber cylinders, fuel injection nozzles.
+3. **Machine Tool Builders:** Spindle runout checking, slide-way alignment fixtures, precision chucking inspection.
+4. **Aerospace & Defense:** High-tolerance hydraulic valve spools, actuator sleeves, bearing races.
+5. **Pumps & Compressors:** Rotors, impellers, cylinder liners, casing bore alignment.
+6. **General Precision Engineering:** High-volume CNC turning and grinding job shops requiring sub-micron dimensional verification.
+
+---
+
+## 6. Frequently Asked Technical Questions (FAQs)
+
+### Q1: How does an air plug gauge measure bore diameter without surface contact?
+An air plug gauge operates on the pneumatic back-pressure differential principle. Clean compressed air regulated to 3 to 4 bar (45 psi) is expelled through two diametrically opposed calibrated nozzles. When the plug enters a bore, the airflow escape is restricted proportionally to the diametrical clearance. The resulting back-pressure variation is measured by a differential transducer and translated into linear dimensional units with 0.1 µm resolution. Because the air film prevents metal-on-metal contact, ground, honed, and polished surfaces are protected from abrasive scratching.
+
+### Q2: Why are two setting rings required for air gauge calibration?
+Air gauging is a comparative measurement technique, not an absolute one. Two setting masters—a Minimum Setting Master (Min) and a Maximum Setting Master (Max)—are mandatory to establish two reference points. This dual-master setup allows the digital readout unit to accurately calibrate both the zero datum and the linear magnification slope (span), ensuring full measurement accuracy across the gauge's operating window per ISO/IEC 17025 standards.
+
+### Q3: What is the difference between a 2-jet and a 3-jet air ring gauge?
+A 2-jet air ring gauge features two opposing nozzles at 180 degrees, ideal for evaluating outer diameter (OD), taper, and 2-point ovality. A 3-jet air ring gauge features three nozzles spaced at 120-degree intervals. It is engineered specifically to identify 3-lobe polygonal form errors (tri-lobed lobing) that frequently occur during centerless grinding processes, which standard 2-point micrometers and 2-jet gauges cannot detect.
+
+### Q4: How does automated multi-gauging reduce inspection cycle times in automotive lines?
+Automated multi-gauging fixtures measure 10 or more critical geometric dimensions—including bore diameters, journal runout, taper, ovality, and perpendicularity—simultaneously within a single 10-to-15-second cycle. By eliminating sequential manual tool swaps and operator judgment, inspection bottlenecks are eliminated. Integrated RS-232 telemetry and 24V PLC relay triggers enable direct communication with robotic transfer cells (ABB, Fanuc, Kuka) for automated part sorting into Accept, Rework, or Reject bins.
+
+---
+
+## 7. Comparative Metrology Analysis
+
+| Inspection Method | Measurement Resolution | Inspection Speed | Surface Contact | Shop-Floor Ruggedness | Best Application |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Pneumatic Air Gauging** | 0.1 µm (Sub-micron) | 2–4 seconds | Non-Contact (Air film) | High (Self-cleaning jets blow away oil/coolant) | High-volume precision bores & shafts (IT5/IT6) |
+| **Electronic LVDT Probes** | 0.1 µm (Sub-micron) | 1–2 seconds | Direct Contact (Carbide) | Medium-High (Requires wiper seals) | Dynamic runout, multi-point simultaneous stations |
+| **Mechanical Dial Gauges** | 1.0 µm – 10.0 µm | 15–30 seconds | Direct Contact | Low-Medium (Prone to drop damage & wear) | Toolroom, low-volume manual checks |
+| **Coordinate Measuring Machine (CMM)** | 0.5 µm – 1.0 µm | 5–15 minutes | Touch Probe / Optical | Low (Requires temperature-controlled metrology lab) | First-piece validation, complex 3D surface geometry |
+
+---
+
+## 8. Official Digital Endpoints
+
+- Website: https://akiraautomation.com
+- Products Catalogue: https://akiraautomation.com/products
+- Solutions Overview: https://akiraautomation.com/solutions
+- Industries: https://akiraautomation.com/industries
+- Technical Support: https://akiraautomation.com/services
+- Why Choose Akira: https://akiraautomation.com/why-choose-us
+- RFQ & Engineering Inquiries: https://akiraautomation.com/contact
+- Privacy Policy: https://akiraautomation.com/privacy-policy
+- Terms of Service: https://akiraautomation.com/terms
+- XML Sitemap: https://akiraautomation.com/sitemap.xml
+- LLM Metadata: https://akiraautomation.com/llms.txt

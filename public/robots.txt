@@ -1,3 +1,39 @@
+# Akira Precision Automation LLP - robots.txt
+# https://akiraautomation.com
+
+# -------------------------------------------------------------
+# Search AI Crawlers & Answer Engines (Allowed for Citations)
+# -------------------------------------------------------------
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# -------------------------------------------------------------
+# Bulk Model Training Scrapers (Disallowed to protect proprietary data)
+# -------------------------------------------------------------
+User-agent: CCBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+# -------------------------------------------------------------
+# Default Crawler Directives
+# -------------------------------------------------------------
 User-agent: *
 Allow: /
 Disallow: /admin
@@ -5,5 +41,11 @@ Disallow: /admin/
 Disallow: /staff
 Disallow: /staff/
 
-# Sitemap
+# -------------------------------------------------------------
+# Sitemaps & LLM Context Discovery
+# -------------------------------------------------------------
 Sitemap: https://akiraautomation.com/sitemap.xml
+
+# LLM Structured Context & Knowledge Graph
+# https://akiraautomation.com/llms.txt
+# https://akiraautomation.com/llms-full.txt

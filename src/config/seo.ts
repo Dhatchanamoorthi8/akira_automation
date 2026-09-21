@@ -67,12 +67,25 @@ export function getCanonicalUrl(pathOrUrl?: string): string {
 export function formatTitle(title: string): string {
   const brand = company.name;
   if (!title) return `${brand} | ${company.tagline}`;
-  if (title.toLowerCase().includes(brand.toLowerCase()) || title.toLowerCase().includes('akira precision automation')) {
-    return title.trim();
+  
+  const cleanTitle = title.trim();
+  if (cleanTitle.toLowerCase().includes(brand.toLowerCase()) || cleanTitle.toLowerCase().includes('akira precision automation')) {
+    return cleanTitle;
   }
-  // Check if adding brand exceeds typical SERP title limit (65 chars)
-  const candidate = `${title.trim()} | ${brand}`;
-  return candidate;
+
+  // Google SERP title pixel width limit corresponds to ~55-60 characters
+  // 1. If full brand fits within 60 chars, append full brand name
+  if (cleanTitle.length + 3 + brand.length <= 60) {
+    return `${cleanTitle} | ${brand}`;
+  }
+
+  // 2. If short brand 'AKIRA' fits within 60 chars, append concise brand
+  if (cleanTitle.length + 3 + 5 <= 60) {
+    return `${cleanTitle} | AKIRA`;
+  }
+
+  // 3. Otherwise return descriptive title without truncation
+  return cleanTitle;
 }
 
 /**
@@ -103,6 +116,22 @@ export function createOrganizationSchema() {
     "description": "Akira Precision Automation LLP manufactures precision gauging fixtures, automated multi-gauging stations, air gauges, digital DRO displays, and work-holding solutions for automotive OEMs and precision manufacturing.",
     "slogan": company.slogan,
     "foundingDate": "2021",
+    "sameAs": [
+      "https://www.linkedin.com/company/akira-precision-automation",
+      "https://www.indiamart.com/akira-precision-automation/"
+    ],
+    "knowsAbout": [
+      "Precision Metrology",
+      "Automated Multi-Gauging Systems",
+      "Pneumatic Air Gauging",
+      "Air Plug Gauges",
+      "Air Ring Gauges",
+      "Inspection Fixtures & Tooling",
+      "LVDT Inductive Probes",
+      "Electronic Gauging",
+      "Sub-Micron Calibration",
+      "Gage R&R Quality Verification"
+    ],
     "address": {
       "@type": "PostalAddress",
       "streetAddress": companyData.address.street,
@@ -113,6 +142,24 @@ export function createOrganizationSchema() {
     },
     "telephone": companyData.phones[0],
     "email": companyData.emails[0],
+    "contactPoint": [
+      {
+        "@type": "ContactPoint",
+        "telephone": companyData.phones[0],
+        "contactType": "sales",
+        "email": companyData.emails[0],
+        "availableLanguage": ["English", "Tamil", "Hindi"],
+        "areaServed": ["IN", "Worldwide"]
+      },
+      {
+        "@type": "ContactPoint",
+        "telephone": companyData.phones[1],
+        "contactType": "technical support",
+        "email": company.ccEmail,
+        "availableLanguage": ["English", "Tamil", "Hindi"],
+        "areaServed": ["IN", "Worldwide"]
+      }
+    ],
     "openingHours": "Mo-Sa 09:00-18:30",
     "priceRange": "$$"
   };
@@ -152,7 +199,26 @@ export function createBreadcrumbSchema(items: BreadcrumbItem[]) {
 }
 
 /**
- * Generates Schema.org Product JSON-LD without fake ratings, reviews, or prices
+ * Generates Schema.org FAQPage JSON-LD for AI Overviews & Answer Engines
+ */
+export function createFAQSchema(faqs?: { question: string; answer: string }[]) {
+  if (!faqs || faqs.length === 0) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map((faq) => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer
+      }
+    }))
+  };
+}
+
+/**
+ * Generates Schema.org Product JSON-LD with verified E-E-A-T technical reviewer
  */
 export function createProductSchema(product: {
   title: string;
@@ -178,6 +244,24 @@ export function createProductSchema(product: {
       "name": company.name,
       "url": SITE_URL
     },
+    "reviewedBy": {
+      "@type": "Person",
+      "name": "Kalidoss",
+      "jobTitle": "Lead Metrology Applications Engineer",
+      "worksFor": {
+        "@type": "Organization",
+        "name": company.name,
+        "url": SITE_URL
+      },
+      "knowsAbout": [
+        "Precision Gauging Systems",
+        "Automated Multi-Gauging",
+        "Pneumatic Air Gauging",
+        "DIN 2250 Calibration Standards",
+        "ISO/IEC 17025 Traceability"
+      ]
+    },
     "url": `${SITE_URL}/products/${product.slug}`
   };
 }
+

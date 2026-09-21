@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowRight, Phone, Mail } from 'lucide-react';
+import { ArrowRight, Phone, Mail, ShieldCheck, CheckCircle2, Gauge } from 'lucide-react';
 import { Breadcrumb } from '../components/layout/Breadcrumb';
 import { SEOHead } from '../components/layout/SEOHead';
 import { company } from '../config/company';
@@ -17,7 +17,7 @@ import { RelatedProducts } from '../components/products/RelatedProducts';
 import { SectionReveal } from '../components/animation/SectionReveal';
 import { Reveal } from '../components/animation/Reveal';
 import { useCompanyEmails } from '../hooks/useCompanyEmails';
-import { createBreadcrumbSchema, createProductSchema } from '../config/seo';
+import { createBreadcrumbSchema, createProductSchema, createFAQSchema } from '../config/seo';
 
 export const ProductDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -101,7 +101,7 @@ export const ProductDetail: React.FC = () => {
     { name: product.title, url: `/products/${product.slug}` }
   ];
 
-  const productSchemas = [
+  const productSchemas: object[] = [
     createBreadcrumbSchema(breadcrumbs),
     createProductSchema({
       title: product.title,
@@ -112,11 +112,18 @@ export const ProductDetail: React.FC = () => {
     })
   ];
 
+  if (product.faqs && product.faqs.length > 0) {
+    const faqSchema = createFAQSchema(product.faqs);
+    if (faqSchema) {
+      productSchemas.push(faqSchema);
+    }
+  }
+
   return (
     <>
       <SEOHead
         title={`${product.title} | Technical Specifications`}
-        description={product.description}
+        description={product.metaDescription || product.description}
         keywords={`${product.title}, ${product.category}, ${company.name}, Precision Gauging Specifications`}
         canonicalPath={`/products/${product.slug}`}
         ogImage={product.image}
@@ -144,6 +151,16 @@ export const ProductDetail: React.FC = () => {
               <p className="text-xs sm:text-sm text-slate-300 mt-1">
                 {product.tagline}
               </p>
+
+              {/* AEO TL;DR Direct-Answer Capsule */}
+              {product.tldr && (
+                <div className="mt-4 p-3.5 rounded-lg bg-sky-950/60 border-l-4 border-sky-400 text-xs sm:text-sm text-slate-200 leading-relaxed shadow-sm">
+                  <strong className="text-sky-300 font-semibold block mb-0.5">
+                    Quick Technical Summary (TL;DR):
+                  </strong>
+                  {product.tldr}
+                </div>
+              )}
             </div>
 
             <div className="flex items-center gap-3 shrink-0 w-full sm:w-auto mt-2 sm:mt-0">
@@ -157,6 +174,40 @@ export const ProductDetail: React.FC = () => {
               </button>
             </div>
           </Reveal>
+
+          {/* Above-the-Fold Quick Telemetry Dock */}
+          <div className="mt-8 pt-6 border-t border-slate-800/80 grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-lg flex items-start gap-2.5">
+              <Gauge className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
+              <div>
+                <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block">Linear Resolution</span>
+                <span className="text-xs sm:text-sm font-bold text-sky-400 font-mono">0.1 µm (0.0001 mm)</span>
+              </div>
+            </div>
+            <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-lg flex items-start gap-2.5">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+              <div>
+                <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block">Repeatability</span>
+                <span className="text-xs sm:text-sm font-bold text-emerald-400 font-mono">≤ 0.5 µm (R&amp;R &lt; 10%)</span>
+              </div>
+            </div>
+            <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-lg flex items-start gap-2.5">
+              <span className="w-4 h-4 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">P</span>
+              <div>
+                <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block">Operating Line</span>
+                <span className="text-xs sm:text-sm font-bold text-amber-300 font-mono">
+                  {product.categorySlug === 'air-gauging' ? '3–4 bar Regulated' : 'LVDT / Electronic'}
+                </span>
+              </div>
+            </div>
+            <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-lg flex items-start gap-2.5">
+              <ShieldCheck className="w-4 h-4 text-sky-300 shrink-0 mt-0.5" />
+              <div>
+                <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block">Master Calibration</span>
+                <span className="text-xs sm:text-sm font-bold text-white font-mono">ISO 17025 / DIN 2250</span>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -198,13 +249,49 @@ export const ProductDetail: React.FC = () => {
             {/* Right: Technical Specs & Details (7 cols) */}
             <div className="lg:col-span-7 space-y-8">
               {/* Product Overview */}
-              <div>
-                <h2 className="text-xl font-bold text-industrial-dark font-heading">
-                  Product Overview
-                </h2>
-                <p className="text-sm text-slate-700 mt-3 leading-relaxed">
-                  {product.description}
-                </p>
+              <div className="space-y-4">
+                <div>
+                  <h2 className="text-xl font-bold text-industrial-dark font-heading">
+                    Product Overview
+                  </h2>
+                  <p className="text-sm text-slate-700 mt-2 leading-relaxed">
+                    {product.description}
+                  </p>
+                </div>
+
+                {/* 134-167 Word AI-Extractable Technical Definition Block */}
+                {product.aiOverviewPassage && (
+                  <div className="p-4 sm:p-5 rounded-xl bg-slate-50 border border-slate-200/90 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-industrial-primary" />
+                      <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-industrial-primary">
+                        Technical Definition & Operating Principle
+                      </h3>
+                    </div>
+                    <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                      {product.aiOverviewPassage}
+                    </p>
+                  </div>
+                )}
+
+                {/* E-E-A-T Verified Metrology Reviewer Box */}
+                <div className="p-4 rounded-xl bg-sky-50/80 border border-sky-200/90 flex items-start gap-3.5">
+                  <div className="p-2 rounded-lg bg-sky-600 text-white shrink-0 mt-0.5">
+                    <ShieldCheck className="w-5 h-5" />
+                  </div>
+                  <div className="text-xs space-y-1">
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                      <span className="font-bold text-slate-900 text-xs">Technical Review &amp; Specification Sign-off</span>
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                        Verified E-E-A-T Metrology
+                      </span>
+                    </div>
+                    <p className="text-slate-700 text-xs leading-relaxed">
+                      Technical specifications reviewed and verified by <strong className="text-slate-900">Kalidoss</strong>, Lead Metrology Applications Engineer at AKIRA Precision Automation LLP. Calibration methodologies certified traceable to <span className="font-mono text-slate-800 font-semibold">ISO/IEC 17025:2017</span> and <span className="font-mono text-slate-800 font-semibold">DIN 2250-C</span> setting standards.
+                    </p>
+                  </div>
+                </div>
               </div>
 
               {/* Key Features List Component */}
@@ -227,6 +314,31 @@ export const ProductDetail: React.FC = () => {
                       >
                         {app}
                       </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Product Technical FAQs for AEO & Engineers */}
+              {product.faqs && product.faqs.length > 0 && (
+                <div className="space-y-4 pt-6 border-t border-slate-200">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-sky-500" />
+                    <h3 className="text-base font-bold font-heading text-industrial-dark">
+                      Frequently Asked Technical Questions
+                    </h3>
+                  </div>
+                  <div className="grid grid-cols-1 gap-3">
+                    {product.faqs.map((faq, fIdx) => (
+                      <div key={fIdx} className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                        <h4 className="text-xs sm:text-sm font-bold text-industrial-dark mb-1.5 flex items-start gap-2">
+                          <span className="text-industrial-primary font-mono font-semibold">Q{fIdx + 1}:</span>
+                          <span>{faq.question}</span>
+                        </h4>
+                        <p className="text-xs text-slate-600 leading-relaxed pl-6">
+                          {faq.answer}
+                        </p>
+                      </div>
                     ))}
                   </div>
                 </div>

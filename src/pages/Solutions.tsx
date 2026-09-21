@@ -15,7 +15,8 @@ import {
   Wrench, 
   Anchor,
   Eye,
-  ArrowLeft
+  ArrowLeft,
+  ShieldCheck
 } from 'lucide-react';
 import { Breadcrumb } from '../components/layout/Breadcrumb';
 import { SEOHead } from '../components/layout/SEOHead';
@@ -24,7 +25,7 @@ import { solutions } from '../data/solutions';
 import { products } from '../data/products';
 import { EnquiryCTA } from '../components/home/EnquiryCTA';
 import { Reveal } from '../components/animation/Reveal';
-import { createBreadcrumbSchema } from '../config/seo';
+import { createBreadcrumbSchema, createFAQSchema } from '../config/seo';
 
 const iconMap: Record<string, React.ElementType> = {
   Cpu,
@@ -99,7 +100,11 @@ export const Solutions: React.FC = () => {
         }
         canonicalPath={selectedSolution ? `/solutions/${selectedSolution.slug}` : '/solutions'}
         ogImage={selectedSolution?.image || '/assets/multigauging/multigauging-showcase.webp'}
-        structuredData={createBreadcrumbSchema(breadcrumbsData)}
+        structuredData={
+          selectedSolution?.faqs
+            ? [createBreadcrumbSchema(breadcrumbsData), createFAQSchema(selectedSolution.faqs)!]
+            : createBreadcrumbSchema(breadcrumbsData)
+        }
       />
 
       {/* Header */}
@@ -130,6 +135,16 @@ export const Solutions: React.FC = () => {
                 : `${company.name} provides solutions in Multi gauging, Fixtures, Air gauges, Electronic Gauges, Air plug & Air Ring Gauges, Attribute Gauges, Plug gauges, Snap gauges, Ring gauges, Special Gauges, Assembly, and Work holding.`
               }
             </p>
+
+            {/* AEO TL;DR Capsule in Focused View */}
+            {selectedSolution?.tldr && (
+              <div className="mt-4 p-3.5 rounded-lg bg-sky-950/60 border-l-4 border-sky-400 text-xs sm:text-sm text-slate-200 leading-relaxed shadow-sm">
+                <strong className="text-sky-300 font-semibold block mb-0.5">
+                  Key Engineering Summary (TL;DR):
+                </strong>
+                {selectedSolution.tldr}
+              </div>
+            )}
 
             {selectedSolution && (
               <div className="pt-4 flex items-center gap-3">
@@ -217,6 +232,31 @@ export const Solutions: React.FC = () => {
                       {sol.fullDescription}
                     </p>
 
+                    {/* AEO TL;DR Direct-Answer Capsule */}
+                    {sol.tldr && (
+                      <div className="p-3.5 rounded-lg bg-sky-50 border-l-4 border-sky-500 text-xs text-slate-700 leading-relaxed shadow-xs">
+                        <strong className="text-sky-900 font-semibold block mb-0.5">
+                          Direct Engineering Summary (TL;DR):
+                        </strong>
+                        {sol.tldr}
+                      </div>
+                    )}
+
+                    {/* 134-167 Word AI-Extractable Definition Block */}
+                    {sol.aiOverviewPassage && (
+                      <div className="p-4 sm:p-5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+                        <div className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-industrial-primary" />
+                          <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-industrial-primary">
+                            Technical Definition & Operating Principle
+                          </h3>
+                        </div>
+                        <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                          {sol.aiOverviewPassage}
+                        </p>
+                      </div>
+                    )}
+
                     {/* Features Checklist */}
                     <div className="space-y-2 pt-2">
                       <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
@@ -243,6 +283,32 @@ export const Solutions: React.FC = () => {
                             {app}
                           </span>
                         ))}
+                      </div>
+                    </div>
+
+                    {/* Standards & Traceability Compliance */}
+                    {sol.standardsCompliance && sol.standardsCompliance.length > 0 && (
+                      <div className="pt-2">
+                        <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
+                          <ShieldCheck className="w-3.5 h-3.5 text-industrial-primary" />
+                          <span>Applicable Metrology &amp; Quality Standards</span>
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {sol.standardsCompliance.map((std, i) => (
+                            <span key={i} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-sky-50 text-sky-900 text-xs font-medium border border-sky-200">
+                              <span className="w-1.5 h-1.5 rounded-full bg-sky-500" />
+                              {std}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* E-E-A-T Technical Specialist Byline */}
+                    <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex items-start gap-2.5">
+                      <ShieldCheck className="w-4 h-4 text-industrial-primary shrink-0 mt-0.5" />
+                      <div className="text-[11px] text-slate-600 leading-relaxed">
+                        <strong className="text-slate-800">Technical Metrology Review:</strong> Verified by <strong className="text-slate-900">Kalidoss</strong>, Lead Metrology Applications Engineer. All tolerances and measurement parameters comply with ISO/DIN manufacturing standards.
                       </div>
                     </div>
 
@@ -285,6 +351,126 @@ export const Solutions: React.FC = () => {
                   </div>
 
                 </div>
+
+                {/* Real-World Metrology Case Studies */}
+                {sol.caseStudies && sol.caseStudies.length > 0 && (
+                  <div className="mt-10 pt-8 border-t border-slate-200 space-y-4">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-industrial-primary" />
+                      <h3 className="text-base font-bold font-heading text-industrial-dark">
+                        Real-World Metrology Case Studies &amp; Shop-Floor Deployments
+                      </h3>
+                    </div>
+                    <div className="grid grid-cols-1 gap-6">
+                      {sol.caseStudies.map((cs, csIdx) => (
+                        <div key={csIdx} className="p-5 rounded-xl bg-slate-50 border border-slate-200/90 space-y-4">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-3">
+                            <div>
+                              <span className="text-[10px] font-mono uppercase tracking-wider text-industrial-primary font-bold">
+                                Case Study — {cs.industry}
+                              </span>
+                              <h4 className="text-sm sm:text-base font-bold text-slate-900 font-heading mt-0.5">
+                                {cs.title}
+                              </h4>
+                            </div>
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 shrink-0 w-fit">
+                              <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                              Production Verified
+                            </span>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                            <div className="space-y-1">
+                              <span className="font-bold text-slate-900 block">Manufacturing Challenge:</span>
+                              <p className="text-slate-600 leading-relaxed">{cs.challenge}</p>
+                            </div>
+                            <div className="space-y-1">
+                              <span className="font-bold text-slate-900 block">AKIRA Engineering Solution:</span>
+                              <p className="text-slate-600 leading-relaxed">{cs.solution}</p>
+                            </div>
+                          </div>
+
+                          <div className="space-y-2 pt-2 border-t border-slate-200/70">
+                            <span className="font-bold text-slate-900 text-xs block">Production Impact &amp; Result:</span>
+                            <p className="text-xs text-slate-700 leading-relaxed">{cs.result}</p>
+                          </div>
+
+                          {cs.metrics && cs.metrics.length > 0 && (
+                            <div className="pt-2">
+                              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                {cs.metrics.map((m, mIdx) => (
+                                  <div key={mIdx} className="bg-white border border-slate-200 p-2.5 rounded-lg text-center shadow-xs">
+                                    <span className="text-[11px] font-bold text-industrial-primary font-mono block">
+                                      {m}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Comparative Metrology Analysis Table */}
+                {sol.comparisonTable && (
+                  <div className="mt-10 pt-8 border-t border-slate-200">
+                    <h3 className="text-base font-bold font-heading text-industrial-dark mb-3">
+                      {sol.comparisonTable.caption || `${sol.title} — Comparative Metrology Analysis`}
+                    </h3>
+                    <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+                      <table className="w-full text-left text-xs border-collapse bg-white">
+                        <thead>
+                          <tr className="bg-slate-100 border-b border-slate-200">
+                            {sol.comparisonTable.headers.map((h, i) => (
+                              <th key={i} className="p-3 font-semibold text-slate-900">
+                                {h}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                          {sol.comparisonTable.rows.map((row, rIdx) => (
+                            <tr key={rIdx} className={rIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}>
+                              {row.map((cell, cIdx) => (
+                                <td key={cIdx} className={`p-3 ${cIdx === 0 ? 'font-semibold text-slate-900' : 'text-slate-600'}`}>
+                                  {cell}
+                                </td>
+                              ))}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+
+                {/* Technical FAQs for AI Search & Engineering Teams */}
+                {sol.faqs && sol.faqs.length > 0 && (
+                  <div className="mt-10 pt-8 border-t border-slate-200 space-y-4">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                      <h3 className="text-base font-bold font-heading text-industrial-dark">
+                        Frequently Asked Technical Questions
+                      </h3>
+                    </div>
+                    <div className="grid grid-cols-1 gap-3">
+                      {sol.faqs.map((faq, fIdx) => (
+                        <div key={fIdx} className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                          <h4 className="text-xs sm:text-sm font-bold text-industrial-dark mb-1.5 flex items-start gap-2">
+                            <span className="text-industrial-primary font-mono font-semibold">Q{fIdx + 1}:</span>
+                            <span>{faq.question}</span>
+                          </h4>
+                          <p className="text-xs text-slate-600 leading-relaxed pl-6">
+                            {faq.answer}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* Related Products in Focused View */}
                 {selectedSolution && supportedProductList.length > 0 && (

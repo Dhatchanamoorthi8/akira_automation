@@ -3,6 +3,17 @@ export interface ProductCategory {
   name: string;
 }
 
+export interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+export interface ComparisonTable {
+  caption?: string;
+  headers: string[];
+  rows: string[][];
+}
+
 export interface ProductSummary {
   id: string;
   slug: string;
@@ -12,8 +23,20 @@ export interface ProductSummary {
   tagline: string;
   image: string;
   description: string;
+  metaDescription?: string;
+  aiOverviewPassage?: string;
+  tldr?: string;
   highlights: string[];
   isFeatured?: boolean;
+}
+
+export interface CaseStudy {
+  title: string;
+  industry: string;
+  challenge: string;
+  solution: string;
+  result: string;
+  metrics: string[];
 }
 
 export interface Product extends ProductSummary {
@@ -24,6 +47,9 @@ export interface Product extends ProductSummary {
   features: string[];
   applications: string[];
   relatedProductSlugs?: string[];
+  standardsCompliance?: string[];
+  caseStudies?: CaseStudy[];
+  faqs?: FAQItem[];
 }
 
 export interface Solution {
@@ -32,11 +58,17 @@ export interface Solution {
   title: string;
   shortDescription: string;
   fullDescription: string;
+  aiOverviewPassage?: string;
+  tldr?: string;
   iconName: string;
   image: string;
   features: string[];
   supportedProducts?: string[];
   applications: string[];
+  faqs?: FAQItem[];
+  comparisonTable?: ComparisonTable;
+  caseStudies?: CaseStudy[];
+  standardsCompliance?: string[];
 }
 
 export interface Industry {
