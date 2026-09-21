@@ -20,7 +20,7 @@ export const AdminLogin: React.FC = () => {
   // Determine redirect path
   const redirectParam = searchParams.get('redirect');
   const fromState = (location.state as { from?: { pathname: string; search?: string } })?.from;
-  const targetDestination = redirectParam
+  const rawTargetDestination = redirectParam
     ? decodeURIComponent(redirectParam)
     : fromState
     ? fromState.pathname + (fromState.search || '')
@@ -34,16 +34,27 @@ export const AdminLogin: React.FC = () => {
     }
   }, [searchParams, sessionExpired, clearSessionExpired]);
 
+  // Helper to compute correct destination based on user role
+  const getDestinationForRole = (isAdminUser: boolean, isStaffUser: boolean): string => {
+    if (isAdminUser) {
+      // Admins should only be redirected to explicit /admin/* paths, never to /staff
+      return rawTargetDestination.startsWith('/admin') && rawTargetDestination !== '/admin/login'
+        ? rawTargetDestination
+        : '/admin/dashboard';
+    }
+    if (isStaffUser) {
+      // Operational staff always go to /staff
+      return '/staff';
+    }
+    return '/';
+  };
+
   // Redirect if already logged in based on role
   useEffect(() => {
     if (user) {
-      if (isStaff && !isAdmin) {
-        navigate('/staff', { replace: true });
-      } else {
-        navigate(targetDestination, { replace: true });
-      }
+      navigate(getDestinationForRole(isAdmin, isStaff), { replace: true });
     }
-  }, [user, isAdmin, isStaff, navigate, targetDestination]);
+  }, [user, isAdmin, isStaff, navigate, rawTargetDestination]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,11 +79,7 @@ export const AdminLogin: React.FC = () => {
         userProfile?.active
       );
 
-      if (isUserStaff && !isUserAdmin) {
-        navigate('/staff', { replace: true });
-      } else {
-        navigate(targetDestination, { replace: true });
-      }
+      navigate(getDestinationForRole(isUserAdmin, isUserStaff), { replace: true });
     }
   };
 

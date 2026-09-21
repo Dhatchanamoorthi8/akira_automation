@@ -24,11 +24,10 @@ import {
   FollowupType,
   FollowupTimeframe,
   FollowupPriority,
-  StaffProfile,
 } from '../../types/database';
 import { followupService } from '../../services/followupService';
 import { enquiryService } from '../../services/enquiryService';
-import { userService } from '../../services/userService';
+import { attendanceService, StaffWithAttendanceStatus } from '../../services/attendanceService';
 import { formatDate } from '../../utils/date';
 
 // ─── Timeframe helpers (client-side, fixes count bug) ───────────────────────
@@ -130,7 +129,7 @@ export const AdminFollowups: React.FC = () => {
   const [selectedStaff, setSelectedStaff] = useState<string>('all');
   const [selectedPriority, setSelectedPriority] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [staffList, setStaffList] = useState<StaffProfile[]>([]);
+  const [staffList, setStaffList] = useState<StaffWithAttendanceStatus[]>([]);
 
   // Modals
   const [completingFollowup, setCompletingFollowup] = useState<FollowupWithEnquiry | null>(null);
@@ -181,7 +180,7 @@ export const AdminFollowups: React.FC = () => {
   }, [fetchFollowups]);
 
   useEffect(() => {
-    userService.getAssignableStaff().then(setStaffList);
+    attendanceService.getActiveStaffWithAttendance(true).then(setStaffList);
   }, []);
 
   // ─── Client-side counts (fixes the "all tabs show same number" bug) ───────
@@ -502,11 +501,21 @@ export const AdminFollowups: React.FC = () => {
           >
             <option value="all">All Staff</option>
             <option value="unassigned">Unassigned</option>
-            {staffList.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.full_name || s.email}
-              </option>
-            ))}
+            {staffList.map((s) => {
+              const statusPrefix = s.role === 'admin'
+                ? '👑 [Admin] '
+                : {
+                    present: '🟢 [Present] ',
+                    on_field: '🟡 [On Field] ',
+                    clocked_out: '⚪ [Out] ',
+                    not_reported: '🔴 ',
+                  }[s.attendanceStatus];
+              return (
+                <option key={s.id} value={s.id}>
+                  {statusPrefix}{s.full_name || s.email}
+                </option>
+              );
+            })}
           </select>
           <span className="text-xs text-gray-500">
             Showing <span className="font-bold text-gray-800">{filteredFollowups.length}</span> of{' '}

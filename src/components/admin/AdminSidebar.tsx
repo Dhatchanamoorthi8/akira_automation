@@ -15,6 +15,7 @@ import {
   ChevronsLeft,
   ChevronsRight,
   MailCheck,
+  Clock,
 } from 'lucide-react';
 import { useAuth } from '../../auth/useAuth';
 import { company } from '../../config/company';
@@ -92,6 +93,12 @@ const navGroups: NavGroupConfig[] = [
         name: 'Staff & Users',
         to: '/admin/users',
         icon: Users,
+        isImplemented: true,
+      },
+      {
+        name: 'Attendance & Tracking',
+        to: '/admin/attendance',
+        icon: Clock,
         isImplemented: true,
       },
       {

@@ -144,6 +144,15 @@ export interface Enquiry {
   status: EnquiryStatus;
   source: string;
   assigned_to: string | null;
+  deal_title?: string | null;
+  deal_value?: number | null;
+  expected_close_date?: string | null;
+  converted_at?: string | null;
+  converted_by?: string | null;
+  lost_reason?: string | null;
+  lost_notes?: string | null;
+  closed_at?: string | null;
+  closed_by?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -232,6 +241,194 @@ export interface EnquiryWithDetails extends Enquiry {
   followups?: Followup[];
   activity_logs?: ActivityLog[];
   email_messages?: import('./email').EmailMessage[];
+  invoices?: Invoice[];
+  field_visits?: FieldVisit[];
+}
+
+export type InvoiceType = 'quotation' | 'proforma' | 'tax_invoice';
+export type InvoiceStatus = 'draft' | 'sent' | 'accepted' | 'paid' | 'cancelled';
+
+export interface Invoice {
+  id: string;
+  enquiry_id: string | null;
+  invoice_number: string;
+  customer_name: string;
+  customer_company: string | null;
+  customer_email: string;
+  customer_phone: string | null;
+  customer_address: string | null;
+  customer_gst: string | null;
+  type: InvoiceType;
+  status: InvoiceStatus;
+  subtotal: number;
+  tax_amount: number;
+  discount_amount: number;
+  total_amount: number;
+  currency: string;
+  issue_date: string;
+  due_date: string | null;
+  notes: string | null;
+  terms: string | null;
+  pdf_url: string | null;
+  created_by: string | null;
+  sent_at: string | null;
+  paid_at: string | null;
+  created_at: string;
+  updated_at: string;
+  items?: InvoiceItem[];
+  creator_profile?: StaffProfile | null;
+}
+
+export interface InvoiceItem {
+  id: string;
+  invoice_id: string;
+  product_id: string | null;
+  description: string;
+  hsn_code: string | null;
+  quantity: number;
+  unit: string;
+  unit_price: number;
+  tax_rate: number;
+  tax_amount: number;
+  total_price: number;
+  created_at: string;
+}
+
+export interface CreateInvoiceInput {
+  enquiryId?: string | null;
+  invoiceNumber?: string;
+  customerName: string;
+  customerCompany?: string | null;
+  customerEmail: string;
+  customerPhone?: string | null;
+  customerAddress?: string | null;
+  customerGst?: string | null;
+  type?: InvoiceType;
+  discountAmount?: number;
+  currency?: string;
+  issueDate?: string;
+  dueDate?: string | null;
+  notes?: string | null;
+  terms?: string | null;
+  createdBy?: string | null;
+  items: Array<{
+    productId?: string | null;
+    description: string;
+    hsnCode?: string | null;
+    quantity: number;
+    unit?: string;
+    unitPrice: number;
+    taxRate?: number;
+  }>;
+}
+
+export interface InvoiceFilters {
+  enquiryId?: string;
+  status?: InvoiceStatus | 'all';
+  type?: InvoiceType | 'all';
+  createdBy?: string;
+  search?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  sortBy?: 'issue_date' | 'created_at' | 'total_amount';
+  sortOrder?: 'asc' | 'desc';
+  limit?: number;
+  offset?: number;
+}
+
+export type VisitPurpose = 'consultation' | 'demo' | 'site_inspection' | 'installation' | 'troubleshooting' | 'other';
+export type VisitStatus = 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
+
+export interface FieldVisit {
+  id: string;
+  enquiry_id: string;
+  staff_id: string;
+  title: string;
+  visit_purpose: VisitPurpose;
+  status: VisitStatus;
+  scheduled_at: string;
+  check_in_at: string | null;
+  check_in_lat: number | null;
+  check_in_lng: number | null;
+  check_in_address: string | null;
+  check_out_at: string | null;
+  check_out_lat: number | null;
+  check_out_lng: number | null;
+  check_out_address: string | null;
+  duration_minutes: number | null;
+  outcome_notes: string | null;
+  customer_contact_person: string | null;
+  customer_signature_url: string | null;
+  photos: string[];
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+  enquiry?: {
+    id: string;
+    name: string;
+    company: string | null;
+    email: string;
+    phone: string | null;
+  } | null;
+  staff_profile?: StaffProfile | null;
+}
+
+export interface CreateVisitInput {
+  enquiryId: string;
+  staffId: string;
+  title: string;
+  visitPurpose?: VisitPurpose;
+  scheduledAt: string;
+  customerContactPerson?: string | null;
+  notes?: string | null;
+  createdBy?: string | null;
+}
+
+export interface VisitFilters {
+  enquiryId?: string;
+  staffId?: string;
+  status?: VisitStatus | 'all';
+  purpose?: VisitPurpose | 'all';
+  dateFrom?: string;
+  dateTo?: string;
+  search?: string;
+  limit?: number;
+  offset?: number;
+}
+
+export type AttendanceStatus = 'present' | 'half_day' | 'on_field' | 'leave';
+
+export interface StaffAttendance {
+  id: string;
+  staff_id: string;
+  work_date: string;
+  clock_in_at: string;
+  clock_in_lat: number | null;
+  clock_in_lng: number | null;
+  clock_in_address: string | null;
+  clock_out_at: string | null;
+  clock_out_lat: number | null;
+  clock_out_lng: number | null;
+  clock_out_address: string | null;
+  status: AttendanceStatus;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+  staff_profile?: StaffProfile | null;
+}
+
+export interface ClockInInput {
+  staffId: string;
+  coords?: { lat: number; lng: number } | null;
+  address?: string | null;
+  status?: AttendanceStatus;
+  notes?: string | null;
+}
+
+export interface ClockOutInput {
+  attendanceId: string;
+  coords?: { lat: number; lng: number } | null;
+  address?: string | null;
 }
 
 export interface FollowupWithEnquiry extends Followup {

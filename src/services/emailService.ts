@@ -300,6 +300,74 @@ export class EmailService {
   }
 
   /**
+   * Dispatches an email to the customer with invoice/quotation details.
+   */
+  async notifyInvoiceDispatched(invoice: import('../types/database').Invoice, customerEmail: string): Promise<EmailSendResult> {
+    const subject = `[${company.name}] ${invoice.type === 'quotation' ? 'Quotation' : 'Invoice'} #${invoice.invoice_number} from Akira Precision`;
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #1e293b;">
+        <div style="background-color: #0f172a; padding: 24px; text-align: center; border-radius: 8px 8px 0 0;">
+          <h1 style="color: #ffffff; margin: 0; font-size: 20px;">${company.name}</h1>
+          <p style="color: #94a3b8; margin: 4px 0 0; font-size: 14px;">Precision Metrology & Gauging Solutions</p>
+        </div>
+        <div style="padding: 24px; border: 1px solid #e2e8f0; border-top: none; background-color: #ffffff;">
+          <h2 style="font-size: 18px; color: #0f172a; margin-top: 0;">${invoice.type === 'quotation' ? 'Formal Quotation' : 'Invoice'} Details</h2>
+          <p>Dear ${invoice.customer_name},</p>
+          <p>Please find the summary of your ${invoice.type} below:</p>
+          <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
+            <tr><td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-weight: bold;">Document Number:</td><td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">${invoice.invoice_number}</td></tr>
+            <tr><td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-weight: bold;">Issue Date:</td><td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">${invoice.issue_date}</td></tr>
+            <tr><td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-weight: bold;">Total Amount:</td><td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-size: 16px; font-weight: bold; color: #0284c7;">₹${invoice.total_amount.toLocaleString('en-IN')} (incl. GST)</td></tr>
+          </table>
+          <p style="margin-top: 24px; font-size: 13px; color: #64748b;">If you have any technical questions regarding this document, please reply directly to this email or contact our sales engineering desk at ${company.primaryEmail}.</p>
+        </div>
+        <div style="padding: 16px; text-align: center; font-size: 12px; color: #94a3b8;">
+          ${company.name} &bull; Bangalore, India
+        </div>
+      </div>
+    `;
+
+    return this.sendNotification({
+      eventType: 'enquiry_assigned',
+      recipient: customerEmail,
+      subject,
+      html,
+    });
+  }
+
+  /**
+   * Dispatches SLA breach alert to administrators when an assigned lead has had no activity for > 24 hours.
+   */
+  async notifyLeadSLAAlert(enquiry: Enquiry, staffName: string, hoursIdle: number): Promise<EmailSendResult> {
+    const adminEmail = this.getRecipientEmail();
+    const subject = `[SLA ALERT] Lead #${enquiry.id.slice(0, 8)} unattended for ${hoursIdle}h (Assigned to: ${staffName})`;
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #1e293b;">
+        <div style="background-color: #be123c; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
+          <h1 style="color: #ffffff; margin: 0; font-size: 18px;">CRM Lead SLA Warning</h1>
+        </div>
+        <div style="padding: 24px; border: 1px solid #e2e8f0; border-top: none; background-color: #ffffff;">
+          <p><strong>Warning:</strong> The following lead was assigned to <strong>${staffName}</strong> and has had no recorded action or follow-up for <strong>${hoursIdle} hours</strong>.</p>
+          <ul style="line-height: 1.6;">
+            <li><strong>Customer:</strong> ${enquiry.name} (${enquiry.company || 'N/A'})</li>
+            <li><strong>Email:</strong> ${enquiry.email}</li>
+            <li><strong>Phone:</strong> ${enquiry.phone || 'N/A'}</li>
+            <li><strong>Requirement:</strong> ${enquiry.subject || enquiry.requirement || 'N/A'}</li>
+          </ul>
+          <p>Please log in to the Akira Admin Portal to reassign or follow up with the assigned representative.</p>
+        </div>
+      </div>
+    `;
+
+    return this.sendNotification({
+      eventType: 'enquiry_assigned',
+      recipient: adminEmail,
+      subject,
+      html,
+    });
+  }
+
+  /**
    * Form-to-email fallback interface (Phase 5 migration compatibility).
    */
   async sendEnquiry(

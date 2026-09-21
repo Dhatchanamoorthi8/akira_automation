@@ -41,6 +41,7 @@ const AdminActivity = lazy(() => import('./pages/admin/AdminActivity').then(m =>
 const AdminUsers = lazy(() => import('./pages/admin/AdminUsers').then(m => ({ default: m.AdminUsers })));
 const AdminFollowupDetail = lazy(() => import('./pages/admin/AdminFollowupDetail').then(m => ({ default: m.AdminFollowupDetail })));
 const AdminEmailSettings = lazy(() => import('./pages/admin/AdminEmailSettings').then(m => ({ default: m.AdminEmailSettings })));
+const AdminAttendance = lazy(() => import('./pages/admin/AdminAttendance').then(m => ({ default: m.AdminAttendance })));
 const StaffWorkspace = lazy(() => import('./pages/staff/StaffWorkspace').then(m => ({ default: m.StaffWorkspace })));
 
 // Scroll to top on route navigation
@@ -107,6 +108,7 @@ const AppShell: React.FC = () => {
                 <Route path="followups" element={<AdminFollowups />} />
                 <Route path="followups/:id" element={<AdminFollowupDetail />} />
                 <Route path="users" element={<AdminUsers />} />
+                <Route path="attendance" element={<AdminAttendance />} />
                 <Route path="activity" element={<AdminActivity />} />
                 <Route path="history" element={<Navigate to="/admin/activity" replace />} />
                 <Route path="products" element={<AdminProducts />} />

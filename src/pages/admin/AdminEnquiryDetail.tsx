@@ -27,6 +27,10 @@ import {
   Sparkles,
   RefreshCw,
   CheckCheck,
+  Receipt,
+  MapPin,
+  TrendingUp,
+  XCircle,
 } from 'lucide-react';
 import {
   EnquiryWithDetails,
@@ -34,12 +38,12 @@ import {
   FollowupType,
   Followup,
   FollowupPriority,
-  StaffProfile,
 } from '../../types/database';
 import { EmailMessage } from '../../types/email';
 import { enquiryService } from '../../services/enquiryService';
 import { followupService } from '../../services/followupService';
 import { emailMessageService } from '../../services/emailMessageService';
+import { attendanceService, StaffWithAttendanceStatus } from '../../services/attendanceService';
 import { formatDate } from '../../utils/date';
 import { PageLoader } from '../../components/common/PageLoader';
 import { AdminErrorState } from '../../components/admin/AdminErrorState';
@@ -68,7 +72,7 @@ export const AdminEnquiryDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
 
   const [enquiry, setEnquiry] = useState<EnquiryWithDetails | null>(null);
-  const [staffList, setStaffList] = useState<StaffProfile[]>([]);
+  const [staffList, setStaffList] = useState<StaffWithAttendanceStatus[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -122,7 +126,7 @@ export const AdminEnquiryDetail: React.FC = () => {
 
     const [enquiryRes, staffRes] = await Promise.all([
       enquiryService.getEnquiryById(id),
-      enquiryService.getAdminProfiles(),
+      attendanceService.getActiveStaffWithAttendance(true),
     ]);
 
     if (enquiryRes.error || !enquiryRes.enquiry) {
@@ -664,7 +668,61 @@ export const AdminEnquiryDetail: React.FC = () => {
               )}
             </div>
 
-            {/* Card 4: Historical Activity Trail */}
+            {/* Card 4: Invoices & Quotations */}
+            {enquiry.invoices && enquiry.invoices.length > 0 && (
+              <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-subtle space-y-4">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 font-mono flex items-center gap-1.5 pb-2 border-b border-slate-100">
+                  <Receipt className="w-3.5 h-3.5 text-industrial-primary" />
+                  <span>Quotations & Invoices ({enquiry.invoices.length})</span>
+                </h3>
+                <div className="space-y-3">
+                  {enquiry.invoices.map((inv) => (
+                    <div key={inv.id} className="p-3 rounded-lg border border-slate-200 bg-slate-50 flex items-center justify-between text-xs">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono font-bold text-industrial-dark">{inv.invoice_number}</span>
+                          <span className="px-2 py-0.5 rounded text-[10px] uppercase font-bold bg-white border border-slate-200">{inv.type}</span>
+                        </div>
+                        <span className="text-slate-500 text-[11px] block mt-0.5">Issued: {inv.issue_date} • Status: {inv.status}</span>
+                      </div>
+                      <span className="font-mono font-bold text-emerald-700 text-sm">₹{inv.total_amount.toLocaleString('en-IN')}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Card 5: Field Visits */}
+            {enquiry.field_visits && enquiry.field_visits.length > 0 && (
+              <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-subtle space-y-4">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 font-mono flex items-center gap-1.5 pb-2 border-b border-slate-100">
+                  <MapPin className="w-3.5 h-3.5 text-industrial-primary" />
+                  <span>Field Visits ({enquiry.field_visits.length})</span>
+                </h3>
+                <div className="space-y-3">
+                  {enquiry.field_visits.map((vis) => (
+                    <div key={vis.id} className="p-3 rounded-lg border border-slate-200 bg-slate-50 text-xs space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-industrial-dark">{vis.title}</span>
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-white border border-slate-200">{vis.status}</span>
+                      </div>
+                      <div className="text-[11px] text-slate-500 font-mono flex items-center gap-2">
+                        <span>{formatDate(vis.scheduled_at)}</span>
+                        {vis.check_in_at && <span className="text-sky-700 font-semibold">• GPS Checked In</span>}
+                        {vis.duration_minutes && <span>• {vis.duration_minutes} mins</span>}
+                      </div>
+                      {vis.outcome_notes && (
+                        <p className="text-xs text-slate-600 bg-white p-2 rounded border border-slate-200 italic">
+                          "{vis.outcome_notes}"
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Card 6: Historical Activity Trail */}
             <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-subtle space-y-4">
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 font-mono flex items-center gap-1.5 pb-2 border-b border-slate-100">
                 <History className="w-3.5 h-3.5 text-industrial-primary" />
@@ -683,6 +741,39 @@ export const AdminEnquiryDetail: React.FC = () => {
                 <Clock className="w-3.5 h-3.5 text-industrial-primary" />
                 <span>Lifecycle Status Progression</span>
               </h3>
+
+              {/* Deal or Lost Reason Callout */}
+              {enquiry.deal_title && (
+                <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs space-y-1">
+                  <div className="flex items-center gap-1.5 font-bold text-emerald-900">
+                    <TrendingUp className="w-4 h-4 text-emerald-600" />
+                    <span>Converted Deal: {enquiry.deal_title}</span>
+                  </div>
+                  {enquiry.deal_value && (
+                    <p className="font-mono text-emerald-800 font-bold text-sm">
+                      ₹{enquiry.deal_value.toLocaleString('en-IN')}
+                    </p>
+                  )}
+                  {enquiry.expected_close_date && (
+                    <p className="text-[11px] text-emerald-700">
+                      Target Close Date: {enquiry.expected_close_date}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {enquiry.lost_reason && (
+                <div className="p-4 rounded-xl bg-slate-100 border border-slate-200 text-xs space-y-1">
+                  <div className="flex items-center gap-1.5 font-bold text-slate-800">
+                    <XCircle className="w-4 h-4 text-slate-500" />
+                    <span>Closed (Lost Opportunity)</span>
+                  </div>
+                  <p className="text-slate-600"><strong>Reason:</strong> {enquiry.lost_reason}</p>
+                  {enquiry.lost_notes && (
+                    <p className="text-slate-500 italic mt-0.5">"{enquiry.lost_notes}"</p>
+                  )}
+                </div>
+              )}
 
               <div className="space-y-2">
                 {STATUS_FLOW.map((item) => {
@@ -723,16 +814,81 @@ export const AdminEnquiryDetail: React.FC = () => {
                 value={enquiry.assigned_to || 'unassigned'}
                 onChange={(e) => handleAssigneeChange(e.target.value)}
                 disabled={isAssigning}
-                className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-industrial-primary/20 focus:border-industrial-primary bg-white text-slate-700"
+                className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-industrial-primary/20 focus:border-industrial-primary bg-white text-slate-700 font-medium"
                 aria-label="Assign staff member"
               >
                 <option value="unassigned">Unassigned Inbound Lead</option>
-                {staffList.map((staff) => (
-                  <option key={staff.id} value={staff.id}>
-                    {staff.full_name || staff.email} ({staff.role})
-                  </option>
-                ))}
+                {staffList.map((staff) => {
+                  let badge = '🔴 [Not Reported]';
+                  let timeInfo = '';
+                  if (staff.role === 'admin') {
+                    badge = '👑 [Admin]';
+                  } else if (staff.attendanceStatus === 'present') {
+                    badge = '🟢 [Present]';
+                    if (staff.todayAttendance?.clock_in_at) {
+                      timeInfo = ` • In: ${new Date(staff.todayAttendance.clock_in_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+                    }
+                  } else if (staff.attendanceStatus === 'on_field') {
+                    badge = '🟡 [On Field]';
+                    if (staff.todayAttendance?.clock_in_at) {
+                      timeInfo = ` • In: ${new Date(staff.todayAttendance.clock_in_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+                    }
+                  } else if (staff.attendanceStatus === 'clocked_out') {
+                    badge = '⚪ [Clocked Out]';
+                    if (staff.todayAttendance?.clock_out_at) {
+                      timeInfo = ` • Left: ${new Date(staff.todayAttendance.clock_out_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+                    }
+                  }
+                  return (
+                    <option key={staff.id} value={staff.id}>
+                      {badge} {staff.full_name || staff.email} ({staff.role}){timeInfo}
+                    </option>
+                  );
+                })}
               </select>
+
+              {/* Real-time Staff Presence Status Indicator (only for operational staff, not admin) */}
+              {(() => {
+                const assignedStaff = staffList.find((s) => s.id === enquiry.assigned_to);
+                if (!assignedStaff || assignedStaff.role === 'admin') return null;
+
+                const statusConfig = {
+                  present: {
+                    label: 'Present & Active Today',
+                    badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                    dotClass: 'bg-emerald-500',
+                  },
+                  on_field: {
+                    label: 'Currently On Field Visit',
+                    badgeClass: 'bg-amber-50 text-amber-700 border-amber-200',
+                    dotClass: 'bg-amber-500',
+                  },
+                  clocked_out: {
+                    label: 'Clocked Out for the Day',
+                    badgeClass: 'bg-slate-100 text-slate-700 border-slate-200',
+                    dotClass: 'bg-slate-400',
+                  },
+                  not_reported: {
+                    label: 'Not Checked In Today',
+                    badgeClass: 'bg-rose-50 text-rose-700 border-rose-200',
+                    dotClass: 'bg-rose-500',
+                  },
+                }[assignedStaff.attendanceStatus];
+
+                return (
+                  <div className={`p-2.5 rounded-lg border text-xs flex items-center justify-between ${statusConfig.badgeClass}`}>
+                    <div className="flex items-center gap-2">
+                      <span className={`w-2 h-2 rounded-full animate-pulse ${statusConfig.dotClass}`} />
+                      <span className="font-semibold">{statusConfig.label}</span>
+                    </div>
+                    {assignedStaff.todayAttendance?.clock_in_at && (
+                      <span className="font-mono text-[11px]">
+                        In: {new Date(assignedStaff.todayAttendance.clock_in_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
 
             {/* Card 3: Follow-up Management Schedule */}

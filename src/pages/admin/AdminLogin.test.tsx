@@ -137,6 +137,70 @@ describe('AdminLogin Component', () => {
     });
   });
 
+  it('6. redirects admin to /admin/dashboard even when redirect param is /staff', async () => {
+    mockSignIn.mockResolvedValueOnce({
+      user: { id: 'admin-1', email: 'admin@akiraautomation.com' } as any,
+      profile: { id: 'admin-1', role: 'admin', active: true } as any,
+      error: null,
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/admin/login?redirect=%2Fstaff']}>
+        <Routes>
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/dashboard" element={<div data-testid="dashboard-page">Dashboard</div>} />
+          <Route path="/staff" element={<div data-testid="staff-page">Staff</div>} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    fireEvent.change(screen.getByLabelText(/Authorized Email/i), {
+      target: { value: 'admin@akiraautomation.com' },
+    });
+    fireEvent.change(screen.getByLabelText(/^Password$/i), {
+      target: { value: 'correctpassword' },
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /Sign In to Admin Portal/i }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('dashboard-page')).toBeInTheDocument();
+      expect(screen.queryByTestId('staff-page')).not.toBeInTheDocument();
+    });
+  });
+
+  it('7. redirects staff to /staff even when redirect param is /admin/dashboard', async () => {
+    mockSignIn.mockResolvedValueOnce({
+      user: { id: 'staff-1', email: 'staff@akiraautomation.com' } as any,
+      profile: { id: 'staff-1', role: 'sales', active: true } as any,
+      error: null,
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/admin/login?redirect=%2Fadmin%2Fdashboard']}>
+        <Routes>
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/dashboard" element={<div data-testid="dashboard-page">Dashboard</div>} />
+          <Route path="/staff" element={<div data-testid="staff-page">Staff</div>} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    fireEvent.change(screen.getByLabelText(/Authorized Email/i), {
+      target: { value: 'staff@akiraautomation.com' },
+    });
+    fireEvent.change(screen.getByLabelText(/^Password$/i), {
+      target: { value: 'correctpassword' },
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /Sign In to Admin Portal/i }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('staff-page')).toBeInTheDocument();
+      expect(screen.queryByTestId('dashboard-page')).not.toBeInTheDocument();
+    });
+  });
+
   it('10. displays friendly notification when session has expired', () => {
     render(
       <MemoryRouter initialEntries={['/admin/login?error=session_expired']}>

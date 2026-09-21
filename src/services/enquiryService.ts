@@ -296,11 +296,27 @@ export class EnquiryService {
         .eq('entity_id', id)
         .order('created_at', { ascending: false });
 
+      // 4. Fetch associated invoices
+      const { data: invoicesData } = await supabase
+        .from('invoices')
+        .select('*, items:invoice_items(*)')
+        .eq('enquiry_id', id)
+        .order('created_at', { ascending: false });
+
+      // 5. Fetch associated field visits
+      const { data: visitsData } = await supabase
+        .from('field_visits')
+        .select('*, staff_profile:profiles!field_visits_staff_id_fkey(id, email, full_name, role)')
+        .eq('enquiry_id', id)
+        .order('scheduled_at', { ascending: false });
+
       return {
         enquiry: {
           ...enquiryData,
           followups: followupsData || [],
           activity_logs: activityData || [],
+          invoices: invoicesData || [],
+          field_visits: visitsData || [],
         } as EnquiryWithDetails,
         error: null,
       };
@@ -308,6 +324,127 @@ export class EnquiryService {
       return {
         enquiry: null,
         error: err instanceof Error ? err.message : 'Unable to load enquiry details.',
+      };
+    }
+  }
+
+  /**
+   * Convert an enquiry into a qualified Deal (Standard CRM conversion pattern).
+   * Validates deal details and transitions status to 'converted'.
+   */
+  async convertEnquiry(
+    id: string,
+    input: {
+      dealTitle: string;
+      dealValue?: number;
+      expectedCloseDate?: string;
+      notes?: string;
+      convertedBy?: string;
+    }
+  ): Promise<{ success: boolean; error: string | null }> {
+    if (!isSupabaseConfigured()) {
+      return { success: false, error: 'Database configuration is unavailable.' };
+    }
+
+    if (!input.dealTitle || !input.dealTitle.trim()) {
+      return { success: false, error: 'Deal title is required for CRM conversion.' };
+    }
+
+    try {
+      const now = new Date().toISOString();
+      const { error } = await supabase
+        .from('enquiries')
+        .update({
+          status: 'converted',
+          deal_title: input.dealTitle.trim(),
+          deal_value: input.dealValue || null,
+          expected_close_date: input.expectedCloseDate || null,
+          converted_at: now,
+          converted_by: input.convertedBy || null,
+        })
+        .eq('id', id);
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      await activityService.recordActivity({
+        entityType: 'enquiry',
+        entityId: id,
+        action: 'ENQUIRY_CONVERTED',
+        newValue: {
+          status: 'converted',
+          deal_title: input.dealTitle.trim(),
+          deal_value: input.dealValue,
+          expected_close_date: input.expectedCloseDate,
+        },
+        description: `Lead converted to Deal: "${input.dealTitle.trim()}" (Value: ₹${(input.dealValue || 0).toLocaleString('en-IN')})`,
+        performedBy: input.convertedBy || null,
+      });
+
+      return { success: true, error: null };
+    } catch (err: unknown) {
+      return {
+        success: false,
+        error: err instanceof Error ? err.message : 'Failed to convert lead.',
+      };
+    }
+  }
+
+  /**
+   * Close an enquiry with a mandatory Lost Reason (Standard CRM lost opportunity pattern).
+   */
+  async closeEnquiry(
+    id: string,
+    input: {
+      lostReason: string;
+      lostNotes?: string;
+      closedBy?: string;
+    }
+  ): Promise<{ success: boolean; error: string | null }> {
+    if (!isSupabaseConfigured()) {
+      return { success: false, error: 'Database configuration is unavailable.' };
+    }
+
+    if (!input.lostReason || !input.lostReason.trim()) {
+      return { success: false, error: 'Please select a reason for closing the lead.' };
+    }
+
+    try {
+      const now = new Date().toISOString();
+      const { error } = await supabase
+        .from('enquiries')
+        .update({
+          status: 'closed',
+          lost_reason: input.lostReason.trim(),
+          lost_notes: input.lostNotes?.trim() || null,
+          closed_at: now,
+          closed_by: input.closedBy || null,
+        })
+        .eq('id', id);
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      await activityService.recordActivity({
+        entityType: 'enquiry',
+        entityId: id,
+        action: 'ENQUIRY_CLOSED',
+        newValue: {
+          status: 'closed',
+          lost_reason: input.lostReason.trim(),
+          lost_notes: input.lostNotes?.trim() || null,
+        },
+        description: `Lead closed. Reason: ${input.lostReason.trim()}${input.lostNotes ? ` - ${input.lostNotes.trim()}` : ''}`,
+        performedBy: input.closedBy || null,
+      });
+
+      return { success: true, error: null };
+    } catch (err: unknown) {
+      return {
+        success: false,
+        error: err instanceof Error ? err.message : 'Failed to close lead.',
       };
     }
   }
@@ -383,6 +520,49 @@ export class EnquiryService {
 
       if (error) {
         return { success: false, error: error.message };
+      }
+
+      // Step 2b: Automatically create or reassign open follow-up task so staff immediately sees action items
+      try {
+        if (profileId) {
+          const { data: openFollowups } = await supabase
+            .from('followups')
+            .select('id')
+            .eq('enquiry_id', id)
+            .not('status', 'in', '(completed,cancelled)')
+            .limit(1);
+
+          if (openFollowups && openFollowups.length > 0) {
+            await supabase
+              .from('followups')
+              .update({ assigned_to: profileId, updated_at: new Date().toISOString() })
+              .eq('id', openFollowups[0].id);
+          } else {
+            const todayDate = new Date().toISOString().slice(0, 10);
+            await supabase.from('followups').insert({
+              enquiry_id: id,
+              assigned_to: profileId,
+              title: `Initial Follow-up: ${currentEnquiry?.company || currentEnquiry?.name || 'Customer Lead'}`,
+              description: `Assigned to ${staffName || 'sales team'} for follow-up and requirement qualification.`,
+              type: 'call',
+              status: 'due_today',
+              priority: 'high',
+              scheduled_at: new Date().toISOString(),
+              due_date: todayDate,
+              notes: currentEnquiry?.requirement || currentEnquiry?.message || 'Contact customer to qualify metrology requirement.',
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            });
+          }
+        } else {
+          await supabase
+            .from('followups')
+            .update({ assigned_to: null, updated_at: new Date().toISOString() })
+            .eq('enquiry_id', id)
+            .not('status', 'in', '(completed,cancelled)');
+        }
+      } catch (err) {
+        console.warn('[EnquiryService] Follow-up auto-assignment error:', err);
       }
 
       // Step 3: Audit log assignment change

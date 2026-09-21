@@ -53,3 +53,5 @@ android/.cxx
 
 # Local Tools & SDKs
 tools/
+# heroui-agents-md
+.heroui-docs/
