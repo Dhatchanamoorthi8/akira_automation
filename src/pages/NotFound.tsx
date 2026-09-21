@@ -30,7 +30,7 @@ export const NotFound: React.FC = () => {
             <h1 className="text-3xl font-extrabold font-heading text-industrial-dark mt-1">
               Dimensional Offset: Page Not Found
             </h1>
-            <p className="text-xs text-industrial-muted mt-2 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-700 font-medium mt-2 leading-relaxed">
               The requested URL could not be found. Please check the address or use the navigation below to browse our precision metrology catalogue.
             </p>
           </Reveal>

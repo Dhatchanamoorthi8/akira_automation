@@ -35,13 +35,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <SpotlightCard
-      className={`card-base card-hover overflow-hidden flex flex-col justify-between group border-slate-200 bg-white ${className}`}
+      className={`card-base card-hover overflow-hidden flex flex-col justify-between h-full group border-slate-200 bg-white ${className}`}
     >
-      <div>
+      <div className="flex flex-col flex-1">
         {/* Image Area with Click to View Option */}
         <div 
           onClick={handleImageClick}
-          className="relative h-64 bg-slate-50 overflow-hidden flex items-center justify-center p-6 border-b border-slate-100 cursor-pointer group/img"
+          className="relative h-60 sm:h-64 bg-slate-50 overflow-hidden flex items-center justify-center p-6 border-b border-slate-100 cursor-pointer group/img shrink-0"
           title="Click to view full-resolution image"
           role="button"
           tabIndex={0}
@@ -74,21 +74,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         </div>
 
         {/* Content */}
-        <div className="p-5 sm:p-6 space-y-3">
-          <HeadingTag className="text-base font-bold text-industrial-dark font-heading group-hover:text-industrial-primary transition-colors leading-snug">
-            <Link to={`/products/${product.slug}`}>
+        <div className="p-5 sm:p-6 flex flex-col flex-1 space-y-3">
+          <HeadingTag className="text-base font-bold text-slate-900 font-heading group-hover:text-industrial-primary transition-colors leading-snug min-h-[2.75rem] sm:min-h-[3rem] line-clamp-2">
+            <Link to={`/products/${product.slug}`} className="line-clamp-2">
               {product.title}
             </Link>
           </HeadingTag>
 
-          <p className="text-xs text-industrial-muted line-clamp-2 leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-700 font-medium line-clamp-2 leading-relaxed min-h-[2.5rem]">
             {product.description}
           </p>
 
           {/* Highlights List */}
-          <div className="pt-2 space-y-1.5 border-t border-slate-100">
+          <div className="pt-2.5 mt-auto space-y-1.5 border-t border-slate-100 min-h-[3.5rem] flex flex-col justify-center">
             {product.highlights.slice(0, highlightCount).map((h, i) => (
-              <div key={i} className="flex items-start gap-2 text-[11px] text-slate-700">
+              <div key={i} className="flex items-start gap-2 text-xs text-slate-800 font-medium">
                 <CheckCircle2 className="w-3.5 h-3.5 text-industrial-primary shrink-0 mt-0.5" />
                 <span className="line-clamp-1">{h}</span>
               </div>
@@ -98,7 +98,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       </div>
 
       {/* Card Actions */}
-      <div className="p-5 sm:p-6 pt-0 border-t border-slate-100 flex items-center justify-between gap-3 mt-4">
+      <div className="p-5 sm:p-6 pt-0 border-t border-slate-100 flex items-center justify-between gap-3 mt-auto">
         <Link
           to={`/products/${product.slug}`}
           className="inline-flex items-center gap-1.5 text-xs font-bold text-industrial-primary hover:text-industrial-hover transition-colors group/link min-h-[44px] py-1"

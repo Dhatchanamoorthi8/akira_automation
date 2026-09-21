@@ -75,16 +75,16 @@ export const IndustriesSection: React.FC = () => {
 
                     {/* Card Body */}
                     <div className="p-4 sm:p-6 space-y-2.5 sm:space-y-3">
-                      <p className="text-xs text-industrial-muted leading-relaxed">
+                      <p className="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed">
                         {ind.description}
                       </p>
 
                       <div className="pt-2 space-y-1.5 border-t border-slate-100">
-                        <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">
+                        <p className="text-xs uppercase font-bold tracking-wider text-slate-600">
                           Typical Gauging Scope:
                         </p>
                         {ind.keyApplications.slice(0, 2).map((app, i) => (
-                          <div key={i} className="flex items-start gap-2 text-[11px] text-slate-700">
+                          <div key={i} className="flex items-start gap-2 text-xs text-slate-800 font-medium">
                             <CheckCircle2 className="w-3.5 h-3.5 text-industrial-primary shrink-0 mt-0.5" />
                             <span className="line-clamp-1">{app}</span>
                           </div>

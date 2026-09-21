@@ -22,7 +22,7 @@ export const PageLoader: React.FC = () => {
         <p className="text-xs font-semibold uppercase tracking-wider text-industrial-dark font-mono">
           Loading Metrology Data
         </p>
-        <p className="text-[11px] text-industrial-muted">
+        <p className="text-xs text-slate-600 font-medium">
           {company.name}
         </p>
       </div>

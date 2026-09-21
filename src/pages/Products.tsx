@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, PackageCheck } from 'lucide-react';
+import { Search, PackageCheck, X } from 'lucide-react';
 import { Breadcrumb } from '../components/layout/Breadcrumb';
 import { SEOHead } from '../components/layout/SEOHead';
 import { company } from '../config/company';
@@ -93,10 +93,13 @@ export const Products: React.FC = () => {
               />
               {searchQuery && (
                 <button 
+                  type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-200/80 transition-colors focus:outline-none focus:ring-2 focus:ring-industrial-primary"
+                  title="Clear search"
+                  aria-label="Clear product search"
                 >
-                  Clear
+                  <X className="w-3.5 h-3.5" />
                 </button>
               )}
             </div>
@@ -126,8 +129,8 @@ export const Products: React.FC = () => {
       <section className="py-16 bg-industrial-bg border-b border-slate-200 min-h-[600px]">
         <div className="industrial-container">
           
-          <div className="mb-6 flex items-center justify-between text-xs text-industrial-muted">
-            <p>Showing <strong>{filteredProducts.length}</strong> products & systems</p>
+          <div className="mb-6 flex items-center justify-between text-xs text-slate-700 font-medium">
+            <p>Showing <strong className="text-slate-900 font-bold">{filteredProducts.length}</strong> products & systems</p>
             {selectedCategory !== 'all' && (
               <button 
                 onClick={() => handleCategoryChange('all')}
@@ -143,10 +146,10 @@ export const Products: React.FC = () => {
               <div className="w-12 h-12 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
                 <Search className="w-6 h-6" />
               </div>
-              <h3 className="text-base font-bold text-industrial-dark font-heading">
+              <h3 className="text-base font-bold text-slate-900 font-heading">
                 No products found
               </h3>
-              <p className="text-xs text-industrial-muted">
+              <p className="text-xs sm:text-sm text-slate-700 font-medium">
                 No matching systems for "{searchQuery}". Try a different search term or category filter.
               </p>
               <button
@@ -157,10 +160,10 @@ export const Products: React.FC = () => {
               </button>
             </div>
           ) : (
-            <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
               {filteredProducts.map((prod) => (
-                <StaggerItem key={prod.id}>
-                  <ProductCard product={prod} variant="default" />
+                <StaggerItem key={prod.id} className="h-full">
+                  <ProductCard product={prod} variant="default" className="h-full" />
                 </StaggerItem>
               ))}
             </StaggerContainer>

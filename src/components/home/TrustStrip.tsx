@@ -64,7 +64,7 @@ export const TrustStrip: React.FC = () => {
                     <h3 className="text-xs sm:text-sm font-bold text-slate-900 font-heading group-hover:text-sky-600 transition-colors leading-snug">
                       {item.title}
                     </h3>
-                    <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                    <p className="text-xs text-slate-700 font-medium mt-1 leading-relaxed">
                       {item.description}
                     </p>
                   </div>

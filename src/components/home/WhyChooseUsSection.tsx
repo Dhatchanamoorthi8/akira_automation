@@ -64,10 +64,10 @@ export const WhyChooseUsSection: React.FC = () => {
                       <CheckCircle2 className="w-4 h-4" />
                     </div>
                     <div>
-                      <h3 className="text-sm font-bold text-industrial-dark font-heading group-hover:text-industrial-primary transition-colors">
+                      <h3 className="text-sm font-bold text-slate-900 font-heading group-hover:text-industrial-primary transition-colors">
                         {item.title}
                       </h3>
-                      <p className="text-xs text-industrial-muted mt-1 leading-relaxed">
+                      <p className="text-xs sm:text-sm text-slate-700 font-medium mt-1 leading-relaxed">
                         {item.description}
                       </p>
                     </div>
@@ -100,7 +100,7 @@ export const WhyChooseUsSection: React.FC = () => {
                   <p className="font-bold text-white font-heading">
                     "Keeping Customers First"
                   </p>
-                  <p className="text-[11px] text-slate-300 mt-1">
+                  <p className="text-xs text-slate-200 font-medium mt-1">
                     We strive to give quality solutions and quality service to our customers.
                   </p>
                 </div>
@@ -113,8 +113,8 @@ export const WhyChooseUsSection: React.FC = () => {
                 <ShieldCheck className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-[10px] uppercase tracking-wider font-bold text-slate-400">Core Values</p>
-                <p className="text-xs font-extrabold font-heading text-industrial-dark">Technical Support • Quality Service</p>
+                <p className="text-xs uppercase tracking-wider font-bold text-slate-600">Core Values</p>
+                <p className="text-xs font-extrabold font-heading text-slate-900">Technical Support • Quality Service</p>
               </div>
             </Reveal>
 

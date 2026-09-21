@@ -233,7 +233,7 @@ export const Header: React.FC = () => {
                             <div className="text-xs font-semibold text-industrial-dark group-hover/item:text-industrial-primary">
                               {sol.title}
                             </div>
-                            <p className="text-[11px] text-industrial-muted line-clamp-1 mt-0.5">
+                            <p className="text-xs text-slate-600 font-medium line-clamp-1 mt-0.5">
                               {sol.shortDescription}
                             </p>
                           </div>
@@ -565,8 +565,8 @@ export const Header: React.FC = () => {
                   <span>Enquire Now</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
-                <div className="text-[11px] text-industrial-muted space-y-1 bg-slate-50 p-3 rounded-lg border border-slate-100">
-                  <p className="font-bold text-industrial-dark uppercase tracking-wider text-[10px] font-sans">Direct Lines & Email:</p>
+                <div className="text-xs text-slate-700 font-medium space-y-1 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                  <p className="font-bold text-slate-900 uppercase tracking-wider text-[10px] font-sans">Direct Lines & Email:</p>
                   <a href={`tel:${companyData.phones[0].replace(/\s+/g, '')}`} className="font-sans tabular-nums text-industrial-dark hover:text-industrial-primary block">
                     {companyData.phones[0]}
                   </a>

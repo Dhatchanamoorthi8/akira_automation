@@ -117,8 +117,16 @@ export const ImageViewerModal: React.FC = () => {
 
         {/* Center Image Canvas */}
         <div 
-          className="relative z-10 flex-1 w-full flex items-center justify-center p-4 sm:p-8 overflow-auto cursor-zoom-in"
-          onClick={() => setIsZoomed(!isZoomed)}
+          className={`relative z-10 flex-1 w-full flex items-center justify-center p-4 sm:p-8 overflow-auto ${
+            isZoomed ? 'cursor-zoom-out' : 'cursor-zoom-in'
+          }`}
+          onClick={() => {
+            if (isZoomed) {
+              setIsZoomed(false);
+            } else {
+              closeImageViewer();
+            }
+          }}
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.94 }}
@@ -132,6 +140,11 @@ export const ImageViewerModal: React.FC = () => {
               e.stopPropagation();
               setIsZoomed(!isZoomed);
             }}
+            onDoubleClick={(e) => {
+              e.stopPropagation();
+              setIsZoomed(!isZoomed);
+            }}
+            title={isZoomed ? "Click to reset zoom" : "Click to zoom in (150%)"}
           >
             <img
               src={imageDetails.src}

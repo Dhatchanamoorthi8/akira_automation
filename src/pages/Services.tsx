@@ -134,7 +134,7 @@ export const Services: React.FC = () => {
                 <h3 className="text-xl font-bold font-heading text-industrial-dark">
                   Require Immediate Technical Support or Calibration?
                 </h3>
-                <p className="text-xs text-industrial-muted max-w-xl">
+                <p className="text-xs sm:text-sm text-slate-700 font-medium max-w-xl">
                   Contact our factory engineering desk directly. We support OEMs, tier-1 suppliers, and machine shops with minimal turnaround time.
                 </p>
               </div>

@@ -48,10 +48,10 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ isStandalone = f
                   <Building className="w-3.5 h-3.5" />
                   <span>Registered Details</span>
                 </div>
-                <h3 className="text-xl font-bold font-heading text-industrial-dark mt-1">
+                <h3 className="text-xl font-bold font-heading text-slate-900 mt-1">
                   {companyData.companyName}
                 </h3>
-                <p className="text-xs text-industrial-muted mt-0.5">
+                <p className="text-xs text-slate-700 font-medium mt-0.5">
                   Established 2021 • Precision • Innovation • Quality
                 </p>
               </div>
@@ -62,8 +62,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ isStandalone = f
                   <MapPin className="w-5 h-5" />
                 </div>
                 <div className="text-xs space-y-1">
-                  <p className="font-bold text-industrial-dark">Registered Office Address:</p>
-                  <p className="text-slate-600 leading-relaxed">
+                  <p className="font-bold text-slate-900">Registered Office Address:</p>
+                  <p className="text-slate-700 font-medium leading-relaxed">
                     {companyData.address.street},<br />
                     {companyData.address.village ? `${companyData.address.village}, ` : ''}{companyData.address.city},<br />
                     {companyData.address.district && <>{companyData.address.district},<br /></>}
@@ -123,16 +123,16 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ isStandalone = f
                   <Clock className="w-5 h-5" />
                 </div>
                 <div className="text-xs space-y-1">
-                  <p className="font-bold text-industrial-dark">Operational Hours:</p>
-                  <p className="text-slate-600">{companyData.businessHours}</p>
-                  <p className="text-[11px] text-industrial-secondary font-medium">
+                  <p className="font-bold text-slate-900">Operational Hours:</p>
+                  <p className="text-slate-700 font-medium">{companyData.businessHours}</p>
+                  <p className="text-xs text-industrial-secondary font-semibold">
                     Support for continuous manufacturing lines
                   </p>
                 </div>
               </div>
 
               {/* Quality Commitment Badge */}
-              <div className="pt-2 border-t border-slate-100 flex items-center gap-2 text-xs text-slate-500">
+              <div className="pt-2 border-t border-slate-100 flex items-center gap-2 text-xs font-semibold text-slate-700">
                 <Award className="w-4 h-4 text-industrial-primary" />
                 <span>Motto: "Keeping Customers First"</span>
               </div>
@@ -148,10 +148,10 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ isStandalone = f
                   <ShieldCheck className="w-3.5 h-3.5" />
                   <span>Direct Engineering Quotation</span>
                 </div>
-                <h3 className="text-xl font-bold font-heading text-industrial-dark mt-1">
+                <h3 className="text-xl font-bold font-heading text-slate-900 mt-1">
                   Submit Gauging / Fixture Enquiry
                 </h3>
-                <p className="text-xs text-industrial-muted mt-1">
+                <p className="text-xs sm:text-sm text-slate-700 font-medium mt-1">
                   Fill out the parameters below and our metrology technical team will prepare a structured proposal.
                 </p>
               </div>

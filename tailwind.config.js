@@ -13,8 +13,8 @@ export default {
           secondary: "#1E6FB7",
           bg: "#F5F7F9",
           surface: "#FFFFFF",
-          text: "#1B2530",
-          muted: "#667085",
+          text: "#0F172A",
+          muted: "#334155",
           accent: "#E6EEF6",
           border: "#E2E8F0",
           highlight: "#0284C7",
@@ -28,9 +28,9 @@ export default {
         }
       },
       fontFamily: {
-        sans: ['Inter', 'Manrope', 'system-ui', '-apple-system', 'sans-serif'],
-        heading: ['Manrope', 'Inter', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'Consolas', 'monospace'],
+        sans: ['Manrope', 'system-ui', '-apple-system', 'sans-serif'],
+        heading: ['Manrope', 'system-ui', 'sans-serif'],
+        mono: ['Manrope', 'Consolas', 'monospace'],
       },
       maxWidth: {
         'site': '1380px',

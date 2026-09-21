@@ -216,10 +216,10 @@ export const InstrumentsFixturesGallery: React.FC = () => {
                     </div>
 
                     <div className="p-5 space-y-2">
-                      <h3 className="text-sm font-bold text-industrial-dark font-heading group-hover:text-industrial-primary transition-colors">
+                      <h3 className="text-sm font-bold text-slate-900 font-heading group-hover:text-industrial-primary transition-colors">
                         {item.name}
                       </h3>
-                      <p className="text-xs text-industrial-muted line-clamp-2 leading-relaxed">
+                      <p className="text-xs sm:text-sm text-slate-700 font-medium line-clamp-2 leading-relaxed">
                         {item.description}
                       </p>
                     </div>

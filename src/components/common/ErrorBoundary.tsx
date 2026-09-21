@@ -73,7 +73,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               <h2 className="text-xl font-bold font-heading text-industrial-dark">
                 Something went wrong
               </h2>
-              <p className="text-xs sm:text-sm text-industrial-muted leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed">
                 An unexpected display error occurred while rendering this page. Our technical team has been notified.
               </p>
             </div>

@@ -69,11 +69,11 @@ export const About: React.FC = () => {
                 Delivering Innovative Metrology & Automation Solutions
               </h2>
 
-              <p className="text-base text-slate-700 leading-relaxed">
-                <strong>{company.name}</strong> focuses on high quality products and innovative solutions that help customers increase productivity and profitability.
+              <p className="text-base text-slate-800 font-medium leading-relaxed">
+                <strong className="text-slate-900 font-bold">{company.name}</strong> focuses on high quality products and innovative solutions that help customers increase productivity and profitability.
               </p>
 
-              <p className="text-sm text-slate-600 leading-relaxed">
+              <p className="text-sm sm:text-base text-slate-700 font-medium leading-relaxed">
                 The company provides comprehensive solutions in Multi gauging, Fixtures, Air gauges, Electronic Gauges, Air plug & Air Ring Gauges, Attribute Gauges, Plug gauges, Snap gauges, Ring gauges, Special Gauges, Assembly, and Work holding which is our major strength compared to any supplier.
               </p>
 
@@ -86,21 +86,21 @@ export const About: React.FC = () => {
                 <h3 className="text-xl font-bold font-heading text-industrial-dark">
                   "{companyIntro.motto}"
                 </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed">
                   We strive to give Quality Solutions and Quality Service to customers in every project we undertake.
                 </p>
               </div>
 
               {/* Core Values */}
               <div className="space-y-3 pt-2">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
                   Core Values Driving {company.name}
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {companyIntro.coreValues.map((val, idx) => (
                     <div key={idx} className="p-4 rounded-xl bg-slate-50 border border-slate-200">
-                      <h4 className="text-sm font-bold text-industrial-dark font-heading">{val.title}</h4>
-                      <p className="text-xs text-industrial-muted mt-1 leading-snug">{val.description}</p>
+                      <h4 className="text-sm font-bold text-slate-900 font-heading">{val.title}</h4>
+                      <p className="text-xs text-slate-700 font-medium mt-1 leading-relaxed">{val.description}</p>
                     </div>
                   ))}
                 </div>
@@ -157,10 +157,10 @@ export const About: React.FC = () => {
                     <Target className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-industrial-dark font-heading">
+                    <h3 className="text-sm font-bold text-slate-900 font-heading">
                       {str}
                     </h3>
-                    <p className="text-xs text-industrial-muted mt-1 leading-relaxed">
+                    <p className="text-xs text-slate-700 font-medium mt-1 leading-relaxed">
                       Committed to delivering traceable, high-reliability dimensional gauging across the production lifecycle.
                     </p>
                   </div>
@@ -200,11 +200,11 @@ export const About: React.FC = () => {
                     <h3 className="text-lg font-bold text-industrial-dark font-heading">
                       {c.title}
                     </h3>
-                    <p className="text-xs text-slate-600 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed">
                       {c.description}
                     </p>
                   </div>
-                  <div className="pt-6 border-t border-slate-100 text-[11px] font-mono text-industrial-muted mt-6">
+                  <div className="pt-6 border-t border-slate-100 text-xs font-semibold text-slate-600 mt-6">
                     Quality Standard
                   </div>
                 </SpotlightCard>
@@ -234,10 +234,10 @@ export const About: React.FC = () => {
               <div className="w-10 h-10 rounded-xl bg-industrial-accent text-industrial-primary flex items-center justify-center">
                 <Gauge className="w-5 h-5" />
               </div>
-              <h3 className="text-base font-bold font-heading text-industrial-dark">
+              <h3 className="text-base font-bold font-heading text-slate-900">
                 Sub-Micron Resolution & Repeatability
               </h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed">
                 Our electronic DRO systems and LVDT comparator probes provide resolution down to 0.1 µm with repeatability ≤ 0.5 µm under 20°C standard metrology room conditions.
               </p>
             </div>
@@ -246,10 +246,10 @@ export const About: React.FC = () => {
               <div className="w-10 h-10 rounded-xl bg-industrial-accent text-industrial-primary flex items-center justify-center">
                 <ShieldCheck className="w-5 h-5" />
               </div>
-              <h3 className="text-base font-bold font-heading text-industrial-dark">
+              <h3 className="text-base font-bold font-heading text-slate-900">
                 Traceable Master Calibration
               </h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed">
                 All setting masters, air ring gauges, and setting plugs are manufactured from hardened tool steel or tungsten carbide, calibrated against masters traceable to national/international NABL / ISO/IEC 17025 accredited laboratories.
               </p>
             </div>
@@ -258,10 +258,10 @@ export const About: React.FC = () => {
               <div className="w-10 h-10 rounded-xl bg-industrial-accent text-industrial-primary flex items-center justify-center">
                 <CheckCircle2 className="w-5 h-5" />
               </div>
-              <h3 className="text-base font-bold font-heading text-industrial-dark">
+              <h3 className="text-base font-bold font-heading text-slate-900">
                 100% Pre-Dispatch Verification
               </h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed">
                 Every multi-gauging station undergoes comprehensive repeatability and reproducibility (Gage R&R) validation and continuous dry-run cycles before on-site customer commissioning.
               </p>
             </div>
@@ -294,7 +294,7 @@ export const About: React.FC = () => {
                   <h3 className="text-xl font-bold font-heading text-industrial-dark">
                     {p.title}
                   </h3>
-                  <p className="text-sm text-slate-600 leading-relaxed">
+                  <p className="text-sm sm:text-base text-slate-700 font-medium leading-relaxed">
                     {p.description}
                   </p>
                 </div>

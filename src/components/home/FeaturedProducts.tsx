@@ -87,10 +87,10 @@ export const FeaturedProducts: React.FC = () => {
         </div>
 
         {/* Editorial Product Cards Grid */}
-        <StaggerContainer key={activeTab} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
+        <StaggerContainer key={activeTab} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8 items-stretch">
           {filteredProducts.map((prod, idx) => (
-            <StaggerItem key={prod.id} className={idx >= 4 && !showAllMobile ? "hidden sm:block" : "block"}>
-              <ProductCard product={prod} variant="featured" />
+            <StaggerItem key={prod.id} className={`h-full ${idx >= 4 && !showAllMobile ? "hidden sm:block" : "block"}`}>
+              <ProductCard product={prod} variant="featured" className="h-full" />
             </StaggerItem>
           ))}
         </StaggerContainer>

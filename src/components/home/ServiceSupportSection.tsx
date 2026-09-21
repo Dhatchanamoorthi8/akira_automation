@@ -64,17 +64,17 @@ export const ServiceSupportSection: React.FC = () => {
                     </div>
 
                     <div>
-                      <h3 className="text-base font-bold text-industrial-dark font-heading group-hover:text-industrial-primary transition-colors">
+                      <h3 className="text-base font-bold text-slate-900 font-heading group-hover:text-industrial-primary transition-colors">
                         {srv.title}
                       </h3>
-                      <p className="text-xs text-industrial-muted mt-2 leading-relaxed">
+                      <p className="text-xs sm:text-sm text-slate-700 font-medium mt-2 leading-relaxed">
                         {srv.description}
                       </p>
                     </div>
 
                     <div className="pt-3 border-t border-slate-100 space-y-1.5">
                       {srv.details.slice(0, 2).map((d, idx) => (
-                        <p key={idx} className="text-[11px] text-slate-600 flex items-start gap-1.5">
+                        <p key={idx} className="text-xs text-slate-700 font-medium flex items-start gap-1.5">
                           <span className="text-industrial-primary font-bold">•</span>
                           <span className="line-clamp-2">{d}</span>
                         </p>
@@ -104,7 +104,7 @@ export const ServiceSupportSection: React.FC = () => {
               <Phone className="w-5 h-5" />
             </div>
             <div className="space-y-0.5">
-              <p className="font-bold text-sm text-industrial-dark font-heading">Direct Technical Support Hotline</p>
+              <p className="font-bold text-sm text-slate-900 font-heading">Direct Technical Support Hotline</p>
               <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 font-mono text-xs text-industrial-primary font-semibold">
                 <a href={`tel:${companyData.phones[0].replace(/\s+/g, '')}`} className="hover:underline">
                   {companyData.phones[0]}
@@ -116,7 +116,7 @@ export const ServiceSupportSection: React.FC = () => {
               </div>
             </div>
           </div>
-          <p className="text-xs text-slate-500 sm:text-right max-w-xs leading-relaxed border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-100">
+          <p className="text-xs text-slate-600 font-medium sm:text-right max-w-xs leading-relaxed border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-100">
             Service available across all automotive and industrial manufacturing corridors in India.
           </p>
         </Reveal>

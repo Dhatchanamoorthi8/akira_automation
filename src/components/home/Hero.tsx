@@ -138,7 +138,7 @@ export const Hero: React.FC = () => {
                 <div className="flex items-center gap-1.5 sm:gap-2.5 px-1 sm:px-2 justify-center sm:justify-start">
                   <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-sky-400 shrink-0" />
                   <div className="min-w-0">
-                    <span className="block text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider leading-tight font-sans">Industry</span>
+                    <span className="block text-[10px] sm:text-xs font-semibold text-slate-300 uppercase tracking-wider leading-tight font-sans">Industry</span>
                     <span className="block text-xs sm:text-sm font-bold text-white tracking-tight leading-tight whitespace-nowrap font-sans">Trusted</span>
                   </div>
                 </div>
@@ -146,15 +146,15 @@ export const Hero: React.FC = () => {
                 <div className="flex items-center gap-1.5 sm:gap-2.5 px-1 sm:px-2 justify-center sm:justify-start">
                   <Target className="w-4 h-4 sm:w-5 sm:h-5 text-sky-400 shrink-0" />
                   <div className="min-w-0">
-                    <span className="block text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider leading-tight font-sans">Precision</span>
-                    <span className="block text-xs sm:text-sm font-bold text-white tracking-tight leading-tight whitespace-nowrap font-mono">Up to 0.1 µm</span>
+                    <span className="block text-[10px] sm:text-xs font-semibold text-slate-300 uppercase tracking-wider leading-tight font-sans">Precision</span>
+                    <span className="block text-xs sm:text-sm font-bold text-white tracking-tight leading-tight whitespace-nowrap font-sans tabular-nums">Up to 0.1 µm</span>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-1.5 sm:gap-2.5 px-1 sm:px-2 justify-center sm:justify-start">
                   <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-sky-400 shrink-0" />
                   <div className="min-w-0">
-                    <span className="block text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider leading-tight font-sans">Countries</span>
+                    <span className="block text-[10px] sm:text-xs font-semibold text-slate-300 uppercase tracking-wider leading-tight font-sans">Countries</span>
                     <span className="block text-xs sm:text-sm font-bold text-white tracking-tight leading-tight whitespace-nowrap font-sans">Serving Globally</span>
                   </div>
                 </div>
@@ -203,7 +203,7 @@ export const Hero: React.FC = () => {
                 <Crosshair className="w-4 h-4" />
               </div>
               <div>
-                <span className="block text-xs font-bold text-white font-mono tracking-tight leading-tight">±0.001 mm</span>
+                <span className="block text-xs font-bold text-white font-sans tabular-nums tracking-tight leading-tight">±0.001 mm</span>
                 <span className="block text-[10px] text-slate-300 font-semibold uppercase tracking-wider leading-tight font-sans">Accuracy</span>
               </div>
             </motion.div>
@@ -242,7 +242,7 @@ export const Hero: React.FC = () => {
               </div>
               <div>
                 <span className="block text-xs font-bold text-white leading-tight font-sans">High Precision</span>
-                <span className="block text-xs text-slate-400 leading-tight font-sans">Accurate Measurements</span>
+                <span className="block text-xs text-slate-300 font-medium leading-tight font-sans">Accurate Measurements</span>
               </div>
             </div>
 
@@ -253,7 +253,7 @@ export const Hero: React.FC = () => {
               </div>
               <div>
                 <span className="block text-xs font-bold text-white leading-tight font-sans">Automated Systems</span>
-                <span className="block text-xs text-slate-400 leading-tight font-sans">Multi-Gauging Solutions</span>
+                <span className="block text-xs text-slate-300 font-medium leading-tight font-sans">Multi-Gauging Solutions</span>
               </div>
             </div>
 
@@ -264,7 +264,7 @@ export const Hero: React.FC = () => {
               </div>
               <div>
                 <span className="block text-xs font-bold text-white leading-tight font-sans">Built for Industry</span>
-                <span className="block text-xs text-slate-400 leading-tight font-sans">OEM & Automotive</span>
+                <span className="block text-xs text-slate-300 font-medium leading-tight font-sans">OEM & Automotive</span>
               </div>
             </div>
 
@@ -275,7 +275,7 @@ export const Hero: React.FC = () => {
               </div>
               <div>
                 <span className="block text-xs font-bold text-white leading-tight font-sans">Better Productivity</span>
-                <span className="block text-xs text-slate-400 leading-tight font-sans">Faster, Smarter, Reliable</span>
+                <span className="block text-xs text-slate-300 font-medium leading-tight font-sans">Faster, Smarter, Reliable</span>
               </div>
             </div>
           </div>

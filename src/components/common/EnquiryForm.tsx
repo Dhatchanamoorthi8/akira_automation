@@ -218,7 +218,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
             value={formData.phone}
             onChange={(e) => handleChange('phone', e.target.value)}
             placeholder="+91 98765 43210"
-            className={`w-full px-3.5 py-2 text-xs rounded-lg border bg-white focus:outline-none focus:ring-2 transition-colors font-mono ${
+            className={`w-full px-3.5 py-2 text-xs rounded-lg border bg-white focus:outline-none focus:ring-2 transition-colors font-sans tabular-nums ${
               errors.phone 
                 ? 'border-tolerance-red focus:ring-tolerance-red/30' 
                 : 'border-slate-300 focus:ring-industrial-primary focus:border-transparent'
@@ -294,13 +294,19 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
 
       {/* Message */}
       <div>
-        <label htmlFor={`${idPrefix}message`} className="block text-xs font-semibold text-industrial-dark mb-1.5">
-          Technical Requirement / Tolerance Specifications <span className="text-tolerance-red" aria-hidden="true">*</span>
-        </label>
+        <div className="flex items-center justify-between mb-1.5">
+          <label htmlFor={`${idPrefix}message`} className="block text-xs font-semibold text-industrial-dark">
+            Technical Requirement / Tolerance Specifications <span className="text-tolerance-red" aria-hidden="true">*</span>
+          </label>
+          <span className="text-[10px] text-slate-400 font-normal tabular-nums font-sans">
+            {formData.message.length} / 1000
+          </span>
+        </div>
         <textarea
           id={`${idPrefix}message`}
           name="message"
           rows={variant === 'modal' ? 3 : 4}
+          maxLength={1000}
           value={formData.message}
           onChange={(e) => handleChange('message', e.target.value)}
           placeholder="Please share details such as diameter range, tolerance limits, component type, checking parameters, or quantity required..."

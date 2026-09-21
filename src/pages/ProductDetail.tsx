@@ -83,7 +83,7 @@ export const ProductDetail: React.FC = () => {
           <h1 className="text-2xl font-bold text-industrial-dark font-heading">
             Product Not Found
           </h1>
-          <p className="text-xs text-industrial-muted">
+          <p className="text-xs sm:text-sm text-slate-700 font-medium">
             The requested gauging system or product specification page does not exist.
           </p>
           <Link to="/products" className="btn-primary text-xs">
@@ -142,20 +142,20 @@ export const ProductDetail: React.FC = () => {
           />
           <Reveal direction="up" className="mt-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-mono font-semibold uppercase tracking-wider bg-sky-950/70 text-sky-300 border border-sky-800/70">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-sans font-semibold uppercase tracking-wider bg-sky-950/70 text-sky-300 border border-sky-800/70">
                 {product.category}
               </span>
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-heading text-white mt-2">
                 {product.title}
               </h1>
-              <p className="text-xs sm:text-sm text-slate-300 mt-1">
+              <p className="text-xs sm:text-sm text-slate-300 mt-1 font-sans">
                 {product.tagline}
               </p>
 
               {/* AEO TL;DR Direct-Answer Capsule */}
               {product.tldr && (
-                <div className="mt-4 p-3.5 rounded-lg bg-sky-950/60 border-l-4 border-sky-400 text-xs sm:text-sm text-slate-200 leading-relaxed shadow-sm">
-                  <strong className="text-sky-300 font-semibold block mb-0.5">
+                <div className="mt-4 p-3.5 rounded-lg bg-sky-950/60 border-l-4 border-sky-400 text-xs sm:text-sm text-slate-200 leading-relaxed shadow-sm font-sans">
+                  <strong className="text-sky-300 font-semibold block mb-0.5 font-sans">
                     Quick Technical Summary (TL;DR):
                   </strong>
                   {product.tldr}
@@ -167,7 +167,7 @@ export const ProductDetail: React.FC = () => {
               <button
                 type="button"
                 onClick={() => openEnquiry(product.title)}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-sky-500 hover:bg-sky-400 text-white font-semibold text-xs transition-all shadow-md active:scale-[0.98] group"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-sky-500 hover:bg-sky-400 text-white font-semibold text-xs transition-all shadow-md active:scale-[0.98] group font-sans"
               >
                 <span>Enquire About This Model</span>
                 <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1 shrink-0" />
@@ -180,22 +180,22 @@ export const ProductDetail: React.FC = () => {
             <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-lg flex items-start gap-2.5">
               <Gauge className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
               <div>
-                <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block">Linear Resolution</span>
-                <span className="text-xs sm:text-sm font-bold text-sky-400 font-mono">0.1 µm (0.0001 mm)</span>
+                <span className="text-[10px] font-sans uppercase tracking-wider text-slate-400 block">Linear Resolution</span>
+                <span className="text-xs sm:text-sm font-bold text-sky-400 font-sans tabular-nums">0.1 µm (0.0001 mm)</span>
               </div>
             </div>
             <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-lg flex items-start gap-2.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
               <div>
-                <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block">Repeatability</span>
-                <span className="text-xs sm:text-sm font-bold text-emerald-400 font-mono">≤ 0.5 µm (R&amp;R &lt; 10%)</span>
+                <span className="text-[10px] font-sans uppercase tracking-wider text-slate-400 block">Repeatability</span>
+                <span className="text-xs sm:text-sm font-bold text-emerald-400 font-sans tabular-nums">≤ 0.5 µm (R&amp;R &lt; 10%)</span>
               </div>
             </div>
             <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-lg flex items-start gap-2.5">
-              <span className="w-4 h-4 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">P</span>
+              <span className="w-4 h-4 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5 font-sans">P</span>
               <div>
-                <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block">Operating Line</span>
-                <span className="text-xs sm:text-sm font-bold text-amber-300 font-mono">
+                <span className="text-[10px] font-sans uppercase tracking-wider text-slate-400 block">Operating Line</span>
+                <span className="text-xs sm:text-sm font-bold text-amber-300 font-sans tabular-nums">
                   {product.categorySlug === 'air-gauging' ? '3–4 bar Regulated' : 'LVDT / Electronic'}
                 </span>
               </div>
@@ -203,8 +203,8 @@ export const ProductDetail: React.FC = () => {
             <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-lg flex items-start gap-2.5">
               <ShieldCheck className="w-4 h-4 text-sky-300 shrink-0 mt-0.5" />
               <div>
-                <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block">Master Calibration</span>
-                <span className="text-xs sm:text-sm font-bold text-white font-mono">ISO 17025 / DIN 2250</span>
+                <span className="text-[10px] font-sans uppercase tracking-wider text-slate-400 block">Master Calibration</span>
+                <span className="text-xs sm:text-sm font-bold text-white font-sans tabular-nums">ISO 17025 / DIN 2250</span>
               </div>
             </div>
           </div>
@@ -264,31 +264,31 @@ export const ProductDetail: React.FC = () => {
                   <div className="p-4 sm:p-5 rounded-xl bg-slate-50 border border-slate-200/90 space-y-2">
                     <div className="flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-industrial-primary" />
-                      <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-industrial-primary">
+                      <h3 className="text-xs font-sans font-bold uppercase tracking-wider text-industrial-primary">
                         Technical Definition & Operating Principle
                       </h3>
                     </div>
-                    <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-sans">
                       {product.aiOverviewPassage}
                     </p>
                   </div>
                 )}
 
                 {/* E-E-A-T Verified Metrology Reviewer Box */}
-                <div className="p-4 rounded-xl bg-sky-50/80 border border-sky-200/90 flex items-start gap-3.5">
+                <div className="p-4 rounded-xl bg-sky-50/80 border border-sky-200/90 flex items-start gap-3.5 font-sans">
                   <div className="p-2 rounded-lg bg-sky-600 text-white shrink-0 mt-0.5">
                     <ShieldCheck className="w-5 h-5" />
                   </div>
                   <div className="text-xs space-y-1">
                     <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                       <span className="font-bold text-slate-900 text-xs">Technical Review &amp; Specification Sign-off</span>
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 font-sans">
                         <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                         Verified E-E-A-T Metrology
                       </span>
                     </div>
                     <p className="text-slate-700 text-xs leading-relaxed">
-                      Technical specifications reviewed and verified by <strong className="text-slate-900">Kalidoss</strong>, Lead Metrology Applications Engineer at AKIRA Precision Automation LLP. Calibration methodologies certified traceable to <span className="font-mono text-slate-800 font-semibold">ISO/IEC 17025:2017</span> and <span className="font-mono text-slate-800 font-semibold">DIN 2250-C</span> setting standards.
+                      Technical specifications reviewed and verified by <strong className="text-slate-900">Kalidoss</strong>, Lead Metrology Applications Engineer at AKIRA Precision Automation LLP. Calibration methodologies certified traceable to <span className="font-sans tabular-nums text-slate-800 font-semibold">ISO/IEC 17025:2017</span> and <span className="font-sans tabular-nums text-slate-800 font-semibold">DIN 2250-C</span> setting standards.
                     </p>
                   </div>
                 </div>
@@ -303,14 +303,14 @@ export const ProductDetail: React.FC = () => {
               {/* Industrial Applications Tag Pills */}
               {product.applications.length > 0 && (
                 <div className="space-y-3">
-                  <h3 className="text-sm font-bold text-industrial-dark font-heading uppercase tracking-wider text-slate-500">
+                  <h3 className="text-sm font-bold text-slate-900 font-heading uppercase tracking-wider">
                     Industrial Applications
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {product.applications.map((app, idx) => (
                       <span 
                         key={idx} 
-                        className="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-medium border border-slate-200"
+                        className="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-medium border border-slate-200 font-sans"
                       >
                         {app}
                       </span>
@@ -331,11 +331,11 @@ export const ProductDetail: React.FC = () => {
                   <div className="grid grid-cols-1 gap-3">
                     {product.faqs.map((faq, fIdx) => (
                       <div key={fIdx} className="p-4 rounded-xl bg-slate-50 border border-slate-200">
-                        <h4 className="text-xs sm:text-sm font-bold text-industrial-dark mb-1.5 flex items-start gap-2">
-                          <span className="text-industrial-primary font-mono font-semibold">Q{fIdx + 1}:</span>
+                        <h4 className="text-xs sm:text-sm font-bold text-industrial-dark mb-1.5 flex items-start gap-2 font-sans">
+                          <span className="text-industrial-primary font-sans tabular-nums font-semibold">Q{fIdx + 1}:</span>
                           <span>{faq.question}</span>
                         </h4>
-                        <p className="text-xs text-slate-600 leading-relaxed pl-6">
+                        <p className="text-xs text-slate-600 leading-relaxed pl-6 font-sans">
                           {faq.answer}
                         </p>
                       </div>

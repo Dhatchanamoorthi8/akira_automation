@@ -5,13 +5,13 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     width: 100%;
   }
 
   body {
     @apply bg-industrial-bg text-industrial-text antialiased;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Manrope', system-ui, -apple-system, sans-serif;
+    font-weight: 500;
     overflow-x: clip;
     width: 100%;
     min-height: 100%;
@@ -24,7 +24,7 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Manrope', 'Inter', system-ui, sans-serif;
+    font-family: 'Manrope', system-ui, sans-serif;
     letter-spacing: -0.02em;
   }
 }
@@ -36,11 +36,11 @@
   }
 
   .section-tag {
-    @apply inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-[11px] font-semibold tracking-wider uppercase bg-industrial-accent text-industrial-primary border border-industrial-primary/25 font-mono;
+    @apply inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-[11px] font-semibold tracking-wider uppercase bg-industrial-accent text-industrial-primary border border-industrial-primary/25 font-sans;
   }
 
   .badge-tech {
-    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] sm:text-[11px] font-mono font-semibold tracking-wider uppercase bg-sky-950/60 text-sky-300 border border-sky-800/60;
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] sm:text-[11px] font-sans font-semibold tracking-wider uppercase bg-sky-950/60 text-sky-300 border border-sky-800/60;
   }
 
   .section-title {
@@ -48,7 +48,7 @@
   }
 
   .section-subtitle {
-    @apply mt-3 text-sm sm:text-base text-industrial-muted max-w-3xl leading-relaxed;
+    @apply mt-3 text-sm sm:text-base text-slate-700 font-medium max-w-3xl leading-relaxed;
   }
 
   .btn-primary {
@@ -88,7 +88,7 @@
   }
 
   .table-cell {
-    @apply px-4 py-3 text-sm text-industrial-text border-b border-slate-100 font-mono;
+    @apply px-4 py-3 text-sm text-industrial-text border-b border-slate-100 font-sans tabular-nums;
   }
 }
 
