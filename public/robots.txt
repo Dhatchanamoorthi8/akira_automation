@@ -48,4 +48,5 @@ Sitemap: https://akiraautomation.com/sitemap.xml
 
 # LLM Structured Context & Knowledge Graph
 # https://akiraautomation.com/llms.txt
+# https://akiraautomation.com/llm.txt
 # https://akiraautomation.com/llms-full.txt

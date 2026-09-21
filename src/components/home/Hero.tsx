@@ -81,14 +81,14 @@ export const Hero: React.FC = () => {
               initial={{ opacity: 0, y: -12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/80 border border-sky-400/40 backdrop-blur-md shadow-[0_0_20px_rgba(56,189,248,0.18)] text-[10.5px] sm:text-xs font-semibold tracking-wider text-slate-100 group self-start"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/80 border border-sky-400/40 backdrop-blur-md shadow-[0_0_20px_rgba(56,189,248,0.18)] text-xs font-semibold tracking-wider text-slate-100 group self-start font-sans"
             >
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0 shadow-[0_0_8px_rgba(52,211,153,0.9)]" />
               <span>PRECISION • INNOVATION • SMART SOLUTIONS</span>
             </motion.div>
 
             {/* Main Hero Headline with PrecisionText */}
-            <h1 className="text-[28px] xs:text-[32px] sm:text-4xl md:text-5xl lg:text-[52px] xl:text-[56px] font-extrabold font-heading tracking-tight text-white leading-[1.15] lg:leading-[1.12] drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)]">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold font-heading tracking-tight text-white leading-[1.15] lg:leading-[1.12] drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)]">
               <PrecisionText
                 text="Precision Gauging Solutions for"
                 highlightText="Modern Manufacturing"
@@ -103,7 +103,7 @@ export const Hero: React.FC = () => {
               initial="hidden"
               animate="visible"
               transition={{ duration: 0.6, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
-              className="text-[12.5px] sm:text-base text-slate-200 leading-relaxed max-w-[34rem] font-normal drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]"
+              className="text-sm sm:text-base text-slate-200 leading-relaxed max-w-[34rem] font-normal drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]"
             >
               {company.name} delivers high-quality <strong className="text-white font-semibold">precision instruments</strong> and automated multi-gauging systems for OEMs and <strong className="text-white font-semibold">automotive</strong> manufacturing, engineered for <strong className="text-white font-semibold">accuracy, productivity, and reliability</strong>.
             </motion.p>
@@ -117,7 +117,7 @@ export const Hero: React.FC = () => {
             >
               <Link
                 to="/solutions"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-7 py-3 min-h-[46px] sm:min-h-[48px] rounded-lg bg-[#0084ff] hover:bg-sky-500 text-white font-bold text-xs sm:text-sm tracking-wide transition-all duration-200 shadow-md shadow-blue-950/40 hover:scale-[1.01] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-sky-400 group text-center whitespace-nowrap"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-7 py-3 min-h-[46px] sm:min-h-[48px] rounded-lg bg-[#0084ff] hover:bg-sky-500 text-white font-bold text-xs sm:text-sm tracking-wide transition-all duration-200 shadow-md shadow-blue-950/40 hover:scale-[1.01] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-sky-400 group text-center whitespace-nowrap font-sans"
               >
                 <span>Explore Solutions</span>
                 <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-200 group-hover:translate-x-1 shrink-0" />
@@ -125,37 +125,37 @@ export const Hero: React.FC = () => {
               <button
                 type="button"
                 onClick={() => openEnquiry()}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-7 py-3 min-h-[46px] sm:min-h-[48px] rounded-lg bg-[#0b1d33]/85 text-white font-semibold text-xs sm:text-sm border border-sky-500/80 backdrop-blur-sm transition-all duration-200 hover:bg-slate-800/90 hover:text-white hover:border-sky-400 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-sky-400 text-center whitespace-nowrap"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-7 py-3 min-h-[46px] sm:min-h-[48px] rounded-lg bg-[#0b1d33]/85 text-white font-semibold text-xs sm:text-sm border border-sky-500/80 backdrop-blur-sm transition-all duration-200 hover:bg-slate-800/90 hover:text-white hover:border-sky-400 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-sky-400 text-center whitespace-nowrap font-sans"
               >
                 <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white shrink-0" />
                 <span>Request an Enquiry</span>
               </button>
             </motion.div>
 
-            {/* ── MOBILE TELEMETRY DOCK (UNTOUCHED - lg:hidden) ── */}
+            {/* ── MOBILE TELEMETRY DOCK (lg:hidden) ── */}
             <div className="lg:hidden pt-2 sm:pt-4 w-full">
               <div className="grid grid-cols-3 divide-x divide-slate-700/60 rounded-xl sm:rounded-2xl bg-[#06182c]/85 border border-sky-500/30 backdrop-blur-md px-1.5 sm:px-4 py-2.5 sm:py-3 shadow-lg">
                 <div className="flex items-center gap-1.5 sm:gap-2.5 px-1 sm:px-2 justify-center sm:justify-start">
                   <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-sky-400 shrink-0" />
                   <div className="min-w-0">
-                    <span className="block text-[8px] sm:text-[9.5px] font-semibold text-slate-400 uppercase tracking-wider leading-tight">Industry</span>
-                    <span className="block text-[10px] sm:text-xs font-bold text-white tracking-tight leading-tight whitespace-nowrap">Trusted</span>
+                    <span className="block text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider leading-tight font-sans">Industry</span>
+                    <span className="block text-xs sm:text-sm font-bold text-white tracking-tight leading-tight whitespace-nowrap font-sans">Trusted</span>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-1.5 sm:gap-2.5 px-1 sm:px-2 justify-center sm:justify-start">
                   <Target className="w-4 h-4 sm:w-5 sm:h-5 text-sky-400 shrink-0" />
                   <div className="min-w-0">
-                    <span className="block text-[8px] sm:text-[9.5px] font-semibold text-slate-400 uppercase tracking-wider leading-tight">Precision</span>
-                    <span className="block text-[10px] sm:text-xs font-bold text-white tracking-tight leading-tight whitespace-nowrap">Up to 0.1 µm</span>
+                    <span className="block text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider leading-tight font-sans">Precision</span>
+                    <span className="block text-xs sm:text-sm font-bold text-white tracking-tight leading-tight whitespace-nowrap font-mono">Up to 0.1 µm</span>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-1.5 sm:gap-2.5 px-1 sm:px-2 justify-center sm:justify-start">
                   <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-sky-400 shrink-0" />
                   <div className="min-w-0">
-                    <span className="block text-[8px] sm:text-[9.5px] font-semibold text-slate-400 uppercase tracking-wider leading-tight">Countries</span>
-                    <span className="block text-[10px] sm:text-xs font-bold text-white tracking-tight leading-tight whitespace-nowrap">Serving Globally</span>
+                    <span className="block text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider leading-tight font-sans">Countries</span>
+                    <span className="block text-xs sm:text-sm font-bold text-white tracking-tight leading-tight whitespace-nowrap font-sans">Serving Globally</span>
                   </div>
                 </div>
               </div>
@@ -169,7 +169,7 @@ export const Hero: React.FC = () => {
             <button
               type="button"
               onClick={handleInspectImage}
-              className="absolute top-2 left-2 z-20 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-900/80 text-white text-[11px] font-semibold shadow-md backdrop-blur-md border border-slate-700 hover:bg-industrial-primary transition-colors cursor-pointer"
+              className="absolute top-2 left-2 z-20 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-900/80 text-white text-xs font-semibold shadow-md backdrop-blur-md border border-slate-700 hover:bg-industrial-primary transition-colors cursor-pointer font-sans"
               title="Click to view full-resolution station"
             >
               <ZoomIn className="w-3.5 h-3.5 text-sky-400" />
@@ -187,7 +187,7 @@ export const Hero: React.FC = () => {
                 <ShieldCheck className="w-5 h-5" />
               </div>
               <div>
-                <span className="block text-[11px] font-medium text-slate-300 leading-tight">Trusted Since</span>
+                <span className="block text-xs font-medium text-slate-300 leading-tight font-sans">Trusted Since</span>
                 <span className="block text-xl font-black font-heading text-white tracking-wider leading-tight">2021</span>
               </div>
             </motion.div>
@@ -204,7 +204,7 @@ export const Hero: React.FC = () => {
               </div>
               <div>
                 <span className="block text-xs font-bold text-white font-mono tracking-tight leading-tight">±0.001 mm</span>
-                <span className="block text-[10px] text-slate-300 font-semibold uppercase tracking-wider leading-tight">Accuracy</span>
+                <span className="block text-[10px] text-slate-300 font-semibold uppercase tracking-wider leading-tight font-sans">Accuracy</span>
               </div>
             </motion.div>
 
@@ -217,15 +217,15 @@ export const Hero: React.FC = () => {
             >
               <div className="flex items-center gap-2">
                 <Check className="w-3.5 h-3.5 text-sky-400 shrink-0" />
-                <span className="text-xs font-semibold text-slate-200">Higher Accuracy</span>
+                <span className="text-xs font-semibold text-slate-200 font-sans">Higher Accuracy</span>
               </div>
               <div className="flex items-center gap-2">
                 <Check className="w-3.5 h-3.5 text-sky-400 shrink-0" />
-                <span className="text-xs font-semibold text-slate-200">Less Rejection</span>
+                <span className="text-xs font-semibold text-slate-200 font-sans">Less Rejection</span>
               </div>
               <div className="flex items-center gap-2">
                 <Check className="w-3.5 h-3.5 text-sky-400 shrink-0" />
-                <span className="text-xs font-semibold text-slate-200">Better Efficiency</span>
+                <span className="text-xs font-semibold text-slate-200 font-sans">Better Efficiency</span>
               </div>
             </motion.div>
           </div>
@@ -241,8 +241,8 @@ export const Hero: React.FC = () => {
                 <Crosshair className="w-4 h-4" />
               </div>
               <div>
-                <span className="block text-xs font-bold text-white leading-tight">High Precision</span>
-                <span className="block text-[11px] text-slate-400 leading-tight">Accurate Measurements</span>
+                <span className="block text-xs font-bold text-white leading-tight font-sans">High Precision</span>
+                <span className="block text-xs text-slate-400 leading-tight font-sans">Accurate Measurements</span>
               </div>
             </div>
 
@@ -252,8 +252,8 @@ export const Hero: React.FC = () => {
                 <Cog className="w-4 h-4" />
               </div>
               <div>
-                <span className="block text-xs font-bold text-white leading-tight">Automated Systems</span>
-                <span className="block text-[11px] text-slate-400 leading-tight">Multi-Gauging Solutions</span>
+                <span className="block text-xs font-bold text-white leading-tight font-sans">Automated Systems</span>
+                <span className="block text-xs text-slate-400 leading-tight font-sans">Multi-Gauging Solutions</span>
               </div>
             </div>
 
@@ -263,8 +263,8 @@ export const Hero: React.FC = () => {
                 <ShieldCheck className="w-4 h-4" />
               </div>
               <div>
-                <span className="block text-xs font-bold text-white leading-tight">Built for Industry</span>
-                <span className="block text-[11px] text-slate-400 leading-tight">OEM & Automotive</span>
+                <span className="block text-xs font-bold text-white leading-tight font-sans">Built for Industry</span>
+                <span className="block text-xs text-slate-400 leading-tight font-sans">OEM & Automotive</span>
               </div>
             </div>
 
@@ -274,8 +274,8 @@ export const Hero: React.FC = () => {
                 <Zap className="w-4 h-4" />
               </div>
               <div>
-                <span className="block text-xs font-bold text-white leading-tight">Better Productivity</span>
-                <span className="block text-[11px] text-slate-400 leading-tight">Faster, Smarter, Reliable</span>
+                <span className="block text-xs font-bold text-white leading-tight font-sans">Better Productivity</span>
+                <span className="block text-xs text-slate-400 leading-tight font-sans">Faster, Smarter, Reliable</span>
               </div>
             </div>
           </div>
@@ -284,8 +284,8 @@ export const Hero: React.FC = () => {
           <div className="hidden xl:flex items-center gap-3 pl-6 border-l border-sky-500/30">
             <div className="w-4 h-0.5 bg-sky-400" />
             <div className="text-right">
-              <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-300">Smart Measurement.</p>
-              <p className="text-[10px] font-extrabold uppercase tracking-widest text-sky-400">Stronger Manufacturing.</p>
+              <p className="text-xs font-extrabold uppercase tracking-widest text-slate-300 font-heading">Smart Measurement.</p>
+              <p className="text-xs font-extrabold uppercase tracking-widest text-sky-400 font-heading">Stronger Manufacturing.</p>
             </div>
           </div>
         </div>

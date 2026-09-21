@@ -228,13 +228,13 @@ export const ProductDetail: React.FC = () => {
 
               {/* Quick Factory Assistance Box */}
               <div className="p-5 rounded-xl bg-slate-50 border border-slate-200/90 text-xs space-y-3">
-                <p className="font-bold text-industrial-dark uppercase tracking-wider text-[11px]">
+                <p className="font-bold text-industrial-dark uppercase tracking-wider text-xs">
                   Direct Factory Assistance
                 </p>
                 <div className="space-y-1.5 text-slate-600">
                   <div className="flex items-center gap-2">
                     <Phone className="w-3.5 h-3.5 text-industrial-primary" />
-                    <span className="font-mono">{companyData.phones[0]} / {companyData.phones[1]}</span>
+                    <span className="font-sans tabular-nums">{companyData.phones[0]} / {companyData.phones[1]}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Mail className="w-3.5 h-3.5 text-industrial-primary" />

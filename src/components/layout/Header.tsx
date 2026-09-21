@@ -116,17 +116,17 @@ export const Header: React.FC = () => {
   return (
     <header className="sticky top-0 z-50 w-full max-w-full transition-all duration-300">
       {/* Top Utility Bar - Compact Engineering Status Bar */}
-      <div className="bg-industrial-dark text-slate-300 text-[10px] sm:text-xs border-b border-slate-800 w-full overflow-hidden">
+      <div className="bg-industrial-dark text-slate-300 text-xs border-b border-slate-800 w-full overflow-hidden">
         <div className="industrial-container py-1 sm:py-1.5 flex items-center justify-between gap-2 sm:gap-4 max-w-full min-w-0">
           <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1 sm:flex-initial">
-            <span className="hidden md:inline-flex items-center gap-1.5 text-slate-300 font-medium shrink-0">
+            <span className="hidden md:inline-flex items-center gap-1.5 text-slate-300 font-medium shrink-0 font-sans">
               <Award className="w-3.5 h-3.5 text-industrial-primary" />
               Sales & Service
             </span>
             <span className="hidden md:inline-block text-slate-600">|</span>
             <a 
               href={`mailto:${emails[0]}`} 
-              className="inline-flex items-center gap-1.5 hover:text-white transition-colors truncate min-w-0 font-mono text-[10px] sm:text-xs"
+              className="inline-flex items-center gap-1.5 hover:text-white transition-colors truncate min-w-0 font-sans text-xs"
               title={emails[0]}
             >
               <Mail className="w-3 h-3 text-industrial-highlight shrink-0" />
@@ -134,10 +134,10 @@ export const Header: React.FC = () => {
             </a>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-4 shrink-0 text-[10px] sm:text-xs">
+          <div className="flex items-center gap-2 sm:gap-4 shrink-0 text-xs">
             <a 
               href={`tel:${companyData.phones[0].replace(/\s+/g, '')}`} 
-              className="inline-flex items-center gap-1.5 hover:text-white transition-colors font-mono whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 hover:text-white transition-colors font-sans tabular-nums whitespace-nowrap"
             >
               <Phone className="w-3 h-3 text-industrial-highlight shrink-0" />
               <span>{companyData.phones[0]}</span>
@@ -145,11 +145,11 @@ export const Header: React.FC = () => {
             <span className="hidden sm:inline-block text-slate-600">/</span>
             <a 
               href={`tel:${companyData.phones[1].replace(/\s+/g, '')}`} 
-              className="hidden sm:inline-flex items-center gap-1.5 hover:text-white transition-colors font-mono whitespace-nowrap"
+              className="hidden sm:inline-flex items-center gap-1.5 hover:text-white transition-colors font-sans tabular-nums whitespace-nowrap"
             >
               <span>{companyData.phones[1]}</span>
             </a>
-            <span className="hidden lg:inline-block px-2 py-0.5 rounded bg-slate-800 text-[10px] text-slate-300 uppercase tracking-wider font-semibold font-mono">
+            <span className="hidden lg:inline-block px-2 py-0.5 rounded bg-slate-800 text-xs text-slate-300 uppercase tracking-wider font-semibold font-sans">
               Smart Solutions
             </span>
           </div>
@@ -566,15 +566,15 @@ export const Header: React.FC = () => {
                   <ArrowRight className="w-4 h-4" />
                 </button>
                 <div className="text-[11px] text-industrial-muted space-y-1 bg-slate-50 p-3 rounded-lg border border-slate-100">
-                  <p className="font-bold text-industrial-dark uppercase tracking-wider text-[10px]">Direct Lines & Email:</p>
-                  <a href={`tel:${companyData.phones[0].replace(/\s+/g, '')}`} className="font-mono text-industrial-dark hover:text-industrial-primary block">
+                  <p className="font-bold text-industrial-dark uppercase tracking-wider text-[10px] font-sans">Direct Lines & Email:</p>
+                  <a href={`tel:${companyData.phones[0].replace(/\s+/g, '')}`} className="font-sans tabular-nums text-industrial-dark hover:text-industrial-primary block">
                     {companyData.phones[0]}
                   </a>
-                  <a href={`tel:${companyData.phones[1].replace(/\s+/g, '')}`} className="font-mono text-industrial-dark hover:text-industrial-primary block">
+                  <a href={`tel:${companyData.phones[1].replace(/\s+/g, '')}`} className="font-sans tabular-nums text-industrial-dark hover:text-industrial-primary block">
                     {companyData.phones[1]}
                   </a>
                   {emails.map((email) => (
-                    <a key={email} href={`mailto:${email}`} className="font-mono text-industrial-dark hover:text-industrial-primary block truncate pt-1 border-t border-slate-200/60">
+                    <a key={email} href={`mailto:${email}`} className="font-sans text-industrial-dark hover:text-industrial-primary block truncate pt-1 border-t border-slate-200/60">
                       {email}
                     </a>
                   ))}

@@ -1,0 +1,59 @@
+<!-- rsl-version: 1.0; ai-search: allowed; ai-training: commercial-inquiry-required -->
+# AKIRA PRECISION AUTOMATION LLP
+
+> Akira Precision Automation LLP is an Indian manufacturer of high-precision metrology systems, automated multi-gauging stations, air gauges, electronic gauges, digital display units, and custom inspection fixtures for automotive OEMs, Tier-1/Tier-2 suppliers, and precision engineering industries.
+
+## Core Capabilities & Solutions
+
+- [Precision Gauging & Fixture Solutions](https://akiraautomation.com/solutions): Overview of all 12 core solution capabilities.
+- [Automated Multi-Gauging Systems](https://akiraautomation.com/solutions/multigauging): Turnkey automated inspection stations for multi-dimensional checking of engine blocks, cylinder liners, camshafts, and transmission shafts.
+- [Air Gauging Systems](https://akiraautomation.com/solutions/air-gauging): Non-contact pneumatic differential pressure inspection for high-precision inside diameters (ID), outside diameters (OD), taper, and ovality.
+- [Inspection Fixtures & Tooling](https://akiraautomation.com/solutions/fixtures): Custom mechanical and pneumatic fixtures with hardened datum locators and toggle clamping.
+- [Electronic Gauging](https://akiraautomation.com/solutions/electronic-gauging): Inductive probe and LVDT-based comparative measurement systems with digital telemetry.
+- [Air Plug Gauges](https://akiraautomation.com/solutions/air-plug-gauges): Hard chrome plated pneumatic plugs for through bore, blind bore, and step bore inspection from 2 mm to 200 mm.
+- [Air Ring Gauges](https://akiraautomation.com/solutions/air-ring-gauges): Two-jet and three-jet (@120°) pneumatic rings for outer diameter, taper, and 3-lobe form error inspection.
+- [Attribute Gauges](https://akiraautomation.com/solutions/attribute-gauges): Go / No-Go functional check gauges for rapid shop-floor pass/fail verification.
+- [Plug & Ring Gauges](https://akiraautomation.com/solutions/plug-gauges): Precision hardened steel and carbide cylindrical plug and ring setting masters.
+- [Snap Gauges](https://akiraautomation.com/solutions/snap-gauges): Caliper-style external diameter inspection gauges with carbide measuring faces.
+- [Special Gauges](https://akiraautomation.com/solutions/special-gauges): Tailored metrology tooling engineered for complex geometric features and tight tolerances.
+- [Assembly & Work-Holding](https://akiraautomation.com/solutions/assembly-work-holding): Ergonomic assembly fixtures and precision workholding clamping tooling.
+
+## Precision Products Catalogue
+
+- [Air Plug Gauge to Check ID Bore](https://akiraautomation.com/products/air-plug-gauge): High-precision pneumatic bore inspection (2 mm to 200 mm) with hard chrome plating.
+- [Air Calliper Gauge to Check OD](https://akiraautomation.com/products/air-calliper-gauge): Snap gauge with air jet embedded in tungsten carbide tip for shaft OD inspection (10 mm to 180 mm).
+- [Air Ring Gauge to Check OD](https://akiraautomation.com/products/air-ring-gauge): Two-jet and three-jet pneumatic rings for OD, taper, and 3-lobe form error detection.
+- [Electronic Calliper Gauge](https://akiraautomation.com/products/electronic-calliper-gauge): High-speed electronic comparator snap gauge with carbide anvils.
+- [Air Gauge Display Unit](https://akiraautomation.com/products/air-gauge-display-unit): Microcontroller-based pneumatic readout unit with high-resolution digital display.
+- [Air Electronics Tri-Colour Display](https://akiraautomation.com/products/air-electronics-tri-colour-display): Hybrid pneumatic-electronic display with green/yellow/red tolerance bands and RS-232 output.
+- [Tri-Colour Digital Display Unit](https://akiraautomation.com/products/tri-colour-digital-display-unit): Single-channel digital DRO with immediate visual tolerance status.
+- [Two-Channel Tri-Colour Display](https://akiraautomation.com/products/two-channel-tri-colour-display): Dual-channel DRO supporting differential math (A+B, A-B) for taper and runout.
+- [Three-Channel Tri-Colour Display](https://akiraautomation.com/products/three-channel-tri-colour-display): Three-channel simultaneous DRO for complex multi-parameter inspection.
+- [Four-Channel Tri-Colour Display](https://akiraautomation.com/products/four-channel-tri-colour-display): Four-channel industrial DRO for comprehensive multi-gauge stations.
+- [Auto Selection Air Server Display](https://akiraautomation.com/products/auto-selection-air-server-display): Automated channel switching system for multi-tool inspection stations.
+- [Memory Module Unit](https://akiraautomation.com/products/memory-module-unit): Industrial data logger storing inspection readings with USB/RS-232 export for SPC analysis.
+- [Engine Block & Liner Multigauging Station](https://akiraautomation.com/products/engine-block-liner-multigauging-station): Multi-plane bore inspection station measuring diameter, taper, and ovality in a single cycle.
+- [Camshaft Multigauging Station](https://akiraautomation.com/products/camshaft-multigauging-station): Multi-journal diameter and runout inspection bench with pneumatic lift and rotary centers.
+- [Measuring Instruments & Equipment](https://akiraautomation.com/products/instruments-measuring-equipment): Digital height gauges, dial indicators, bore gauges, and granite surface plates.
+- [Special Gauges & Fixtures](https://akiraautomation.com/products/special-gauges-fixtures): Custom-engineered inspection tooling for non-standard part geometries.
+
+## Key Technical Questions Answered
+
+- **How does air gauging work?** Non-contact pneumatic back-pressure differential measurement. Compressed air at 3 to 4 bar (45 psi) is discharged through calibrated nozzles against the workpiece surface; clearance changes create proportional pressure shifts with 0.1 µm resolution.
+- **Why are two setting masters required?** Comparative calibration requires Minimum and Maximum setting masters to accurately define zero reference and linear magnification span per ISO/IEC 17025 traceability.
+- **What is the cycle time of an automated multi-gauging station?** Under 15 seconds for simultaneous multi-point dimensional inspection (10+ parameters including ID, OD, runout, taper, and perpendicularity).
+
+## Company & Contact Information
+
+- Legal Name: Akira Precision Automation LLP
+- Tagline: Precision • Innovation • Smart Solutions
+- Slogan: Automating Today... Building Tomorrow...
+- Primary Email: milestonegauges@gmail.com
+- CC Email: messalessarvices@gmail.com
+- Telephones: +91 97893 54332 / +91 99622 34460
+- Address: SF No. 341/2A, 341/2B, Site No. 23, Sri Ganapathy Nagar, Athipalayam Village, Coimbatore - 641110, Tamil Nadu, India.
+- Business Hours: Monday – Saturday: 09:00 – 18:30 IST
+
+## Optional
+
+- [Full LLM Context & Knowledge Graph](https://akiraautomation.com/llms-full.txt): Complete technical specifications, tolerance tables, calibration protocols, comparative matrices, and full company details.

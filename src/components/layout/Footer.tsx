@@ -148,7 +148,7 @@ export const Footer: React.FC = () => {
 
                 <div className="flex items-start gap-2.5">
                   <Phone className="w-4 h-4 text-industrial-primary shrink-0 mt-0.5" />
-                  <div className="space-y-1 text-xs font-mono">
+                  <div className="space-y-1 text-xs font-sans tabular-nums">
                     <a href={`tel:${companyData.phones[0].replace(/\s+/g, '')}`} className="hover:text-white block transition-colors">
                       {companyData.phones[0]}
                     </a>
