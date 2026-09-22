@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Wrench, GraduationCap, Compass, Zap, Headphones, Phone } from 'lucide-react';
+import { Button, Card, Chip } from '@heroui/react';
 import { servicesData } from '../../data/services';
 import { useEnquiry } from '../../context/EnquiryContext';
 import { companyData } from '../../data/company';
@@ -26,10 +27,12 @@ export const ServiceSupportSection: React.FC = () => {
         {/* Section Header */}
         <Reveal direction="up" className="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-12 gap-6">
           <div>
-            <span className="section-tag">
-              Lifecycle Engineering Support
-            </span>
-            <h2 className="section-title mt-3">
+            <Chip variant="soft" color="accent" size="sm" className="bg-sky-50 text-industrial-primary border border-sky-200/80 mb-3">
+              <Chip.Label className="text-xs font-semibold uppercase tracking-wider font-mono">
+                Lifecycle Engineering Support
+              </Chip.Label>
+            </Chip>
+            <h2 className="section-title mt-2">
               Service & Support
             </h2>
             <p className="mt-2 text-base sm:text-lg font-bold text-industrial-primary font-heading">
@@ -39,13 +42,15 @@ export const ServiceSupportSection: React.FC = () => {
               Our commitment begins before commissioning and continues through operator training, routine calibration, and fast emergency service response.
             </p>
           </div>
-          <button
-            onClick={() => openEnquiry("Service & Technical Support")}
-            className="btn-primary w-full sm:w-auto text-center justify-center shrink-0 self-start md:self-end"
+          <Button
+            variant="primary"
+            size="md"
+            onPress={() => openEnquiry("Service & Technical Support")}
+            className="bg-industrial-primary hover:bg-sky-600 text-white w-full sm:w-auto text-center justify-center shrink-0 self-start md:self-end font-sans inline-flex items-center gap-2"
           >
             <Headphones className="w-4 h-4" />
             <span>Talk to Our Technical Team</span>
-          </button>
+          </Button>
         </Reveal>
 
         {/* 4 Cards Grid */}
@@ -56,41 +61,46 @@ export const ServiceSupportSection: React.FC = () => {
               <StaggerItem key={srv.id}>
                 <SpotlightCard
                   spotlightColor="rgba(14, 116, 144, 0.08)"
-                  className="card-base card-hover p-4 sm:p-6 flex flex-col justify-between group border-slate-200 bg-white h-full"
+                  className="h-full rounded-xl"
                 >
-                  <div className="space-y-4">
-                    <div className="w-12 h-12 rounded-xl bg-industrial-accent text-industrial-primary flex items-center justify-center group-hover:bg-industrial-primary group-hover:text-white transition-colors duration-300">
-                      <Icon className="w-6 h-6" />
+                  <Card
+                    variant="default"
+                    className="card-hover p-5 sm:p-6 flex flex-col justify-between group border border-slate-200 bg-white h-full rounded-xl shadow-sm hover:shadow-card hover:border-industrial-primary/40 transition-all duration-200"
+                  >
+                    <div className="space-y-4">
+                      <div className="w-12 h-12 rounded-xl bg-industrial-accent text-industrial-primary flex items-center justify-center group-hover:bg-industrial-primary group-hover:text-white transition-colors duration-300">
+                        <Icon className="w-6 h-6" />
+                      </div>
+
+                      <Card.Header className="p-0">
+                        <Card.Title className="text-base font-bold text-slate-900 font-heading group-hover:text-industrial-primary transition-colors">
+                          {srv.title}
+                        </Card.Title>
+                        <Card.Description className="text-xs sm:text-sm text-slate-700 font-medium mt-2 leading-relaxed">
+                          {srv.description}
+                        </Card.Description>
+                      </Card.Header>
+
+                      <div className="pt-3 border-t border-slate-100 space-y-1.5">
+                        {srv.details.slice(0, 2).map((d, idx) => (
+                          <p key={idx} className="text-xs text-slate-700 font-medium flex items-start gap-1.5">
+                            <span className="text-industrial-primary font-bold">•</span>
+                            <span className="line-clamp-2">{d}</span>
+                          </p>
+                        ))}
+                      </div>
                     </div>
 
-                    <div>
-                      <h3 className="text-base font-bold text-slate-900 font-heading group-hover:text-industrial-primary transition-colors">
-                        {srv.title}
-                      </h3>
-                      <p className="text-xs sm:text-sm text-slate-700 font-medium mt-2 leading-relaxed">
-                        {srv.description}
-                      </p>
-                    </div>
-
-                    <div className="pt-3 border-t border-slate-100 space-y-1.5">
-                      {srv.details.slice(0, 2).map((d, idx) => (
-                        <p key={idx} className="text-xs text-slate-700 font-medium flex items-start gap-1.5">
-                          <span className="text-industrial-primary font-bold">•</span>
-                          <span className="line-clamp-2">{d}</span>
-                        </p>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="pt-4 mt-4 border-t border-slate-100">
-                    <Link
-                      to="/services"
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-industrial-primary group-hover:text-industrial-hover transition-colors"
-                    >
-                      <span>Full Service Details</span>
-                      <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-                    </Link>
-                  </div>
+                    <Card.Footer className="p-0 pt-4 mt-4 border-t border-slate-100">
+                      <Link
+                        to="/services"
+                        className="button button--ghost button--sm inline-flex items-center gap-1.5 text-xs font-bold text-industrial-primary group-hover:text-industrial-hover transition-colors p-0 font-sans"
+                      >
+                        <span>Full Service Details</span>
+                        <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+                      </Link>
+                    </Card.Footer>
+                  </Card>
                 </SpotlightCard>
               </StaggerItem>
             );
@@ -98,30 +108,33 @@ export const ServiceSupportSection: React.FC = () => {
         </StaggerContainer>
 
         {/* Hotline Banner */}
-        <Reveal direction="up" delay={0.2} className="mt-6 sm:mt-12 p-4 sm:p-6 rounded-2xl bg-white border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
-          <div className="flex items-start sm:items-center gap-3.5 text-xs text-slate-700">
-            <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 shadow-sm">
-              <Phone className="w-5 h-5" />
-            </div>
-            <div className="space-y-0.5">
-              <p className="font-bold text-sm text-slate-900 font-heading">Direct Technical Support Hotline</p>
-              <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 font-mono text-xs text-industrial-primary font-semibold">
-                <a href={`tel:${companyData.phones[0].replace(/\s+/g, '')}`} className="hover:underline">
-                  {companyData.phones[0]}
-                </a>
-                <span className="text-slate-400">/</span>
-                <a href={`tel:${companyData.phones[1].replace(/\s+/g, '')}`} className="hover:underline">
-                  {companyData.phones[1]}
-                </a>
+        <Reveal direction="up" delay={0.2} className="mt-6 sm:mt-12">
+          <Card variant="default" className="p-4 sm:p-6 rounded-2xl bg-white border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+            <div className="flex items-start sm:items-center gap-3.5 text-xs text-slate-700">
+              <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 shadow-sm">
+                <Phone className="w-5 h-5" />
+              </div>
+              <div className="space-y-0.5">
+                <p className="font-bold text-sm text-slate-900 font-heading">Direct Technical Support Hotline</p>
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 font-mono text-xs text-industrial-primary font-semibold">
+                  <a href={`tel:${companyData.phones[0].replace(/\s+/g, '')}`} className="hover:underline">
+                    {companyData.phones[0]}
+                  </a>
+                  <span className="text-slate-400">/</span>
+                  <a href={`tel:${companyData.phones[1].replace(/\s+/g, '')}`} className="hover:underline">
+                    {companyData.phones[1]}
+                  </a>
+                </div>
               </div>
             </div>
-          </div>
-          <p className="text-xs text-slate-600 font-medium sm:text-right max-w-xs leading-relaxed border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-100">
-            Service available across all automotive and industrial manufacturing corridors in India.
-          </p>
+            <p className="text-xs text-slate-600 font-medium sm:text-right max-w-xs leading-relaxed border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-100">
+              Service available across all automotive and industrial manufacturing corridors in India.
+            </p>
+          </Card>
         </Reveal>
 
       </div>
     </SectionReveal>
   );
 };
+

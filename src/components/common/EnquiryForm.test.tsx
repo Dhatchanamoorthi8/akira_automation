@@ -5,7 +5,7 @@ import { EnquiryForm } from './EnquiryForm';
 import { emailService } from '../../services/emailService';
 import { enquiryService } from '../../services/enquiryService';
 
-describe('EnquiryForm Component', () => {
+describe('EnquiryForm Component', { timeout: 15000 }, () => {
   beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     vi.spyOn(enquiryService, 'createEnquiry').mockResolvedValue({

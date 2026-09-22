@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, ReactNode } from 'react';
-import { motion, useReducedMotion } from 'motion/react';
+import { useReducedMotion } from 'motion/react';
 
 interface SpotlightCardProps {
   children: ReactNode;
@@ -51,18 +51,17 @@ export const SpotlightCard: React.FC<SpotlightCardProps> = ({
   };
 
   return (
-    <motion.div
+    <div
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      whileHover={shouldReduceMotion ? undefined : { y: -3, transition: { duration: 0.22, ease: [0.16, 1, 0.3, 1] } }}
-      className={`relative overflow-hidden ${className}`}
+      className={`relative ${className}`}
     >
-      {/* Precision Industrial Radial Spotlight - disabled on touch devices & reduced motion */}
+      {/* Precision Industrial Radial Spotlight - clipped to rounded boundary behind children */}
       {!shouldReduceMotion && !isTouchDevice && (
         <div
-          className="pointer-events-none absolute -inset-px transition-opacity duration-300 rounded-[inherit] z-10"
+          className="pointer-events-none absolute -inset-px transition-opacity duration-300 rounded-[inherit] overflow-hidden z-0"
           style={{
             opacity,
             background: `radial-gradient(400px circle at ${position.x}px ${position.y}px, ${spotlightColor}, transparent 80%)`,
@@ -70,7 +69,9 @@ export const SpotlightCard: React.FC<SpotlightCardProps> = ({
           aria-hidden="true"
         />
       )}
-      {children}
-    </motion.div>
+      <div className="relative z-10 h-full">
+        {children}
+      </div>
+    </div>
   );
 };

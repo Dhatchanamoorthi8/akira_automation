@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { ArrowRight, CheckCircle2, Cpu, ZoomIn } from 'lucide-react';
+import { Button, Chip, Tabs } from '@heroui/react';
 import { useEnquiry } from '../../context/EnquiryContext';
 import { useImageViewer } from '../../context/ImageViewerContext';
 import { SectionReveal } from '../animation/SectionReveal';
@@ -21,10 +22,10 @@ export const MultigaugingShowcase: React.FC = () => {
       <div className="industrial-container relative z-10">
         {/* Section Header */}
         <Reveal direction="up" className="max-w-3xl mb-5 sm:mb-10">
-          <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-[11px] font-mono font-semibold tracking-wider uppercase bg-industrial-primary/20 text-sky-400 border border-sky-400/30">
+          <Chip variant="soft" color="accent" size="sm" className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-[11px] font-mono font-semibold tracking-wider uppercase bg-industrial-primary/20 text-sky-400 border border-sky-400/30">
             <Cpu className="w-3.5 h-3.5" />
-            Specialized Automated Multi-Gauging
-          </span>
+            <Chip.Label>Specialized Automated Multi-Gauging</Chip.Label>
+          </Chip>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-heading text-white mt-3">
             Production-Line Multigauging Stations
           </h2>
@@ -33,43 +34,38 @@ export const MultigaugingShowcase: React.FC = () => {
           </p>
         </Reveal>
 
-        {/* Station Tabs with Mechanical Sliding layoutId Indicator */}
-        <div className="flex border-b border-slate-700 mb-6 sm:mb-8 gap-2 overflow-x-auto no-scrollbar max-w-full w-full">
-          <button
-            onClick={() => setActiveStation('engine')}
-            className={`relative px-4 sm:px-6 py-3 sm:py-3.5 text-xs sm:text-sm font-bold transition-colors whitespace-nowrap shrink-0 ${
-              activeStation === 'engine'
-                ? 'text-white'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
+        {/* Station Tabs with HeroUI Tabs */}
+        <Tabs
+          selectedKey={activeStation}
+          onSelectionChange={(key) => setActiveStation(key as 'engine' | 'camshaft')}
+          className="mb-6 sm:mb-8"
+        >
+          <Tabs.List
+            aria-label="Multi-Gauging Stations"
+            className="flex flex-col sm:flex-row w-full sm:w-auto p-1.5 bg-slate-950/90 border border-slate-800 rounded-xl gap-2 shadow-lg"
           >
-            <span>Engine Block Liner Bore Station</span>
-            {activeStation === 'engine' && (
-              <motion.div
-                layoutId="activeStationTab"
-                transition={{ type: 'spring', stiffness: 400, damping: 32 }}
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-sky-400"
-              />
-            )}
-          </button>
-          <button
-            onClick={() => setActiveStation('camshaft')}
-            className={`relative px-4 sm:px-6 py-3 sm:py-3.5 text-xs sm:text-sm font-bold transition-colors whitespace-nowrap shrink-0 ${
-              activeStation === 'camshaft'
-                ? 'text-white'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <span>Camshaft Dia Multigauging Station</span>
-            {activeStation === 'camshaft' && (
-              <motion.div
-                layoutId="activeStationTab"
-                transition={{ type: 'spring', stiffness: 400, damping: 32 }}
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-sky-400"
-              />
-            )}
-          </button>
-        </div>
+            <Tabs.Tab
+              id="engine"
+              className={`flex-1 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm font-bold transition-all text-center cursor-pointer ${
+                activeStation === 'engine'
+                  ? 'bg-[#0084ff] text-white shadow-md'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+              }`}
+            >
+              Station 01: Engine Block Liner Bore Station
+            </Tabs.Tab>
+            <Tabs.Tab
+              id="camshaft"
+              className={`flex-1 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm font-bold transition-all text-center cursor-pointer ${
+                activeStation === 'camshaft'
+                  ? 'bg-[#0084ff] text-white shadow-md'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+              }`}
+            >
+              Station 02: Camshaft Dia Multigauging Station
+            </Tabs.Tab>
+          </Tabs.List>
+        </Tabs>
 
         {/* Active Station Display */}
         <AnimatePresence mode="wait">
@@ -148,9 +144,9 @@ export const MultigaugingShowcase: React.FC = () => {
             {/* Right: Technical Specs & Features */}
             <div className="lg:col-span-6 space-y-6">
               <div>
-                <span className="px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-sky-500/20 text-sky-300 border border-sky-400/30">
-                  Turnkey Multi-Gauging Station
-                </span>
+                <Chip variant="soft" color="accent" size="sm" className="px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-sky-500/20 text-sky-300 border border-sky-400/30">
+                  <Chip.Label>Turnkey Multi-Gauging Station</Chip.Label>
+                </Chip>
                 <h3 className="text-2xl font-bold font-heading text-white mt-2">
                   Engine Block Liner Bore Multigauging Station
                 </h3>
@@ -206,17 +202,19 @@ export const MultigaugingShowcase: React.FC = () => {
               <div className="pt-2 flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-4">
                 <Link
                   to="/products/engine-block-liner-multigauging-station"
-                  className="btn-primary bg-sky-500 hover:bg-sky-400 text-white w-full sm:w-auto text-center justify-center"
+                  className="button button--primary button--md bg-sky-500 hover:bg-sky-400 text-white w-full sm:w-auto text-center justify-center font-sans inline-flex items-center gap-2 px-5 py-2.5 rounded-lg"
                 >
                   <span>View Full Station Details</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
-                <button
-                  onClick={() => openEnquiry("Engine Block Liner Bore Multigauging Station")}
-                  className="btn-secondary bg-transparent text-white border-slate-600 hover:bg-slate-800 w-full sm:w-auto text-center justify-center"
+                <Button
+                  variant="outline"
+                  size="md"
+                  onPress={() => openEnquiry("Engine Block Liner Bore Multigauging Station")}
+                  className="bg-transparent text-white border-slate-600 hover:bg-slate-800 w-full sm:w-auto text-center justify-center font-sans"
                 >
                   Inquire About This Station
-                </button>
+                </Button>
               </div>
 
             </div>
@@ -293,9 +291,9 @@ export const MultigaugingShowcase: React.FC = () => {
             {/* Right: Technical Specs & Features */}
             <div className="lg:col-span-6 space-y-6">
               <div>
-                <span className="px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-sky-500/20 text-sky-300 border border-sky-400/30">
-                  Dedicated Inspection Bench
-                </span>
+                <Chip variant="soft" color="accent" size="sm" className="px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-sky-500/20 text-sky-300 border border-sky-400/30">
+                  <Chip.Label>Dedicated Inspection Bench</Chip.Label>
+                </Chip>
                 <h3 className="text-2xl font-bold font-heading text-white mt-2">
                   Camshaft Dia Multigauging Station
                 </h3>
@@ -351,17 +349,19 @@ export const MultigaugingShowcase: React.FC = () => {
               <div className="pt-2 flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-4">
                 <Link
                   to="/products/camshaft-multigauging-station"
-                  className="btn-primary bg-sky-500 hover:bg-sky-400 text-white w-full sm:w-auto text-center justify-center"
+                  className="button button--primary button--md bg-sky-500 hover:bg-sky-400 text-white w-full sm:w-auto text-center justify-center font-sans inline-flex items-center gap-2 px-5 py-2.5 rounded-lg"
                 >
                   <span>View Full Station Details</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
-                <button
-                  onClick={() => openEnquiry("Camshaft Dia Multigauging Station")}
-                  className="btn-secondary bg-transparent text-white border-slate-600 hover:bg-slate-800 w-full sm:w-auto text-center justify-center"
+                <Button
+                  variant="outline"
+                  size="md"
+                  onPress={() => openEnquiry("Camshaft Dia Multigauging Station")}
+                  className="bg-transparent text-white border-slate-600 hover:bg-slate-800 w-full sm:w-auto text-center justify-center font-sans"
                 >
                   Inquire About This Station
-                </button>
+                </Button>
               </div>
 
             </div>
@@ -373,3 +373,4 @@ export const MultigaugingShowcase: React.FC = () => {
     </SectionReveal>
   );
 };
+

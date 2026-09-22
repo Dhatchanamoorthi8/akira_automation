@@ -1,10 +1,14 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath, URL } from 'node:url';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    tailwindcss(),
+    react(),
+  ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -31,7 +35,7 @@ export default defineConfig({
     port: 3000,
     host: true,
     watch: {
-      ignored: ['**/.agents/**', '**/extracted_ppt_images/**', '**/*.pptx', '**/*.jpeg', '**/*.jpg', '**/*.png'],
+      ignored: ['**/.agents/**', '**/extracted_ppt_images/**', '**/*.pptx'],
     },
   },
 });

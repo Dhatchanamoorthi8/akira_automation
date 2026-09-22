@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Card } from '@heroui/react';
 import { EnquiryStatusDistribution } from '../../types/database';
 import { Layers, MoreHorizontal } from 'lucide-react';
 
@@ -9,12 +10,12 @@ interface EnquiryStatusSummaryProps {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  new: '#3b82f6', // blue-500
-  contacted: '#0ea5e9', // sky-500
-  quotation_sent: '#f59e0b', // amber-500
-  follow_up: '#6366f1', // indigo-500
-  converted: '#10b981', // emerald-500
-  closed: '#94a3b8', // slate-400
+  new: '#2563eb', // blue-600
+  contacted: '#0284c7', // sky-600
+  quotation_sent: '#d97706', // amber-600
+  follow_up: '#4f46e5', // indigo-600
+  converted: '#059669', // emerald-600
+  closed: '#64748b', // slate-500
 };
 
 export const EnquiryStatusSummary: React.FC<EnquiryStatusSummaryProps> = ({
@@ -28,7 +29,7 @@ export const EnquiryStatusSummary: React.FC<EnquiryStatusSummaryProps> = ({
 
   if (isLoading) {
     return (
-      <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs animate-pulse space-y-4 min-w-0 max-w-full overflow-hidden h-full">
+      <Card className="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xs animate-pulse space-y-4 min-w-0 max-w-full overflow-hidden h-full">
         <div className="flex items-center justify-between">
           <div className="h-5 w-36 bg-slate-200 rounded-md" />
           <div className="h-4 w-4 bg-slate-200 rounded" />
@@ -38,13 +39,13 @@ export const EnquiryStatusSummary: React.FC<EnquiryStatusSummaryProps> = ({
           <div className="h-4 bg-slate-100 rounded" />
           <div className="h-4 bg-slate-100 rounded" />
         </div>
-      </div>
+      </Card>
     );
   }
 
   // Calculate SVG donut stroke arcs
   const radius = 56;
-  const strokeWidth = 16;
+  const strokeWidth = 15;
   const circumference = 2 * Math.PI * radius;
 
   let cumulativePercent = 0;
@@ -65,11 +66,11 @@ export const EnquiryStatusSummary: React.FC<EnquiryStatusSummaryProps> = ({
     });
 
   return (
-    <div className="bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 shadow-xs flex flex-col justify-between min-w-0 max-w-full overflow-hidden h-full flex-1">
+    <Card className="bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-xs flex flex-col justify-between min-w-0 max-w-full overflow-hidden h-full flex-1">
       {/* Header matching visual reference */}
       <div className="flex items-center justify-between pb-3 border-b border-slate-100 min-w-0">
         <div className="min-w-0">
-          <h3 className="text-base font-bold text-slate-900 tracking-tight truncate">
+          <h3 className="text-base font-bold text-slate-900 tracking-tight truncate font-heading">
             {title}
           </h3>
           <p className="text-xs text-slate-500 mt-0.5 truncate">
@@ -88,7 +89,7 @@ export const EnquiryStatusSummary: React.FC<EnquiryStatusSummaryProps> = ({
       {total === 0 ? (
         <div className="h-60 flex-1 flex flex-col items-center justify-center text-center p-6 border border-dashed border-slate-200 rounded-xl bg-slate-50/50 my-auto">
           <Layers className="w-8 h-8 text-slate-300 mb-2" />
-          <p className="text-xs font-semibold text-slate-600">No Pipeline Records</p>
+          <p className="text-xs font-bold text-slate-700 font-heading">No Pipeline Records</p>
           <p className="text-[11px] text-slate-400 mt-0.5">
             Captured RFQs will categorize across lifecycle stages here.
           </p>
@@ -136,11 +137,11 @@ export const EnquiryStatusSummary: React.FC<EnquiryStatusSummaryProps> = ({
 
             {/* Donut Center Counter */}
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center">
-              <span className="text-2xl font-bold tracking-tight text-slate-900">
+              <span className="text-2xl font-extrabold tracking-tight text-slate-900 font-mono">
                 {total}
               </span>
-              <span className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">
-                Total RFQs
+              <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider font-mono">
+                TOTAL RFQS
               </span>
             </div>
           </div>
@@ -154,23 +155,23 @@ export const EnquiryStatusSummary: React.FC<EnquiryStatusSummaryProps> = ({
               return (
                 <div
                   key={item.status}
-                  className={`flex items-center justify-between p-1 rounded-lg transition-colors cursor-pointer min-w-0 ${
-                    isHovered ? 'bg-slate-50' : ''
+                  className={`flex items-center justify-between p-1.5 rounded-lg transition-colors cursor-pointer min-w-0 border ${
+                    isHovered ? 'bg-slate-50 border-slate-200' : 'border-transparent'
                   }`}
                   onMouseEnter={() => setHoveredStatus(item.status)}
                   onMouseLeave={() => setHoveredStatus(null)}
                 >
                   <div className="flex items-center gap-2 min-w-0">
                     <span
-                      className="w-2.5 h-2.5 rounded-full shrink-0"
+                      className="w-2.5 h-2.5 rounded-full shrink-0 shadow-2xs"
                       style={{ backgroundColor: color }}
                     />
-                    <span className="text-slate-600 font-medium text-[11px] truncate">
+                    <span className="text-slate-700 font-semibold text-[11px] truncate">
                       {item.label}
                     </span>
                   </div>
                   <div className="flex items-center gap-1 font-mono text-[11px] shrink-0">
-                    <span className="font-semibold text-slate-800">{item.count}</span>
+                    <span className="font-bold text-slate-900">{item.count}</span>
                     <span className="text-slate-400 text-[10px]">({item.percentage}%)</span>
                   </div>
                 </div>
@@ -179,6 +180,6 @@ export const EnquiryStatusSummary: React.FC<EnquiryStatusSummaryProps> = ({
           </div>
         </div>
       )}
-    </div>
+    </Card>
   );
 };

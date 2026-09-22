@@ -1,4 +1,5 @@
 import React from 'react';
+import { Card, Chip } from '@heroui/react';
 import { Followup } from '../../types/database';
 import { formatDateTime } from '../../utils/date';
 import { CalendarCheck2, Phone, Mail, Users, Monitor, FileText, Clock } from 'lucide-react';
@@ -20,38 +21,43 @@ const typeIcons: Record<string, React.ElementType> = {
 export const UpcomingFollowups: React.FC<UpcomingFollowupsProps> = ({ followups, isLoading }) => {
   if (isLoading) {
     return (
-      <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-subtle animate-pulse space-y-4 h-full flex flex-col">
+      <Card className="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xs animate-pulse space-y-4 h-full flex flex-col">
         <div className="h-4 w-36 bg-slate-200 rounded" />
         <div className="space-y-3 flex-1">
           {Array.from({ length: 3 }).map((_, i) => (
             <div key={i} className="h-12 bg-slate-100 rounded-lg" />
           ))}
         </div>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs flex flex-col h-full flex-1 space-y-4">
+    <Card className="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xs flex flex-col h-full flex-1 space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between pb-3 border-b border-slate-100">
         <div>
-          <h3 className="text-base font-bold text-slate-900 tracking-tight">
+          <h3 className="text-base font-bold text-slate-900 tracking-tight font-heading">
             Upcoming Follow-ups
           </h3>
           <p className="text-xs text-slate-500 mt-0.5">
             Scheduled client appointments and technical calls
           </p>
         </div>
-        <span className="text-xs font-mono font-bold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200/60">
-          {followups.length}
-        </span>
+        <Chip
+          variant="soft"
+          color="default"
+          size="sm"
+          className="text-xs font-mono font-bold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200/60"
+        >
+          <Chip.Label>{followups.length}</Chip.Label>
+        </Chip>
       </div>
 
       {followups.length === 0 ? (
-        <div className="flex-1 min-h-[180px] flex flex-col items-center justify-center text-center p-4 border border-dashed border-slate-200 rounded-lg bg-slate-50/50">
+        <div className="flex-1 min-h-[180px] flex flex-col items-center justify-center text-center p-6 border border-dashed border-slate-200 rounded-xl bg-slate-50/50">
           <CalendarCheck2 className="w-8 h-8 text-slate-300 mb-2" />
-          <p className="text-xs font-semibold text-slate-600">No upcoming follow-ups.</p>
+          <p className="text-xs font-bold text-slate-700 font-heading">No upcoming follow-ups.</p>
           <p className="text-[11px] text-slate-400 mt-0.5">
             Customer follow-ups and reminder dates will list here.
           </p>
@@ -67,24 +73,24 @@ export const UpcomingFollowups: React.FC<UpcomingFollowupsProps> = ({ followups,
             return (
               <div
                 key={item.id}
-                className="p-3 rounded-lg border border-slate-200/80 hover:border-industrial-primary/30 transition-colors flex items-start gap-3 bg-slate-50/50"
+                className="p-3.5 rounded-xl border border-slate-200/90 hover:border-sky-500/40 transition-colors flex items-start gap-3 bg-slate-50/50 hover:bg-slate-50 shadow-2xs"
               >
-                <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 text-industrial-primary flex items-center justify-center shrink-0 shadow-subtle mt-0.5">
+                <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 text-blue-600 flex items-center justify-center shrink-0 shadow-2xs mt-0.5">
                   <Icon className="w-4 h-4" />
                 </div>
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-baseline justify-between gap-1">
-                    <h4 className="text-xs font-bold text-industrial-dark truncate">
+                    <h4 className="text-xs font-bold text-slate-900 truncate">
                       {customerName}
                     </h4>
-                    <span className="text-[10px] font-mono text-industrial-primary shrink-0">
+                    <span className="text-[10px] font-mono font-semibold text-blue-600 shrink-0 bg-blue-50 px-2 py-0.5 rounded border border-blue-200/60">
                       {formatDateTime(item.scheduled_at)}
                     </span>
                   </div>
 
                   {companyName && (
-                    <p className="text-[11px] text-slate-500 truncate">
+                    <p className="text-[11px] text-slate-500 truncate font-medium">
                       {companyName}
                     </p>
                   )}
@@ -100,6 +106,6 @@ export const UpcomingFollowups: React.FC<UpcomingFollowupsProps> = ({ followups,
           })}
         </div>
       )}
-    </div>
+    </Card>
   );
 };

@@ -1,6 +1,44 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@import "@heroui/styles";
+
+@theme {
+  --color-industrial-primary: #0055A5;
+  --color-industrial-dark: #0B1F33;
+  --color-industrial-secondary: #1E6FB7;
+  --color-industrial-bg: #F5F7F9;
+  --color-industrial-surface: #FFFFFF;
+  --color-industrial-text: #0F172A;
+  --color-industrial-muted: #334155;
+  --color-industrial-accent: #E6EEF6;
+  --color-industrial-border: #E2E8F0;
+  --color-industrial-highlight: #0284C7;
+  --color-industrial-hover: #00478a;
+  --color-industrial-darkhover: #142c44;
+
+  --color-tolerance-red: #DC2626;
+  --color-tolerance-amber: #F59E0B;
+  --color-tolerance-green: #10B981;
+
+  --font-sans: 'Manrope', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Manrope', system-ui, sans-serif;
+  --font-mono: 'Manrope', Consolas, monospace;
+
+  --max-width-site: 1380px;
+
+  --shadow-subtle: 0 1px 3px 0 rgba(11, 31, 51, 0.05), 0 1px 2px -1px rgba(11, 31, 51, 0.05);
+  --shadow-card: 0 4px 12px 0 rgba(11, 31, 51, 0.06), 0 2px 4px -2px rgba(11, 31, 51, 0.04);
+  --shadow-card-hover: 0 12px 24px -4px rgba(0, 85, 165, 0.12), 0 4px 6px -2px rgba(11, 31, 51, 0.05);
+  --shadow-elevated: 0 20px 25px -5px rgba(11, 31, 51, 0.1), 0 8px 10px -6px rgba(11, 31, 51, 0.1);
+}
+
+:root {
+  /* HeroUI semantic tokens mapped to Akira Industrial theme */
+  --accent: #0055A5;
+  --accent-foreground: #FFFFFF;
+  --primary: #0055A5;
+  --primary-foreground: #FFFFFF;
+  --radius: 0.5rem;
+}
 
 @layer base {
   html {
@@ -76,7 +114,13 @@
   }
 
   .card-hover {
-    @apply hover:shadow-card hover:border-industrial-primary/30 hover:-translate-y-0.5;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .card-hover:hover {
+    box-shadow: 0 10px 25px -5px rgba(0, 85, 165, 0.1), 0 4px 6px -2px rgba(11, 31, 51, 0.05);
+    border-color: rgba(0, 85, 165, 0.4);
+    transform: translateY(-2px);
   }
 
   .spec-block {

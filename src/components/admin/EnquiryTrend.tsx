@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { Card, Chip } from '@heroui/react';
 import { TrendingUp, MoreHorizontal, Calendar } from 'lucide-react';
 
 export interface TrendItem {
@@ -71,30 +72,35 @@ export const EnquiryTrend: React.FC<EnquiryTrendProps> = ({
 
   if (isLoading) {
     return (
-      <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs animate-pulse space-y-4 min-w-0 max-w-full overflow-hidden h-full">
+      <Card className="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xs animate-pulse space-y-4 min-w-0 max-w-full overflow-hidden h-full">
         <div className="flex items-center justify-between">
           <div className="h-5 w-48 bg-slate-200 rounded-md" />
           <div className="h-5 w-24 bg-slate-100 rounded-md" />
         </div>
         <div className="h-60 bg-slate-50 rounded-xl" />
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 shadow-xs flex flex-col justify-between min-w-0 max-w-full overflow-hidden h-full flex-1">
-      {/* Header matching visual reference with responsive wrapping */}
+    <Card className="bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-xs flex flex-col justify-between min-w-0 max-w-full overflow-hidden h-full flex-1">
+      {/* Header matching industrial reference with responsive wrapping */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 min-w-0">
         <div className="min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="text-base font-bold text-slate-900 tracking-tight truncate">
+            <h3 className="text-base font-bold text-slate-900 tracking-tight truncate font-heading">
               {title}
             </h3>
             {badgeLabel && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200/60 shrink-0">
-                <TrendingUp className="w-3 h-3" />
-                <span>{badgeLabel}</span>
-              </span>
+              <Chip
+                variant="soft"
+                color="accent"
+                size="sm"
+                className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200/60 shrink-0 font-mono"
+              >
+                <TrendingUp className="w-3 h-3 shrink-0" />
+                <Chip.Label>{badgeLabel}</Chip.Label>
+              </Chip>
             )}
           </div>
           <p className="text-xs text-slate-500 mt-0.5 truncate">
@@ -104,13 +110,13 @@ export const EnquiryTrend: React.FC<EnquiryTrendProps> = ({
 
         {/* Legend & Options Button */}
         <div className="flex items-center gap-3 self-start sm:self-auto flex-wrap min-w-0">
-          <div className="flex items-center gap-3 text-xs font-medium text-slate-600 flex-wrap">
-            <div className="flex items-center gap-1.5 shrink-0">
-              <span className="w-2.5 h-2.5 rounded-full bg-blue-600" />
+          <div className="flex items-center gap-3 text-xs font-semibold text-slate-600 flex-wrap font-mono">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200/60 shrink-0">
+              <span className="w-2.5 h-2.5 rounded-full bg-blue-600 shadow-2xs" />
               <span>Total RFQs ({totalPeriodEnquiries})</span>
             </div>
-            <div className="flex items-center gap-1.5 shrink-0">
-              <span className="w-2.5 h-2.5 rounded-full bg-sky-300" />
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200/60 shrink-0">
+              <span className="w-2.5 h-2.5 rounded-full bg-sky-400 shadow-2xs" />
               <span>Converted ({totalPeriodConverted})</span>
             </div>
           </div>
@@ -139,7 +145,7 @@ export const EnquiryTrend: React.FC<EnquiryTrendProps> = ({
           <div className="relative h-56 flex flex-col justify-between pointer-events-none">
             {yTicks.map((tick, idx) => (
               <div key={idx} className="flex items-center w-full min-w-0">
-                <span className="w-8 text-[11px] font-mono text-slate-400 text-right pr-2 shrink-0">
+                <span className="w-8 text-[11px] font-mono font-semibold text-slate-400 text-right pr-2 shrink-0">
                   {tick}
                 </span>
                 <div className="w-full border-b border-dashed border-slate-200" />
@@ -172,20 +178,20 @@ export const EnquiryTrend: React.FC<EnquiryTrendProps> = ({
                 >
                   {/* Floating Hover Card (Tooltip) with boundary protection */}
                   {isHovered && (
-                    <div className={`absolute -top-16 z-20 bg-slate-900 text-white text-xs rounded-xl py-2 px-3 shadow-xl pointer-events-none whitespace-nowrap animate-in fade-in zoom-in-95 duration-150 ${tooltipAlign}`}>
-                      <div className="font-semibold text-[11px] text-slate-300 border-b border-slate-700/60 pb-1 mb-1 truncate max-w-[200px]">
+                    <div className={`absolute -top-16 z-20 bg-slate-900 border border-slate-700 text-white text-xs rounded-xl py-2 px-3 shadow-xl pointer-events-none whitespace-nowrap animate-in fade-in zoom-in-95 duration-150 ${tooltipAlign}`}>
+                      <div className="font-semibold text-[11px] text-slate-300 border-b border-slate-700/80 pb-1 mb-1 truncate max-w-[200px] font-mono">
                         {item.label}
                       </div>
                       <div className="flex items-center justify-between gap-3 text-[11px]">
-                        <span className="flex items-center gap-1.5">
+                        <span className="flex items-center gap-1.5 text-slate-300">
                           <span className="w-2 h-2 rounded-full bg-blue-500" />
                           <span>Total RFQs:</span>
                         </span>
-                        <span className="font-bold font-mono">{item.count}</span>
+                        <span className="font-bold font-mono text-white">{item.count}</span>
                       </div>
                       {convertedVal > 0 && (
                         <div className="flex items-center justify-between gap-3 text-[11px] mt-0.5">
-                          <span className="flex items-center gap-1.5">
+                          <span className="flex items-center gap-1.5 text-slate-300">
                             <span className="w-2 h-2 rounded-full bg-sky-300" />
                             <span>Converted:</span>
                           </span>
@@ -215,15 +221,15 @@ export const EnquiryTrend: React.FC<EnquiryTrendProps> = ({
                       className={`flex-1 min-w-0 rounded-t-md transition-all duration-200 ${
                         convertedVal > 0
                           ? isHovered
-                            ? 'bg-sky-400'
-                            : 'bg-sky-300'
+                            ? 'bg-sky-400 shadow-sm'
+                            : 'bg-sky-400/90'
                           : 'bg-slate-100'
                       }`}
                     />
                   </div>
 
                   {/* X-Axis Label */}
-                  <span className="text-[10px] font-medium text-slate-400 mt-2 truncate max-w-full text-center block px-0.5">
+                  <span className="text-[10px] font-medium text-slate-500 mt-2 truncate max-w-full text-center block px-0.5 font-mono">
                     {item.label}
                   </span>
                 </div>
@@ -232,6 +238,6 @@ export const EnquiryTrend: React.FC<EnquiryTrendProps> = ({
           </div>
         </div>
       )}
-    </div>
+    </Card>
   );
 };

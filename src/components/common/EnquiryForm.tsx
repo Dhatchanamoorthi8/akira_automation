@@ -1,5 +1,32 @@
 import React from 'react';
-import { Send, CheckCircle2, AlertCircle, Mail, ExternalLink } from 'lucide-react';
+import {
+  Form,
+  TextField,
+  Label,
+  Input,
+  TextArea,
+  Description,
+  FieldError,
+  Button,
+  Select,
+  ListBox,
+} from '@heroui/react';
+import {
+  Send,
+  CheckCircle2,
+  AlertCircle,
+  Mail,
+  ExternalLink,
+  User,
+  Building2,
+  Phone,
+  Factory,
+  Package,
+  FileText,
+  Sliders,
+  RotateCcw,
+  Check,
+} from 'lucide-react';
 import { useEnquiryForm } from '../../hooks/useEnquiryForm';
 import { productCategories } from '../../data/productSummaries';
 import { industries } from '../../data/industries';
@@ -35,16 +62,16 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
     onSuccess: onSubmitted,
   });
 
-  const categories = productCategories.filter(c => c.slug !== 'all');
+  const categories = productCategories.filter((c) => c.slug !== 'all');
 
   if (isSuccess) {
     return (
-      <div 
-        className="p-8 text-center space-y-4 bg-emerald-50/70 border border-emerald-200 rounded-xl animate-in fade-in duration-300"
+      <div
+        className="p-6 sm:p-8 text-center space-y-4 bg-emerald-50/80 border border-emerald-200 rounded-2xl animate-in fade-in duration-300 shadow-sm"
         role="status"
         aria-live="polite"
       >
-        <div className="w-14 h-14 bg-emerald-100 text-tolerance-green rounded-full flex items-center justify-center mx-auto shadow-sm">
+        <div className="w-14 h-14 bg-emerald-100 text-tolerance-green rounded-full flex items-center justify-center mx-auto shadow-sm ring-4 ring-emerald-50">
           <CheckCircle2 className="w-8 h-8" />
         </div>
         <div className="space-y-1.5">
@@ -62,19 +89,22 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
         </div>
 
         <div className="pt-3 flex flex-wrap items-center justify-center gap-3">
-          <button
+          <Button
             type="button"
-            onClick={resetForm}
-            className="px-4 py-2 rounded-lg bg-white border border-slate-300 text-xs font-semibold text-industrial-dark hover:bg-slate-50 transition-colors shadow-sm"
+            variant="secondary"
+            onPress={resetForm}
+            className="px-4 py-2 rounded-lg bg-white border border-slate-300 text-xs font-semibold text-industrial-dark hover:bg-slate-50 transition-colors shadow-xs inline-flex items-center gap-1.5 cursor-pointer"
           >
-            Send Another Inquiry
-          </button>
+            <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
+            <span>Send Another Inquiry</span>
+          </Button>
+
           {mailtoFallbackUrl && (
             <a
               href={mailtoFallbackUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-xs"
               title="Open email in your desktop or mobile email app"
             >
               <Mail className="w-3.5 h-3.5 text-industrial-primary" />
@@ -82,14 +112,17 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
               <ExternalLink className="w-3 h-3 text-slate-400" />
             </a>
           )}
+
           {onCancel && (
-            <button
+            <Button
               type="button"
-              onClick={onCancel}
-              className="px-5 py-2 rounded-lg bg-industrial-primary text-white text-xs font-semibold hover:bg-industrial-hover transition-colors shadow-sm"
+              variant="primary"
+              onPress={onCancel}
+              className="px-5 py-2 rounded-lg bg-industrial-primary text-white text-xs font-semibold hover:bg-industrial-hover transition-colors shadow-xs inline-flex items-center gap-1.5 cursor-pointer"
             >
-              Close Window
-            </button>
+              <Check className="w-3.5 h-3.5 text-white" />
+              <span>Close Window</span>
+            </Button>
           )}
         </div>
       </div>
@@ -97,21 +130,26 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-4" aria-label="Technical Sales & Engineering Enquiry Form">
+    <Form
+      onSubmit={handleSubmit}
+      validationBehavior="aria"
+      className="space-y-4"
+      aria-label="Technical Sales & Engineering Enquiry Form"
+    >
       {serverError && (
-        <div 
-          className="p-4 rounded-lg bg-red-50 border border-red-200 text-tolerance-red text-xs space-y-2"
+        <div
+          className="p-4 rounded-xl bg-red-50/90 border border-red-200 text-tolerance-red text-xs space-y-2 animate-in fade-in duration-200 shadow-xs"
           role="alert"
         >
           <div className="flex items-start gap-2">
             <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-            <span className="leading-relaxed">{serverError}</span>
+            <span className="leading-relaxed font-medium">{serverError}</span>
           </div>
           {mailtoFallbackUrl && (
             <div className="pt-1 pl-6">
               <a
                 href={mailtoFallbackUrl}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-tolerance-red text-white text-[11px] font-semibold hover:bg-red-700 transition-colors shadow-sm"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-tolerance-red text-white text-[11px] font-semibold hover:bg-red-700 transition-colors shadow-xs"
               >
                 <Mail className="w-3.5 h-3.5" />
                 <span>Open Pre-filled Email to {recipientEmail}</span>
@@ -123,186 +161,330 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
 
       {/* Row 1: Name & Company */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label htmlFor={`${idPrefix}name`} className="block text-xs font-semibold text-industrial-dark mb-1.5">
-            Full Name <span className="text-tolerance-red" aria-hidden="true">*</span>
-          </label>
-          <input
+        <TextField
+          isRequired
+          isInvalid={!!errors.name}
+          validationBehavior="aria"
+          className="flex flex-col gap-1.5"
+        >
+          <Label
+            htmlFor={`${idPrefix}name`}
+            className="text-xs font-semibold text-industrial-dark inline-flex items-center gap-1.5"
+          >
+            <User className="w-3.5 h-3.5 text-industrial-primary shrink-0" />
+            <span>Full Name</span>
+            <span className="text-tolerance-red" aria-hidden="true">*</span>
+          </Label>
+          <Input
             id={`${idPrefix}name`}
             name="name"
             type="text"
             value={formData.name}
             onChange={(e) => handleChange('name', e.target.value)}
             placeholder="e.g. Ramesh Kumar"
-            className={`w-full px-3.5 py-2 text-xs rounded-lg border bg-white focus:outline-none focus:ring-2 transition-colors ${
-              errors.name 
-                ? 'border-tolerance-red focus:ring-tolerance-red/30' 
+            className={`w-full px-3.5 py-2 text-xs rounded-lg border bg-white focus:outline-none focus:ring-2 transition-colors shadow-xs ${
+              errors.name
+                ? 'border-tolerance-red focus:ring-tolerance-red/30'
                 : 'border-slate-300 focus:ring-industrial-primary focus:border-transparent'
             }`}
             aria-required="true"
             aria-invalid={!!errors.name}
             aria-describedby={errors.name ? `${idPrefix}name-error` : undefined}
           />
-          {errors.name && (
-            <p id={`${idPrefix}name-error`} className="text-[11px] text-tolerance-red mt-1">
-              {errors.name}
-            </p>
+          {errors.name ? (
+            <FieldError
+              id={`${idPrefix}name-error`}
+              className="text-[11px] text-tolerance-red mt-0.5 inline-flex items-center gap-1 font-medium"
+            >
+              <AlertCircle className="w-3 h-3 shrink-0" />
+              <span>{errors.name}</span>
+            </FieldError>
+          ) : (
+            <Description className="text-[10px] text-slate-400">
+              Technical contact person name
+            </Description>
           )}
-        </div>
+        </TextField>
 
-        <div>
-          <label htmlFor={`${idPrefix}company`} className="block text-xs font-semibold text-industrial-dark mb-1.5">
-            Company / Organization <span className="text-tolerance-red" aria-hidden="true">*</span>
-          </label>
-          <input
+        <TextField
+          isRequired
+          isInvalid={!!errors.companyName}
+          validationBehavior="aria"
+          className="flex flex-col gap-1.5"
+        >
+          <Label
+            htmlFor={`${idPrefix}company`}
+            className="text-xs font-semibold text-industrial-dark inline-flex items-center gap-1.5"
+          >
+            <Building2 className="w-3.5 h-3.5 text-industrial-primary shrink-0" />
+            <span>Company / Organization</span>
+            <span className="text-tolerance-red" aria-hidden="true">*</span>
+          </Label>
+          <Input
             id={`${idPrefix}company`}
             name="companyName"
             type="text"
             value={formData.companyName}
             onChange={(e) => handleChange('companyName', e.target.value)}
             placeholder="e.g. Precision Auto Components Ltd"
-            className={`w-full px-3.5 py-2 text-xs rounded-lg border bg-white focus:outline-none focus:ring-2 transition-colors ${
-              errors.companyName 
-                ? 'border-tolerance-red focus:ring-tolerance-red/30' 
+            className={`w-full px-3.5 py-2 text-xs rounded-lg border bg-white focus:outline-none focus:ring-2 transition-colors shadow-xs ${
+              errors.companyName
+                ? 'border-tolerance-red focus:ring-tolerance-red/30'
                 : 'border-slate-300 focus:ring-industrial-primary focus:border-transparent'
             }`}
             aria-required="true"
             aria-invalid={!!errors.companyName}
             aria-describedby={errors.companyName ? `${idPrefix}company-error` : undefined}
           />
-          {errors.companyName && (
-            <p id={`${idPrefix}company-error`} className="text-[11px] text-tolerance-red mt-1">
-              {errors.companyName}
-            </p>
+          {errors.companyName ? (
+            <FieldError
+              id={`${idPrefix}company-error`}
+              className="text-[11px] text-tolerance-red mt-0.5 inline-flex items-center gap-1 font-medium"
+            >
+              <AlertCircle className="w-3 h-3 shrink-0" />
+              <span>{errors.companyName}</span>
+            </FieldError>
+          ) : (
+            <Description className="text-[10px] text-slate-400">
+              Manufacturing plant or enterprise entity
+            </Description>
           )}
-        </div>
+        </TextField>
       </div>
 
       {/* Row 2: Email & Phone */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label htmlFor={`${idPrefix}email`} className="block text-xs font-semibold text-industrial-dark mb-1.5">
-            Business Email <span className="text-tolerance-red" aria-hidden="true">*</span>
-          </label>
-          <input
+        <TextField
+          isRequired
+          isInvalid={!!errors.email}
+          validationBehavior="aria"
+          className="flex flex-col gap-1.5"
+        >
+          <Label
+            htmlFor={`${idPrefix}email`}
+            className="text-xs font-semibold text-industrial-dark inline-flex items-center gap-1.5"
+          >
+            <Mail className="w-3.5 h-3.5 text-industrial-primary shrink-0" />
+            <span>Business Email</span>
+            <span className="text-tolerance-red" aria-hidden="true">*</span>
+          </Label>
+          <Input
             id={`${idPrefix}email`}
             name="email"
             type="email"
             value={formData.email}
             onChange={(e) => handleChange('email', e.target.value)}
             placeholder="quality@company.com"
-            className={`w-full px-3.5 py-2 text-xs rounded-lg border bg-white focus:outline-none focus:ring-2 transition-colors ${
-              errors.email 
-                ? 'border-tolerance-red focus:ring-tolerance-red/30' 
+            className={`w-full px-3.5 py-2 text-xs rounded-lg border bg-white focus:outline-none focus:ring-2 transition-colors shadow-xs ${
+              errors.email
+                ? 'border-tolerance-red focus:ring-tolerance-red/30'
                 : 'border-slate-300 focus:ring-industrial-primary focus:border-transparent'
             }`}
             aria-required="true"
             aria-invalid={!!errors.email}
             aria-describedby={errors.email ? `${idPrefix}email-error` : undefined}
           />
-          {errors.email && (
-            <p id={`${idPrefix}email-error`} className="text-[11px] text-tolerance-red mt-1">
-              {errors.email}
-            </p>
+          {errors.email ? (
+            <FieldError
+              id={`${idPrefix}email-error`}
+              className="text-[11px] text-tolerance-red mt-0.5 inline-flex items-center gap-1 font-medium"
+            >
+              <AlertCircle className="w-3 h-3 shrink-0" />
+              <span>{errors.email}</span>
+            </FieldError>
+          ) : (
+            <Description className="text-[10px] text-slate-400">
+              For official quote dispatch & CAD specs
+            </Description>
           )}
-        </div>
+        </TextField>
 
-        <div>
-          <label htmlFor={`${idPrefix}phone`} className="block text-xs font-semibold text-industrial-dark mb-1.5">
-            Contact Number / Mobile <span className="text-tolerance-red" aria-hidden="true">*</span>
-          </label>
-          <input
+        <TextField
+          isRequired
+          isInvalid={!!errors.phone}
+          validationBehavior="aria"
+          className="flex flex-col gap-1.5"
+        >
+          <Label
+            htmlFor={`${idPrefix}phone`}
+            className="text-xs font-semibold text-industrial-dark inline-flex items-center gap-1.5"
+          >
+            <Phone className="w-3.5 h-3.5 text-industrial-primary shrink-0" />
+            <span>Contact Number / Mobile</span>
+            <span className="text-tolerance-red" aria-hidden="true">*</span>
+          </Label>
+          <Input
             id={`${idPrefix}phone`}
             name="phone"
             type="tel"
             value={formData.phone}
             onChange={(e) => handleChange('phone', e.target.value)}
             placeholder="+91 98765 43210"
-            className={`w-full px-3.5 py-2 text-xs rounded-lg border bg-white focus:outline-none focus:ring-2 transition-colors font-sans tabular-nums ${
-              errors.phone 
-                ? 'border-tolerance-red focus:ring-tolerance-red/30' 
+            className={`w-full px-3.5 py-2 text-xs rounded-lg border bg-white focus:outline-none focus:ring-2 transition-colors font-sans tabular-nums shadow-xs ${
+              errors.phone
+                ? 'border-tolerance-red focus:ring-tolerance-red/30'
                 : 'border-slate-300 focus:ring-industrial-primary focus:border-transparent'
             }`}
             aria-required="true"
             aria-invalid={!!errors.phone}
             aria-describedby={errors.phone ? `${idPrefix}phone-error` : undefined}
           />
-          {errors.phone && (
-            <p id={`${idPrefix}phone-error`} className="text-[11px] text-tolerance-red mt-1">
-              {errors.phone}
-            </p>
+          {errors.phone ? (
+            <FieldError
+              id={`${idPrefix}phone-error`}
+              className="text-[11px] text-tolerance-red mt-0.5 inline-flex items-center gap-1 font-medium"
+            >
+              <AlertCircle className="w-3 h-3 shrink-0" />
+              <span>{errors.phone}</span>
+            </FieldError>
+          ) : (
+            <Description className="text-[10px] text-slate-400">
+              Direct line for engineering clarifications
+            </Description>
           )}
-        </div>
+        </TextField>
       </div>
 
-      {/* Row 3: Industry & Category */}
+      {/* Row 3: Industry & Category - HeroUI Select & ListBox */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label htmlFor={`${idPrefix}industry`} className="block text-xs font-semibold text-industrial-dark mb-1.5">
-            Manufacturing Sector
-          </label>
-          <select
-            id={`${idPrefix}industry`}
-            value={formData.industry}
-            onChange={(e) => handleChange('industry', e.target.value)}
-            className="w-full px-3.5 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-industrial-primary focus:border-transparent bg-white"
+        <Select
+          id={`${idPrefix}industry`}
+          name="industry"
+          selectedKey={formData.industry}
+          onSelectionChange={(key) => handleChange('industry', String(key))}
+          className="flex flex-col gap-1.5"
+          fullWidth
+        >
+          <Label
+            className="text-xs font-semibold text-industrial-dark inline-flex items-center gap-1.5"
           >
-            {industries.map((ind) => (
-              <option key={ind.id} value={ind.name}>
-                {ind.name}
-              </option>
-            ))}
-            <option value="Other Industry">Other Manufacturing Sector</option>
-          </select>
-        </div>
+            <Factory className="w-3.5 h-3.5 text-industrial-primary shrink-0" />
+            <span>Manufacturing Sector</span>
+          </Label>
+          <Select.Trigger
+            className="w-full h-9 px-3.5 py-2 text-xs rounded-lg border border-slate-300 bg-white flex items-center justify-between shadow-xs hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-industrial-primary transition-colors cursor-pointer"
+          >
+            <Select.Value className="text-xs font-medium text-slate-800 truncate" />
+            <Select.Indicator className="text-slate-400" />
+          </Select.Trigger>
+          <Description className="text-[10px] text-slate-400">
+            Sector-specific tolerance & compliance context
+          </Description>
+          <Select.Popover className="bg-white rounded-xl shadow-elevated border border-slate-200/90 p-1.5 z-50 min-w-[240px]">
+            <ListBox className="outline-none space-y-0.5 max-h-60 overflow-y-auto">
+              {industries.map((ind) => (
+                <ListBox.Item
+                  key={ind.id}
+                  id={ind.name}
+                  textValue={ind.name}
+                  className="px-3 py-2 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-industrial-dark data-[selected=true]:bg-sky-50 data-[selected=true]:text-industrial-primary data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                >
+                  {ind.name}
+                </ListBox.Item>
+              ))}
+              <ListBox.Item
+                id="Other Industry"
+                textValue="Other Manufacturing Sector"
+                className="px-3 py-2 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-industrial-dark data-[selected=true]:bg-sky-50 data-[selected=true]:text-industrial-primary data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors border-t border-slate-100 mt-1"
+              >
+                Other Manufacturing Sector
+              </ListBox.Item>
+            </ListBox>
+          </Select.Popover>
+        </Select>
 
-        <div>
-          <label htmlFor={`${idPrefix}category`} className="block text-xs font-semibold text-industrial-dark mb-1.5">
-            Product / Solution Category
-          </label>
-          <select
-            id={`${idPrefix}category`}
-            value={formData.productCategory}
-            onChange={(e) => handleChange('productCategory', e.target.value)}
-            className="w-full px-3.5 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-industrial-primary focus:border-transparent bg-white"
+        <Select
+          id={`${idPrefix}category`}
+          name="productCategory"
+          selectedKey={formData.productCategory}
+          onSelectionChange={(key) => handleChange('productCategory', String(key))}
+          className="flex flex-col gap-1.5"
+          fullWidth
+        >
+          <Label
+            className="text-xs font-semibold text-industrial-dark inline-flex items-center gap-1.5"
           >
-            {categories.map((cat) => (
-              <option key={cat.slug} value={cat.name}>
-                {cat.name}
-              </option>
-            ))}
-            <option value="Custom Fixture / Special Solution">Custom Fixture / Special Solution</option>
-          </select>
-        </div>
+            <Package className="w-3.5 h-3.5 text-industrial-primary shrink-0" />
+            <span>Product / Solution Category</span>
+          </Label>
+          <Select.Trigger
+            className="w-full h-9 px-3.5 py-2 text-xs rounded-lg border border-slate-300 bg-white flex items-center justify-between shadow-xs hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-industrial-primary transition-colors cursor-pointer"
+          >
+            <Select.Value className="text-xs font-medium text-slate-800 truncate" />
+            <Select.Indicator className="text-slate-400" />
+          </Select.Trigger>
+          <Description className="text-[10px] text-slate-400">
+            Air gauging, electronic display, or custom station
+          </Description>
+          <Select.Popover className="bg-white rounded-xl shadow-elevated border border-slate-200/90 p-1.5 z-50 min-w-[240px]">
+            <ListBox className="outline-none space-y-0.5 max-h-60 overflow-y-auto">
+              {categories.map((cat) => (
+                <ListBox.Item
+                  key={cat.slug}
+                  id={cat.name}
+                  textValue={cat.name}
+                  className="px-3 py-2 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-industrial-dark data-[selected=true]:bg-sky-50 data-[selected=true]:text-industrial-primary data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                >
+                  {cat.name}
+                </ListBox.Item>
+              ))}
+              <ListBox.Item
+                id="Custom Fixture / Special Solution"
+                textValue="Custom Fixture / Special Solution"
+                className="px-3 py-2 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-industrial-dark data-[selected=true]:bg-sky-50 data-[selected=true]:text-industrial-primary data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors border-t border-slate-100 mt-1"
+              >
+                Custom Fixture / Special Solution
+              </ListBox.Item>
+            </ListBox>
+          </Select.Popover>
+        </Select>
       </div>
 
       {/* Specific Product if known */}
-      <div>
-        <label htmlFor={`${idPrefix}specific`} className="block text-xs font-semibold text-industrial-dark mb-1.5">
-          Specific Gauge Model / Drawing Ref <span className="text-slate-400 font-normal">(Optional)</span>
-        </label>
-        <input
+      <TextField className="flex flex-col gap-1.5">
+        <Label
+          htmlFor={`${idPrefix}specific`}
+          className="text-xs font-semibold text-industrial-dark inline-flex items-center gap-1.5"
+        >
+          <FileText className="w-3.5 h-3.5 text-industrial-primary shrink-0" />
+          <span>Specific Gauge Model / Drawing Ref</span>
+          <span className="text-slate-400 font-normal text-[11px]">(Optional)</span>
+        </Label>
+        <Input
           id={`${idPrefix}specific`}
           name="specificProduct"
           type="text"
           value={formData.specificProduct || ''}
           onChange={(e) => handleChange('specificProduct', e.target.value)}
           placeholder="e.g. Air Plug Gauge Ø45mm or Camshaft Multigauging Station"
-          className="w-full px-3.5 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-industrial-primary focus:border-transparent bg-white"
+          className="w-full px-3.5 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-industrial-primary focus:border-transparent bg-white shadow-xs"
         />
-      </div>
+        <Description className="text-[10px] text-slate-400">
+          Component drawing number, bore size, or model code if known
+        </Description>
+      </TextField>
 
       {/* Message */}
-      <div>
-        <div className="flex items-center justify-between mb-1.5">
-          <label htmlFor={`${idPrefix}message`} className="block text-xs font-semibold text-industrial-dark">
-            Technical Requirement / Tolerance Specifications <span className="text-tolerance-red" aria-hidden="true">*</span>
-          </label>
-          <span className="text-[10px] text-slate-400 font-normal tabular-nums font-sans">
+      <TextField
+        isRequired
+        isInvalid={!!errors.message}
+        validationBehavior="aria"
+        className="flex flex-col gap-1.5"
+      >
+        <div className="flex items-center justify-between">
+          <Label
+            htmlFor={`${idPrefix}message`}
+            className="text-xs font-semibold text-industrial-dark inline-flex items-center gap-1.5"
+          >
+            <Sliders className="w-3.5 h-3.5 text-industrial-primary shrink-0" />
+            <span>Technical Requirement / Tolerance Specifications</span>
+            <span className="text-tolerance-red" aria-hidden="true">*</span>
+          </Label>
+          <span className="text-[10px] text-slate-400 font-normal tabular-nums font-mono">
             {formData.message.length} / 1000
           </span>
         </div>
-        <textarea
+        <TextArea
           id={`${idPrefix}message`}
           name="message"
           rows={variant === 'modal' ? 3 : 4}
@@ -310,21 +492,29 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
           value={formData.message}
           onChange={(e) => handleChange('message', e.target.value)}
           placeholder="Please share details such as diameter range, tolerance limits, component type, checking parameters, or quantity required..."
-          className={`w-full px-3.5 py-2 text-xs rounded-lg border bg-white focus:outline-none focus:ring-2 transition-colors ${
-            errors.message 
-              ? 'border-tolerance-red focus:ring-tolerance-red/30' 
+          className={`w-full px-3.5 py-2 text-xs rounded-lg border bg-white focus:outline-none focus:ring-2 transition-colors shadow-xs ${
+            errors.message
+              ? 'border-tolerance-red focus:ring-tolerance-red/30'
               : 'border-slate-300 focus:ring-industrial-primary focus:border-transparent'
           }`}
           aria-required="true"
           aria-invalid={!!errors.message}
           aria-describedby={errors.message ? `${idPrefix}message-error` : undefined}
         />
-        {errors.message && (
-          <p id={`${idPrefix}message-error`} className="text-[11px] text-tolerance-red mt-1">
-            {errors.message}
-          </p>
+        {errors.message ? (
+          <FieldError
+            id={`${idPrefix}message-error`}
+            className="text-[11px] text-tolerance-red mt-0.5 inline-flex items-center gap-1 font-medium"
+          >
+            <AlertCircle className="w-3 h-3 shrink-0" />
+            <span>{errors.message}</span>
+          </FieldError>
+        ) : (
+          <Description className="text-[10px] text-slate-400">
+            Specify tolerance bands (e.g. ±0.005mm), cycle time, or pneumatic supply specs
+          </Description>
         )}
-      </div>
+      </TextField>
 
       {/* Submit / Actions Bar */}
       <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
@@ -339,18 +529,21 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
 
         <div className="flex items-center gap-2.5 w-full sm:w-auto order-1 sm:order-2 shrink-0">
           {onCancel && (
-            <button
+            <Button
               type="button"
-              onClick={onCancel}
-              className="flex-1 sm:flex-none h-10 px-4 rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 hover:text-industrial-dark active:translate-y-0.5 text-xs font-semibold transition-all inline-flex items-center justify-center whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-industrial-primary focus:ring-offset-2"
+              variant="secondary"
+              onPress={onCancel}
+              className="flex-1 sm:flex-none h-10 px-4 rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 hover:text-industrial-dark text-xs font-semibold transition-all inline-flex items-center justify-center whitespace-nowrap cursor-pointer shadow-xs"
             >
               Cancel
-            </button>
+            </Button>
           )}
-          <button
+
+          <Button
             type="submit"
-            disabled={isSubmitting}
-            className="flex-1 sm:flex-none h-10 px-5 rounded-lg bg-industrial-primary text-white text-xs font-semibold shadow-sm hover:bg-industrial-hover hover:shadow-md active:translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-industrial-primary focus:ring-offset-2 transition-all duration-200 disabled:opacity-60 inline-flex items-center justify-center gap-2 whitespace-nowrap"
+            isDisabled={isSubmitting}
+            variant="primary"
+            className="flex-1 sm:flex-none h-10 px-5 rounded-lg bg-industrial-primary text-white text-xs font-semibold shadow-sm hover:bg-industrial-hover hover:shadow-md transition-all duration-200 disabled:opacity-60 inline-flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer"
           >
             {isSubmitting ? (
               <>
@@ -366,9 +559,9 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
                 <span>Submit Technical Enquiry</span>
               </>
             )}
-          </button>
+          </Button>
         </div>
       </div>
-    </form>
+    </Form>
   );
 };

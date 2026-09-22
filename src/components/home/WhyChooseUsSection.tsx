@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { Card, Chip } from '@heroui/react';
 import { company } from '../../config/company';
 import { SectionReveal } from '../animation/SectionReveal';
 import { Reveal } from '../animation/Reveal';
@@ -40,10 +41,12 @@ export const WhyChooseUsSection: React.FC = () => {
           {/* Left Column: Typography & Vertical Feature List (7 cols) */}
           <div className="lg:col-span-7 space-y-4 sm:space-y-6">
             <Reveal direction="up">
-              <span className="section-tag">
-                Our Differentiators
-              </span>
-              <h2 className="section-title mt-3">
+              <Chip variant="soft" color="accent" size="sm" className="bg-sky-50 text-industrial-primary border border-sky-200/80 mb-3">
+                <Chip.Label className="text-xs font-semibold uppercase tracking-wider font-mono">
+                  Our Differentiators
+                </Chip.Label>
+              </Chip>
+              <h2 className="section-title mt-2">
                 Why Choose {company.name}?
               </h2>
               <p className="section-subtitle">
@@ -51,33 +54,37 @@ export const WhyChooseUsSection: React.FC = () => {
               </p>
             </Reveal>
 
-            {/* Vertical Feature List */}
+            {/* Vertical Feature List with HeroUI Card */}
             <StaggerContainer className="space-y-3 sm:space-y-4 pt-1 sm:pt-2">
               {coreStrengthDetails.map((item, idx) => (
                 <StaggerItem key={idx}>
-                  <div 
-                    className={`items-start gap-3.5 sm:gap-4 p-3.5 sm:p-4 rounded-xl bg-slate-50 border border-slate-200/80 hover:border-industrial-primary/30 hover:bg-slate-50/50 transition-colors group ${
+                  <Card 
+                    variant="default"
+                    className={`items-start gap-3.5 sm:gap-4 p-3.5 sm:p-4 rounded-xl bg-slate-50 border border-slate-200/80 hover:border-industrial-primary/30 hover:bg-slate-50/50 transition-colors group shadow-none ${
                       idx >= 3 ? "hidden sm:flex" : "flex"
                     }`}
                   >
                     <div className="w-8 h-8 rounded-lg bg-industrial-accent text-industrial-primary flex items-center justify-center shrink-0 group-hover:bg-industrial-primary group-hover:text-white transition-colors mt-0.5">
                       <CheckCircle2 className="w-4 h-4" />
                     </div>
-                    <div>
-                      <h3 className="text-sm font-bold text-slate-900 font-heading group-hover:text-industrial-primary transition-colors">
+                    <Card.Header className="p-0 space-y-1">
+                      <Card.Title className="text-sm font-bold text-slate-900 font-heading group-hover:text-industrial-primary transition-colors">
                         {item.title}
-                      </h3>
-                      <p className="text-xs sm:text-sm text-slate-700 font-medium mt-1 leading-relaxed">
+                      </Card.Title>
+                      <Card.Description className="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed">
                         {item.description}
-                      </p>
-                    </div>
-                  </div>
+                      </Card.Description>
+                    </Card.Header>
+                  </Card>
                 </StaggerItem>
               ))}
             </StaggerContainer>
 
             <Reveal direction="up" className="pt-2">
-              <Link to="/why-choose-us" className="btn-outline w-full sm:w-auto inline-flex justify-center text-center">
+              <Link
+                to="/why-choose-us"
+                className="button button--outline button--md w-full sm:w-auto inline-flex items-center justify-center gap-2 border-slate-300 text-slate-800 hover:text-industrial-primary hover:border-industrial-primary font-sans px-5 py-2.5 rounded-lg"
+              >
                 <span>Read More About Our Core Strengths</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
@@ -108,14 +115,16 @@ export const WhyChooseUsSection: React.FC = () => {
             </ScaleReveal>
 
             {/* Floating Metric Card */}
-            <Reveal direction="right" delay={0.2} className="absolute -top-4 -left-4 bg-white text-industrial-dark rounded-xl p-3.5 shadow-card border border-slate-200 hidden sm:flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
-                <ShieldCheck className="w-6 h-6" />
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-wider font-bold text-slate-600">Core Values</p>
-                <p className="text-xs font-extrabold font-heading text-slate-900">Technical Support • Quality Service</p>
-              </div>
+            <Reveal direction="right" delay={0.2} className="absolute -top-4 -left-4 hidden sm:block">
+              <Card variant="default" className="bg-white text-industrial-dark rounded-xl p-3.5 shadow-card border border-slate-200 flex flex-row items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                  <ShieldCheck className="w-6 h-6" />
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-wider font-bold text-slate-600 font-mono">Core Values</p>
+                  <p className="text-xs font-extrabold font-heading text-slate-900">Technical Support • Quality Service</p>
+                </div>
+              </Card>
             </Reveal>
 
           </div>
@@ -127,3 +136,4 @@ export const WhyChooseUsSection: React.FC = () => {
 };
 
 export const WhyMilestoneSection = WhyChooseUsSection;
+

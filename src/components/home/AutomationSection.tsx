@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Bot, Zap } from 'lucide-react';
+import { Card, Chip } from '@heroui/react';
 import { company } from '../../config/company';
 import { companyIntro } from '../../data/company';
 import { SectionReveal } from '../animation/SectionReveal';
@@ -32,7 +33,7 @@ export const AutomationSection: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-industrial-dark/90 via-transparent to-transparent" />
                 
                 <div className="absolute bottom-4 left-4 right-4 p-3.5 sm:p-4 rounded-xl bg-slate-900/80 backdrop-blur-md border border-slate-700/80">
-                  <div className="flex items-center gap-2 text-xs text-sky-400 font-semibold mb-1">
+                  <div className="flex items-center gap-2 text-xs text-sky-400 font-semibold mb-1 font-mono">
                     <Bot className="w-4 h-4" />
                     <span><ShinyText>Robotic & Conveyor Ready</ShinyText></span>
                   </div>
@@ -47,11 +48,11 @@ export const AutomationSection: React.FC = () => {
           {/* Right Column: Copy & 3 Pillars from PPT Slide 12 (7 cols) */}
           <div className="lg:col-span-7 space-y-4 sm:space-y-6 order-1 lg:order-2">
             <Reveal direction="up">
-              <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-[11px] font-mono font-semibold tracking-wider uppercase bg-sky-950/70 text-sky-300 border border-sky-800/70">
+              <Chip variant="soft" color="accent" size="sm" className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-[11px] font-mono font-semibold tracking-wider uppercase bg-sky-950/70 text-sky-300 border border-sky-800/70 mb-3">
                 <Zap className="w-3.5 h-3.5" />
-                Next-Gen Factory Automation
-              </span>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-heading text-white mt-3 leading-tight">
+                <Chip.Label>Next-Gen Factory Automation</Chip.Label>
+              </Chip>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-heading text-white mt-2 leading-tight">
                 The Next Level for Your Manufacturing
               </h2>
               <p className="mt-2.5 sm:mt-3 text-slate-300 text-sm sm:text-base leading-relaxed">
@@ -59,21 +60,22 @@ export const AutomationSection: React.FC = () => {
               </p>
             </Reveal>
 
-            {/* 3 Pillars from Slide 12 */}
+            {/* 3 Pillars from Slide 12 with HeroUI Card */}
             <StaggerContainer className="space-y-3 sm:space-y-4 pt-1 sm:pt-2">
               {companyIntro.automationPillars.map((pillar, idx) => (
                 <StaggerItem key={idx}>
-                  <div 
-                    className="p-3.5 sm:p-4 rounded-xl bg-slate-800/60 border border-slate-700/80 hover:border-sky-400/40 transition-colors"
+                  <Card 
+                    variant="default"
+                    className="p-3.5 sm:p-4 rounded-xl bg-slate-800/60 border border-slate-700/80 hover:border-sky-400/40 transition-colors shadow-none"
                   >
-                    <h3 className="text-sm font-bold text-sky-400 font-heading flex items-center gap-2">
+                    <Card.Title className="text-sm font-bold text-sky-400 font-heading flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-sky-400" />
                       {pillar.title}
-                    </h3>
-                    <p className="text-xs text-slate-300 mt-1.5 leading-relaxed">
+                    </Card.Title>
+                    <Card.Description className="text-xs text-slate-300 mt-1.5 leading-relaxed">
                       {pillar.description}
-                    </p>
-                  </div>
+                    </Card.Description>
+                  </Card>
                 </StaggerItem>
               ))}
             </StaggerContainer>
@@ -81,16 +83,16 @@ export const AutomationSection: React.FC = () => {
             <Reveal direction="up" className="pt-2 flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-4">
               <Link
                 to="/solutions/multigauging"
-                className="btn-primary bg-sky-500 hover:bg-sky-400 text-white w-full sm:w-auto text-center justify-center"
+                className="button button--primary button--md bg-sky-500 hover:bg-sky-400 text-white w-full sm:w-auto text-center justify-center font-sans inline-flex items-center gap-2 px-5 py-2.5 rounded-lg"
               >
                 <span>Explore Multigauging Solutions</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 to="/contact"
-                className="btn-secondary bg-transparent text-white border-slate-600 hover:bg-slate-800 w-full sm:w-auto text-center justify-center"
+                className="button button--outline button--md bg-transparent text-white border-slate-600 hover:bg-slate-800 w-full sm:w-auto text-center justify-center font-sans inline-flex items-center gap-2 px-5 py-2.5 rounded-lg"
               >
-                Consult Automation Team
+                <span>Consult Automation Team</span>
               </Link>
             </Reveal>
 
@@ -101,3 +103,4 @@ export const AutomationSection: React.FC = () => {
     </SectionReveal>
   );
 };
+

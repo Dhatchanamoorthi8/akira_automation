@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, CheckCircle2, Award } from 'lucide-react';
+import { Card, Chip } from '@heroui/react';
 import { company } from '../../config/company';
 import { companyIntro } from '../../data/company';
 import { SectionReveal } from '../animation/SectionReveal';
@@ -16,10 +17,12 @@ export const AboutSection: React.FC = () => {
           {/* Left Column: Company Introduction */}
           <div className="lg:col-span-7 space-y-4 sm:space-y-6">
             <Reveal direction="up">
-              <span className="section-tag">
-                About {company.name}
-              </span>
-              <h2 className="section-title mt-3">
+              <Chip variant="soft" color="accent" size="sm" className="bg-sky-50 text-industrial-primary border border-sky-200/80 mb-3">
+                <Chip.Label className="text-xs font-semibold uppercase tracking-wider font-mono">
+                  About {company.name}
+                </Chip.Label>
+              </Chip>
+              <h2 className="section-title mt-2">
                 Precision Instruments & Automated Multi-Gauging Systems
               </h2>
             </Reveal>
@@ -32,33 +35,33 @@ export const AboutSection: React.FC = () => {
               {companyIntro.aboutUsText}
             </p>
 
-            {/* Core Values & Motto */}
-            <div className="p-4 sm:p-5 rounded-xl bg-white border border-slate-200 shadow-subtle space-y-4">
-              <div className="flex items-center gap-3 border-b border-slate-100 pb-3">
+            {/* Core Values & Motto with HeroUI Card */}
+            <Card variant="default" className="p-4 sm:p-5 rounded-xl bg-white border border-slate-200/90 shadow-subtle space-y-4">
+              <Card.Header className="p-0 border-b border-slate-100 pb-3 flex flex-row items-center gap-3">
                 <div className="w-9 h-9 rounded-lg bg-industrial-accent text-industrial-primary flex items-center justify-center shrink-0">
                   <Award className="w-5 h-5" />
                 </div>
                 <div>
-                  <span className="text-xs text-slate-600 uppercase font-bold tracking-wider">Company Motto</span>
-                  <p className="text-base sm:text-lg font-extrabold text-industrial-primary font-heading">
+                  <span className="text-xs text-slate-500 uppercase font-bold tracking-wider font-mono">Company Motto</span>
+                  <Card.Title className="text-base sm:text-lg font-extrabold text-industrial-primary font-heading">
                     "{companyIntro.motto}"
-                  </p>
+                  </Card.Title>
                 </div>
-              </div>
+              </Card.Header>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+              <Card.Content className="p-0 grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
                 {companyIntro.coreValues.map((val, idx) => (
                   <div key={idx} className="p-3 rounded-lg bg-slate-50 border border-slate-200">
                     <p className="text-xs sm:text-sm font-bold text-slate-900 font-heading">{val.title}</p>
-                    <p className="text-xs text-slate-700 font-medium mt-1 leading-relaxed">{val.description}</p>
+                    <p className="text-xs text-slate-600 font-medium mt-1 leading-relaxed">{val.description}</p>
                   </div>
                 ))}
-              </div>
-            </div>
+              </Card.Content>
+            </Card>
 
             {/* Vision & Strengths Bullet Checklist */}
             <div className="space-y-2 pt-2">
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-700">
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-700 font-mono">
                 Vision & Key Strengths
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-medium text-slate-800">
@@ -72,7 +75,10 @@ export const AboutSection: React.FC = () => {
             </div>
 
             <div className="pt-2">
-              <Link to="/about" className="btn-outline w-full sm:w-auto inline-flex justify-center text-center">
+              <Link
+                to="/about"
+                className="button button--outline button--md w-full sm:w-auto inline-flex items-center justify-center gap-2 border-slate-300 text-slate-800 hover:text-industrial-primary hover:border-industrial-primary font-sans"
+              >
                 <span>Learn More About Our Company</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
@@ -101,7 +107,7 @@ export const AboutSection: React.FC = () => {
             </ScaleReveal>
 
             {/* Visual Fact Card */}
-            <div className="mt-4 sm:mt-0 sm:absolute sm:-bottom-6 sm:-left-6 bg-industrial-dark text-white p-4 sm:p-5 rounded-xl shadow-elevated border border-slate-700 w-full sm:max-w-xs z-10">
+            <Card variant="tertiary" className="mt-4 sm:mt-0 sm:absolute sm:-bottom-6 sm:-left-6 bg-industrial-dark text-white p-4 sm:p-5 rounded-xl shadow-elevated border border-slate-700 w-full sm:max-w-xs z-10">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-industrial-primary flex items-center justify-center text-white shrink-0 font-bold">
                   <Award className="w-5 h-5" />
@@ -112,7 +118,7 @@ export const AboutSection: React.FC = () => {
                   <p className="text-[10px] sm:text-[11px] text-sky-400 font-semibold mt-0.5">{company.slogan}</p>
                 </div>
               </div>
-            </div>
+            </Card>
 
           </div>
 
@@ -121,3 +127,4 @@ export const AboutSection: React.FC = () => {
     </SectionReveal>
   );
 };
+

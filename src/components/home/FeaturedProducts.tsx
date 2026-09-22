@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import { motion } from 'motion/react';
+import { Button, Chip, Tabs } from '@heroui/react';
 import { productSummaries, productCategories } from '../../data/productSummaries';
 import { ProductCard } from '../common/ProductCard';
 import { SectionReveal } from '../animation/SectionReveal';
@@ -23,68 +23,67 @@ export const FeaturedProducts: React.FC = () => {
         {/* Section Header */}
         <Reveal direction="up" className="flex flex-col md:flex-row md:items-end justify-between mb-5 sm:mb-10 gap-6">
           <div>
-            <span className="section-tag">
-              Featured Metrology Products
-            </span>
-            <h2 className="section-title mt-3">
+            <Chip variant="soft" color="accent" size="sm" className="bg-sky-50 text-industrial-primary border border-sky-200/80 mb-3">
+              <Chip.Label className="text-xs font-semibold uppercase tracking-wider font-mono">
+                Featured Metrology Products
+              </Chip.Label>
+            </Chip>
+            <h2 className="section-title mt-2">
               Precision Gauging & Multi-Gauging Systems
             </h2>
             <p className="section-subtitle">
               Every instrument and system is precision-manufactured to meet the rigorous quality requirements of OEM and automotive manufacturers.
             </p>
           </div>
-          <Link to="/products" className="inline-flex items-center gap-2 text-sm font-bold text-industrial-primary hover:text-industrial-hover self-start md:self-end group">
+          <Link
+            to="/products"
+            className="button button--ghost button--sm inline-flex items-center gap-2 text-sm font-bold text-industrial-primary hover:text-industrial-hover self-start md:self-end group p-0 font-sans"
+          >
             <span>View All Products</span>
             <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
           </Link>
         </Reveal>
 
-        {/* Filter Tabs with Mechanical Sliding layoutId Indicator */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-6 sm:pb-4 sm:mb-8 no-scrollbar w-full max-w-full">
-          <button
-            onClick={() => {
-              setActiveTab('all');
-              setShowAllMobile(false);
-            }}
-            className={`relative px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors z-10 ${
-              activeTab === 'all'
-                ? 'text-white'
-                : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'
-            }`}
-          >
-            {activeTab === 'all' && (
-              <motion.div
-                layoutId="activeFeaturedTabPill"
-                transition={{ type: 'spring', stiffness: 450, damping: 35 }}
-                className="absolute inset-0 bg-industrial-primary rounded-lg -z-10 shadow-sm"
-              />
-            )}
-            <span>All Featured Systems</span>
-          </button>
-          {productCategories.filter(c => c.slug !== 'all').map((cat) => (
-            <button
-              key={cat.slug}
-              onClick={() => {
-                setActiveTab(cat.slug);
-                setShowAllMobile(false);
-              }}
-              className={`relative px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors z-10 ${
-                activeTab === cat.slug
-                  ? 'text-white'
-                  : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'
-              }`}
+        {/* Filter Tabs with HeroUI Tabs */}
+        <Tabs
+          selectedKey={activeTab}
+          onSelectionChange={(key) => {
+            setActiveTab(String(key));
+            setShowAllMobile(false);
+          }}
+          className="mb-6 sm:mb-8 w-full"
+        >
+          <div className="overflow-x-auto no-scrollbar pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
+            <Tabs.List
+              aria-label="Featured Product Categories"
+              className="flex items-center gap-2 min-w-max p-1.5 bg-slate-200/70 rounded-xl border border-slate-300/80"
             >
-              {activeTab === cat.slug && (
-                <motion.div
-                  layoutId="activeFeaturedTabPill"
-                  transition={{ type: 'spring', stiffness: 450, damping: 35 }}
-                  className="absolute inset-0 bg-industrial-primary rounded-lg -z-10 shadow-sm"
-                />
-              )}
-              <span>{cat.name}</span>
-            </button>
-          ))}
-        </div>
+              <Tabs.Tab
+                id="all"
+                className={`h-auto min-h-[38px] px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                  activeTab === 'all'
+                    ? 'bg-industrial-primary text-white shadow-sm'
+                    : 'bg-white/80 text-slate-700 hover:text-industrial-primary hover:bg-white border border-transparent hover:border-slate-200'
+                }`}
+              >
+                All Featured Systems
+              </Tabs.Tab>
+              {productCategories.filter(c => c.slug !== 'all').map((cat) => (
+                <Tabs.Tab
+                  key={cat.slug}
+                  id={cat.slug}
+                  className={`h-auto min-h-[38px] px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                    activeTab === cat.slug
+                      ? 'bg-industrial-primary text-white shadow-sm'
+                      : 'bg-white/80 text-slate-700 hover:text-industrial-primary hover:bg-white border border-transparent hover:border-slate-200'
+                  }`}
+                >
+                  {cat.name}
+                </Tabs.Tab>
+              ))}
+            </Tabs.List>
+          </div>
+        </Tabs>
 
         {/* Editorial Product Cards Grid */}
         <StaggerContainer key={activeTab} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8 items-stretch">
@@ -98,14 +97,15 @@ export const FeaturedProducts: React.FC = () => {
         {/* Mobile View More Products Button */}
         {!showAllMobile && filteredProducts.length > 4 && (
           <div className="mt-6 text-center sm:hidden">
-            <button
-              type="button"
-              onClick={() => setShowAllMobile(true)}
-              className="w-full py-2.5 px-4 rounded-lg bg-white hover:bg-slate-50 text-industrial-primary font-bold text-xs border border-slate-200 transition-colors inline-flex items-center justify-center gap-1.5 shadow-sm"
+            <Button
+              variant="secondary"
+              fullWidth
+              onPress={() => setShowAllMobile(true)}
+              className="w-full py-2.5 px-4 rounded-lg bg-white hover:bg-slate-50 text-industrial-primary font-bold text-xs border border-slate-200 transition-colors inline-flex items-center justify-center gap-1.5 shadow-sm font-sans"
             >
               <span>View All {filteredProducts.length} Systems</span>
               <ArrowRight className="w-3.5 h-3.5" />
-            </button>
+            </Button>
           </div>
         )}
 
@@ -113,3 +113,4 @@ export const FeaturedProducts: React.FC = () => {
     </SectionReveal>
   );
 };
+

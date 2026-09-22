@@ -8,6 +8,7 @@ import {
   Award,
   Building
 } from 'lucide-react';
+import { Card, Chip } from '@heroui/react';
 import { companyData } from '../../data/company';
 import { EnquiryForm } from '../common/EnquiryForm';
 import { SectionReveal } from '../animation/SectionReveal';
@@ -25,10 +26,12 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ isStandalone = f
       <div className="industrial-container">
         {/* Section Header */}
         <Reveal direction="up" className="max-w-3xl mb-6 sm:mb-12">
-          <span className="section-tag">
-            Official Registered Details & Inquiries
-          </span>
-          <h2 className="section-title mt-3">
+          <Chip variant="soft" color="accent" size="sm" className="bg-sky-50 text-industrial-primary border border-sky-200/80 mb-3">
+            <Chip.Label className="text-xs font-semibold uppercase tracking-wider font-mono">
+              Official Registered Details & Inquiries
+            </Chip.Label>
+          </Chip>
+          <h2 className="section-title mt-2">
             Connect With Us
           </h2>
           <p className="mt-2.5 sm:mt-3 text-base sm:text-lg text-slate-700 leading-relaxed font-medium">
@@ -41,20 +44,20 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ isStandalone = f
           
           {/* Left Column: Official Contact Details from Slide 26 (5 cols) */}
           <Reveal direction="right" className="lg:col-span-5 space-y-4 sm:space-y-6">
-            <div className="bg-white p-4 sm:p-8 rounded-xl border border-slate-200/90 shadow-subtle space-y-5 sm:space-y-6">
+            <Card variant="default" className="bg-white p-4 sm:p-8 rounded-xl border border-slate-200/90 shadow-subtle space-y-5 sm:space-y-6">
               
-              <div className="border-b border-slate-100 pb-4">
+              <Card.Header className="p-0 border-b border-slate-100 pb-4">
                 <div className="flex items-center gap-1.5 text-[11px] font-mono font-bold uppercase tracking-wider text-industrial-primary">
                   <Building className="w-3.5 h-3.5" />
                   <span>Registered Details</span>
                 </div>
-                <h3 className="text-xl font-bold font-heading text-slate-900 mt-1">
+                <Card.Title className="text-xl font-bold font-heading text-slate-900 mt-1">
                   {companyData.companyName}
-                </h3>
-                <p className="text-xs text-slate-700 font-medium mt-0.5">
+                </Card.Title>
+                <Card.Description className="text-xs text-slate-700 font-medium mt-0.5">
                   Established 2021 • Precision • Innovation • Quality
-                </p>
-              </div>
+                </Card.Description>
+              </Card.Header>
 
               {/* Address Card */}
               <div className="flex items-start gap-4">
@@ -137,27 +140,27 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ isStandalone = f
                 <span>Motto: "Keeping Customers First"</span>
               </div>
 
-            </div>
+            </Card>
           </Reveal>
 
           {/* Right Column: B2B Enquiry Form (7 cols) */}
           <Reveal direction="left" delay={0.15} className="lg:col-span-7">
-            <div className="bg-white p-4 sm:p-10 rounded-xl border border-slate-200/90 shadow-subtle">
-              <div className="mb-6">
+            <Card variant="default" className="bg-white p-4 sm:p-10 rounded-xl border border-slate-200/90 shadow-subtle">
+              <Card.Header className="p-0 mb-6">
                 <div className="flex items-center gap-1.5 text-[11px] font-mono font-bold uppercase tracking-wider text-industrial-primary">
                   <ShieldCheck className="w-3.5 h-3.5" />
                   <span>Direct Engineering Quotation</span>
                 </div>
-                <h3 className="text-xl font-bold font-heading text-slate-900 mt-1">
+                <Card.Title className="text-xl font-bold font-heading text-slate-900 mt-1">
                   Submit Gauging / Fixture Enquiry
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-700 font-medium mt-1">
+                </Card.Title>
+                <Card.Description className="text-xs sm:text-sm text-slate-700 font-medium mt-1">
                   Fill out the parameters below and our metrology technical team will prepare a structured proposal.
-                </p>
-              </div>
+                </Card.Description>
+              </Card.Header>
 
               <EnquiryForm variant="inline" idPrefix="contact-" />
-            </div>
+            </Card>
           </Reveal>
 
         </div>
@@ -166,3 +169,4 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ isStandalone = f
     </SectionReveal>
   );
 };
+
