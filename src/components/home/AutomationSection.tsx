@@ -48,7 +48,7 @@ export const AutomationSection: React.FC = () => {
           {/* Right Column: Copy & 3 Pillars from PPT Slide 12 (7 cols) */}
           <div className="lg:col-span-7 space-y-4 sm:space-y-6 order-1 lg:order-2">
             <Reveal direction="up">
-              <Chip variant="soft" color="accent" size="sm" className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-[11px] font-mono font-semibold tracking-wider uppercase bg-sky-950/70 text-sky-300 border border-sky-800/70 mb-3">
+              <Chip variant="soft" color="accent" size="sm" className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-xs font-mono font-semibold tracking-wider uppercase bg-sky-950/70 text-sky-300 border border-sky-800/70 mb-3">
                 <Zap className="w-3.5 h-3.5" />
                 <Chip.Label>Next-Gen Factory Automation</Chip.Label>
               </Chip>
@@ -83,14 +83,14 @@ export const AutomationSection: React.FC = () => {
             <Reveal direction="up" className="pt-2 flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-4">
               <Link
                 to="/solutions/multigauging"
-                className="button button--primary button--md bg-sky-500 hover:bg-sky-400 text-white w-full sm:w-auto text-center justify-center font-sans inline-flex items-center gap-2 px-5 py-2.5 rounded-lg"
+                className="w-full sm:w-auto text-center justify-center font-sans font-semibold text-xs sm:text-sm inline-flex items-center gap-2 px-5 py-2.5 min-h-[44px] rounded-lg bg-industrial-primary hover:bg-industrial-hover text-white shadow-sm transition-all focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
               >
                 <span>Explore Multigauging Solutions</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 to="/contact"
-                className="button button--outline button--md bg-transparent text-white border-slate-600 hover:bg-slate-800 w-full sm:w-auto text-center justify-center font-sans inline-flex items-center gap-2 px-5 py-2.5 rounded-lg"
+                className="w-full sm:w-auto text-center justify-center font-sans font-semibold text-xs sm:text-sm inline-flex items-center gap-2 px-5 py-2.5 min-h-[44px] rounded-lg bg-transparent text-white border border-slate-600 hover:bg-slate-800 transition-all focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
               >
                 <span>Consult Automation Team</span>
               </Link>

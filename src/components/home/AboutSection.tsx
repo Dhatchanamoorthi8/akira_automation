@@ -77,7 +77,7 @@ export const AboutSection: React.FC = () => {
             <div className="pt-2">
               <Link
                 to="/about"
-                className="button button--outline button--md w-full sm:w-auto inline-flex items-center justify-center gap-2 border-slate-300 text-slate-800 hover:text-industrial-primary hover:border-industrial-primary font-sans"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 border border-slate-300 bg-white text-slate-800 hover:text-industrial-primary hover:border-industrial-primary font-sans font-semibold text-xs sm:text-sm px-5 py-2.5 min-h-[44px] rounded-lg shadow-subtle hover:bg-slate-50 transition-all focus-visible:ring-2 focus-visible:ring-industrial-primary focus-visible:outline-none"
               >
                 <span>Learn More About Our Company</span>
                 <ArrowRight className="w-4 h-4" />
@@ -113,9 +113,9 @@ export const AboutSection: React.FC = () => {
                   <Award className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-[10px] sm:text-[11px] text-slate-300 uppercase tracking-widest font-semibold font-mono">Brand Promise</p>
+                  <p className="text-xs text-slate-300 uppercase tracking-widest font-semibold font-mono">Brand Promise</p>
                   <p className="text-base sm:text-lg font-black font-heading tracking-tight text-white">{company.name}</p>
-                  <p className="text-[10px] sm:text-[11px] text-sky-400 font-semibold mt-0.5">{company.slogan}</p>
+                  <p className="text-xs text-sky-400 font-semibold mt-0.5">{company.slogan}</p>
                 </div>
               </div>
             </Card>

@@ -46,7 +46,7 @@ export const ServiceSupportSection: React.FC = () => {
             variant="primary"
             size="md"
             onPress={() => openEnquiry("Service & Technical Support")}
-            className="bg-industrial-primary hover:bg-sky-600 text-white w-full sm:w-auto text-center justify-center shrink-0 self-start md:self-end font-sans inline-flex items-center gap-2"
+            className="bg-industrial-primary hover:bg-industrial-hover text-white w-full sm:w-auto text-center justify-center shrink-0 self-start md:self-end font-sans font-semibold text-xs sm:text-sm inline-flex items-center gap-2 px-5 py-2.5 min-h-[44px] rounded-lg shadow-sm transition-all focus-visible:ring-2 focus-visible:ring-industrial-primary focus-visible:outline-none"
           >
             <Headphones className="w-4 h-4" />
             <span>Talk to Our Technical Team</span>
@@ -94,7 +94,7 @@ export const ServiceSupportSection: React.FC = () => {
                     <Card.Footer className="p-0 pt-4 mt-4 border-t border-slate-100">
                       <Link
                         to="/services"
-                        className="button button--ghost button--sm inline-flex items-center gap-1.5 text-xs font-bold text-industrial-primary group-hover:text-industrial-hover transition-colors p-0 font-sans"
+                        className="inline-flex items-center gap-1.5 min-h-[44px] py-1 text-xs font-bold text-industrial-primary group-hover:text-industrial-hover transition-colors font-sans focus-visible:ring-2 focus-visible:ring-industrial-primary focus-visible:outline-none rounded-lg"
                       >
                         <span>Full Service Details</span>
                         <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />

@@ -44,7 +44,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           {/* Image Area with Click to View Option */}
           <div 
             onClick={handleImageClick}
-            className="relative h-52 sm:h-56 bg-slate-50 overflow-hidden flex items-center justify-center p-5 border-b border-slate-100 cursor-pointer group/img shrink-0"
+            className="relative h-52 sm:h-56 bg-slate-50 overflow-hidden flex items-center justify-center p-5 border-b border-slate-100 cursor-pointer group/img shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-industrial-primary"
             title="Click to view full-resolution image"
             role="button"
             tabIndex={0}
@@ -74,7 +74,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 size="sm"
                 className="bg-white/95 text-industrial-dark shadow-subtle border border-slate-200 backdrop-blur-sm"
               >
-                <Chip.Label className="text-[10px] font-bold uppercase tracking-wider font-mono">
+                <Chip.Label className="text-xs font-bold uppercase tracking-wider font-mono">
                   {product.category}
                 </Chip.Label>
               </Chip>
@@ -127,7 +127,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             variant="secondary"
             size="sm"
             onPress={() => openEnquiry(product.title)}
-            className="px-4 py-2 min-h-[40px] rounded-lg bg-slate-100 hover:bg-industrial-primary hover:text-white text-xs font-semibold text-industrial-dark transition-colors border border-slate-200/80 font-sans"
+            className="px-4 py-2 min-h-[44px] rounded-lg bg-slate-100 hover:bg-industrial-primary hover:text-white text-xs font-semibold text-industrial-dark transition-colors border border-slate-200/80 font-sans"
           >
             Enquire Now
           </Button>

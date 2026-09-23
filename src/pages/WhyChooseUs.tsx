@@ -6,7 +6,6 @@ import {
   Wrench, 
   HeartHandshake, 
   Bot, 
-  DollarSign, 
   CheckCircle2, 
   ArrowRight, 
   ShieldCheck, 
@@ -20,7 +19,8 @@ import {
   Activity, 
   TrendingUp,
   Layers,
-  Phone
+  Phone,
+  BadgeIndianRupeeIcon
 } from 'lucide-react';
 import { Button, Card, Chip, Accordion } from '@heroui/react';
 import { company } from '../config/company';
@@ -108,7 +108,7 @@ const differentiators = [
   },
   {
     id: "value-driven-pricing",
-    icon: DollarSign,
+    icon: BadgeIndianRupeeIcon,
     badge: "Pillar 05 // Economic Advantage",
     title: "Competitive & Value-Driven Pricing",
     tagline: "High-precision metrology without exorbitant multinational markups",
@@ -194,7 +194,7 @@ const operationalBenefits = [
     title: "Strong Return on Investment",
     description: "Lower scrap rates, extended tool wear monitoring, and durable wear-resistant carbide contacts.",
     metric: "High Value",
-    icon: DollarSign
+    icon: BadgeIndianRupeeIcon
   }
 ];
 

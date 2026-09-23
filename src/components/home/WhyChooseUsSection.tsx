@@ -34,7 +34,7 @@ const coreStrengthDetails = [
 
 export const WhyChooseUsSection: React.FC = () => {
   return (
-    <SectionReveal className="py-10 sm:py-16 lg:py-20 bg-white border-b border-slate-200 overflow-hidden">
+    <SectionReveal className="py-10 sm:py-16 lg:py-20 bg-slate-50/70 border-b border-slate-200 overflow-hidden">
       <div className="industrial-container">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
           
@@ -60,7 +60,7 @@ export const WhyChooseUsSection: React.FC = () => {
                 <StaggerItem key={idx}>
                   <Card 
                     variant="default"
-                    className={`items-start gap-3.5 sm:gap-4 p-3.5 sm:p-4 rounded-xl bg-slate-50 border border-slate-200/80 hover:border-industrial-primary/30 hover:bg-slate-50/50 transition-colors group shadow-none ${
+                    className={`items-start gap-3.5 sm:gap-4 p-3.5 sm:p-4 rounded-xl bg-white border border-slate-200/90 shadow-subtle hover:border-industrial-primary/30 hover:shadow-card transition-all group ${
                       idx >= 3 ? "hidden sm:flex" : "flex"
                     }`}
                   >
@@ -83,7 +83,7 @@ export const WhyChooseUsSection: React.FC = () => {
             <Reveal direction="up" className="pt-2">
               <Link
                 to="/why-choose-us"
-                className="button button--outline button--md w-full sm:w-auto inline-flex items-center justify-center gap-2 border-slate-300 text-slate-800 hover:text-industrial-primary hover:border-industrial-primary font-sans px-5 py-2.5 rounded-lg"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 border border-slate-300 bg-white text-slate-800 hover:text-industrial-primary hover:border-industrial-primary font-sans font-semibold text-xs sm:text-sm px-5 py-2.5 min-h-[44px] rounded-lg shadow-subtle hover:bg-slate-50 transition-all focus-visible:ring-2 focus-visible:ring-industrial-primary focus-visible:outline-none"
               >
                 <span>Read More About Our Core Strengths</span>
                 <ArrowRight className="w-4 h-4" />
@@ -117,7 +117,7 @@ export const WhyChooseUsSection: React.FC = () => {
             {/* Floating Metric Card */}
             <Reveal direction="right" delay={0.2} className="absolute -top-4 -left-4 hidden sm:block">
               <Card variant="default" className="bg-white text-industrial-dark rounded-xl p-3.5 shadow-card border border-slate-200 flex flex-row items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                <div className="w-10 h-10 rounded-lg bg-sky-50 text-industrial-primary flex items-center justify-center font-bold">
                   <ShieldCheck className="w-6 h-6" />
                 </div>
                 <div>

@@ -22,7 +22,7 @@ export const MultigaugingShowcase: React.FC = () => {
       <div className="industrial-container relative z-10">
         {/* Section Header */}
         <Reveal direction="up" className="max-w-3xl mb-5 sm:mb-10">
-          <Chip variant="soft" color="accent" size="sm" className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-[11px] font-mono font-semibold tracking-wider uppercase bg-industrial-primary/20 text-sky-400 border border-sky-400/30">
+          <Chip variant="soft" color="accent" size="sm" className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-xs font-mono font-semibold tracking-wider uppercase bg-industrial-primary/20 text-sky-400 border border-sky-400/30">
             <Cpu className="w-3.5 h-3.5" />
             <Chip.Label>Specialized Automated Multi-Gauging</Chip.Label>
           </Chip>
@@ -42,13 +42,13 @@ export const MultigaugingShowcase: React.FC = () => {
         >
           <Tabs.List
             aria-label="Multi-Gauging Stations"
-            className="flex flex-col sm:flex-row w-full sm:w-auto p-1.5 bg-slate-950/90 border border-slate-800 rounded-xl gap-2 shadow-lg"
+            className="flex flex-col sm:flex-row w-full sm:w-auto p-1.5 bg-slate-950/90 border border-slate-800 rounded-xl gap-2 shadow-card"
           >
             <Tabs.Tab
               id="engine"
               className={`flex-1 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm font-bold transition-all text-center cursor-pointer ${
                 activeStation === 'engine'
-                  ? 'bg-[#0084ff] text-white shadow-md'
+                  ? 'bg-industrial-primary text-white shadow-subtle'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
               }`}
             >
@@ -58,7 +58,7 @@ export const MultigaugingShowcase: React.FC = () => {
               id="camshaft"
               className={`flex-1 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm font-bold transition-all text-center cursor-pointer ${
                 activeStation === 'camshaft'
-                  ? 'bg-[#0084ff] text-white shadow-md'
+                  ? 'bg-industrial-primary text-white shadow-subtle'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
               }`}
             >
@@ -89,7 +89,7 @@ export const MultigaugingShowcase: React.FC = () => {
                   productSlug: "engine-block-liner-multigauging-station",
                   badge: "Turnkey Metrology Bench"
                 })}
-                className="relative rounded-xl overflow-hidden border border-slate-700 shadow-2xl bg-slate-900 p-2 group cursor-pointer"
+                className="relative rounded-xl overflow-hidden border border-slate-700 shadow-card bg-slate-900 p-2 group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-industrial-primary"
                 title="Click to view full-resolution station"
                 role="button"
                 tabIndex={0}
@@ -144,7 +144,7 @@ export const MultigaugingShowcase: React.FC = () => {
             {/* Right: Technical Specs & Features */}
             <div className="lg:col-span-6 space-y-6">
               <div>
-                <Chip variant="soft" color="accent" size="sm" className="px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-sky-500/20 text-sky-300 border border-sky-400/30">
+                <Chip variant="soft" color="accent" size="sm" className="px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-industrial-primary/20 text-sky-300 border border-sky-400/30">
                   <Chip.Label>Turnkey Multi-Gauging Station</Chip.Label>
                 </Chip>
                 <h3 className="text-2xl font-bold font-heading text-white mt-2">
@@ -156,7 +156,7 @@ export const MultigaugingShowcase: React.FC = () => {
               </div>
 
               {/* Technical Specifications Matrix */}
-              <div className="grid grid-cols-2 gap-2 sm:gap-3 text-[11px] sm:text-xs bg-slate-800/60 p-3 sm:p-4 rounded-xl border border-slate-700">
+              <div className="grid grid-cols-2 gap-2 sm:gap-3 text-xs bg-slate-800/60 p-3 sm:p-4 rounded-xl border border-slate-700">
                 <div className="space-y-1">
                   <p className="text-slate-400">Display Units</p>
                   <p className="font-semibold text-white">Tri-Colour Six Digit Display</p>
@@ -202,7 +202,7 @@ export const MultigaugingShowcase: React.FC = () => {
               <div className="pt-2 flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-4">
                 <Link
                   to="/products/engine-block-liner-multigauging-station"
-                  className="button button--primary button--md bg-sky-500 hover:bg-sky-400 text-white w-full sm:w-auto text-center justify-center font-sans inline-flex items-center gap-2 px-5 py-2.5 rounded-lg"
+                  className="button button--primary button--md bg-industrial-primary hover:bg-industrial-hover text-white w-full sm:w-auto text-center justify-center font-sans inline-flex items-center gap-2 px-5 py-2.5 rounded-lg shadow-subtle transition-colors"
                 >
                   <span>View Full Station Details</span>
                   <ArrowRight className="w-4 h-4" />
@@ -211,7 +211,7 @@ export const MultigaugingShowcase: React.FC = () => {
                   variant="outline"
                   size="md"
                   onPress={() => openEnquiry("Engine Block Liner Bore Multigauging Station")}
-                  className="bg-transparent text-white border-slate-600 hover:bg-slate-800 w-full sm:w-auto text-center justify-center font-sans"
+                  className="bg-transparent text-white border-slate-600 hover:bg-slate-800 w-full sm:w-auto text-center justify-center font-sans min-h-[44px]"
                 >
                   Inquire About This Station
                 </Button>
@@ -239,7 +239,7 @@ export const MultigaugingShowcase: React.FC = () => {
                   productSlug: "camshaft-multigauging-station",
                   badge: "6 OD Diameters Bench"
                 })}
-                className="relative rounded-xl overflow-hidden border border-slate-700 shadow-2xl bg-slate-900 p-2 group cursor-pointer"
+                className="relative rounded-xl overflow-hidden border border-slate-700 shadow-card bg-slate-900 p-2 group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-industrial-primary"
                 title="Click to view full-resolution station"
                 role="button"
                 tabIndex={0}
@@ -263,7 +263,7 @@ export const MultigaugingShowcase: React.FC = () => {
                   className="w-full h-auto object-contain rounded-xl max-h-[380px] transition-transform duration-500 group-hover:scale-[1.02]"
                 />
                 <div className="absolute bottom-4 right-4 z-10">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900/85 text-white text-xs font-semibold shadow-md backdrop-blur-md border border-slate-700/80 group-hover:bg-industrial-primary transition-colors">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900/85 text-white text-xs font-semibold shadow-subtle backdrop-blur-md border border-slate-700/80 group-hover:bg-industrial-primary transition-colors">
                     <ZoomIn className="w-3.5 h-3.5 text-sky-400 group-hover:text-white" />
                     <span>Click to Inspect</span>
                   </span>
@@ -276,12 +276,12 @@ export const MultigaugingShowcase: React.FC = () => {
                     alt="Camshaft Fixture CAD"
                     className="w-16 h-12 object-contain bg-white rounded p-1"
                   />
-                  <div className="text-[11px]">
+                  <div className="text-xs">
                     <p className="font-bold text-white">CAD Engineering</p>
                     <p className="text-slate-400">Precision Fixture Model</p>
                   </div>
                 </div>
-                <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700 flex flex-col justify-center text-[11px]">
+                <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700 flex flex-col justify-center text-xs">
                   <p className="font-bold text-sky-400">6 OD Diameters</p>
                   <p className="text-slate-400">Simultaneous Multi-Point</p>
                 </div>
@@ -291,7 +291,7 @@ export const MultigaugingShowcase: React.FC = () => {
             {/* Right: Technical Specs & Features */}
             <div className="lg:col-span-6 space-y-6">
               <div>
-                <Chip variant="soft" color="accent" size="sm" className="px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-sky-500/20 text-sky-300 border border-sky-400/30">
+                <Chip variant="soft" color="accent" size="sm" className="px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-industrial-primary/20 text-sky-300 border border-sky-400/30">
                   <Chip.Label>Dedicated Inspection Bench</Chip.Label>
                 </Chip>
                 <h3 className="text-2xl font-bold font-heading text-white mt-2">
@@ -349,7 +349,7 @@ export const MultigaugingShowcase: React.FC = () => {
               <div className="pt-2 flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-4">
                 <Link
                   to="/products/camshaft-multigauging-station"
-                  className="button button--primary button--md bg-sky-500 hover:bg-sky-400 text-white w-full sm:w-auto text-center justify-center font-sans inline-flex items-center gap-2 px-5 py-2.5 rounded-lg"
+                  className="button button--primary button--md bg-industrial-primary hover:bg-industrial-hover text-white w-full sm:w-auto text-center justify-center font-sans inline-flex items-center gap-2 px-5 py-2.5 rounded-lg shadow-subtle transition-colors"
                 >
                   <span>View Full Station Details</span>
                   <ArrowRight className="w-4 h-4" />
@@ -358,7 +358,7 @@ export const MultigaugingShowcase: React.FC = () => {
                   variant="outline"
                   size="md"
                   onPress={() => openEnquiry("Camshaft Dia Multigauging Station")}
-                  className="bg-transparent text-white border-slate-600 hover:bg-slate-800 w-full sm:w-auto text-center justify-center font-sans"
+                  className="bg-transparent text-white border-slate-600 hover:bg-slate-800 w-full sm:w-auto text-center justify-center font-sans min-h-[44px]"
                 >
                   Inquire About This Station
                 </Button>

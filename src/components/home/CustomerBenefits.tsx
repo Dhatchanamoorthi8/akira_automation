@@ -55,7 +55,7 @@ export const CustomerBenefits: React.FC = () => {
                         <div className="w-10 h-10 rounded-lg bg-slate-100 text-industrial-primary flex items-center justify-center group-hover:bg-industrial-primary group-hover:text-white transition-colors duration-200 border border-slate-200/60">
                           <Icon className="w-5 h-5" />
                         </div>
-                        <Chip variant="soft" color="accent" size="sm" className="bg-sky-50 text-industrial-primary border border-sky-200/70 font-mono text-[10px] font-bold">
+                        <Chip variant="soft" color="accent" size="sm" className="bg-sky-50 text-industrial-primary border border-sky-200/70 font-mono text-xs font-bold">
                           <Chip.Label>{b.metric}</Chip.Label>
                         </Chip>
                       </div>
@@ -70,10 +70,10 @@ export const CustomerBenefits: React.FC = () => {
                       </Card.Header>
                     </div>
 
-                    <Card.Footer className="p-0 pt-3 border-t border-slate-100 text-[10px] font-mono font-semibold text-slate-400 flex items-center gap-1 mt-4">
+                    <Card.Footer className="p-0 pt-3 border-t border-slate-100 text-xs font-mono font-semibold text-slate-500 flex items-center gap-1 mt-4">
                       <span className="text-industrial-primary">{company.name}</span>
-                      <span className="text-slate-300">•</span>
-                      <span className="text-slate-500">Smart Solutions</span>
+                      <span className="text-slate-400">•</span>
+                      <span className="text-slate-600">Smart Solutions</span>
                     </Card.Footer>
                   </Card>
                 </SpotlightCard>

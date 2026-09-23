@@ -5,8 +5,7 @@ import {
   Headphones, 
   ShieldCheck, 
   HeartHandshake, 
-  Bot,
-  ArrowRight
+  Bot
 } from 'lucide-react';
 import { Card } from '@heroui/react';
 import { StaggerContainer } from '../animation/StaggerContainer';
@@ -57,24 +56,19 @@ export const TrustStrip: React.FC = () => {
               <StaggerItem key={idx} className={idx >= 4 ? 'hidden md:block' : ''}>
                 <Card 
                   variant="default"
-                  className="p-3.5 sm:p-4 rounded-xl bg-white border border-slate-200/80 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:border-sky-400/60 hover:shadow-card hover:-translate-y-0.5 transition-all duration-200 group text-left h-full flex flex-col justify-between"
+                  className="p-3.5 sm:p-4 rounded-xl bg-white border border-slate-200/80 shadow-subtle hover:border-industrial-primary/40 hover:shadow-card hover:-translate-y-0.5 transition-all duration-200 group text-left h-full flex flex-col justify-start"
                 >
-                  <div>
-                    <div className="w-10 h-10 rounded-lg bg-sky-50 text-industrial-primary flex items-center justify-center mb-2.5 group-hover:bg-industrial-primary group-hover:text-white transition-colors duration-200 border border-sky-100/60">
-                      <Icon className="w-5 h-5 transition-transform duration-200 group-hover:scale-105" />
-                    </div>
-                    <Card.Header className="p-0 space-y-1">
-                      <Card.Title className="text-xs sm:text-sm font-bold text-slate-900 font-heading group-hover:text-industrial-primary transition-colors leading-snug">
-                        {item.title}
-                      </Card.Title>
-                      <Card.Description className="text-xs text-slate-600 font-medium leading-relaxed">
-                        {item.description}
-                      </Card.Description>
-                    </Card.Header>
+                  <div className="w-10 h-10 rounded-lg bg-sky-50 text-industrial-primary flex items-center justify-center mb-2.5 group-hover:bg-industrial-primary group-hover:text-white transition-colors duration-200 border border-sky-100/60">
+                    <Icon className="w-5 h-5 transition-transform duration-200 group-hover:scale-105" />
                   </div>
-                  <Card.Footer className="p-0 pt-2 flex justify-end">
-                    <ArrowRight className="w-4 h-4 text-sky-500 transition-transform duration-200 group-hover:translate-x-1" />
-                  </Card.Footer>
+                  <Card.Header className="p-0 space-y-1">
+                    <Card.Title className="text-xs sm:text-sm font-bold text-slate-900 font-heading group-hover:text-industrial-primary transition-colors leading-snug">
+                      {item.title}
+                    </Card.Title>
+                    <Card.Description className="text-xs text-slate-600 font-medium leading-relaxed">
+                      {item.description}
+                    </Card.Description>
+                  </Card.Header>
                 </Card>
               </StaggerItem>
             );

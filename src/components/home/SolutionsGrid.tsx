@@ -72,12 +72,12 @@ export const SolutionsGrid: React.FC = () => {
                     <Card.Footer className="p-0 pt-4 border-t border-slate-100 mt-6 flex items-center justify-between text-xs font-semibold text-industrial-primary group-hover:text-industrial-hover">
                       <Link
                         to={`/solutions#${sol.slug}`}
-                        className="inline-flex items-center gap-1.5 focus:outline-none min-h-[44px] py-1"
+                        className="inline-flex items-center gap-1.5 min-h-[44px] py-1 font-sans focus-visible:ring-2 focus-visible:ring-industrial-primary focus-visible:outline-none rounded-lg"
                       >
                         <span>Explore Capability</span>
                         <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-1" />
                       </Link>
-                      <span className="text-[10px] font-mono text-slate-400 font-normal">
+                      <span className="text-xs font-mono text-slate-500 font-medium">
                         Precision Standard
                       </span>
                     </Card.Footer>
@@ -95,7 +95,7 @@ export const SolutionsGrid: React.FC = () => {
               variant="secondary"
               fullWidth
               onPress={() => setShowAllMobile(true)}
-              className="py-2.5 px-4 rounded-lg bg-slate-100 hover:bg-slate-200 text-industrial-primary font-bold text-xs border border-slate-200/80 transition-colors inline-flex items-center justify-center gap-1.5 font-sans"
+              className="py-2.5 px-4 min-h-[44px] rounded-lg bg-slate-100 hover:bg-slate-200 text-industrial-primary font-bold text-xs border border-slate-200/80 transition-colors inline-flex items-center justify-center gap-1.5 font-sans focus-visible:ring-2 focus-visible:ring-industrial-primary focus-visible:outline-none"
             >
               <span>View All 12 Capabilities</span>
               <ArrowRight className="w-3.5 h-3.5" />

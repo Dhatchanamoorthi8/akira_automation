@@ -37,7 +37,7 @@ export const FeaturedProducts: React.FC = () => {
           </div>
           <Link
             to="/products"
-            className="button button--ghost button--sm inline-flex items-center gap-2 text-sm font-bold text-industrial-primary hover:text-industrial-hover self-start md:self-end group p-0 font-sans"
+            className="inline-flex items-center gap-2 min-h-[44px] py-1 text-sm font-bold text-industrial-primary hover:text-industrial-hover self-start md:self-end group font-sans focus-visible:ring-2 focus-visible:ring-industrial-primary focus-visible:outline-none rounded-lg"
           >
             <span>View All Products</span>
             <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
@@ -60,9 +60,9 @@ export const FeaturedProducts: React.FC = () => {
             >
               <Tabs.Tab
                 id="all"
-                className={`h-auto min-h-[38px] px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                className={`h-auto min-h-[44px] px-4 py-2.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-industrial-primary focus-visible:outline-none ${
                   activeTab === 'all'
-                    ? 'bg-industrial-primary text-white shadow-sm'
+                    ? 'bg-industrial-primary text-white shadow-subtle'
                     : 'bg-white/80 text-slate-700 hover:text-industrial-primary hover:bg-white border border-transparent hover:border-slate-200'
                 }`}
               >
@@ -72,9 +72,9 @@ export const FeaturedProducts: React.FC = () => {
                 <Tabs.Tab
                   key={cat.slug}
                   id={cat.slug}
-                  className={`h-auto min-h-[38px] px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                  className={`h-auto min-h-[44px] px-4 py-2.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-industrial-primary focus-visible:outline-none ${
                     activeTab === cat.slug
-                      ? 'bg-industrial-primary text-white shadow-sm'
+                      ? 'bg-industrial-primary text-white shadow-subtle'
                       : 'bg-white/80 text-slate-700 hover:text-industrial-primary hover:bg-white border border-transparent hover:border-slate-200'
                   }`}
                 >
@@ -85,14 +85,29 @@ export const FeaturedProducts: React.FC = () => {
           </div>
         </Tabs>
 
-        {/* Editorial Product Cards Grid */}
-        <StaggerContainer key={activeTab} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8 items-stretch">
-          {filteredProducts.map((prod, idx) => (
-            <StaggerItem key={prod.id} className={`h-full ${idx >= 4 && !showAllMobile ? "hidden sm:block" : "block"}`}>
-              <ProductCard product={prod} variant="featured" className="h-full" />
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
+        {/* Editorial Product Cards Grid or Empty State */}
+        {filteredProducts.length === 0 ? (
+          <div className="p-8 text-center bg-white rounded-xl border border-slate-200 shadow-subtle space-y-3 my-4">
+            <p className="text-sm font-semibold text-slate-800 font-heading">No featured products found for this category.</p>
+            <p className="text-xs text-slate-600">Please choose another category or reset to view all featured systems.</p>
+            <Button
+              variant="secondary"
+              size="sm"
+              onPress={() => setActiveTab('all')}
+              className="px-4 py-2 min-h-[44px] rounded-lg bg-industrial-primary text-white text-xs font-semibold"
+            >
+              Reset to All Featured Systems
+            </Button>
+          </div>
+        ) : (
+          <StaggerContainer key={activeTab} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8 items-stretch">
+            {filteredProducts.map((prod, idx) => (
+              <StaggerItem key={prod.id} className={`h-full ${idx >= 4 && !showAllMobile ? "hidden sm:block" : "block"}`}>
+                <ProductCard product={prod} variant="featured" className="h-full" />
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        )}
 
         {/* Mobile View More Products Button */}
         {!showAllMobile && filteredProducts.length > 4 && (
@@ -101,7 +116,7 @@ export const FeaturedProducts: React.FC = () => {
               variant="secondary"
               fullWidth
               onPress={() => setShowAllMobile(true)}
-              className="w-full py-2.5 px-4 rounded-lg bg-white hover:bg-slate-50 text-industrial-primary font-bold text-xs border border-slate-200 transition-colors inline-flex items-center justify-center gap-1.5 shadow-sm font-sans"
+              className="w-full py-2.5 px-4 min-h-[44px] rounded-lg bg-white hover:bg-slate-50 text-industrial-primary font-bold text-xs border border-slate-200 transition-colors inline-flex items-center justify-center gap-1.5 shadow-subtle font-sans"
             >
               <span>View All {filteredProducts.length} Systems</span>
               <ArrowRight className="w-3.5 h-3.5" />

@@ -38,7 +38,7 @@ export const IndustriesSection: React.FC = () => {
           </div>
           <Link
             to="/industries"
-            className="button button--ghost button--sm inline-flex items-center gap-2 text-sm font-bold text-industrial-primary hover:text-industrial-hover self-start md:self-end group p-0 font-sans"
+            className="inline-flex items-center gap-2 min-h-[44px] py-1 text-sm font-bold text-industrial-primary hover:text-industrial-hover self-start md:self-end group font-sans focus-visible:ring-2 focus-visible:ring-industrial-primary focus-visible:outline-none rounded-lg"
           >
             <span>Explore All Industries</span>
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -106,7 +106,7 @@ export const IndustriesSection: React.FC = () => {
                     <Card.Footer className="p-4 sm:p-6 pt-0 border-t border-slate-100 mt-2">
                       <Link
                         to={`/industries#${ind.slug}`}
-                        className="button button--ghost button--sm inline-flex items-center gap-1.5 text-xs font-bold text-industrial-primary group-hover:text-industrial-hover transition-colors p-0 font-sans"
+                        className="inline-flex items-center gap-1.5 min-h-[44px] py-1 text-xs font-bold text-industrial-primary group-hover:text-industrial-hover transition-colors font-sans focus-visible:ring-2 focus-visible:ring-industrial-primary focus-visible:outline-none rounded-lg"
                       >
                         <span>Industry Solutions</span>
                         <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
@@ -123,7 +123,7 @@ export const IndustriesSection: React.FC = () => {
         <div className="mt-6 text-center sm:hidden">
           <Link
             to="/industries"
-            className="button button--secondary w-full py-2.5 px-4 rounded-lg bg-white hover:bg-slate-50 text-industrial-primary font-bold text-xs border border-slate-200 transition-colors inline-flex items-center justify-center gap-1.5 shadow-sm font-sans"
+            className="w-full py-2.5 px-4 min-h-[44px] rounded-lg bg-white hover:bg-slate-50 text-industrial-primary font-bold text-xs border border-slate-200 transition-colors inline-flex items-center justify-center gap-1.5 shadow-sm font-sans focus-visible:ring-2 focus-visible:ring-industrial-primary focus-visible:outline-none"
           >
             <span>Explore All 5 Industry Sectors</span>
             <ArrowRight className="w-3.5 h-3.5" />

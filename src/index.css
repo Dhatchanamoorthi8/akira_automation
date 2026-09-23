@@ -74,11 +74,11 @@
   }
 
   .section-tag {
-    @apply inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-[11px] font-semibold tracking-wider uppercase bg-industrial-accent text-industrial-primary border border-industrial-primary/25 font-sans;
+    @apply inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-xs font-semibold tracking-wider uppercase bg-industrial-accent text-industrial-primary border border-industrial-primary/25 font-sans;
   }
 
   .badge-tech {
-    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] sm:text-[11px] font-sans font-semibold tracking-wider uppercase bg-sky-950/60 text-sky-300 border border-sky-800/60;
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-sans font-semibold tracking-wider uppercase bg-sky-950/60 text-sky-300 border border-sky-800/60;
   }
 
   .section-title {
@@ -102,7 +102,7 @@
   }
 
   .btn-outline {
-    @apply inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 min-h-[42px] rounded-lg bg-transparent text-industrial-primary font-semibold text-xs sm:text-sm border-2 border-industrial-primary transition-all duration-200 hover:bg-industrial-primary hover:text-white active:translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-industrial-primary focus:ring-offset-2;
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] rounded-lg bg-transparent text-industrial-primary font-semibold text-xs sm:text-sm border-2 border-industrial-primary transition-all duration-200 hover:bg-industrial-primary hover:text-white active:translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-industrial-primary focus:ring-offset-2;
   }
 
   .btn-dark {

@@ -149,7 +149,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
             <div className="pt-1 pl-6">
               <a
                 href={mailtoFallbackUrl}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-tolerance-red text-white text-[11px] font-semibold hover:bg-red-700 transition-colors shadow-xs"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-tolerance-red text-white text-xs font-semibold hover:bg-red-700 transition-colors shadow-xs"
               >
                 <Mail className="w-3.5 h-3.5" />
                 <span>Open Pre-filled Email to {recipientEmail}</span>
@@ -182,7 +182,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
             value={formData.name}
             onChange={(e) => handleChange('name', e.target.value)}
             placeholder="e.g. Ramesh Kumar"
-            className={`w-full px-3.5 py-2 text-xs rounded-lg border bg-white focus:outline-none focus:ring-2 transition-colors shadow-xs ${
+            className={`w-full px-3.5 py-2.5 min-h-[44px] text-xs sm:text-sm rounded-lg border bg-white focus:outline-none focus:ring-2 transition-colors shadow-xs ${
               errors.name
                 ? 'border-tolerance-red focus:ring-tolerance-red/30'
                 : 'border-slate-300 focus:ring-industrial-primary focus:border-transparent'
@@ -194,13 +194,13 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
           {errors.name ? (
             <FieldError
               id={`${idPrefix}name-error`}
-              className="text-[11px] text-tolerance-red mt-0.5 inline-flex items-center gap-1 font-medium"
+              className="text-xs text-tolerance-red mt-0.5 inline-flex items-center gap-1 font-medium"
             >
               <AlertCircle className="w-3 h-3 shrink-0" />
               <span>{errors.name}</span>
             </FieldError>
           ) : (
-            <Description className="text-[10px] text-slate-400">
+            <Description className="text-xs text-slate-500">
               Technical contact person name
             </Description>
           )}
@@ -227,7 +227,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
             value={formData.companyName}
             onChange={(e) => handleChange('companyName', e.target.value)}
             placeholder="e.g. Precision Auto Components Ltd"
-            className={`w-full px-3.5 py-2 text-xs rounded-lg border bg-white focus:outline-none focus:ring-2 transition-colors shadow-xs ${
+            className={`w-full px-3.5 py-2.5 min-h-[44px] text-xs sm:text-sm rounded-lg border bg-white focus:outline-none focus:ring-2 transition-colors shadow-xs ${
               errors.companyName
                 ? 'border-tolerance-red focus:ring-tolerance-red/30'
                 : 'border-slate-300 focus:ring-industrial-primary focus:border-transparent'
@@ -239,13 +239,13 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
           {errors.companyName ? (
             <FieldError
               id={`${idPrefix}company-error`}
-              className="text-[11px] text-tolerance-red mt-0.5 inline-flex items-center gap-1 font-medium"
+              className="text-xs text-tolerance-red mt-0.5 inline-flex items-center gap-1 font-medium"
             >
               <AlertCircle className="w-3 h-3 shrink-0" />
               <span>{errors.companyName}</span>
             </FieldError>
           ) : (
-            <Description className="text-[10px] text-slate-400">
+            <Description className="text-xs text-slate-500">
               Manufacturing plant or enterprise entity
             </Description>
           )}
@@ -275,7 +275,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
             value={formData.email}
             onChange={(e) => handleChange('email', e.target.value)}
             placeholder="quality@company.com"
-            className={`w-full px-3.5 py-2 text-xs rounded-lg border bg-white focus:outline-none focus:ring-2 transition-colors shadow-xs ${
+            className={`w-full px-3.5 py-2.5 min-h-[44px] text-xs sm:text-sm rounded-lg border bg-white focus:outline-none focus:ring-2 transition-colors shadow-xs ${
               errors.email
                 ? 'border-tolerance-red focus:ring-tolerance-red/30'
                 : 'border-slate-300 focus:ring-industrial-primary focus:border-transparent'
@@ -287,13 +287,13 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
           {errors.email ? (
             <FieldError
               id={`${idPrefix}email-error`}
-              className="text-[11px] text-tolerance-red mt-0.5 inline-flex items-center gap-1 font-medium"
+              className="text-xs text-tolerance-red mt-0.5 inline-flex items-center gap-1 font-medium"
             >
               <AlertCircle className="w-3 h-3 shrink-0" />
               <span>{errors.email}</span>
             </FieldError>
           ) : (
-            <Description className="text-[10px] text-slate-400">
+            <Description className="text-xs text-slate-500">
               For official quote dispatch & CAD specs
             </Description>
           )}
@@ -320,7 +320,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
             value={formData.phone}
             onChange={(e) => handleChange('phone', e.target.value)}
             placeholder="+91 98765 43210"
-            className={`w-full px-3.5 py-2 text-xs rounded-lg border bg-white focus:outline-none focus:ring-2 transition-colors font-sans tabular-nums shadow-xs ${
+            className={`w-full px-3.5 py-2.5 min-h-[44px] text-xs sm:text-sm rounded-lg border bg-white focus:outline-none focus:ring-2 transition-colors font-sans tabular-nums shadow-xs ${
               errors.phone
                 ? 'border-tolerance-red focus:ring-tolerance-red/30'
                 : 'border-slate-300 focus:ring-industrial-primary focus:border-transparent'
@@ -332,13 +332,13 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
           {errors.phone ? (
             <FieldError
               id={`${idPrefix}phone-error`}
-              className="text-[11px] text-tolerance-red mt-0.5 inline-flex items-center gap-1 font-medium"
+              className="text-xs text-tolerance-red mt-0.5 inline-flex items-center gap-1 font-medium"
             >
               <AlertCircle className="w-3 h-3 shrink-0" />
               <span>{errors.phone}</span>
             </FieldError>
           ) : (
-            <Description className="text-[10px] text-slate-400">
+            <Description className="text-xs text-slate-500">
               Direct line for engineering clarifications
             </Description>
           )}
@@ -362,12 +362,12 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
             <span>Manufacturing Sector</span>
           </Label>
           <Select.Trigger
-            className="w-full h-9 px-3.5 py-2 text-xs rounded-lg border border-slate-300 bg-white flex items-center justify-between shadow-xs hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-industrial-primary transition-colors cursor-pointer"
+            className="w-full min-h-[44px] h-11 px-3.5 py-2.5 text-xs sm:text-sm rounded-lg border border-slate-300 bg-white flex items-center justify-between shadow-xs hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-industrial-primary transition-colors cursor-pointer"
           >
-            <Select.Value className="text-xs font-medium text-slate-800 truncate" />
+            <Select.Value className="text-xs sm:text-sm font-medium text-slate-800 truncate" />
             <Select.Indicator className="text-slate-400" />
           </Select.Trigger>
-          <Description className="text-[10px] text-slate-400">
+          <Description className="text-xs text-slate-500">
             Sector-specific tolerance & compliance context
           </Description>
           <Select.Popover className="bg-white rounded-xl shadow-elevated border border-slate-200/90 p-1.5 z-50 min-w-[240px]">
@@ -408,12 +408,12 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
             <span>Product / Solution Category</span>
           </Label>
           <Select.Trigger
-            className="w-full h-9 px-3.5 py-2 text-xs rounded-lg border border-slate-300 bg-white flex items-center justify-between shadow-xs hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-industrial-primary transition-colors cursor-pointer"
+            className="w-full min-h-[44px] h-11 px-3.5 py-2.5 text-xs sm:text-sm rounded-lg border border-slate-300 bg-white flex items-center justify-between shadow-xs hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-industrial-primary transition-colors cursor-pointer"
           >
-            <Select.Value className="text-xs font-medium text-slate-800 truncate" />
+            <Select.Value className="text-xs sm:text-sm font-medium text-slate-800 truncate" />
             <Select.Indicator className="text-slate-400" />
           </Select.Trigger>
-          <Description className="text-[10px] text-slate-400">
+          <Description className="text-xs text-slate-500">
             Air gauging, electronic display, or custom station
           </Description>
           <Select.Popover className="bg-white rounded-xl shadow-elevated border border-slate-200/90 p-1.5 z-50 min-w-[240px]">
@@ -448,7 +448,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
         >
           <FileText className="w-3.5 h-3.5 text-industrial-primary shrink-0" />
           <span>Specific Gauge Model / Drawing Ref</span>
-          <span className="text-slate-400 font-normal text-[11px]">(Optional)</span>
+          <span className="text-slate-400 font-normal text-xs">(Optional)</span>
         </Label>
         <Input
           id={`${idPrefix}specific`}
@@ -457,9 +457,9 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
           value={formData.specificProduct || ''}
           onChange={(e) => handleChange('specificProduct', e.target.value)}
           placeholder="e.g. Air Plug Gauge Ø45mm or Camshaft Multigauging Station"
-          className="w-full px-3.5 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-industrial-primary focus:border-transparent bg-white shadow-xs"
+          className="w-full px-3.5 py-2.5 min-h-[44px] text-xs sm:text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-industrial-primary focus:border-transparent bg-white shadow-xs"
         />
-        <Description className="text-[10px] text-slate-400">
+        <Description className="text-xs text-slate-500">
           Component drawing number, bore size, or model code if known
         </Description>
       </TextField>
@@ -480,7 +480,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
             <span>Technical Requirement / Tolerance Specifications</span>
             <span className="text-tolerance-red" aria-hidden="true">*</span>
           </Label>
-          <span className="text-[10px] text-slate-400 font-normal tabular-nums font-mono">
+          <span className="text-xs text-slate-400 font-normal tabular-nums font-mono">
             {formData.message.length} / 1000
           </span>
         </div>
@@ -492,7 +492,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
           value={formData.message}
           onChange={(e) => handleChange('message', e.target.value)}
           placeholder="Please share details such as diameter range, tolerance limits, component type, checking parameters, or quantity required..."
-          className={`w-full px-3.5 py-2 text-xs rounded-lg border bg-white focus:outline-none focus:ring-2 transition-colors shadow-xs ${
+          className={`w-full px-3.5 py-2.5 min-h-[100px] text-xs sm:text-sm rounded-lg border bg-white focus:outline-none focus:ring-2 transition-colors shadow-xs ${
             errors.message
               ? 'border-tolerance-red focus:ring-tolerance-red/30'
               : 'border-slate-300 focus:ring-industrial-primary focus:border-transparent'
@@ -504,13 +504,13 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
         {errors.message ? (
           <FieldError
             id={`${idPrefix}message-error`}
-            className="text-[11px] text-tolerance-red mt-0.5 inline-flex items-center gap-1 font-medium"
+            className="text-xs text-tolerance-red mt-0.5 inline-flex items-center gap-1 font-medium"
           >
             <AlertCircle className="w-3 h-3 shrink-0" />
             <span>{errors.message}</span>
           </FieldError>
         ) : (
-          <Description className="text-[10px] text-slate-400">
+          <Description className="text-xs text-slate-500">
             Specify tolerance bands (e.g. ±0.005mm), cycle time, or pneumatic supply specs
           </Description>
         )}
@@ -518,11 +518,11 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
 
       {/* Submit / Actions Bar */}
       <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
-        <div className="text-[11px] text-slate-500 order-2 sm:order-1 leading-tight text-center sm:text-left">
+        <div className="text-xs text-slate-500 order-2 sm:order-1 leading-tight text-center sm:text-left">
           <div>
             Delivered to <strong className="font-mono text-industrial-dark">{recipientEmail}</strong>
           </div>
-          <div className="text-slate-400 text-[10px] mt-0.5">
+          <div className="text-slate-500 text-xs mt-0.5">
             ISO calibration & engineering support
           </div>
         </div>
@@ -533,7 +533,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
               type="button"
               variant="secondary"
               onPress={onCancel}
-              className="flex-1 sm:flex-none h-10 px-4 rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 hover:text-industrial-dark text-xs font-semibold transition-all inline-flex items-center justify-center whitespace-nowrap cursor-pointer shadow-xs"
+              className="flex-1 sm:flex-none min-h-[44px] h-11 px-5 rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 hover:text-industrial-dark text-xs sm:text-sm font-semibold transition-all inline-flex items-center justify-center whitespace-nowrap cursor-pointer shadow-xs focus-visible:ring-2 focus-visible:ring-industrial-primary focus-visible:outline-none"
             >
               Cancel
             </Button>
@@ -543,7 +543,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
             type="submit"
             isDisabled={isSubmitting}
             variant="primary"
-            className="flex-1 sm:flex-none h-10 px-5 rounded-lg bg-industrial-primary text-white text-xs font-semibold shadow-sm hover:bg-industrial-hover hover:shadow-md transition-all duration-200 disabled:opacity-60 inline-flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer"
+            className="flex-1 sm:flex-none min-h-[44px] h-11 px-6 rounded-lg bg-industrial-primary text-white text-xs sm:text-sm font-semibold shadow-sm hover:bg-industrial-hover hover:shadow-md transition-all duration-200 disabled:opacity-60 inline-flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer focus-visible:ring-2 focus-visible:ring-industrial-primary focus-visible:outline-none"
           >
             {isSubmitting ? (
               <>

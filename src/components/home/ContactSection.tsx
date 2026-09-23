@@ -47,7 +47,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ isStandalone = f
             <Card variant="default" className="bg-white p-4 sm:p-8 rounded-xl border border-slate-200/90 shadow-subtle space-y-5 sm:space-y-6">
               
               <Card.Header className="p-0 border-b border-slate-100 pb-4">
-                <div className="flex items-center gap-1.5 text-[11px] font-mono font-bold uppercase tracking-wider text-industrial-primary">
+                <div className="flex items-center gap-1.5 text-xs font-mono font-bold uppercase tracking-wider text-industrial-primary">
                   <Building className="w-3.5 h-3.5" />
                   <span>Registered Details</span>
                 </div>
@@ -147,7 +147,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ isStandalone = f
           <Reveal direction="left" delay={0.15} className="lg:col-span-7">
             <Card variant="default" className="bg-white p-4 sm:p-10 rounded-xl border border-slate-200/90 shadow-subtle">
               <Card.Header className="p-0 mb-6">
-                <div className="flex items-center gap-1.5 text-[11px] font-mono font-bold uppercase tracking-wider text-industrial-primary">
+                <div className="flex items-center gap-1.5 text-xs font-mono font-bold uppercase tracking-wider text-industrial-primary">
                   <ShieldCheck className="w-3.5 h-3.5" />
                   <span>Direct Engineering Quotation</span>
                 </div>
