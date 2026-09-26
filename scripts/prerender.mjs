@@ -528,16 +528,17 @@ async function runPrerender() {
     const jsonLdScript = `<script type="application/ld+json" id="structured-data-jsonld">${jsonLdContent}</script>`;
 
     // Critical FOUC guard CSS to ensure pre-rendered HTML renders instantly with high fidelity before JS hydration
+    // Note: Scoped strictly to .akira-prerender-shell so it NEVER leaks into the React hydrated tree
     const criticalFoucGuardStyles = `  <style id="akira-critical-fouc-guard">
     html, body {
       margin: 0;
       padding: 0;
-      background-color: #0B1F33 !important;
-      color: #F8FAFC !important;
+      background-color: #0B1F33;
+      color: #F8FAFC;
       font-family: 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       -webkit-font-smoothing: antialiased;
     }
-    #root {
+    .akira-prerender-shell {
       min-height: 100vh;
       background-color: #0B1F33;
       color: #F8FAFC;
@@ -545,7 +546,7 @@ async function runPrerender() {
       flex-direction: column;
       width: 100%;
     }
-    #root header {
+    .akira-prerender-shell header {
       background: #06111C;
       border-bottom: 1px solid rgba(51, 65, 85, 0.6);
       padding: 12px 20px;
@@ -555,7 +556,7 @@ async function runPrerender() {
       width: 100%;
       box-sizing: border-box;
     }
-    #root header nav {
+    .akira-prerender-shell header nav {
       display: flex;
       align-items: center;
       gap: 12px;
@@ -563,23 +564,23 @@ async function runPrerender() {
       font-weight: 600;
       flex-wrap: wrap;
     }
-    #root header nav a {
+    .akira-prerender-shell header nav a {
       color: #94A3B8 !important;
       text-decoration: none !important;
       padding: 6px 12px;
       border-radius: 6px;
       transition: color 0.15s, background 0.15s;
     }
-    #root header nav a:hover {
+    .akira-prerender-shell header nav a:hover {
       color: #FFFFFF !important;
       background: rgba(255, 255, 255, 0.08);
     }
-    #root header nav a[href="/contact"] {
+    .akira-prerender-shell header nav a[href="/contact"] {
       background: #0055A5 !important;
       color: #FFFFFF !important;
       font-weight: 700 !important;
     }
-    #root main {
+    .akira-prerender-shell main {
       flex: 1;
       width: 100%;
       max-width: 1380px;
@@ -587,7 +588,7 @@ async function runPrerender() {
       padding: 36px 20px 60px;
       box-sizing: border-box;
     }
-    #root nav[aria-label="Breadcrumb"] {
+    .akira-prerender-shell nav[aria-label="Breadcrumb"] {
       font-size: 12px;
       font-weight: 500;
       color: #94A3B8;
@@ -597,15 +598,15 @@ async function runPrerender() {
       gap: 8px;
       flex-wrap: wrap;
     }
-    #root nav[aria-label="Breadcrumb"] a {
+    .akira-prerender-shell nav[aria-label="Breadcrumb"] a {
       color: #38BDF8 !important;
       text-decoration: none !important;
     }
-    #root nav[aria-label="Breadcrumb"] span {
+    .akira-prerender-shell nav[aria-label="Breadcrumb"] span {
       color: #E2E8F0;
       font-weight: 600;
     }
-    #root h1 {
+    .akira-prerender-shell h1 {
       font-size: clamp(24px, 4vw, 42px);
       font-weight: 800;
       color: #FFFFFF !important;
@@ -613,31 +614,31 @@ async function runPrerender() {
       margin: 0 0 16px;
       letter-spacing: -0.02em;
     }
-    #root h2 {
+    .akira-prerender-shell h2 {
       font-size: clamp(18px, 2.5vw, 24px);
       font-weight: 700;
       color: #38BDF8 !important;
       margin: 32px 0 12px;
       letter-spacing: -0.01em;
     }
-    #root h3 {
+    .akira-prerender-shell h3 {
       font-size: 16px;
       font-weight: 700;
       color: #F1F5F9 !important;
       margin: 20px 0 8px;
     }
-    #root p {
+    .akira-prerender-shell p {
       font-size: 14px;
       line-height: 1.65;
       color: #CBD5E1 !important;
       margin: 0 0 16px;
       max-width: 820px;
     }
-    #root a {
+    .akira-prerender-shell a {
       color: #38BDF8 !important;
       text-decoration: underline;
     }
-    #root ul {
+    .akira-prerender-shell ul {
       padding-left: 20px;
       margin: 0 0 20px;
       color: #CBD5E1;
@@ -645,7 +646,7 @@ async function runPrerender() {
       font-size: 14px;
       max-width: 820px;
     }
-    #root table {
+    .akira-prerender-shell table {
       width: 100%;
       max-width: 860px;
       border-collapse: collapse;
@@ -656,18 +657,18 @@ async function runPrerender() {
       border-radius: 8px;
       overflow: hidden;
     }
-    #root th, #root td {
+    .akira-prerender-shell th, .akira-prerender-shell td {
       padding: 10px 14px;
       border: 1px solid rgba(51, 65, 85, 0.6);
       text-align: left;
       color: #E2E8F0;
     }
-    #root th {
+    .akira-prerender-shell th {
       background: rgba(30, 41, 59, 0.8);
       color: #FFFFFF;
       font-weight: 700;
     }
-    #root .tldr {
+    .akira-prerender-shell .tldr {
       background: rgba(15, 23, 42, 0.8);
       border-left: 4px solid #0055A5;
       padding: 12px 16px;
@@ -676,7 +677,7 @@ async function runPrerender() {
       font-size: 13px;
       color: #E2E8F0;
     }
-    #root .telemetry-dock {
+    .akira-prerender-shell .telemetry-dock {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 12px;
@@ -686,17 +687,17 @@ async function runPrerender() {
       padding: 14px 18px;
       margin: 20px 0;
     }
-    #root .telemetry-dock p {
+    .akira-prerender-shell .telemetry-dock p {
       margin: 0;
       font-size: 13px;
     }
-    #root dl dt {
+    .akira-prerender-shell dl dt {
       color: #38BDF8;
       font-size: 14px;
       font-weight: 700;
       margin-top: 14px;
     }
-    #root dl dd {
+    .akira-prerender-shell dl dd {
       color: #CBD5E1;
       font-size: 13px;
       line-height: 1.6;
@@ -705,19 +706,19 @@ async function runPrerender() {
       margin-bottom: 14px;
     }
     @media (max-width: 768px) {
-      #root header {
+      .akira-prerender-shell header {
         flex-direction: column;
         gap: 12px;
         align-items: flex-start;
       }
-      #root header nav {
+      .akira-prerender-shell header nav {
         gap: 8px;
         font-size: 12px;
       }
-      #root header nav a {
+      .akira-prerender-shell header nav a {
         padding: 4px 8px;
       }
-      #root main {
+      .akira-prerender-shell main {
         padding: 24px 16px 40px;
       }
     }
@@ -759,7 +760,7 @@ async function runPrerender() {
 
     result = result.replace(
       '<div id="root"></div>',
-      `<div id="root">${styledDom}</div>`
+      `<div id="root"><div class="akira-prerender-shell">${styledDom}</div></div>`
     );
 
     return result;
