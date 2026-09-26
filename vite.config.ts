@@ -16,6 +16,14 @@ export default defineConfig({
   },
   build: {
     chunkSizeWarningLimit: 600,
+    modulePreload: {
+      resolveDependencies(filename, deps, { hostType }) {
+        if (hostType === 'html') {
+          return deps.filter(dep => !dep.includes('vendor-supabase'));
+        }
+        return deps;
+      },
+    },
     rollupOptions: {
       output: {
         manualChunks(id) {

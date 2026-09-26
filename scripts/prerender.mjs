@@ -527,14 +527,239 @@ async function runPrerender() {
     }
     const jsonLdScript = `<script type="application/ld+json" id="structured-data-jsonld">${jsonLdContent}</script>`;
 
-    // Insert JSON-LD before </head>
-    result = result.replace('</head>', `  ${jsonLdScript}\n  </head>`);
+    // Critical FOUC guard CSS to ensure pre-rendered HTML renders instantly with high fidelity before JS hydration
+    const criticalFoucGuardStyles = `  <style id="akira-critical-fouc-guard">
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: #0B1F33 !important;
+      color: #F8FAFC !important;
+      font-family: 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    #root {
+      min-height: 100vh;
+      background-color: #0B1F33;
+      color: #F8FAFC;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+    #root header {
+      background: #06111C;
+      border-bottom: 1px solid rgba(51, 65, 85, 0.6);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    #root header nav {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      flex-wrap: wrap;
+    }
+    #root header nav a {
+      color: #94A3B8 !important;
+      text-decoration: none !important;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: color 0.15s, background 0.15s;
+    }
+    #root header nav a:hover {
+      color: #FFFFFF !important;
+      background: rgba(255, 255, 255, 0.08);
+    }
+    #root header nav a[href="/contact"] {
+      background: #0055A5 !important;
+      color: #FFFFFF !important;
+      font-weight: 700 !important;
+    }
+    #root main {
+      flex: 1;
+      width: 100%;
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 36px 20px 60px;
+      box-sizing: border-box;
+    }
+    #root nav[aria-label="Breadcrumb"] {
+      font-size: 12px;
+      font-weight: 500;
+      color: #94A3B8;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    #root nav[aria-label="Breadcrumb"] a {
+      color: #38BDF8 !important;
+      text-decoration: none !important;
+    }
+    #root nav[aria-label="Breadcrumb"] span {
+      color: #E2E8F0;
+      font-weight: 600;
+    }
+    #root h1 {
+      font-size: clamp(24px, 4vw, 42px);
+      font-weight: 800;
+      color: #FFFFFF !important;
+      line-height: 1.18;
+      margin: 0 0 16px;
+      letter-spacing: -0.02em;
+    }
+    #root h2 {
+      font-size: clamp(18px, 2.5vw, 24px);
+      font-weight: 700;
+      color: #38BDF8 !important;
+      margin: 32px 0 12px;
+      letter-spacing: -0.01em;
+    }
+    #root h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #F1F5F9 !important;
+      margin: 20px 0 8px;
+    }
+    #root p {
+      font-size: 14px;
+      line-height: 1.65;
+      color: #CBD5E1 !important;
+      margin: 0 0 16px;
+      max-width: 820px;
+    }
+    #root a {
+      color: #38BDF8 !important;
+      text-decoration: underline;
+    }
+    #root ul {
+      padding-left: 20px;
+      margin: 0 0 20px;
+      color: #CBD5E1;
+      line-height: 1.7;
+      font-size: 14px;
+      max-width: 820px;
+    }
+    #root table {
+      width: 100%;
+      max-width: 860px;
+      border-collapse: collapse;
+      margin: 20px 0 28px;
+      font-size: 13px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(51, 65, 85, 0.8);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    #root th, #root td {
+      padding: 10px 14px;
+      border: 1px solid rgba(51, 65, 85, 0.6);
+      text-align: left;
+      color: #E2E8F0;
+    }
+    #root th {
+      background: rgba(30, 41, 59, 0.8);
+      color: #FFFFFF;
+      font-weight: 700;
+    }
+    #root .tldr {
+      background: rgba(15, 23, 42, 0.8);
+      border-left: 4px solid #0055A5;
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin: 16px 0 24px;
+      font-size: 13px;
+      color: #E2E8F0;
+    }
+    #root .telemetry-dock {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(51, 65, 85, 0.8);
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 20px 0;
+    }
+    #root .telemetry-dock p {
+      margin: 0;
+      font-size: 13px;
+    }
+    #root dl dt {
+      color: #38BDF8;
+      font-size: 14px;
+      font-weight: 700;
+      margin-top: 14px;
+    }
+    #root dl dd {
+      color: #CBD5E1;
+      font-size: 13px;
+      line-height: 1.6;
+      margin-left: 0;
+      margin-top: 4px;
+      margin-bottom: 14px;
+    }
+    @media (max-width: 768px) {
+      #root header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+      }
+      #root header nav {
+        gap: 8px;
+        font-size: 12px;
+      }
+      #root header nav a {
+        padding: 4px 8px;
+      }
+      #root main {
+        padding: 24px 16px 40px;
+      }
+    }
+  </style>`;
+
+    // Insert critical styles and JSON-LD before </head>
+    result = result.replace('</head>', `  ${criticalFoucGuardStyles}\n  ${jsonLdScript}\n  </head>`);
 
     // 7. Inject Semantic Pre-Rendered DOM into <div id="root">
-    const preRenderedContent = route.generateBody ? route.generateBody() : '';
+    const rawContent = route.generateBody ? route.generateBody() : '';
+
+    const headerHtml = `
+      <header>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <a href="/" style="text-decoration:none;display:flex;align-items:center;gap:8px;">
+            <span style="color:#38BDF8;font-size:20px;font-weight:900;letter-spacing:-0.02em;">AKIRA</span>
+            <span style="color:#FFFFFF;font-size:12px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">PRECISION AUTOMATION</span>
+          </a>
+        </div>
+        <nav aria-label="Main Navigation">
+          <a href="/">Home</a>
+          <a href="/about">About Us</a>
+          <a href="/solutions">Solutions</a>
+          <a href="/products">Products</a>
+          <a href="/industries">Industries</a>
+          <a href="/services">Services</a>
+          <a href="/why-choose-us">Why Choose Us</a>
+          <a href="/contact">Contact</a>
+        </nav>
+      </header>
+    `;
+
+    let styledDom = rawContent;
+    if (styledDom.includes('<header>')) {
+      styledDom = styledDom.replace(/<header>[\s\S]*?<\/header>/i, headerHtml);
+    } else {
+      styledDom = `${headerHtml}\n${styledDom}`;
+    }
+
     result = result.replace(
       '<div id="root"></div>',
-      `<div id="root">${preRenderedContent}</div>`
+      `<div id="root">${styledDom}</div>`
     );
 
     return result;

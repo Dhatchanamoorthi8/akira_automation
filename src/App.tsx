@@ -2,13 +2,10 @@ import React, { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
-import { EnquiryModal } from './components/common/EnquiryModal';
 import { EnquiryProvider } from './context/EnquiryContext';
-import { ImageViewerModal } from './components/common/ImageViewerModal';
 import { ImageViewerProvider } from './context/ImageViewerContext';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { PageLoader } from './components/common/PageLoader';
-import { AuthProvider } from './auth/AuthProvider';
 import { ProtectedRoute } from './auth/ProtectedRoute';
 
 // Direct import for the primary landing page to maximize first contentful paint
@@ -26,6 +23,11 @@ const Contact = lazy(() => import('./pages/Contact').then(m => ({ default: m.Con
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy').then(m => ({ default: m.PrivacyPolicy })));
 const Terms = lazy(() => import('./pages/Terms').then(m => ({ default: m.Terms })));
 const NotFound = lazy(() => import('./pages/NotFound').then(m => ({ default: m.NotFound })));
+const EnquiryModal = lazy(() => import('./components/common/EnquiryModal').then(m => ({ default: m.EnquiryModal })));
+const ImageViewerModal = lazy(() => import('./components/common/ImageViewerModal').then(m => ({ default: m.ImageViewerModal })));
+
+// Administrative and Staff Portal authentication shell (Lazy-loaded with Supabase)
+const PortalAuthShell = lazy(() => import('./auth/PortalAuthShell').then(m => ({ default: m.PortalAuthShell })));
 
 // Administrative routes
 const AdminLogin = lazy(() => import('./pages/admin/AdminLogin').then(m => ({ default: m.AdminLogin })));
@@ -81,42 +83,43 @@ const AppShell: React.FC = () => {
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/terms" element={<Terms />} />
 
-              {/* Staff Portal Workspace */}
-              <Route
-                path="/staff"
-                element={
-                  <ProtectedRoute allowedRoles={['admin', 'staff', 'sales', 'manager']}>
-                    <StaffWorkspace />
-                  </ProtectedRoute>
-                }
-              />
+              {/* Administrative & Staff Portal Routes (isolated auth chunk) */}
+              <Route element={<PortalAuthShell />}>
+                <Route
+                  path="/staff"
+                  element={
+                    <ProtectedRoute allowedRoles={['admin', 'staff', 'sales', 'manager']}>
+                      <StaffWorkspace />
+                    </ProtectedRoute>
+                  }
+                />
 
-              {/* Admin Portal Routes */}
-              <Route path="/admin/login" element={<AdminLogin />} />
-              <Route
-                path="/admin"
-                element={
-                  <ProtectedRoute allowedRoles={['admin']}>
-                    <AdminLayout />
-                  </ProtectedRoute>
-                }
-              >
-                <Route index element={<Navigate to="/admin/dashboard" replace />} />
-                <Route path="dashboard" element={<AdminDashboard />} />
-                <Route path="enquiries" element={<AdminEnquiries />} />
-                <Route path="enquiries/:id" element={<AdminEnquiryDetail />} />
-                <Route path="followups" element={<AdminFollowups />} />
-                <Route path="followups/:id" element={<AdminFollowupDetail />} />
-                <Route path="users" element={<AdminUsers />} />
-                <Route path="attendance" element={<AdminAttendance />} />
-                <Route path="activity" element={<AdminActivity />} />
-                <Route path="history" element={<Navigate to="/admin/activity" replace />} />
-                <Route path="products" element={<AdminProducts />} />
-                <Route path="product-images" element={<AdminProductImages />} />
-                <Route path="products/new" element={<AdminProductForm />} />
-                <Route path="products/:id/edit" element={<AdminProductForm />} />
-                <Route path="settings/email" element={<AdminEmailSettings />} />
-                <Route path="email-settings" element={<Navigate to="/admin/settings/email" replace />} />
+                <Route path="/admin/login" element={<AdminLogin />} />
+                <Route
+                  path="/admin"
+                  element={
+                    <ProtectedRoute allowedRoles={['admin']}>
+                      <AdminLayout />
+                    </ProtectedRoute>
+                  }
+                >
+                  <Route index element={<Navigate to="/admin/dashboard" replace />} />
+                  <Route path="dashboard" element={<AdminDashboard />} />
+                  <Route path="enquiries" element={<AdminEnquiries />} />
+                  <Route path="enquiries/:id" element={<AdminEnquiryDetail />} />
+                  <Route path="followups" element={<AdminFollowups />} />
+                  <Route path="followups/:id" element={<AdminFollowupDetail />} />
+                  <Route path="users" element={<AdminUsers />} />
+                  <Route path="attendance" element={<AdminAttendance />} />
+                  <Route path="activity" element={<AdminActivity />} />
+                  <Route path="history" element={<Navigate to="/admin/activity" replace />} />
+                  <Route path="products" element={<AdminProducts />} />
+                  <Route path="product-images" element={<AdminProductImages />} />
+                  <Route path="products/new" element={<AdminProductForm />} />
+                  <Route path="products/:id/edit" element={<AdminProductForm />} />
+                  <Route path="settings/email" element={<AdminEmailSettings />} />
+                  <Route path="email-settings" element={<Navigate to="/admin/settings/email" replace />} />
+                </Route>
               </Route>
 
               {/* 404 Fallback Route */}
@@ -128,8 +131,10 @@ const AppShell: React.FC = () => {
       {!isPortalRoute && (
         <>
           <Footer />
-          <EnquiryModal />
-          <ImageViewerModal />
+          <Suspense fallback={null}>
+            <EnquiryModal />
+            <ImageViewerModal />
+          </Suspense>
         </>
       )}
     </div>
@@ -138,16 +143,14 @@ const AppShell: React.FC = () => {
 
 export const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <EnquiryProvider>
-        <ImageViewerProvider>
-          <Router>
-            <ScrollToTop />
-            <AppShell />
-          </Router>
-        </ImageViewerProvider>
-      </EnquiryProvider>
-    </AuthProvider>
+    <EnquiryProvider>
+      <ImageViewerProvider>
+        <Router>
+          <ScrollToTop />
+          <AppShell />
+        </Router>
+      </ImageViewerProvider>
+    </EnquiryProvider>
   );
 };
 

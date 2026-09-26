@@ -10,10 +10,11 @@ import {
 } from 'lucide-react';
 import { Card, Chip } from '@heroui/react';
 import { companyData } from '../../data/company';
-import { EnquiryForm } from '../common/EnquiryForm';
 import { SectionReveal } from '../animation/SectionReveal';
 import { Reveal } from '../animation/Reveal';
 import { useCompanyEmails } from '../../hooks/useCompanyEmails';
+
+const EnquiryForm = React.lazy(() => import('../common/EnquiryForm').then(m => ({ default: m.EnquiryForm })));
 
 interface ContactSectionProps {
   isStandalone?: boolean;
@@ -159,7 +160,9 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ isStandalone = f
                 </Card.Description>
               </Card.Header>
 
-              <EnquiryForm variant="inline" idPrefix="contact-" />
+              <React.Suspense fallback={<div className="h-64 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 text-xs font-mono">Loading form parameters...</div>}>
+                <EnquiryForm variant="inline" idPrefix="contact-" />
+              </React.Suspense>
             </Card>
           </Reveal>
 
