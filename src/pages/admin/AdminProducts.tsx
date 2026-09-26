@@ -23,6 +23,7 @@ import {
 import { ProductWithImages, ProductFilters } from '../../types/database';
 import { productService } from '../../services/productService';
 import { formatDateTimeDDMMYYYY } from '../../utils/date';
+import { Button, Chip, Card, Table, Modal, Input, Checkbox } from '@heroui/react';
 import { AdminTableSkeleton } from '../../components/admin/AdminSkeleton';
 import { AdminErrorState } from '../../components/admin/AdminErrorState';
 import { SEOHead } from '../../components/layout/SEOHead';
@@ -354,9 +355,14 @@ export const AdminProducts: React.FC = () => {
               <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
                 Product Catalogue
               </h1>
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-sky-100 text-industrial-primary border border-sky-200">
-                {totalCount} Total
-              </span>
+              <Chip
+                variant="soft"
+                color="accent"
+                size="sm"
+                className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-sky-100 text-industrial-primary border border-sky-200"
+              >
+                <Chip.Label>{totalCount} Total</Chip.Label>
+              </Chip>
             </div>
             <p className="text-xs text-gray-500 mt-0.5">
               Manage precision instruments, technical specifications, and factory photography.
@@ -366,9 +372,11 @@ export const AdminProducts: React.FC = () => {
           <div className="flex items-center gap-2">
             {/* Customize Columns Dropdown with LocalStorage */}
             <div className="relative column-customizer-container">
-              <button
-                type="button"
-                onClick={(e) => {
+              <Button
+                variant={isColumnMenuOpen ? "primary" : "outline"}
+                size="sm"
+                onPress={() => setIsColumnMenuOpen(!isColumnMenuOpen)}
+                onClick={(e: any) => {
                   e.stopPropagation();
                   setIsColumnMenuOpen(!isColumnMenuOpen);
                 }}
@@ -377,12 +385,11 @@ export const AdminProducts: React.FC = () => {
                     ? 'bg-gray-900 text-white border-gray-900'
                     : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
                 }`}
-                title="Customize visible columns"
                 aria-label="Customize visible columns"
               >
                 <SlidersHorizontal className="w-3.5 h-3.5" />
                 <span>Customize Columns</span>
-              </button>
+              </Button>
 
               {isColumnMenuOpen && (
                 <div className="absolute right-0 mt-1.5 w-72 bg-white rounded-xl shadow-xl border border-gray-200 py-2 z-40 text-xs animate-in fade-in zoom-in-95 duration-150">
@@ -391,13 +398,15 @@ export const AdminProducts: React.FC = () => {
                       <span className="font-semibold text-gray-800 block">Display & Order</span>
                       <span className="text-[10px] text-gray-400">Drag or use arrows to reorder</span>
                     </div>
-                    <button
-                      type="button"
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onPress={resetColumns}
                       onClick={resetColumns}
-                      className="text-[11px] text-blue-600 hover:underline font-medium"
+                      className="text-[11px] text-blue-600 hover:underline font-medium p-0 h-auto cursor-pointer"
                     >
                       Reset All
-                    </button>
+                    </Button>
                   </div>
 
                   <div className="p-2 space-y-1 max-h-80 overflow-y-auto">
@@ -416,50 +425,58 @@ export const AdminProducts: React.FC = () => {
                       >
                         <div className="flex items-center gap-2 min-w-0">
                           <GripVertical className="w-3.5 h-3.5 text-gray-400 shrink-0 cursor-grab" />
-                          <label className="flex items-center gap-2 cursor-pointer select-none truncate">
-                            <input
-                              type="checkbox"
-                              checked={col.visible}
+                          <div className="flex items-center gap-2 select-none truncate">
+                            <Checkbox
+                              isSelected={col.visible}
                               onChange={() => toggleColumn(col.key)}
-                              className="w-3.5 h-3.5 rounded border-gray-300 text-gray-900 focus:ring-0 focus:ring-offset-0 cursor-pointer shrink-0"
-                            />
+                              aria-label={col.label}
+                            >
+                              <Checkbox.Control>
+                                <Checkbox.Indicator />
+                              </Checkbox.Control>
+                            </Checkbox>
                             <span
-                              className={`text-xs font-medium truncate ${
+                              onClick={() => toggleColumn(col.key)}
+                              className={`text-xs font-medium truncate cursor-pointer ${
                                 col.visible ? 'text-gray-900' : 'text-gray-400 line-through'
                               }`}
                             >
                               {col.label}
                             </span>
-                          </label>
+                          </div>
                         </div>
 
                         <div className="flex items-center gap-0.5 shrink-0">
-                          <button
-                            type="button"
-                            disabled={idx === 0}
-                            onClick={(e) => {
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            isIconOnly
+                            isDisabled={idx === 0}
+                            onPress={() => moveColumn(idx, idx - 1)}
+                            onClick={(e: any) => {
                               e.stopPropagation();
                               moveColumn(idx, idx - 1);
                             }}
-                            className="p-1 rounded text-gray-400 hover:text-gray-700 disabled:opacity-25 hover:bg-gray-100 transition-colors"
-                            title="Move column up"
+                            className="p-1 rounded text-gray-400 hover:text-gray-700 disabled:opacity-25 hover:bg-gray-100 transition-colors h-6 w-6 min-w-6 cursor-pointer"
                             aria-label={`Move ${col.label} column up`}
                           >
                             <ArrowUp className="w-3 h-3" />
-                          </button>
-                          <button
-                            type="button"
-                            disabled={idx === columns.length - 1}
-                            onClick={(e) => {
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            isIconOnly
+                            isDisabled={idx === columns.length - 1}
+                            onPress={() => moveColumn(idx, idx + 1)}
+                            onClick={(e: any) => {
                               e.stopPropagation();
                               moveColumn(idx, idx + 1);
                             }}
-                            className="p-1 rounded text-gray-400 hover:text-gray-700 disabled:opacity-25 hover:bg-gray-100 transition-colors"
-                            title="Move column down"
+                            className="p-1 rounded text-gray-400 hover:text-gray-700 disabled:opacity-25 hover:bg-gray-100 transition-colors h-6 w-6 min-w-6 cursor-pointer"
                             aria-label={`Move ${col.label} column down`}
                           >
                             <ArrowDown className="w-3 h-3" />
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     ))}
@@ -473,17 +490,17 @@ export const AdminProducts: React.FC = () => {
               )}
             </div>
 
-            <button
-              type="button"
-              onClick={fetchProducts}
-              disabled={isLoading}
-              className="p-2 rounded-lg bg-white border border-gray-200 text-gray-600 hover:text-gray-900 hover:bg-gray-50 shadow-2xs transition-colors flex items-center gap-1.5 text-xs font-medium"
-              title="Refresh product list"
+            <Button
+              variant="outline"
+              size="sm"
+              onPress={fetchProducts}
+              isDisabled={isLoading}
+              className="p-2 rounded-lg bg-white border border-gray-200 text-gray-600 hover:text-gray-900 hover:bg-gray-50 shadow-2xs transition-colors flex items-center gap-1.5 text-xs font-medium cursor-pointer"
               aria-label="Refresh product list"
             >
               <RotateCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-blue-600' : ''}`} />
               <span>Refresh</span>
-            </button>
+            </Button>
 
             <Link
               to="/admin/products/new"
@@ -501,14 +518,15 @@ export const AdminProducts: React.FC = () => {
             const isSelected = selectedFilter === opt.key;
 
             return (
-              <button
+              <Button
                 key={opt.key}
-                type="button"
-                onClick={() => {
+                variant={isSelected ? 'primary' : 'outline'}
+                size="sm"
+                onPress={() => {
                   setSelectedFilter(opt.key);
                   setCurrentPage(1);
                 }}
-                className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all shadow-2xs whitespace-nowrap shrink-0 ${
+                className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all shadow-2xs whitespace-nowrap shrink-0 cursor-pointer ${
                   isSelected
                     ? 'bg-gray-900 text-white border border-gray-900 shadow-sm'
                     : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 hover:border-gray-300'
@@ -522,15 +540,15 @@ export const AdminProducts: React.FC = () => {
                 >
                   {opt.count}
                 </span>
-              </button>
+              </Button>
             );
           })}
         </div>
 
         {/* Search Bar */}
         <div className="relative">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-          <input
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none z-10" />
+          <Input
             type="text"
             value={search}
             onChange={(e) => {
@@ -538,20 +556,26 @@ export const AdminProducts: React.FC = () => {
               setCurrentPage(1);
             }}
             placeholder="Search by product name, category, or slug..."
-            className="w-full pl-10 pr-9 py-2 text-xs bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 placeholder:text-gray-400 shadow-2xs transition-all"
+            className="w-full pl-10 pr-9 py-2 text-xs bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 placeholder:text-gray-400 shadow-2xs transition-all font-sans"
           />
           {search && (
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              size="sm"
+              isIconOnly
+              onPress={() => {
+                setSearch('');
+                setCurrentPage(1);
+              }}
               onClick={() => {
                 setSearch('');
                 setCurrentPage(1);
               }}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-0.5"
-              title="Clear search"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-0.5 h-6 w-6 min-w-6 cursor-pointer"
+              aria-label="Clear search"
             >
               <X className="w-3.5 h-3.5" />
-            </button>
+            </Button>
           )}
         </div>
 
@@ -586,28 +610,32 @@ export const AdminProducts: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className="bg-white rounded-2xl border border-gray-200/90 shadow-2xs overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse min-w-[980px]">
-                {/* Table Header */}
-                <thead>
-                  <tr className="border-b border-gray-100 bg-gray-50/40 text-[12px] font-medium text-gray-500">
-                    <th className="py-3.5 pl-5 pr-3 w-10">
-                      <input
-                        type="checkbox"
-                        checked={
+          <Card className="bg-white rounded-2xl border border-gray-200/90 shadow-2xs overflow-hidden p-0">
+            <Table className="w-full">
+              <Table.ScrollContainer className="overflow-x-auto">
+                <Table.Content aria-label="Product Catalogue Table" className="w-full text-left border-collapse min-w-[980px]">
+                  {/* Table Header */}
+                  <Table.Header className="border-b border-gray-100 bg-gray-50/40 text-[12px] font-medium text-gray-500">
+                    <Table.Column className="py-3.5 pl-5 pr-3 w-10">
+                      <Checkbox
+                        slot="selection"
+                        isSelected={
                           paginatedProducts.length > 0 &&
                           selectedRowIds.size === paginatedProducts.length
                         }
                         onChange={toggleSelectAll}
-                        className="w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-0 focus:ring-offset-0 cursor-pointer"
                         aria-label="Select all rows"
-                      />
-                    </th>
+                      >
+                        <Checkbox.Control>
+                          <Checkbox.Indicator />
+                        </Checkbox.Control>
+                      </Checkbox>
+                    </Table.Column>
 
                     {activeColumns.map((col) => (
-                      <th
+                      <Table.Column
                         key={col.key}
+                        isRowHeader={col.key === 'name' || (!activeColumns.some((c) => c.key === 'name') && col.key === activeColumns[0]?.key)}
                         className={`py-3.5 px-4 font-medium whitespace-nowrap ${
                           col.key === 'status' || col.key === 'featured' || col.key === 'images_count'
                             ? 'text-center'
@@ -615,14 +643,13 @@ export const AdminProducts: React.FC = () => {
                         }`}
                       >
                         {col.label}
-                      </th>
+                      </Table.Column>
                     ))}
-                    <th className="py-3.5 px-4 text-right font-medium">Actions</th>
-                  </tr>
-                </thead>
+                    <Table.Column className="py-3.5 px-4 text-right font-medium">Actions</Table.Column>
+                  </Table.Header>
 
-                {/* Table Body */}
-                <tbody className="divide-y divide-gray-100 text-xs">
+                  {/* Table Body */}
+                  <Table.Body className="divide-y divide-gray-100 text-xs">
                   {paginatedProducts.map((prod) => {
                     const isRowSelected = selectedRowIds.has(prod.id);
                     const primaryImg =
@@ -631,7 +658,7 @@ export const AdminProducts: React.FC = () => {
                     const imagesCount = prod.product_images?.length || 0;
 
                     return (
-                      <tr
+                      <Table.Row
                         key={prod.id}
                         onClick={() => setSelectedProduct(prod)}
                         className={`transition-colors cursor-pointer group ${
@@ -639,22 +666,24 @@ export const AdminProducts: React.FC = () => {
                         }`}
                       >
                         {/* Row Checkbox */}
-                        <td className="py-3.5 pl-5 pr-3 w-10" onClick={(e) => toggleSelectRow(prod.id, e)}>
-                          <input
-                            type="checkbox"
-                            checked={isRowSelected}
-                            onChange={() => {}}
-                            className="w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-0 focus:ring-offset-0 cursor-pointer"
+                        <Table.Cell className="py-3.5 pl-5 pr-3 w-10" onClick={(e) => toggleSelectRow(prod.id, e)}>
+                          <Checkbox
+                            slot="selection"
+                            isSelected={isRowSelected}
                             aria-label={`Select ${prod.name}`}
-                          />
-                        </td>
+                          >
+                            <Checkbox.Control>
+                              <Checkbox.Indicator />
+                            </Checkbox.Control>
+                          </Checkbox>
+                        </Table.Cell>
 
                         {/* Dynamic Ordered Columns */}
                         {activeColumns.map((col) => {
                           switch (col.key) {
                             case 'image':
                               return (
-                                <td key={col.key} className="py-3 px-4 w-16">
+                                <Table.Cell key={col.key} className="py-3 px-4 w-16">
                                   <div className="w-12 h-12 rounded-xl border border-gray-200 bg-gray-50 flex items-center justify-center shrink-0 overflow-hidden">
                                     {primaryImg ? (
                                       <img
@@ -670,45 +699,45 @@ export const AdminProducts: React.FC = () => {
                                       <ImageIcon className="w-5 h-5 text-gray-300" />
                                     )}
                                   </div>
-                                </td>
+                                </Table.Cell>
                               );
 
                             case 'name':
                               return (
-                                <td key={col.key} className="py-3.5 px-4 whitespace-nowrap">
+                                <Table.Cell key={col.key} className="py-3.5 px-4 whitespace-nowrap">
                                   <div className="font-semibold text-gray-900 text-sm group-hover:text-blue-600 transition-colors">
                                     {prod.name}
                                   </div>
                                   <div className="text-[11px] font-mono text-gray-400 mt-0.5">
                                     /{prod.slug}
                                   </div>
-                                </td>
+                                </Table.Cell>
                               );
 
                             case 'category':
                               return (
-                                <td key={col.key} className="py-3.5 px-4 whitespace-nowrap">
-                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200">
-                                    {prod.category || 'General'}
-                                  </span>
-                                </td>
+                                <Table.Cell key={col.key} className="py-3.5 px-4 whitespace-nowrap">
+                                  <Chip size="sm" variant="soft" color="default" className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200">
+                                    <Chip.Label>{prod.category || 'General'}</Chip.Label>
+                                  </Chip>
+                                </Table.Cell>
                               );
 
                             case 'status':
                               return (
-                                <td key={col.key} className="py-3.5 px-4 whitespace-nowrap text-center">
-                                  <button
-                                    type="button"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
+                                <Table.Cell key={col.key} className="py-3.5 px-4 whitespace-nowrap text-center">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onPress={() => {
                                       handleToggleActive(prod);
                                     }}
-                                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border transition-all ${
+                                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
                                       prod.active
                                         ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
                                         : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200'
                                     }`}
-                                    title={prod.active ? 'Click to deactivate' : 'Click to activate'}
+                                    aria-label={prod.active ? 'Active - click to deactivate' : 'Inactive - click to activate'}
                                   >
                                     <span
                                       className={`w-1.5 h-1.5 rounded-full ${
@@ -716,29 +745,25 @@ export const AdminProducts: React.FC = () => {
                                       }`}
                                     />
                                     <span>{prod.active ? 'Active' : 'Inactive'}</span>
-                                  </button>
-                                </td>
+                                  </Button>
+                                </Table.Cell>
                               );
 
                             case 'featured':
                               return (
-                                <td key={col.key} className="py-3.5 px-4 whitespace-nowrap text-center">
-                                  <button
-                                    type="button"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
+                                <Table.Cell key={col.key} className="py-3.5 px-4 whitespace-nowrap text-center">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    isIconOnly
+                                    onPress={() => {
                                       handleToggleFeatured(prod);
                                     }}
-                                    className={`p-1.5 rounded-lg transition-colors inline-flex items-center justify-center ${
+                                    className={`p-1.5 rounded-lg transition-colors inline-flex items-center justify-center cursor-pointer ${
                                       prod.featured
                                         ? 'text-amber-500 hover:bg-amber-50'
                                         : 'text-gray-300 hover:text-amber-500 hover:bg-gray-100'
                                     }`}
-                                    title={
-                                      prod.featured
-                                        ? 'Featured on homepage. Click to unfeature.'
-                                        : 'Click to feature on homepage.'
-                                    }
                                     aria-label={prod.featured ? 'Featured on homepage' : 'Not featured'}
                                   >
                                     <Star
@@ -746,13 +771,13 @@ export const AdminProducts: React.FC = () => {
                                         prod.featured ? 'fill-amber-400 text-amber-400' : ''
                                       }`}
                                     />
-                                  </button>
-                                </td>
+                                  </Button>
+                                </Table.Cell>
                               );
 
                             case 'images_count':
                               return (
-                                <td key={col.key} className="py-3.5 px-4 whitespace-nowrap text-center">
+                                <Table.Cell key={col.key} className="py-3.5 px-4 whitespace-nowrap text-center">
                                   <Link
                                     to={`/admin/product-images?productId=${prod.id}`}
                                     onClick={(e) => e.stopPropagation()}
@@ -762,17 +787,17 @@ export const AdminProducts: React.FC = () => {
                                     <ImageIcon className="w-3.5 h-3.5 text-gray-400" />
                                     <span>{imagesCount}</span>
                                   </Link>
-                                </td>
+                                </Table.Cell>
                               );
 
                             case 'updated_at':
                               return (
-                                <td key={col.key} className="py-3.5 px-4 whitespace-nowrap text-gray-500 font-mono text-[11px]">
+                                <Table.Cell key={col.key} className="py-3.5 px-4 whitespace-nowrap text-gray-500 font-mono text-[11px]">
                                   <div className="flex items-center gap-1.5">
                                     <Clock className="w-3 h-3 text-gray-400 shrink-0" />
                                     <span>{formatDateTimeDDMMYYYY(prod.updated_at || prod.created_at)}</span>
                                   </div>
-                                </td>
+                                </Table.Cell>
                               );
 
                             default:
@@ -781,7 +806,7 @@ export const AdminProducts: React.FC = () => {
                         })}
 
                         {/* Actions Column */}
-                        <td className="py-3.5 px-4 text-right whitespace-nowrap space-x-1">
+                        <Table.Cell className="py-3.5 px-4 text-right whitespace-nowrap space-x-1">
                           <a
                             href={`/products/${prod.slug}`}
                             target="_blank"
@@ -804,25 +829,32 @@ export const AdminProducts: React.FC = () => {
                             <Edit className="w-3.5 h-3.5" />
                           </Link>
 
-                          <button
-                            type="button"
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            isIconOnly
+                            onPress={() => {
+                              setDeletingProduct(prod);
+                            }}
                             onClick={(e) => {
                               e.stopPropagation();
                               setDeletingProduct(prod);
                             }}
-                            className="p-1.5 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 inline-flex items-center justify-center transition-colors"
-                            title="Delete product"
+                            className="p-1.5 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 inline-flex items-center justify-center transition-colors cursor-pointer"
                             aria-label="Delete product"
                           >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </td>
-                      </tr>
+                            <span title="Delete product" className="inline-flex items-center justify-center pointer-events-none">
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </span>
+                          </Button>
+                        </Table.Cell>
+                      </Table.Row>
                     );
                   })}
-                </tbody>
-              </table>
-            </div>
+                  </Table.Body>
+                </Table.Content>
+              </Table.ScrollContainer>
+            </Table>
 
             {/* Pagination Footer */}
             <div className="border-t border-gray-100 px-6 py-3.5 flex items-center justify-between text-xs text-gray-500">
@@ -831,63 +863,71 @@ export const AdminProducts: React.FC = () => {
               </div>
 
               <div className="flex items-center gap-1.5">
-                <button
-                  type="button"
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  isIconOnly
+                  isDisabled={currentPage === 1}
+                  onPress={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   className="p-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                   aria-label="Previous page"
                 >
                   <ChevronLeft className="w-3.5 h-3.5" />
-                </button>
+                </Button>
 
                 {Array.from({ length: Math.min(5, totalPages) }, (_, i) => i + 1).map((pageNum) => {
                   const isActive = currentPage === pageNum;
                   return (
-                    <button
+                    <Button
                       key={pageNum}
-                      type="button"
-                      onClick={() => setCurrentPage(pageNum)}
-                      className={`w-7 h-7 rounded-lg text-xs font-semibold flex items-center justify-center transition-colors ${
+                      variant={isActive ? 'primary' : 'ghost'}
+                      size="sm"
+                      isIconOnly
+                      onPress={() => setCurrentPage(pageNum)}
+                      className={`w-7 h-7 rounded-lg text-xs font-semibold flex items-center justify-center transition-colors cursor-pointer ${
                         isActive
                           ? 'bg-gray-900 text-white shadow-2xs'
                           : 'text-gray-600 hover:bg-gray-100'
                       }`}
                     >
                       {pageNum}
-                    </button>
+                    </Button>
                   );
                 })}
 
                 {totalPages > 5 && (
                   <>
                     <span className="px-1 text-gray-400 font-mono">...</span>
-                    <button
-                      type="button"
-                      onClick={() => setCurrentPage(totalPages)}
-                      className={`w-7 h-7 rounded-lg text-xs font-semibold flex items-center justify-center transition-colors ${
+                    <Button
+                      variant={currentPage === totalPages ? 'primary' : 'ghost'}
+                      size="sm"
+                      isIconOnly
+                      onPress={() => setCurrentPage(totalPages)}
+                      className={`w-7 h-7 rounded-lg text-xs font-semibold flex items-center justify-center transition-colors cursor-pointer ${
                         currentPage === totalPages
                           ? 'bg-gray-900 text-white shadow-2xs'
                           : 'text-gray-600 hover:bg-gray-100'
                       }`}
                     >
                       {totalPages}
-                    </button>
+                    </Button>
                   </>
                 )}
 
-                <button
-                  type="button"
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  isIconOnly
+                  isDisabled={currentPage === totalPages}
+                  onPress={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   className="p-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                   aria-label="Next page"
                 >
                   <ChevronRight className="w-3.5 h-3.5" />
-                </button>
+                </Button>
               </div>
             </div>
-          </div>
+          </Card>
         )}
       </div>
 
@@ -904,56 +944,61 @@ export const AdminProducts: React.FC = () => {
         }}
       />
 
-      {/* Delete Confirmation Modal */}
-      {deletingProduct && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-gray-200 space-y-4">
-            <div className="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto">
-              <Trash2 className="w-6 h-6" />
-            </div>
-
-            <div className="text-center space-y-1">
-              <h3 className="text-base font-bold text-gray-900">
-                Delete Product Permanently?
-              </h3>
+      <Modal.Backdrop isOpen={!!deletingProduct} onOpenChange={(open) => { if (!open) { setDeletingProduct(null); setDeleteError(null); } }}>
+        <Modal.Container>
+          <Modal.Dialog className="sm:max-w-md">
+            <Modal.CloseTrigger />
+            <Modal.Header>
+              <Modal.Icon className="bg-rose-50 text-rose-600">
+                <Trash2 className="w-5 h-5" />
+              </Modal.Icon>
+              <Modal.Heading>Delete Product Permanently?</Modal.Heading>
+            </Modal.Header>
+            <Modal.Body>
               <p className="text-xs text-gray-500 leading-relaxed">
                 Are you sure you want to delete{' '}
-                <strong className="text-gray-800 font-semibold">{deletingProduct.name}</strong>?
+                <strong className="text-gray-800 font-semibold">{deletingProduct?.name}</strong>?
                 This action will permanently purge the product, its technical specifications, and all associated photography from Supabase Storage.
               </p>
-            </div>
 
-            {deleteError && (
-              <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 shrink-0" />
-                <span>{deleteError}</span>
-              </div>
-            )}
-
-            <div className="flex items-center gap-3 pt-2">
-              <button
-                type="button"
+              {deleteError && (
+                <div className="mt-3 p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{deleteError}</span>
+                </div>
+              )}
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="secondary"
+                size="md"
+                onPress={() => {
+                  setDeletingProduct(null);
+                  setDeleteError(null);
+                }}
                 onClick={() => {
                   setDeletingProduct(null);
                   setDeleteError(null);
                 }}
-                disabled={isDeleting}
-                className="flex-1 py-2.5 px-4 rounded-xl border border-gray-200 text-xs font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50 min-h-[44px]"
+                isDisabled={isDeleting}
               >
                 Cancel
-              </button>
-              <button
-                type="button"
+              </Button>
+              <Button
+                variant="danger"
+                size="md"
+                onPress={handleConfirmDelete}
                 onClick={handleConfirmDelete}
-                disabled={isDeleting}
-                className="flex-1 py-2.5 px-4 rounded-xl bg-rose-600 text-white text-xs font-semibold hover:bg-rose-700 disabled:opacity-50 min-h-[44px] shadow-sm flex items-center justify-center gap-2"
+                isDisabled={isDeleting}
+                className="gap-2"
               >
-                {isDeleting ? 'Deleting...' : 'Delete Product'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+                {isDeleting && <RotateCw className="w-4 h-4 animate-spin shrink-0" />}
+                <span>{isDeleting ? 'Purging...' : 'Delete Permanently'}</span>
+              </Button>
+            </Modal.Footer>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     </>
   );
 };

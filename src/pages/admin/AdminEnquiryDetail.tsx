@@ -18,7 +18,6 @@ import {
   User,
   ExternalLink,
   FileText,
-  X,
   Loader2,
   Check,
   MessageSquare,
@@ -49,6 +48,7 @@ import { PageLoader } from '../../components/common/PageLoader';
 import { AdminErrorState } from '../../components/admin/AdminErrorState';
 import { SEOHead } from '../../components/layout/SEOHead';
 import { ActivityTimeline } from '../../components/admin/ActivityTimeline';
+import { Button, Modal, Input, TextArea, Select, ListBox, Label, Checkbox } from '@heroui/react';
 
 const STATUS_FLOW: { status: EnquiryStatus; label: string; icon: React.ElementType }[] = [
   { status: 'new', label: 'New RFQ', icon: Inbox },
@@ -380,20 +380,21 @@ export const AdminEnquiryDetail: React.FC = () => {
               </a>
             )}
             {enquiry.email && (
-              <button
-                type="button"
-                onClick={() => {
+              <Button
+                variant="primary"
+                size="sm"
+                onPress={() => {
                   setEmailSubject(`Re: [Akira Precision Automation] ${enquiry.subject || enquiry.specific_product || 'Precision Metrology Inquiry'}`);
                   setEmailMessage('');
                   setEmailFeedback(null);
                   setIsEmailModalOpen(true);
                 }}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-industrial-primary text-white text-xs font-semibold hover:bg-industrial-hover transition-colors shadow-subtle min-h-[38px]"
-                title="Send direct email to customer via Resend"
+                className="bg-industrial-primary text-white text-xs font-semibold hover:bg-industrial-hover shadow-subtle min-h-[38px] gap-1.5 cursor-pointer"
+                aria-label="Send direct email to customer via Resend"
               >
                 <Mail className="w-3.5 h-3.5" />
                 <span>Send Email</span>
-              </button>
+              </Button>
             )}
           </div>
         </div>
@@ -526,29 +527,32 @@ export const AdminEnquiryDetail: React.FC = () => {
                   </h3>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => enquiry?.id && fetchEmailThread(enquiry.id)}
-                    disabled={isLoadingThread}
-                    className="p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded transition-colors"
-                    title="Refresh conversation thread"
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    isIconOnly
+                    onPress={() => enquiry?.id && fetchEmailThread(enquiry.id)}
+                    isDisabled={isLoadingThread}
+                    className="p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded transition-colors h-7 w-7 min-w-7 cursor-pointer"
+                    aria-label="Refresh conversation thread"
                   >
                     <RefreshCw className={`w-3.5 h-3.5 ${isLoadingThread ? 'animate-spin' : ''}`} />
-                  </button>
+                  </Button>
                   {enquiry.email && (
-                    <button
-                      type="button"
-                      onClick={() => {
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onPress={() => {
                         setEmailSubject(`Re: [Akira Precision Automation] ${enquiry.subject || enquiry.specific_product || 'Precision Metrology Inquiry'}`);
                         setEmailMessage('');
                         setEmailFeedback(null);
                         setIsEmailModalOpen(true);
                       }}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-industrial-primary text-white text-[11px] font-semibold hover:bg-industrial-hover transition-colors"
+                      className="gap-1 px-2.5 py-1 bg-industrial-primary text-white text-[11px] font-semibold hover:bg-industrial-hover cursor-pointer"
                     >
                       <Plus className="w-3 h-3" />
                       <span>Reply to Customer</span>
-                    </button>
+                    </Button>
                   )}
                 </div>
               </div>
@@ -566,19 +570,20 @@ export const AdminEnquiryDetail: React.FC = () => {
                     Replies sent to <span className="font-mono text-slate-600">{enquiry.email}</span> will be recorded here with delivery receipts and threading headers.
                   </p>
                   {enquiry.email && (
-                    <button
-                      type="button"
-                      onClick={() => {
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onPress={() => {
                         setEmailSubject(`Re: [Akira Precision Automation] ${enquiry.subject || enquiry.specific_product || 'Precision Metrology Inquiry'}`);
                         setEmailMessage('');
                         setEmailFeedback(null);
                         setIsEmailModalOpen(true);
                       }}
-                      className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-industrial-primary text-white text-xs font-semibold hover:bg-industrial-hover transition-colors shadow-subtle"
+                      className="mt-2 gap-1.5 px-3 py-1.5 bg-industrial-primary text-white text-xs font-semibold hover:bg-industrial-hover shadow-subtle cursor-pointer"
                     >
                       <SendHorizontal className="w-3.5 h-3.5" />
                       <span>Send First Response</span>
-                    </button>
+                    </Button>
                   )}
                 </div>
               ) : (
@@ -646,19 +651,20 @@ export const AdminEnquiryDetail: React.FC = () => {
                           </div>
 
                           {!isOutbound && (
-                            <button
-                              type="button"
-                              onClick={() => {
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onPress={() => {
                                 setEmailSubject(msg.subject.startsWith('Re:') ? msg.subject : `Re: ${msg.subject}`);
                                 setEmailMessage('');
                                 setEmailFeedback(null);
                                 setIsEmailModalOpen(true);
                               }}
-                              className="inline-flex items-center gap-1 text-industrial-primary hover:underline font-semibold text-xs"
+                              className="gap-1 text-industrial-primary hover:underline font-semibold text-xs p-0 h-auto cursor-pointer"
                             >
                               <CornerDownRight className="w-3 h-3" />
                               <span>Reply</span>
-                            </button>
+                            </Button>
                           )}
                         </div>
                       </div>
@@ -781,12 +787,13 @@ export const AdminEnquiryDetail: React.FC = () => {
                   const isCurrent = enquiry.status === item.status;
 
                   return (
-                    <button
+                    <Button
                       key={item.status}
-                      type="button"
-                      onClick={() => handleStatusChange(item.status)}
-                      disabled={isUpdatingStatus}
-                      className={`w-full p-2.5 rounded-lg text-xs font-semibold flex items-center justify-between transition-all min-h-[40px] border ${
+                      variant={isCurrent ? "primary" : "outline"}
+                      size="sm"
+                      onPress={() => handleStatusChange(item.status)}
+                      isDisabled={isUpdatingStatus}
+                      className={`w-full p-2.5 rounded-lg text-xs font-semibold flex items-center justify-between transition-all min-h-[40px] border cursor-pointer ${
                         isCurrent
                           ? 'bg-industrial-primary text-white border-industrial-primary shadow-subtle'
                           : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
@@ -797,7 +804,7 @@ export const AdminEnquiryDetail: React.FC = () => {
                         <span>{item.label}</span>
                       </div>
                       {isCurrent && <Check className="w-3.5 h-3.5 text-white" />}
-                    </button>
+                    </Button>
                   );
                 })}
               </div>
@@ -810,42 +817,64 @@ export const AdminEnquiryDetail: React.FC = () => {
                 <span>Assigned Staff Member</span>
               </h3>
 
-              <select
+              <Select
                 value={enquiry.assigned_to || 'unassigned'}
-                onChange={(e) => handleAssigneeChange(e.target.value)}
-                disabled={isAssigning}
-                className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-industrial-primary/20 focus:border-industrial-primary bg-white text-slate-700 font-medium"
+                onChange={(val) => handleAssigneeChange((val as string) || 'unassigned')}
+                isDisabled={isAssigning}
+                className="w-full"
                 aria-label="Assign staff member"
               >
-                <option value="unassigned">Unassigned Inbound Lead</option>
-                {staffList.map((staff) => {
-                  let badge = '🔴 [Not Reported]';
-                  let timeInfo = '';
-                  if (staff.role === 'admin') {
-                    badge = '👑 [Admin]';
-                  } else if (staff.attendanceStatus === 'present') {
-                    badge = '🟢 [Present]';
-                    if (staff.todayAttendance?.clock_in_at) {
-                      timeInfo = ` • In: ${new Date(staff.todayAttendance.clock_in_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-                    }
-                  } else if (staff.attendanceStatus === 'on_field') {
-                    badge = '🟡 [On Field]';
-                    if (staff.todayAttendance?.clock_in_at) {
-                      timeInfo = ` • In: ${new Date(staff.todayAttendance.clock_in_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-                    }
-                  } else if (staff.attendanceStatus === 'clocked_out') {
-                    badge = '⚪ [Clocked Out]';
-                    if (staff.todayAttendance?.clock_out_at) {
-                      timeInfo = ` • Left: ${new Date(staff.todayAttendance.clock_out_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-                    }
-                  }
-                  return (
-                    <option key={staff.id} value={staff.id}>
-                      {badge} {staff.full_name || staff.email} ({staff.role}){timeInfo}
-                    </option>
-                  );
-                })}
-              </select>
+                <Select.Trigger className="w-full h-9 px-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 bg-white text-slate-700 font-medium flex items-center justify-between cursor-pointer shadow-2xs">
+                  <Select.Value className="text-xs font-medium text-slate-700 truncate" />
+                  <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
+                </Select.Trigger>
+                <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[280px] max-h-60 overflow-y-auto">
+                  <ListBox className="outline-none space-y-0.5">
+                    <ListBox.Item
+                      id="unassigned"
+                      textValue="Unassigned Inbound Lead"
+                      className="px-2.5 py-1.5 text-xs rounded-lg text-slate-500 italic hover:bg-slate-100 cursor-pointer outline-none"
+                    >
+                      Unassigned Inbound Lead
+                      <ListBox.ItemIndicator />
+                    </ListBox.Item>
+                    {staffList.map((staff) => {
+                      let badge = '🔴 [Not Reported]';
+                      let timeInfo = '';
+                      if (staff.role === 'admin') {
+                        badge = '👑 [Admin]';
+                      } else if (staff.attendanceStatus === 'present') {
+                        badge = '🟢 [Present]';
+                        if (staff.todayAttendance?.clock_in_at) {
+                          timeInfo = ` • In: ${new Date(staff.todayAttendance.clock_in_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+                        }
+                      } else if (staff.attendanceStatus === 'on_field') {
+                        badge = '🟡 [On Field]';
+                        if (staff.todayAttendance?.clock_in_at) {
+                          timeInfo = ` • In: ${new Date(staff.todayAttendance.clock_in_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+                        }
+                      } else if (staff.attendanceStatus === 'clocked_out') {
+                        badge = '⚪ [Clocked Out]';
+                        if (staff.todayAttendance?.clock_out_at) {
+                          timeInfo = ` • Left: ${new Date(staff.todayAttendance.clock_out_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+                        }
+                      }
+                      const label = `${badge} ${staff.full_name || staff.email} (${staff.role})${timeInfo}`;
+                      return (
+                        <ListBox.Item
+                          key={staff.id}
+                          id={staff.id}
+                          textValue={label}
+                          className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-sky-50 data-[selected=true]:text-sky-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                        >
+                          {label}
+                          <ListBox.ItemIndicator />
+                        </ListBox.Item>
+                      );
+                    })}
+                  </ListBox>
+                </Select.Popover>
+              </Select>
 
               {/* Real-time Staff Presence Status Indicator (only for operational staff, not admin) */}
               {(() => {
@@ -898,14 +927,15 @@ export const AdminEnquiryDetail: React.FC = () => {
                   <CalendarClock className="w-3.5 h-3.5 text-industrial-primary" />
                   <span>Scheduled Follow-ups</span>
                 </h3>
-                <button
-                  type="button"
-                  onClick={() => setIsFollowupModalOpen(true)}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold bg-industrial-primary text-white hover:bg-industrial-hover transition-colors shadow-subtle"
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onPress={() => setIsFollowupModalOpen(true)}
+                  className="gap-1 px-2.5 py-1 text-xs font-semibold bg-industrial-primary text-white hover:bg-industrial-hover shadow-subtle cursor-pointer"
                 >
                   <Plus className="w-3 h-3" />
                   <span>Schedule</span>
-                </button>
+                </Button>
               </div>
 
               {enquiry.followups && enquiry.followups.length > 0 ? (
@@ -986,24 +1016,26 @@ export const AdminEnquiryDetail: React.FC = () => {
 
                         {f.status !== 'completed' && f.status !== 'cancelled' && (
                           <div className="flex items-center gap-2 pt-1 border-t border-slate-100">
-                            <button
-                              type="button"
-                              onClick={() => {
+                            <Button
+                              variant="primary"
+                              size="sm"
+                              onPress={() => {
                                 setCompletingFollowup(f);
                                 setCompletionOutcome('');
                                 setScheduleNext(false);
                               }}
-                              className="flex-1 py-1 px-2.5 rounded bg-industrial-primary text-white text-[11px] font-semibold hover:bg-industrial-hover transition-colors"
+                              className="flex-1 py-1 px-2.5 bg-industrial-primary text-white text-[11px] font-semibold hover:bg-industrial-hover cursor-pointer"
                             >
                               Mark Complete
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleCancelFollowup(f.id)}
-                              className="py-1 px-2 rounded text-slate-400 hover:text-rose-600 text-[11px] transition-colors"
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onPress={() => handleCancelFollowup(f.id)}
+                              className="py-1 px-2 text-slate-400 hover:text-rose-600 text-[11px] cursor-pointer"
                             >
                               Cancel
-                            </button>
+                            </Button>
                           </div>
                         )}
                       </div>
@@ -1021,388 +1053,444 @@ export const AdminEnquiryDetail: React.FC = () => {
         </div>
 
         {/* Schedule Follow-up Modal */}
-        {isFollowupModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-industrial-dark/60 backdrop-blur-sm animate-in fade-in">
-            <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
-              <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                <h3 className="text-base font-bold text-industrial-dark">Schedule Customer Follow-up</h3>
-                <button
-                  type="button"
+        <Modal.Backdrop isOpen={isFollowupModalOpen} onOpenChange={setIsFollowupModalOpen}>
+          <Modal.Container>
+            <Modal.Dialog className="sm:max-w-md">
+              <Modal.CloseTrigger />
+              <Modal.Header>
+                <Modal.Heading>Schedule Customer Follow-up</Modal.Heading>
+              </Modal.Header>
+              <Modal.Body>
+                {followupError && (
+                  <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2 mb-3">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    <span>{followupError}</span>
+                  </div>
+                )}
+
+                <form onSubmit={handleScheduleFollowup} id="schedule-followup-form" className="space-y-4 text-xs">
+                  <div>
+                    <Label className="block font-semibold text-slate-700 mb-1 text-xs">Follow-up Title</Label>
+                    <Input
+                      type="text"
+                      required
+                      value={followupTitle}
+                      onChange={(e) => setFollowupTitle(e.target.value)}
+                      placeholder="e.g. Call to clarify bore diameter and tolerance"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-xs font-sans"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label className="block font-semibold text-slate-700 mb-1 text-xs">Channel</Label>
+                      <Select
+                        value={followupType}
+                        onChange={(val) => setFollowupType((val as FollowupType) || 'call')}
+                        className="w-full"
+                        aria-label="Channel"
+                      >
+                        <Select.Trigger className="w-full h-9 px-3 py-2 text-xs border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 bg-white text-slate-700 flex items-center justify-between cursor-pointer shadow-2xs">
+                          <Select.Value className="text-xs font-medium text-slate-700 capitalize truncate" />
+                          <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
+                        </Select.Trigger>
+                        <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[150px]">
+                          <ListBox className="outline-none space-y-0.5">
+                            {[
+                              { id: 'call', label: 'Telephone Call' },
+                              { id: 'email', label: 'Email Communication' },
+                              { id: 'meeting', label: 'Video or In-Person' },
+                              { id: 'demo', label: 'Product Demonstration' },
+                              { id: 'quotation', label: 'Quotation Review' },
+                              { id: 'other', label: 'Other Action' },
+                            ].map(item => (
+                              <ListBox.Item
+                                key={item.id}
+                                id={item.id}
+                                textValue={item.label}
+                                className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-sky-50 data-[selected=true]:text-sky-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                              >
+                                {item.label}
+                                <ListBox.ItemIndicator />
+                              </ListBox.Item>
+                            ))}
+                          </ListBox>
+                        </Select.Popover>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label className="block font-semibold text-slate-700 mb-1 text-xs">Priority</Label>
+                      <Select
+                        value={followupPriority}
+                        onChange={(val) => setFollowupPriority((val as FollowupPriority) || 'medium')}
+                        className="w-full"
+                        aria-label="Priority"
+                      >
+                        <Select.Trigger className="w-full h-9 px-3 py-2 text-xs border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 bg-white text-slate-700 flex items-center justify-between cursor-pointer shadow-2xs">
+                          <Select.Value className="text-xs font-medium text-slate-700 capitalize truncate" />
+                          <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
+                        </Select.Trigger>
+                        <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[130px]">
+                          <ListBox className="outline-none space-y-0.5">
+                            {[
+                              { id: 'urgent', label: 'Urgent' },
+                              { id: 'high', label: 'High' },
+                              { id: 'medium', label: 'Medium' },
+                              { id: 'low', label: 'Low' },
+                            ].map(item => (
+                              <ListBox.Item
+                                key={item.id}
+                                id={item.id}
+                                textValue={item.label}
+                                className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-sky-50 data-[selected=true]:text-sky-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                              >
+                                {item.label}
+                                <ListBox.ItemIndicator />
+                              </ListBox.Item>
+                            ))}
+                          </ListBox>
+                        </Select.Popover>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label className="block font-semibold text-slate-700 mb-1 text-xs">Scheduled Date</Label>
+                      <Input
+                        type="date"
+                        required
+                        value={followupDate}
+                        onChange={(e) => setFollowupDate(e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 font-mono text-xs"
+                      />
+                    </div>
+                    <div>
+                      <Label className="block font-semibold text-slate-700 mb-1 text-xs">Scheduled Time</Label>
+                      <Input
+                        type="time"
+                        required
+                        value={followupTime}
+                        onChange={(e) => setFollowupTime(e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 font-mono text-xs"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label className="block font-semibold text-slate-700 mb-1 text-xs">Follow-up Brief / Agenda Notes</Label>
+                    <TextArea
+                      rows={3}
+                      value={followupNotes}
+                      onChange={(e) => setFollowupNotes(e.target.value)}
+                      placeholder="e.g. Discuss liner bore tolerances and review CAD drawing with quality manager..."
+                      className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-xs font-sans"
+                    />
+                  </div>
+                </form>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onPress={() => setIsFollowupModalOpen(false)}
                   onClick={() => setIsFollowupModalOpen(false)}
-                  className="p-1 text-slate-400 hover:text-slate-600 rounded"
                 >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              {followupError && (
-                <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 shrink-0" />
-                  <span>{followupError}</span>
-                </div>
-              )}
-
-              <form onSubmit={handleScheduleFollowup} className="space-y-4 text-xs">
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Follow-up Title</label>
-                  <input
-                    type="text"
-                    required
-                    value={followupTitle}
-                    onChange={(e) => setFollowupTitle(e.target.value)}
-                    placeholder="e.g. Call to clarify bore diameter and tolerance"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-industrial-primary"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block font-semibold text-slate-700 mb-1">Channel</label>
-                    <select
-                      value={followupType}
-                      onChange={(e) => setFollowupType(e.target.value as FollowupType)}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-industrial-primary"
-                    >
-                      <option value="call">Telephone Call</option>
-                      <option value="email">Email Communication</option>
-                      <option value="meeting">Video or In-Person</option>
-                      <option value="demo">Product Demonstration</option>
-                      <option value="quotation">Quotation Review</option>
-                      <option value="other">Other Action</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block font-semibold text-slate-700 mb-1">Priority</label>
-                    <select
-                      value={followupPriority}
-                      onChange={(e) => setFollowupPriority(e.target.value as FollowupPriority)}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-industrial-primary"
-                    >
-                      <option value="urgent">Urgent</option>
-                      <option value="high">High</option>
-                      <option value="medium">Medium</option>
-                      <option value="low">Low</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block font-semibold text-slate-700 mb-1">Scheduled Date</label>
-                    <input
-                      type="date"
-                      required
-                      value={followupDate}
-                      onChange={(e) => setFollowupDate(e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-industrial-primary font-mono"
-                    />
-                  </div>
-                  <div>
-                    <label className="block font-semibold text-slate-700 mb-1">Scheduled Time</label>
-                    <input
-                      type="time"
-                      required
-                      value={followupTime}
-                      onChange={(e) => setFollowupTime(e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-industrial-primary font-mono"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Follow-up Brief / Agenda Notes</label>
-                  <textarea
-                    rows={3}
-                    value={followupNotes}
-                    onChange={(e) => setFollowupNotes(e.target.value)}
-                    placeholder="e.g. Discuss liner bore tolerances and review CAD drawing with quality manager..."
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-industrial-primary"
-                  />
-                </div>
-
-                <div className="flex items-center gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setIsFollowupModalOpen(false)}
-                    className="flex-1 py-2.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isSchedulingFollowup}
-                    className="flex-1 py-2.5 rounded-lg bg-industrial-primary text-white font-semibold hover:bg-industrial-hover disabled:opacity-50 flex items-center justify-center gap-1.5 shadow-subtle"
-                  >
-                    {isSchedulingFollowup ? (
-                      <>
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                        <span>Saving...</span>
-                      </>
-                    ) : (
-                      <span>Schedule Follow-up</span>
-                    )}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  form="schedule-followup-form"
+                  variant="primary"
+                  size="sm"
+                  isDisabled={isSchedulingFollowup}
+                  className="bg-industrial-primary hover:bg-industrial-hover text-white gap-1.5"
+                >
+                  {isSchedulingFollowup && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                  <span>{isSchedulingFollowup ? 'Saving...' : 'Schedule Follow-up'}</span>
+                </Button>
+              </Modal.Footer>
+            </Modal.Dialog>
+          </Modal.Container>
+        </Modal.Backdrop>
 
         {/* Complete Follow-up Modal */}
         {completingFollowup && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-industrial-dark/60 backdrop-blur-sm animate-in fade-in">
-            <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
-              <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                <h3 className="text-base font-bold text-industrial-dark">Complete Follow-up Task</h3>
-                <button
-                  type="button"
-                  onClick={() => setCompletingFollowup(null)}
-                  className="p-1 text-slate-400 hover:text-slate-600 rounded"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              <div className="space-y-4 text-xs">
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
-                    Customer Outcome & Feedback <span className="text-rose-500">*</span>
-                  </label>
-                  <textarea
-                    rows={3}
-                    required
-                    value={completionOutcome}
-                    onChange={(e) => setCompletionOutcome(e.target.value)}
-                    placeholder="e.g. Call completed. Client requested formal quote for 4 units of Air Plug Gauge Ø45mm..."
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-industrial-primary"
-                  />
-                </div>
-
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
-                  <label className="flex items-center gap-2 cursor-pointer font-semibold text-slate-800">
-                    <input
-                      type="checkbox"
-                      checked={scheduleNext}
-                      onChange={(e) => setScheduleNext(e.target.checked)}
-                      className="rounded border-slate-300 text-industrial-primary focus:ring-industrial-primary"
-                    />
-                    <span>Schedule next successive follow-up</span>
-                  </label>
-
-                  {scheduleNext && (
-                    <div className="space-y-3 pt-2 border-t border-slate-200 animate-in fade-in">
-                      <div className="grid grid-cols-2 gap-2">
-                        <div>
-                          <label className="block text-[11px] text-slate-500 mb-0.5">Next Channel</label>
-                          <select
-                            value={nextType}
-                            onChange={(e) => setNextType(e.target.value as FollowupType)}
-                            className="w-full px-2 py-1.5 border border-slate-300 rounded text-xs"
-                          >
-                            <option value="call">Call</option>
-                            <option value="email">Email</option>
-                            <option value="quotation">Send Quote</option>
-                            <option value="meeting">Meeting</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label className="block text-[11px] text-slate-500 mb-0.5">Next Date</label>
-                          <input
-                            type="date"
-                            value={nextDate}
-                            onChange={(e) => setNextDate(e.target.value)}
-                            className="w-full px-2 py-1.5 border border-slate-300 rounded text-xs font-mono"
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <label className="block text-[11px] text-slate-500 mb-0.5">Next Notes</label>
-                        <input
-                          type="text"
-                          value={nextNotes}
-                          onChange={(e) => setNextNotes(e.target.value)}
-                          placeholder="e.g. Follow up on received quote..."
-                          className="w-full px-2 py-1.5 border border-slate-300 rounded text-xs"
-                        />
-                      </div>
+          <Modal.Backdrop isOpen={!!completingFollowup} onOpenChange={(open) => { if (!open) setCompletingFollowup(null); }}>
+            <Modal.Container>
+              <Modal.Dialog className="sm:max-w-md">
+                <Modal.CloseTrigger />
+                <Modal.Header>
+                  <Modal.Heading>Complete Follow-up Task</Modal.Heading>
+                </Modal.Header>
+                <Modal.Body>
+                  <div className="space-y-4 text-xs">
+                    <div>
+                      <Label className="block font-semibold text-slate-700 mb-1">
+                        Customer Outcome & Feedback <span className="text-rose-500">*</span>
+                      </Label>
+                      <TextArea
+                        rows={3}
+                        required
+                        value={completionOutcome}
+                        onChange={(e) => setCompletionOutcome(e.target.value)}
+                        placeholder="e.g. Call completed. Client requested formal quote for 4 units of Air Plug Gauge Ø45mm..."
+                        className="w-full text-xs font-sans"
+                      />
                     </div>
-                  )}
-                </div>
 
-                <div className="flex items-center gap-3 pt-2">
-                  <button
-                    type="button"
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+                      <Checkbox
+                        isSelected={scheduleNext}
+                        onChange={(isSelected) => setScheduleNext(isSelected)}
+                        className="font-semibold text-slate-800 text-xs"
+                      >
+                        <Checkbox.Control>
+                          <Checkbox.Indicator />
+                        </Checkbox.Control>
+                        <Checkbox.Content>
+                          <span>Schedule next successive follow-up</span>
+                        </Checkbox.Content>
+                      </Checkbox>
+
+                      {scheduleNext && (
+                        <div className="space-y-3 pt-2 border-t border-slate-200 animate-in fade-in">
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <Label className="block text-[11px] text-slate-500 mb-0.5">Next Channel</Label>
+                              <Select
+                                value={nextType}
+                                onChange={(val) => setNextType((val as FollowupType) || 'call')}
+                                className="w-full"
+                                aria-label="Next Channel"
+                              >
+                                <Select.Trigger className="w-full h-8 px-2 py-1.5 border border-slate-300 rounded-xl text-xs bg-white flex items-center justify-between cursor-pointer">
+                                  <Select.Value className="text-xs font-medium text-slate-700 capitalize truncate" />
+                                  <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
+                                </Select.Trigger>
+                                <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[130px]">
+                                  <ListBox className="outline-none space-y-0.5">
+                                    {[
+                                      { id: 'call', label: 'Call' },
+                                      { id: 'email', label: 'Email' },
+                                      { id: 'quotation', label: 'Send Quote' },
+                                      { id: 'meeting', label: 'Meeting' },
+                                    ].map(item => (
+                                      <ListBox.Item
+                                        key={item.id}
+                                        id={item.id}
+                                        textValue={item.label}
+                                        className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-sky-50 data-[selected=true]:text-sky-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                                      >
+                                        {item.label}
+                                        <ListBox.ItemIndicator />
+                                      </ListBox.Item>
+                                    ))}
+                                  </ListBox>
+                                </Select.Popover>
+                              </Select>
+                            </div>
+                            <div>
+                              <Label className="block text-[11px] text-slate-500 mb-0.5">Next Date</Label>
+                              <Input
+                                type="date"
+                                value={nextDate}
+                                onChange={(e) => setNextDate(e.target.value)}
+                                className="w-full px-2 py-1.5 border border-slate-300 rounded-xl text-xs font-mono"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <Label className="block text-[11px] text-slate-500 mb-0.5">Next Notes</Label>
+                            <Input
+                              type="text"
+                              value={nextNotes}
+                              onChange={(e) => setNextNotes(e.target.value)}
+                              placeholder="e.g. Follow up on received quote..."
+                              className="w-full px-2 py-1.5 border border-slate-300 rounded-xl text-xs font-sans"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onPress={() => setCompletingFollowup(null)}
                     onClick={() => setCompletingFollowup(null)}
-                    className="flex-1 py-2.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold"
                   >
                     Cancel
-                  </button>
-                  <button
-                    type="button"
+                  </Button>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    isDisabled={isSubmittingCompletion}
+                    onPress={handleConfirmCompletion}
                     onClick={handleConfirmCompletion}
-                    disabled={isSubmittingCompletion}
-                    className="flex-1 py-2.5 rounded-lg bg-emerald-600 text-white font-semibold hover:bg-emerald-700 disabled:opacity-50 flex items-center justify-center gap-1.5 shadow-subtle"
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5"
                   >
-                    {isSubmittingCompletion ? (
-                      <>
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                        <span>Completing...</span>
-                      </>
-                    ) : (
-                      <span>Save & Complete</span>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+                    {isSubmittingCompletion && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                    <span>{isSubmittingCompletion ? 'Completing...' : 'Save & Complete'}</span>
+                  </Button>
+                </Modal.Footer>
+              </Modal.Dialog>
+            </Modal.Container>
+          </Modal.Backdrop>
         )}
 
         {/* Modal: Send Email to Customer */}
         {isEmailModalOpen && enquiry && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-industrial-dark/60 backdrop-blur-sm animate-in fade-in">
-            <div className="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-sky-100 text-industrial-primary flex items-center justify-center">
-                    <SendHorizontal className="w-4 h-4" />
+          <Modal.Backdrop isOpen={isEmailModalOpen} onOpenChange={setIsEmailModalOpen}>
+            <Modal.Container size="lg">
+              <Modal.Dialog className="sm:max-w-xl max-h-[90vh] overflow-y-auto">
+                <Modal.CloseTrigger />
+                <Modal.Header>
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-sky-100 text-industrial-primary flex items-center justify-center">
+                      <SendHorizontal className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <Modal.Heading>Send Email to Customer</Modal.Heading>
+                      <p className="text-[11px] text-slate-400 font-normal">
+                        Dispatched via notifications@akiraautomation.com with server-enforced recipient
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-industrial-dark font-heading">
-                      Send Email to Customer
-                    </h3>
-                    <p className="text-[11px] text-slate-400">
-                      Dispatched via notifications@akiraautomation.com with server-enforced recipient
-                    </p>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setIsEmailModalOpen(false)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              {emailFeedback && (
-                <div
-                  className={`p-3 rounded-xl border text-xs flex items-center gap-2 ${
-                    emailFeedback.type === 'success'
-                      ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
-                      : 'bg-rose-50 border-rose-200 text-rose-800'
-                  }`}
-                >
-                  {emailFeedback.type === 'success' ? (
-                    <CheckCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-                  ) : (
-                    <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                </Modal.Header>
+                <Modal.Body>
+                  {emailFeedback && (
+                    <div
+                      className={`p-3 rounded-xl border text-xs flex items-center gap-2 mb-3 ${
+                        emailFeedback.type === 'success'
+                          ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                          : 'bg-rose-50 border-rose-200 text-rose-800'
+                      }`}
+                    >
+                      {emailFeedback.type === 'success' ? (
+                        <CheckCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                      ) : (
+                        <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                      )}
+                      <span>{emailFeedback.message}</span>
+                    </div>
                   )}
-                  <span>{emailFeedback.message}</span>
-                </div>
-              )}
 
-              <form onSubmit={handleSendAdminReply} className="space-y-4 text-xs">
-                <div>
-                  <label className="block text-slate-500 font-semibold mb-1 flex items-center justify-between">
-                    <span>Customer Recipient</span>
-                    <span className="text-[10px] text-slate-400 font-normal">Server-Locked Recipient</span>
-                  </label>
-                  <div className="flex items-center gap-2 px-3 py-2 bg-slate-100 border border-slate-200 rounded-lg text-slate-700 font-mono">
-                    <User className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                    <span className="font-semibold">{enquiry.name}</span>
-                    <span className="text-slate-400">({enquiry.email})</span>
-                  </div>
-                </div>
+                  <form onSubmit={handleSendAdminReply} id="send-customer-email-form" className="space-y-4 text-xs">
+                    <div>
+                      <label className="block text-slate-500 font-semibold mb-1 flex items-center justify-between">
+                        <span>Customer Recipient</span>
+                        <span className="text-[10px] text-slate-400 font-normal">Server-Locked Recipient</span>
+                      </label>
+                      <div className="flex items-center gap-2 px-3 py-2 bg-slate-100 border border-slate-200 rounded-lg text-slate-700 font-mono">
+                        <User className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span className="font-semibold">{enquiry.name}</span>
+                        <span className="text-slate-400">({enquiry.email})</span>
+                      </div>
+                    </div>
 
-                <div>
-                  <label className="block text-slate-600 font-semibold mb-1">
-                    Subject Line
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={emailSubject}
-                    onChange={(e) => setEmailSubject(e.target.value)}
-                    placeholder="Subject line..."
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-industrial-primary text-slate-800 font-medium"
-                  />
-                </div>
+                    <div>
+                      <Label className="block text-slate-600 font-semibold mb-1 text-xs">
+                        Subject Line
+                      </Label>
+                      <Input
+                        type="text"
+                        required
+                        value={emailSubject}
+                        onChange={(e) => setEmailSubject(e.target.value)}
+                        placeholder="Subject line..."
+                        className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 font-medium text-xs font-sans"
+                      />
+                    </div>
 
-                {/* Quick Template Chips */}
-                <div>
-                  <span className="block text-[11px] text-slate-400 font-medium mb-1.5 flex items-center gap-1">
-                    <Sparkles className="w-3 h-3 text-amber-500" />
-                    <span>Quick Engineering Response Templates:</span>
-                  </span>
-                  <div className="flex flex-wrap gap-1.5">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setEmailSubject(`Re: [Akira Precision Automation] Technical Drawing & Tolerance Request - #${enquiry.id.slice(0, 8)}`);
-                        setEmailMessage(
-                          `Dear ${enquiry.name},\n\nThank you for reaching out to Akira Precision Automation regarding your metrology requirement.\n\nTo ensure we provide the most precise gauging recommendation and quote for your application, could you kindly share:\n1. 2D component drawing with dimensional tolerances.\n2. Checking parameters (Bore diameter, taper, ovality, etc.).\n3. Target production cycle time / inspection throughput.\n\nLooking forward to your reply.\n\nRegards,\nAkira Precision Automation Engineering Team`
-                        );
-                      }}
-                      className="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-medium border border-slate-200 transition-colors"
-                    >
-                      + Request Drawing & Tolerances
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setEmailSubject(`Re: [Akira Precision Automation] Formal Proposal & Commercial Discussion - #${enquiry.id.slice(0, 8)}`);
-                        setEmailMessage(
-                          `Dear ${enquiry.name},\n\nThank you for your interest in Akira Precision Automation precision inspection systems.\n\nWe have reviewed your requirements for ${enquiry.specific_product || enquiry.product_category || 'industrial gauges'} and our applications team is currently compiling your formal technical proposal.\n\nCould we schedule a brief 15-minute discussion to review master setting ring specifications and calibration certificate preferences?\n\nRegards,\nAkira Precision Automation Sales & Applications`
-                        );
-                      }}
-                      className="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-medium border border-slate-200 transition-colors"
-                    >
-                      + Proposal Discussion
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setEmailSubject(`Re: [Akira Precision Automation] Technical Video Demonstration - #${enquiry.id.slice(0, 8)}`);
-                        setEmailMessage(
-                          `Dear ${enquiry.name},\n\nWe would be delighted to demonstrate our ${enquiry.specific_product || 'electronic column & multi-jet gauging system'} live via a video consultation.\n\nPlease let us know your availability over the coming days for a 20-minute live demonstration of measurement repeatability and SPC data export.\n\nRegards,\nAkira Precision Automation Metrology Team`
-                        );
-                      }}
-                      className="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-medium border border-slate-200 transition-colors"
-                    >
-                      + Video Demonstration
-                    </button>
-                  </div>
-                </div>
+                    {/* Quick Template Chips */}
+                    <div>
+                      <span className="block text-[11px] text-slate-400 font-medium mb-1.5 flex items-center gap-1">
+                        <Sparkles className="w-3 h-3 text-amber-500" />
+                        <span>Quick Engineering Response Templates:</span>
+                      </span>
+                      <div className="flex flex-wrap gap-1.5">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          type="button"
+                          onPress={() => {
+                            setEmailSubject(`Re: [Akira Precision Automation] Technical Drawing & Tolerance Request - #${enquiry.id.slice(0, 8)}`);
+                            setEmailMessage(
+                              `Dear ${enquiry.name},\n\nThank you for reaching out to Akira Precision Automation regarding your metrology requirement.\n\nTo ensure we provide the most precise gauging recommendation and quote for your application, could you kindly share:\n1. 2D component drawing with dimensional tolerances.\n2. Checking parameters (Bore diameter, taper, ovality, etc.).\n3. Target production cycle time / inspection throughput.\n\nLooking forward to your reply.\n\nRegards,\nAkira Precision Automation Engineering Team`
+                            );
+                          }}
+                          className="px-2.5 py-1 text-slate-700 text-[10px] font-medium"
+                        >
+                          + Request Drawing & Tolerances
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          type="button"
+                          onPress={() => {
+                            setEmailSubject(`Re: [Akira Precision Automation] Formal Proposal & Commercial Discussion - #${enquiry.id.slice(0, 8)}`);
+                            setEmailMessage(
+                              `Dear ${enquiry.name},\n\nThank you for your interest in Akira Precision Automation precision inspection systems.\n\nWe have reviewed your requirements for ${enquiry.specific_product || enquiry.product_category || 'industrial gauges'} and our applications team is currently compiling your formal technical proposal.\n\nCould we schedule a brief 15-minute discussion to review master setting ring specifications and calibration certificate preferences?\n\nRegards,\nAkira Precision Automation Sales & Applications`
+                            );
+                          }}
+                          className="px-2.5 py-1 text-slate-700 text-[10px] font-medium"
+                        >
+                          + Proposal Discussion
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          type="button"
+                          onPress={() => {
+                            setEmailSubject(`Re: [Akira Precision Automation] Technical Video Demonstration - #${enquiry.id.slice(0, 8)}`);
+                            setEmailMessage(
+                              `Dear ${enquiry.name},\n\nWe would be delighted to demonstrate our ${enquiry.specific_product || 'electronic column & multi-jet gauging system'} live via a video consultation.\n\nPlease let us know your availability over the coming days for a 20-minute live demonstration of measurement repeatability and SPC data export.\n\nRegards,\nAkira Precision Automation Metrology Team`
+                            );
+                          }}
+                          className="px-2.5 py-1 text-slate-700 text-[10px] font-medium"
+                        >
+                          + Video Demonstration
+                        </Button>
+                      </div>
+                    </div>
 
-                <div>
-                  <label className="block text-slate-600 font-semibold mb-1">
-                    Message Content
-                  </label>
-                  <textarea
-                    rows={7}
-                    required
-                    value={emailMessage}
-                    onChange={(e) => setEmailMessage(e.target.value)}
-                    placeholder="Write your email message to the customer..."
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-industrial-primary font-sans leading-relaxed text-slate-800"
-                  />
-                </div>
-
-                <div className="flex items-center gap-3 pt-2">
-                  <button
+                    <div>
+                      <Label className="block text-slate-600 font-semibold mb-1 text-xs">
+                        Message Content
+                      </Label>
+                      <TextArea
+                        rows={7}
+                        required
+                        value={emailMessage}
+                        onChange={(e) => setEmailMessage(e.target.value)}
+                        placeholder="Write your email message to the customer..."
+                        className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 font-sans leading-relaxed text-slate-800 text-xs"
+                      />
+                    </div>
+                  </form>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button
+                    variant="outline"
+                    size="sm"
                     type="button"
+                    onPress={() => setIsEmailModalOpen(false)}
                     onClick={() => setIsEmailModalOpen(false)}
-                    disabled={isSendingEmail}
-                    className="flex-1 py-2.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold transition-colors"
+                    isDisabled={isSendingEmail}
                   >
                     Cancel
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="submit"
-                    disabled={isSendingEmail || !emailMessage.trim()}
-                    className="flex-1 py-2.5 rounded-lg bg-industrial-primary text-white font-semibold hover:bg-industrial-hover disabled:opacity-50 flex items-center justify-center gap-1.5 shadow-subtle transition-colors"
+                    form="send-customer-email-form"
+                    variant="primary"
+                    size="sm"
+                    isDisabled={isSendingEmail || !emailMessage.trim()}
+                    className="bg-industrial-primary hover:bg-industrial-hover text-white gap-1.5"
                   >
                     {isSendingEmail ? (
                       <>
@@ -1415,11 +1503,11 @@ export const AdminEnquiryDetail: React.FC = () => {
                         <span>Send Email</span>
                       </>
                     )}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
+                  </Button>
+                </Modal.Footer>
+              </Modal.Dialog>
+            </Modal.Container>
+          </Modal.Backdrop>
         )}
       </div>
     </>

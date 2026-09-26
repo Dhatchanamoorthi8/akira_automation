@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../auth/useAuth';
 import { company } from '../../config/company';
+import { Drawer, Button } from '@heroui/react';
 
 interface AdminSidebarProps {
   isMobileOpen: boolean;
@@ -216,41 +217,45 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
               </Link>
 
               {!isMobile && (
-                <button
-                  type="button"
-                  onClick={toggleCollapse}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors flex items-center justify-center shrink-0 ml-1 min-h-[36px] min-w-[36px]"
-                  title="Collapse sidebar"
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  isIconOnly
+                  onPress={toggleCollapse}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors flex items-center justify-center shrink-0 ml-1 min-h-[36px] min-w-[36px] cursor-pointer"
                   aria-label="Collapse sidebar"
                 >
                   <ChevronsLeft className="w-4 h-4" />
-                </button>
+                </Button>
               )}
             </>
           ) : (
             <div className="flex items-center justify-center">
-              <button
-                type="button"
-                onClick={toggleCollapse}
-                className="p-2 rounded-lg text-slate-500 hover:text-industrial-dark hover:bg-slate-100 transition-colors flex items-center justify-center min-h-[40px] min-w-[40px]"
-                title="Expand sidebar"
+              <Button
+                variant="ghost"
+                size="sm"
+                isIconOnly
+                onPress={toggleCollapse}
+                className="p-2 rounded-lg text-slate-500 hover:text-industrial-dark hover:bg-slate-100 transition-colors flex items-center justify-center min-h-[40px] min-w-[40px] cursor-pointer"
                 aria-label="Expand sidebar"
               >
                 <ChevronsRight className="w-5 h-5 text-slate-700" />
-              </button>
+              </Button>
             </div>
           )}
 
           {/* Mobile close button (only in mobile drawer) */}
           {isMobile && (
-            <button
-              type="button"
-              onClick={onCloseMobile}
-              className="lg:hidden p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 min-h-[44px] min-w-[44px] flex items-center justify-center"
+            <Button
+              variant="ghost"
+              size="sm"
+              isIconOnly
+              onPress={onCloseMobile}
+              className="lg:hidden p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
               aria-label="Close navigation sidebar"
             >
               <X className="w-5 h-5" />
-            </button>
+            </Button>
           )}
         </div>
 
@@ -377,22 +382,22 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
             {collapsed && <span className="sr-only">Public Website</span>}
           </Link>
 
-          <button
-            type="button"
-            title="Sign Out"
-            onClick={async () => {
+          <Button
+            variant="ghost"
+            aria-label="Sign Out"
+            onPress={async () => {
               onCloseMobile();
               await signOut();
               navigate('/admin/login');
             }}
-            className={`flex items-center rounded-lg text-xs font-medium text-rose-600 hover:bg-rose-50 transition-colors text-left ${
-              collapsed ? 'w-10 h-10 justify-center' : 'w-full gap-2 px-3 py-2 min-h-[44px]'
+            className={`flex items-center rounded-lg text-xs font-medium text-rose-600 hover:bg-rose-50 transition-colors text-left cursor-pointer ${
+              collapsed ? 'w-10 h-10 justify-center p-0' : 'w-full gap-2 px-3 py-2 min-h-[44px] justify-start'
             }`}
           >
-            <LogOut className="w-3.5 h-3.5 text-rose-500" />
+            <LogOut className="w-3.5 h-3.5 text-rose-500 shrink-0" />
             {!collapsed && <span>Sign Out</span>}
             {collapsed && <span className="sr-only">Sign Out</span>}
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -409,22 +414,20 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
         {renderNavContent(false)}
       </aside>
 
-      {/* Mobile Drawer (Slide-in) */}
-      {isMobileOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 flex" role="dialog" aria-modal="true">
-          {/* Backdrop Overlay */}
-          <div
-            className="fixed inset-0 bg-industrial-dark/60 backdrop-blur-sm transition-opacity"
-            onClick={onCloseMobile}
-            aria-hidden="true"
-          />
-
-          {/* Drawer Panel */}
-          <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white shadow-2xl z-10 animate-in slide-in-from-left duration-200">
+      {/* Mobile Drawer (Slide-in) using HeroUI v3 Drawer */}
+      <Drawer.Backdrop
+        isOpen={isMobileOpen}
+        onOpenChange={(open) => {
+          if (!open) onCloseMobile();
+        }}
+        className="lg:hidden"
+      >
+        <Drawer.Content placement="left" className="max-w-xs w-full p-0 bg-transparent shadow-none border-none">
+          <Drawer.Dialog className="h-full w-full p-0 bg-white shadow-2xl flex flex-col" aria-label="Navigation Sidebar">
             {renderNavContent(true)}
-          </div>
-        </div>
-      )}
+          </Drawer.Dialog>
+        </Drawer.Content>
+      </Drawer.Backdrop>
     </>
   );
 };

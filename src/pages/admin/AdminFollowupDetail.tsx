@@ -6,11 +6,11 @@ import {
   AlertTriangle,
   XCircle,
   Edit,
-  X,
   Loader2,
   Check,
   ExternalLink,
 } from 'lucide-react';
+import { Button, Checkbox, Input, Label, Modal, TextArea, TextField, Select, ListBox } from '@heroui/react';
 import { useAuth } from '../../auth/useAuth';
 import {
   FollowupWithEnquiry,
@@ -340,86 +340,137 @@ export const AdminFollowupDetail: React.FC = () => {
             </h3>
             <form onSubmit={handleSaveEdit} className="space-y-3.5 text-xs">
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Title</label>
-                <input
+                <Label className="block font-semibold text-slate-700 mb-1 text-xs">Title</Label>
+                <Input
                   type="text"
                   required
                   value={editForm.title}
                   onChange={e => setEditForm(prev => ({ ...prev, title: e.target.value }))}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-sky-500"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-xs font-sans"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Description / Notes</label>
-                <textarea
+                <Label className="block font-semibold text-slate-700 mb-1 text-xs">Description / Notes</Label>
+                <TextArea
                   rows={3}
                   value={editForm.description}
                   onChange={e => setEditForm(prev => ({ ...prev, description: e.target.value }))}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-sky-500"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-xs font-sans"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Scheduled Date/Time</label>
-                  <input
+                  <Label className="block font-semibold text-slate-700 mb-1 text-xs">Scheduled Date/Time</Label>
+                  <Input
                     type="datetime-local"
                     value={editForm.scheduledAt}
                     onChange={e => setEditForm(prev => ({ ...prev, scheduledAt: e.target.value }))}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg font-mono focus:outline-none focus:ring-1 focus:ring-sky-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-xl font-mono focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-xs"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Priority</label>
-                  <select
+                  <Label className="block font-semibold text-slate-700 mb-1 text-xs">Priority</Label>
+                  <Select
                     value={editForm.priority}
-                    onChange={e => setEditForm(prev => ({ ...prev, priority: e.target.value as FollowupPriority }))}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-white"
+                    onChange={val => setEditForm(prev => ({ ...prev, priority: (val as FollowupPriority) || 'medium' }))}
+                    className="w-full"
+                    aria-label="Priority"
                   >
-                    <option value="urgent">Urgent</option>
-                    <option value="high">High</option>
-                    <option value="medium">Medium</option>
-                    <option value="low">Low</option>
-                  </select>
+                    <Select.Trigger className="w-full h-9 px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white text-slate-700 flex items-center justify-between shadow-2xs hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-colors cursor-pointer">
+                      <Select.Value className="text-xs font-medium text-slate-700 capitalize truncate" />
+                      <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
+                    </Select.Trigger>
+                    <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[140px]">
+                      <ListBox className="outline-none space-y-0.5">
+                        {[
+                          { id: 'urgent', label: 'Urgent' },
+                          { id: 'high', label: 'High' },
+                          { id: 'medium', label: 'Medium' },
+                          { id: 'low', label: 'Low' },
+                        ].map(p => (
+                          <ListBox.Item
+                            key={p.id}
+                            id={p.id}
+                            textValue={p.label}
+                            className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-sky-50 data-[selected=true]:text-sky-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                          >
+                            {p.label}
+                            <ListBox.ItemIndicator />
+                          </ListBox.Item>
+                        ))}
+                      </ListBox>
+                    </Select.Popover>
+                  </Select>
                 </div>
 
                 {isAdmin && (
                   <div>
-                    <label className="block font-semibold text-slate-700 mb-1">Reassign Staff</label>
-                    <select
-                      value={editForm.assignedTo}
-                      onChange={e => setEditForm(prev => ({ ...prev, assignedTo: e.target.value }))}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-white"
+                    <Label className="block font-semibold text-slate-700 mb-1 text-xs">Reassign Staff</Label>
+                    <Select
+                      value={editForm.assignedTo || 'unassigned'}
+                      onChange={val => setEditForm(prev => ({ ...prev, assignedTo: val === 'unassigned' ? '' : (val as string) }))}
+                      className="w-full"
+                      aria-label="Reassign Staff"
                     >
-                      <option value="">-- Unassigned --</option>
-                      {staffProfiles.map(s => (
-                        <option key={s.id} value={s.id}>
-                          {s.full_name || s.email} ({s.role})
-                        </option>
-                      ))}
-                    </select>
+                      <Select.Trigger className="w-full h-9 px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white text-slate-700 flex items-center justify-between shadow-2xs hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-colors cursor-pointer">
+                        <Select.Value className="text-xs font-medium text-slate-700 truncate" />
+                        <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
+                      </Select.Trigger>
+                      <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[200px] max-h-60 overflow-y-auto">
+                        <ListBox className="outline-none space-y-0.5">
+                          <ListBox.Item
+                            id="unassigned"
+                            textValue="-- Unassigned --"
+                            className="px-2.5 py-1.5 text-xs rounded-lg text-slate-500 italic hover:bg-slate-100 cursor-pointer outline-none"
+                          >
+                            -- Unassigned --
+                            <ListBox.ItemIndicator />
+                          </ListBox.Item>
+                          {staffProfiles.map(s => {
+                            const label = `${s.full_name || s.email} (${s.role})`;
+                            return (
+                              <ListBox.Item
+                                key={s.id}
+                                id={s.id}
+                                textValue={label}
+                                className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-sky-50 data-[selected=true]:text-sky-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                              >
+                                {label}
+                                <ListBox.ItemIndicator />
+                              </ListBox.Item>
+                            );
+                          })}
+                        </ListBox>
+                      </Select.Popover>
+                    </Select>
                   </div>
                 )}
               </div>
 
               <div className="flex items-center justify-end gap-2.5 pt-2">
-                <button
+                <Button
                   type="button"
+                  variant="outline"
+                  size="sm"
+                  onPress={() => setIsEditing(false)}
                   onClick={() => setIsEditing(false)}
-                  className="px-3 py-1.5 border border-slate-300 rounded-lg text-slate-700 font-semibold"
+                  className="px-3 py-1.5 border border-slate-300 rounded-xl text-slate-700 font-semibold cursor-pointer"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   type="submit"
-                  disabled={isSubmittingEdit}
-                  className="px-4 py-1.5 bg-industrial-dark text-white rounded-lg font-semibold inline-flex items-center gap-1.5"
+                  variant="primary"
+                  size="sm"
+                  isDisabled={isSubmittingEdit}
+                  className="px-4 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-semibold inline-flex items-center gap-1.5 cursor-pointer"
                 >
                   {isSubmittingEdit && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                   Save Changes
-                </button>
+                </Button>
               </div>
             </form>
           </div>
@@ -534,128 +585,123 @@ export const AdminFollowupDetail: React.FC = () => {
         </div>
 
         {/* Complete Modal */}
-        {showCompleteModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
-            <div className="bg-white rounded-xl shadow-xl border border-slate-200 max-w-md w-full p-6 space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                <h3 className="text-sm font-bold text-industrial-dark font-heading">
-                  Complete Task
-                </h3>
-                <button onClick={() => setShowCompleteModal(false)} className="text-slate-400 hover:text-slate-600">
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              <form onSubmit={handleComplete} className="space-y-3.5 text-xs">
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
-                    Customer Outcome & Notes <span className="text-rose-500">*</span>
-                  </label>
-                  <textarea
-                    required
-                    rows={3}
-                    value={outcomeNotes}
-                    onChange={e => setOutcomeNotes(e.target.value)}
-                    placeholder="e.g. Customer approved quotation draft. Needs drawing sign-off."
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-sky-500"
-                  />
-                </div>
-
-                <div className="pt-1">
-                  <label className="inline-flex items-center gap-2 text-xs text-slate-700 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={scheduleNext}
-                      onChange={e => setScheduleNext(e.target.checked)}
-                      className="rounded border-slate-300 text-sky-600"
+        <Modal.Backdrop isOpen={showCompleteModal} onOpenChange={setShowCompleteModal}>
+          <Modal.Container>
+            <Modal.Dialog className="sm:max-w-md">
+              <Modal.CloseTrigger />
+              <Modal.Header>
+                <Modal.Heading>Complete Task</Modal.Heading>
+              </Modal.Header>
+              <Modal.Body>
+                <form onSubmit={handleComplete} id="complete-followup-form" className="space-y-3.5 text-xs">
+                  <TextField className="w-full" isRequired>
+                    <Label className="text-xs font-semibold text-slate-700">
+                      Customer Outcome & Notes
+                    </Label>
+                    <TextArea
+                      rows={3}
+                      value={outcomeNotes}
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setOutcomeNotes(e.target.value)}
+                      placeholder="e.g. Customer approved quotation draft. Needs drawing sign-off."
+                      className="w-full text-xs"
                     />
-                    <span className="font-semibold">Schedule Next Follow-up</span>
-                  </label>
-                </div>
+                  </TextField>
 
-                {scheduleNext && (
-                  <div>
-                    <label className="block font-semibold text-slate-700 mb-1">Next Follow-up Date</label>
-                    <input
-                      type="datetime-local"
-                      required={scheduleNext}
-                      value={nextDate}
-                      onChange={e => setNextDate(e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg font-mono"
-                    />
+                  <div className="pt-1">
+                    <Checkbox
+                      isSelected={scheduleNext}
+                      onChange={(isSelected: boolean) => setScheduleNext(isSelected)}
+                    >
+                      <span className="text-xs font-semibold text-slate-700">Schedule Next Follow-up</span>
+                    </Checkbox>
                   </div>
-                )}
 
-                <div className="flex items-center justify-end gap-2.5 pt-3">
-                  <button
-                    type="button"
-                    onClick={() => setShowCompleteModal(false)}
-                    className="px-3.5 py-2 border border-slate-300 text-slate-700 rounded-lg font-semibold"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isSubmittingComplete}
-                    className="px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold inline-flex items-center gap-1.5"
-                  >
-                    {isSubmittingComplete && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                    Confirm Complete
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
+                  {scheduleNext && (
+                    <TextField className="w-full">
+                      <Label className="text-xs font-semibold text-slate-700">Next Follow-up Date</Label>
+                      <Input
+                        type="datetime-local"
+                        value={nextDate}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNextDate(e.target.value)}
+                        className="w-full font-mono text-xs"
+                      />
+                    </TextField>
+                  )}
+                </form>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onPress={() => setShowCompleteModal(false)}
+                  onClick={() => setShowCompleteModal(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  form="complete-followup-form"
+                  variant="primary"
+                  size="sm"
+                  isDisabled={isSubmittingComplete}
+                  className="gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white"
+                >
+                  {isSubmittingComplete && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                  Confirm Complete
+                </Button>
+              </Modal.Footer>
+            </Modal.Dialog>
+          </Modal.Container>
+        </Modal.Backdrop>
 
         {/* Cancel Modal */}
-        {showCancelModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
-            <div className="bg-white rounded-xl shadow-xl border border-slate-200 max-w-md w-full p-6 space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                <h3 className="text-sm font-bold text-industrial-dark font-heading">
-                  Cancel Follow-up
-                </h3>
-                <button onClick={() => setShowCancelModal(false)} className="text-slate-400 hover:text-slate-600">
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              <form onSubmit={handleCancel} className="space-y-3.5 text-xs">
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
-                    Cancellation Reason (Optional)
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={cancelReason}
-                    onChange={e => setCancelReason(e.target.value)}
-                    placeholder="e.g. Customer cancelled project requirement / Handled via direct email."
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-sky-500"
-                  />
-                </div>
-
-                <div className="flex items-center justify-end gap-2.5 pt-3">
-                  <button
-                    type="button"
-                    onClick={() => setShowCancelModal(false)}
-                    className="px-3.5 py-2 border border-slate-300 text-slate-700 rounded-lg font-semibold"
-                  >
-                    Keep Active
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isSubmittingCancel}
-                    className="px-4 py-2 bg-rose-600 text-white rounded-lg font-semibold inline-flex items-center gap-1.5"
-                  >
-                    {isSubmittingCancel && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                    Confirm Cancellation
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
+        <Modal.Backdrop isOpen={showCancelModal} onOpenChange={setShowCancelModal}>
+          <Modal.Container>
+            <Modal.Dialog className="sm:max-w-md">
+              <Modal.CloseTrigger />
+              <Modal.Header>
+                <Modal.Heading>Cancel Follow-up</Modal.Heading>
+              </Modal.Header>
+              <Modal.Body>
+                <form onSubmit={handleCancel} id="cancel-followup-form" className="space-y-3.5 text-xs">
+                  <TextField className="w-full">
+                    <Label className="text-xs font-semibold text-slate-700">
+                      Cancellation Reason (Optional)
+                    </Label>
+                    <TextArea
+                      rows={3}
+                      value={cancelReason}
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setCancelReason(e.target.value)}
+                      placeholder="e.g. Customer cancelled project requirement / Handled via direct email."
+                      className="w-full text-xs"
+                    />
+                  </TextField>
+                </form>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onPress={() => setShowCancelModal(false)}
+                  onClick={() => setShowCancelModal(false)}
+                >
+                  Keep Active
+                </Button>
+                <Button
+                  type="submit"
+                  form="cancel-followup-form"
+                  variant="danger"
+                  size="sm"
+                  isDisabled={isSubmittingCancel}
+                  className="gap-1.5"
+                >
+                  {isSubmittingCancel && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                  Confirm Cancellation
+                </Button>
+              </Modal.Footer>
+            </Modal.Dialog>
+          </Modal.Container>
+        </Modal.Backdrop>
       </div>
     </>
   );

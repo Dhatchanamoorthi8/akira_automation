@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { Card, Table, Chip, Button, Input, Select, ListBox, Label } from '@heroui/react';
 import {
   Clock,
   MapPin,
@@ -128,14 +129,18 @@ export const AdminAttendance: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            <button
+            <Button
+              variant="outline"
+              size="sm"
+              onPress={fetchAttendanceData}
               onClick={fetchAttendanceData}
-              disabled={isLoading}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 transition-colors shadow-xs disabled:opacity-50"
+              isDisabled={isLoading}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 transition-colors shadow-xs disabled:opacity-50 cursor-pointer"
+              aria-label="Refresh attendance roster"
             >
               <RotateCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-              Refresh Roster
-            </button>
+              <span>Refresh Roster</span>
+            </Button>
           </div>
         </div>
 
@@ -149,265 +154,307 @@ export const AdminAttendance: React.FC = () => {
 
         {/* KPI Stats Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+          <Card className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Staff</span>
               <Users className="w-4 h-4 text-slate-400" />
             </div>
             <div className="mt-2 text-2xl font-bold font-mono text-slate-900">{stats.total}</div>
-          </div>
+          </Card>
 
-          <div className="bg-emerald-50/60 p-4 rounded-xl border border-emerald-200 shadow-xs">
+          <Card className="bg-emerald-50/60 p-4 rounded-xl border border-emerald-200 shadow-xs">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-emerald-800 uppercase tracking-wider">Present</span>
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
             </div>
             <div className="mt-2 text-2xl font-bold font-mono text-emerald-900">{stats.present}</div>
-          </div>
+          </Card>
 
-          <div className="bg-amber-50/60 p-4 rounded-xl border border-amber-200 shadow-xs">
+          <Card className="bg-amber-50/60 p-4 rounded-xl border border-amber-200 shadow-xs">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-amber-800 uppercase tracking-wider">On Field</span>
               <Navigation className="w-4 h-4 text-amber-600" />
             </div>
             <div className="mt-2 text-2xl font-bold font-mono text-amber-900">{stats.onField}</div>
-          </div>
+          </Card>
 
-          <div className="bg-slate-100 p-4 rounded-xl border border-slate-200 shadow-xs">
+          <Card className="bg-slate-100 p-4 rounded-xl border border-slate-200 shadow-xs">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-slate-600 uppercase tracking-wider">Clocked Out</span>
               <CheckCircle2 className="w-4 h-4 text-slate-500" />
             </div>
             <div className="mt-2 text-2xl font-bold font-mono text-slate-700">{stats.clockedOut}</div>
-          </div>
+          </Card>
 
-          <div className="bg-rose-50/60 p-4 rounded-xl border border-rose-200 shadow-xs">
+          <Card className="bg-rose-50/60 p-4 rounded-xl border border-rose-200 shadow-xs">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-rose-800 uppercase tracking-wider">Not Reported</span>
               <AlertCircle className="w-4 h-4 text-rose-500" />
             </div>
             <div className="mt-2 text-2xl font-bold font-mono text-rose-900">{stats.notReported}</div>
-          </div>
+          </Card>
         </div>
 
         {/* Filters Bar */}
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <Card className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2 flex-1">
             {/* Search Input */}
-            <div className="relative flex-1 min-w-[200px] max-w-sm">
-              <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-slate-400" />
-              <input
+            <div className="relative flex-1 min-w-[200px] max-w-sm flex items-center">
+              <Search className="w-3.5 h-3.5 absolute left-3 text-slate-400 pointer-events-none z-10" />
+              <Input
                 type="text"
                 placeholder="Search staff name, email, or role..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                className="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl border border-slate-200 bg-slate-50/60 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 font-sans"
               />
             </div>
 
             {/* Status Filter */}
-            <select
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value as any)}
-              className="px-3 py-1.5 text-xs rounded-lg border border-slate-200 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500"
-            >
-              <option value="all">All Working Statuses</option>
-              <option value="present">🟢 Present</option>
-              <option value="on_field">🟡 On Field</option>
-              <option value="clocked_out">⚪ Clocked Out</option>
-              <option value="not_reported">🔴 Not Reported</option>
-            </select>
+            <div className="min-w-[170px]">
+              <Select
+                value={selectedStatus}
+                onChange={(val) => setSelectedStatus((val as any) || 'all')}
+                className="w-full"
+                aria-label="Filter by Working Status"
+              >
+                <Select.Trigger className="w-full h-8 px-2.5 py-1.5 text-xs rounded-xl border border-slate-200 bg-slate-50/60 text-slate-700 flex items-center justify-between shadow-2xs hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-colors cursor-pointer">
+                  <Select.Value className="text-xs font-medium text-slate-700 truncate" />
+                  <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
+                </Select.Trigger>
+                <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[180px]">
+                  <ListBox className="outline-none space-y-0.5">
+                    {[
+                      { id: 'all', label: 'All Working Statuses' },
+                      { id: 'present', label: '🟢 Present' },
+                      { id: 'on_field', label: '🟡 On Field' },
+                      { id: 'clocked_out', label: '⚪ Clocked Out' },
+                      { id: 'not_reported', label: '🔴 Not Reported' },
+                    ].map(st => (
+                      <ListBox.Item
+                        key={st.id}
+                        id={st.id}
+                        textValue={st.label}
+                        className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-sky-50 data-[selected=true]:text-sky-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                      >
+                        {st.label}
+                        <ListBox.ItemIndicator />
+                      </ListBox.Item>
+                    ))}
+                  </ListBox>
+                </Select.Popover>
+              </Select>
+            </div>
           </div>
 
           {/* Date Selector */}
           <div className="flex items-center gap-2 self-end md:self-auto">
-            <span className="text-xs font-semibold text-slate-500 flex items-center gap-1">
+            <Label className="text-xs font-semibold text-slate-500 flex items-center gap-1">
               <Calendar className="w-3.5 h-3.5" /> Date:
-            </span>
-            <input
+            </Label>
+            <Input
               type="date"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              className="px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 font-mono"
+              className="px-2.5 py-1.5 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 font-mono"
             />
             {!isToday && (
-              <button
-                type="button"
+              <Button
+                variant="ghost"
+                size="sm"
+                onPress={() => setSelectedDate(new Date().toISOString().slice(0, 10))}
                 onClick={() => setSelectedDate(new Date().toISOString().slice(0, 10))}
-                className="px-2 py-1 text-xs text-sky-600 hover:text-sky-700 font-semibold"
+                className="px-2 py-1 text-xs text-sky-600 hover:text-sky-700 font-semibold cursor-pointer h-auto min-w-0"
               >
                 Today
-              </button>
+              </Button>
             )}
           </div>
-        </div>
+        </Card>
 
         {/* Staff Attendance Roster Table */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="bg-slate-50/80 border-b border-slate-200 text-slate-600 uppercase font-mono text-[10px] tracking-wider">
-                  <th className="py-3 px-4">Staff Member</th>
-                  <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-4">Clock In (GPS / Location)</th>
-                  <th className="py-3 px-4">Clock Out (GPS / Location)</th>
-                  <th className="py-3 px-4">Duration</th>
-                  <th className="py-3 px-4 text-right">Audit Verification</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {filteredStaff.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="py-8 text-center text-slate-400">
-                      No staff attendance records matched your filter criteria.
-                    </td>
-                  </tr>
-                ) : (
-                  filteredStaff.map((staff) => {
-                    const att = staff.todayAttendance;
-                    const statusConfig = {
-                      present: {
-                        label: 'Present',
-                        bg: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                        dot: 'bg-emerald-500',
-                      },
-                      on_field: {
-                        label: 'On Field',
-                        bg: 'bg-amber-50 text-amber-700 border-amber-200',
-                        dot: 'bg-amber-500',
-                      },
-                      clocked_out: {
-                        label: 'Clocked Out',
-                        bg: 'bg-slate-100 text-slate-700 border-slate-200',
-                        dot: 'bg-slate-400',
-                      },
-                      not_reported: {
-                        label: 'Not Reported',
-                        bg: 'bg-rose-50 text-rose-700 border-rose-200',
-                        dot: 'bg-rose-500',
-                      },
-                    }[staff.attendanceStatus];
+        <Card className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden p-0">
+          <Table className="w-full">
+            <Table.ScrollContainer className="overflow-x-auto">
+              <Table.Content aria-label="Staff Attendance Roster" className="w-full text-left text-xs min-w-[750px]">
+                <Table.Header className="bg-slate-50/80 border-b border-slate-200 text-slate-600 uppercase font-mono text-[10px] tracking-wider">
+                  <Table.Column isRowHeader className="py-3 px-4">Staff Member</Table.Column>
+                  <Table.Column className="py-3 px-4">Status</Table.Column>
+                  <Table.Column className="py-3 px-4">Clock In (GPS / Location)</Table.Column>
+                  <Table.Column className="py-3 px-4">Clock Out (GPS / Location)</Table.Column>
+                  <Table.Column className="py-3 px-4">Duration</Table.Column>
+                  <Table.Column className="py-3 px-4 text-right">Audit Verification</Table.Column>
+                </Table.Header>
+                <Table.Body className="divide-y divide-slate-100">
+                  {filteredStaff.length === 0 ? (
+                    <Table.Row>
+                      <Table.Cell className="py-8 text-center text-slate-400" colSpan={6}>
+                        No staff attendance records matched your filter criteria.
+                      </Table.Cell>
+                    </Table.Row>
+                  ) : (
+                    filteredStaff.map((staff) => {
+                      const att = staff.todayAttendance;
+                      const statusConfig = {
+                        present: {
+                          label: 'Present',
+                          color: 'success' as const,
+                          bg: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                          dot: 'bg-emerald-500',
+                        },
+                        on_field: {
+                          label: 'On Field',
+                          color: 'warning' as const,
+                          bg: 'bg-amber-50 text-amber-700 border-amber-200',
+                          dot: 'bg-amber-500',
+                        },
+                        clocked_out: {
+                          label: 'Clocked Out',
+                          color: 'default' as const,
+                          bg: 'bg-slate-100 text-slate-700 border-slate-200',
+                          dot: 'bg-slate-400',
+                        },
+                        not_reported: {
+                          label: 'Not Reported',
+                          color: 'danger' as const,
+                          bg: 'bg-rose-50 text-rose-700 border-rose-200',
+                          dot: 'bg-rose-500',
+                        },
+                      }[staff.attendanceStatus];
 
-                    return (
-                      <tr key={staff.id} className="hover:bg-slate-50/60 transition-colors">
-                        {/* Staff Details */}
-                        <td className="py-3 px-4">
-                          <div className="font-semibold text-slate-900">{staff.full_name || 'Staff Member'}</div>
-                          <div className="text-slate-500 text-[11px] flex items-center gap-1.5">
-                            <span>{staff.email}</span>
-                            <span className="px-1.5 py-0.2 rounded bg-slate-100 text-[10px] uppercase font-mono text-slate-600">
-                              {staff.role}
-                            </span>
-                          </div>
-                        </td>
-
-                        {/* Status Badge */}
-                        <td className="py-3 px-4">
-                          <span
-                            className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[11px] font-semibold ${statusConfig.bg}`}
-                          >
-                            <span className={`w-1.5 h-1.5 rounded-full ${statusConfig.dot}`} />
-                            {statusConfig.label}
-                          </span>
-                        </td>
-
-                        {/* Clock In */}
-                        <td className="py-3 px-4">
-                          {att?.clock_in_at ? (
-                            <div className="space-y-0.5">
-                              <div className="font-mono font-semibold text-slate-800">
-                                {new Date(att.clock_in_at).toLocaleTimeString([], {
-                                  hour: '2-digit',
-                                  minute: '2-digit',
-                                })}
-                              </div>
-                              {att.clock_in_lat && att.clock_in_lng ? (
-                                <a
-                                  href={`https://www.google.com/maps?q=${att.clock_in_lat},${att.clock_in_lng}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-[11px] text-sky-600 hover:text-sky-800 flex items-center gap-1 font-mono"
-                                >
-                                  <MapPin className="w-3 h-3 shrink-0 text-sky-500" />
-                                  <span>
-                                    {att.clock_in_lat.toFixed(4)}, {att.clock_in_lng.toFixed(4)}
-                                  </span>
-                                  <ExternalLink className="w-2.5 h-2.5" />
-                                </a>
-                              ) : (
-                                <span className="text-[11px] text-slate-400">Office / Web Portal</span>
-                              )}
-                            </div>
-                          ) : (
-                            <span className="text-slate-400">—</span>
-                          )}
-                        </td>
-
-                        {/* Clock Out */}
-                        <td className="py-3 px-4">
-                          {att?.clock_out_at ? (
-                            <div className="space-y-0.5">
-                              <div className="font-mono font-semibold text-slate-800">
-                                {new Date(att.clock_out_at).toLocaleTimeString([], {
-                                  hour: '2-digit',
-                                  minute: '2-digit',
-                                })}
-                              </div>
-                              {att.clock_out_lat && att.clock_out_lng ? (
-                                <a
-                                  href={`https://www.google.com/maps?q=${att.clock_out_lat},${att.clock_out_lng}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-[11px] text-sky-600 hover:text-sky-800 flex items-center gap-1 font-mono"
-                                >
-                                  <MapPin className="w-3 h-3 shrink-0 text-sky-500" />
-                                  <span>
-                                    {att.clock_out_lat.toFixed(4)}, {att.clock_out_lng.toFixed(4)}
-                                  </span>
-                                  <ExternalLink className="w-2.5 h-2.5" />
-                                </a>
-                              ) : (
-                                <span className="text-[11px] text-slate-400">Office / Web Portal</span>
-                              )}
-                            </div>
-                          ) : (
-                            <span className="text-slate-400">
-                              {staff.attendanceStatus === 'not_reported' ? '—' : 'Active'}
-                            </span>
-                          )}
-                        </td>
-
-                        {/* Duration */}
-                        <td className="py-3 px-4 font-mono font-medium text-slate-700">
-                          {calculateDuration(att?.clock_in_at, att?.clock_out_at)}
-                        </td>
-
-                        {/* Audit Verification */}
-                        <td className="py-3 px-4 text-right">
-                          {att ? (
-                            att.clock_in_lat && att.clock_in_lng ? (
-                              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                                <ShieldCheck className="w-3 h-3 text-emerald-600" />
-                                GPS Verified
+                      return (
+                        <Table.Row key={staff.id} className="hover:bg-slate-50/60 transition-colors">
+                          {/* Staff Details */}
+                          <Table.Cell className="py-3 px-4">
+                            <div className="font-semibold text-slate-900">{staff.full_name || 'Staff Member'}</div>
+                            <div className="text-slate-500 text-[11px] flex items-center gap-1.5">
+                              <span>{staff.email}</span>
+                              <span className="px-1.5 py-0.2 rounded bg-slate-100 text-[10px] uppercase font-mono text-slate-600">
+                                {staff.role}
                               </span>
+                            </div>
+                          </Table.Cell>
+
+                          {/* Status Badge */}
+                          <Table.Cell className="py-3 px-4">
+                            <Chip
+                              size="sm"
+                              variant="soft"
+                              color={statusConfig.color}
+                              className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[11px] font-semibold ${statusConfig.bg}`}
+                            >
+                              <span className={`w-1.5 h-1.5 rounded-full ${statusConfig.dot}`} />
+                              <span>{statusConfig.label}</span>
+                            </Chip>
+                          </Table.Cell>
+
+                          {/* Clock In */}
+                          <Table.Cell className="py-3 px-4">
+                            {att?.clock_in_at ? (
+                              <div className="space-y-0.5">
+                                <div className="font-mono font-semibold text-slate-800">
+                                  {new Date(att.clock_in_at).toLocaleTimeString([], {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                  })}
+                                </div>
+                                {att.clock_in_lat && att.clock_in_lng ? (
+                                  <a
+                                    href={`https://www.google.com/maps?q=${att.clock_in_lat},${att.clock_in_lng}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-[11px] text-sky-600 hover:text-sky-800 flex items-center gap-1 font-mono"
+                                  >
+                                    <MapPin className="w-3 h-3 shrink-0 text-sky-500" />
+                                    <span>
+                                      {att.clock_in_lat.toFixed(4)}, {att.clock_in_lng.toFixed(4)}
+                                    </span>
+                                    <ExternalLink className="w-2.5 h-2.5" />
+                                  </a>
+                                ) : (
+                                  <span className="text-[11px] text-slate-400">Office / Web Portal</span>
+                                )}
+                              </div>
                             ) : (
-                              <span className="inline-flex items-center gap-1 text-[11px] text-slate-600 bg-slate-100 px-2 py-0.5 rounded">
-                                Web Portal
+                              <span className="text-slate-400">—</span>
+                            )}
+                          </Table.Cell>
+
+                          {/* Clock Out */}
+                          <Table.Cell className="py-3 px-4">
+                            {att?.clock_out_at ? (
+                              <div className="space-y-0.5">
+                                <div className="font-mono font-semibold text-slate-800">
+                                  {new Date(att.clock_out_at).toLocaleTimeString([], {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                  })}
+                                </div>
+                                {att.clock_out_lat && att.clock_out_lng ? (
+                                  <a
+                                    href={`https://www.google.com/maps?q=${att.clock_out_lat},${att.clock_out_lng}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-[11px] text-sky-600 hover:text-sky-800 flex items-center gap-1 font-mono"
+                                  >
+                                    <MapPin className="w-3 h-3 shrink-0 text-sky-500" />
+                                    <span>
+                                      {att.clock_out_lat.toFixed(4)}, {att.clock_out_lng.toFixed(4)}
+                                    </span>
+                                    <ExternalLink className="w-2.5 h-2.5" />
+                                  </a>
+                                ) : (
+                                  <span className="text-[11px] text-slate-400">Office / Web Portal</span>
+                                )}
+                              </div>
+                            ) : (
+                              <span className="text-slate-400">
+                                {staff.attendanceStatus === 'not_reported' ? '—' : 'Active'}
                               </span>
-                            )
-                          ) : (
-                            <span className="text-slate-400 text-[11px]">Unrecorded</span>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+                            )}
+                          </Table.Cell>
+
+                          {/* Duration */}
+                          <Table.Cell className="py-3 px-4 font-mono font-medium text-slate-700">
+                            {calculateDuration(att?.clock_in_at, att?.clock_out_at)}
+                          </Table.Cell>
+
+                          {/* Audit Verification */}
+                          <Table.Cell className="py-3 px-4 text-right">
+                            {att ? (
+                              att.clock_in_lat && att.clock_in_lng ? (
+                                <Chip
+                                  size="sm"
+                                  variant="soft"
+                                  color="success"
+                                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200"
+                                >
+                                  <ShieldCheck className="w-3 h-3 text-emerald-600 inline mr-1" />
+                                  GPS Verified
+                                </Chip>
+                              ) : (
+                                <Chip
+                                  size="sm"
+                                  variant="soft"
+                                  color="default"
+                                  className="inline-flex items-center gap-1 text-[11px] text-slate-600 bg-slate-100 px-2 py-0.5 rounded border border-slate-200"
+                                >
+                                  Web Portal
+                                </Chip>
+                              )
+                            ) : (
+                              <span className="text-slate-400 text-[11px]">Unrecorded</span>
+                            )}
+                          </Table.Cell>
+                        </Table.Row>
+                      );
+                    })
+                  )}
+                </Table.Body>
+              </Table.Content>
+            </Table.ScrollContainer>
+          </Table>
+        </Card>
       </div>
     </>
   );

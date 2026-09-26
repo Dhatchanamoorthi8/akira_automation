@@ -28,14 +28,15 @@ import { AdminTableSkeleton } from '../../components/admin/AdminSkeleton';
 import { AdminErrorState } from '../../components/admin/AdminErrorState';
 import { SEOHead } from '../../components/layout/SEOHead';
 import { useAuth } from '../../auth/useAuth';
+import { Button, Card, Chip, Table, Modal, Select, ListBox, Input, Label } from '@heroui/react';
 
-const ROLE_STYLES: Record<string, { label: string; bg: string; text: string; border: string }> = {
-  admin: { label: 'Administrator', bg: 'bg-sky-50', text: 'text-sky-700', border: 'border-sky-200' },
-  staff: { label: 'Staff Member', bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200' },
-  manager: { label: 'Manager', bg: 'bg-indigo-50', text: 'text-indigo-700', border: 'border-indigo-200' },
-  sales: { label: 'Sales Engineer', bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200' },
-  editor: { label: 'Editor', bg: 'bg-purple-50', text: 'text-purple-700', border: 'border-purple-200' },
-  viewer: { label: 'Viewer', bg: 'bg-slate-50', text: 'text-slate-700', border: 'border-slate-200' },
+const ROLE_STYLES: Record<string, { label: string; color: "accent" | "success" | "warning" | "danger" | "default"; bg: string; text: string; border: string }> = {
+  admin: { label: 'Administrator', color: 'accent', bg: 'bg-sky-50', text: 'text-sky-700', border: 'border-sky-200' },
+  staff: { label: 'Staff Member', color: 'success', bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200' },
+  manager: { label: 'Manager', color: 'accent', bg: 'bg-indigo-50', text: 'text-indigo-700', border: 'border-indigo-200' },
+  sales: { label: 'Sales Engineer', color: 'warning', bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200' },
+  editor: { label: 'Editor', color: 'accent', bg: 'bg-purple-50', text: 'text-purple-700', border: 'border-purple-200' },
+  viewer: { label: 'Viewer', color: 'default', bg: 'bg-slate-50', text: 'text-slate-700', border: 'border-slate-200' },
 };
 
 export const AdminUsers: React.FC = () => {
@@ -309,22 +310,28 @@ export const AdminUsers: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2.5">
-            <button
+            <Button
+              variant="outline"
+              size="sm"
+              onPress={() => fetchUsers()}
               onClick={() => fetchUsers()}
-              disabled={isLoading}
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors shadow-sm disabled:opacity-50"
-              title="Refresh users"
+              isDisabled={isLoading}
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors shadow-sm disabled:opacity-50 cursor-pointer"
+              aria-label="Refresh users"
             >
               <RotateCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
               <span className="hidden sm:inline">Refresh</span>
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="primary"
+              size="sm"
+              onPress={() => setShowCreateModal(true)}
               onClick={() => setShowCreateModal(true)}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg bg-industrial-dark text-white hover:bg-slate-800 transition-colors shadow-sm"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg bg-industrial-dark text-white hover:bg-slate-800 transition-colors shadow-sm cursor-pointer"
             >
               <UserPlus className="w-3.5 h-3.5 text-sky-400" />
-              Create Staff User
-            </button>
+              <span>Create Staff User</span>
+            </Button>
           </div>
         </div>
 
@@ -338,71 +345,113 @@ export const AdminUsers: React.FC = () => {
 
         {/* KPI Strip */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          <Card className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
             <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Total Users</span>
             <p className="text-xl font-bold font-mono text-industrial-dark mt-0.5">{total}</p>
-          </div>
-          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          </Card>
+          <Card className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
             <span className="text-[11px] font-semibold text-emerald-700 uppercase tracking-wider">Active Staff</span>
             <p className="text-xl font-bold font-mono text-emerald-700 mt-0.5">{staffCount}</p>
-          </div>
-          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          </Card>
+          <Card className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
             <span className="text-[11px] font-semibold text-sky-700 uppercase tracking-wider">Administrators</span>
             <p className="text-xl font-bold font-mono text-sky-700 mt-0.5">{adminCount}</p>
-          </div>
-          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          </Card>
+          <Card className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
             <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Active Accounts</span>
             <p className="text-xl font-bold font-mono text-industrial-dark mt-0.5">{activeCount}</p>
-          </div>
+          </Card>
         </div>
 
         {/* Search & Filter Toolbar */}
-        <div className="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+        <Card className="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm space-y-3">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {/* Search Input */}
-            <div className="relative">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
+            <div className="relative flex items-center">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none z-10" />
+              <Input
                 type="text"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder="Search staff by name or email..."
-                className="w-full pl-9 pr-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500"
+                className="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl border border-slate-200 bg-slate-50/60 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 font-sans"
               />
             </div>
 
             {/* Role Filter */}
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 min-w-0">
               <SlidersHorizontal className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-              <select
+              <Select
                 value={roleFilter}
-                onChange={e => setRoleFilter(e.target.value as UserRole | 'all')}
-                className="w-full px-2.5 py-2 text-xs rounded-lg border border-slate-300 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                onChange={val => setRoleFilter((val as UserRole | 'all') || 'all')}
+                className="w-full"
+                aria-label="Filter by role"
               >
-                <option value="all">All Roles</option>
-                <option value="staff">Staff Only</option>
-                <option value="admin">Administrators Only</option>
-                <option value="sales">Sales Only</option>
-                <option value="manager">Managers Only</option>
-                <option value="editor">Editors Only</option>
-                <option value="viewer">Viewers Only</option>
-              </select>
+                <Select.Trigger className="w-full h-8 px-2.5 py-1.5 text-xs rounded-xl border border-slate-200 bg-slate-50/60 text-slate-700 flex items-center justify-between shadow-2xs hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-colors cursor-pointer">
+                  <Select.Value className="text-xs font-medium text-slate-700 truncate" />
+                  <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
+                </Select.Trigger>
+                <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[170px]">
+                  <ListBox className="outline-none space-y-0.5">
+                    {[
+                      { id: 'all', label: 'All Roles' },
+                      { id: 'staff', label: 'Staff Only' },
+                      { id: 'admin', label: 'Administrators Only' },
+                      { id: 'sales', label: 'Sales Only' },
+                      { id: 'manager', label: 'Managers Only' },
+                      { id: 'editor', label: 'Editors Only' },
+                      { id: 'viewer', label: 'Viewers Only' },
+                    ].map(r => (
+                      <ListBox.Item
+                        key={r.id}
+                        id={r.id}
+                        textValue={r.label}
+                        className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-sky-50 data-[selected=true]:text-sky-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                      >
+                        {r.label}
+                        <ListBox.ItemIndicator />
+                      </ListBox.Item>
+                    ))}
+                  </ListBox>
+                </Select.Popover>
+              </Select>
             </div>
 
             {/* Status Filter */}
-            <div>
-              <select
+            <div className="min-w-0">
+              <Select
                 value={statusFilter}
-                onChange={e => setStatusFilter(e.target.value as 'all' | 'active' | 'inactive')}
-                className="w-full px-2.5 py-2 text-xs rounded-lg border border-slate-300 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                onChange={val => setStatusFilter((val as 'all' | 'active' | 'inactive') || 'all')}
+                className="w-full"
+                aria-label="Filter by account status"
               >
-                <option value="all">All Statuses</option>
-                <option value="active">Active Accounts</option>
-                <option value="inactive">Inactive Accounts</option>
-              </select>
+                <Select.Trigger className="w-full h-8 px-2.5 py-1.5 text-xs rounded-xl border border-slate-200 bg-slate-50/60 text-slate-700 flex items-center justify-between shadow-2xs hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-colors cursor-pointer">
+                  <Select.Value className="text-xs font-medium text-slate-700 truncate" />
+                  <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
+                </Select.Trigger>
+                <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[170px]">
+                  <ListBox className="outline-none space-y-0.5">
+                    {[
+                      { id: 'all', label: 'All Statuses' },
+                      { id: 'active', label: 'Active Accounts' },
+                      { id: 'inactive', label: 'Inactive Accounts' },
+                    ].map(s => (
+                      <ListBox.Item
+                        key={s.id}
+                        id={s.id}
+                        textValue={s.label}
+                        className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-sky-50 data-[selected=true]:text-sky-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                      >
+                        {s.label}
+                        <ListBox.ItemIndicator />
+                      </ListBox.Item>
+                    ))}
+                  </ListBox>
+                </Select.Popover>
+              </Select>
             </div>
           </div>
-        </div>
+        </Card>
 
         {/* User Content */}
         {isLoading ? (
@@ -424,131 +473,141 @@ export const AdminUsers: React.FC = () => {
         ) : (
           <div className="space-y-4">
             {/* Desktop Table View */}
-            <div className="hidden lg:block bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-slate-50/75 border-b border-slate-200 text-[11px] font-semibold text-slate-600 uppercase tracking-wider">
-                    <th className="py-3 px-4">Staff Member</th>
-                    <th className="py-3 px-4">Email Address</th>
-                    <th className="py-3 px-4">Access Role</th>
-                    <th className="py-3 px-4">Account Status</th>
-                    <th className="py-3 px-4">Registered</th>
-                    <th className="py-3 px-4">Last Activity</th>
-                    <th className="py-3 px-4 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-xs">
-                  {users.map(u => {
-                    const roleStyle = ROLE_STYLES[u.role] || ROLE_STYLES.viewer;
-                    const initials = (u.full_name || u.email)
-                      .split(' ')
-                      .map(p => p[0])
-                      .join('')
-                      .slice(0, 2)
-                      .toUpperCase();
-                    const isSelf = currentUser?.id === u.id;
 
-                    return (
-                      <tr key={u.id} className="hover:bg-slate-50/50 transition-colors">
-                        <td className="py-3 px-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center font-bold text-slate-700 text-[11px]">
-                              {initials}
-                            </div>
-                            <div>
-                              <div className="font-semibold text-industrial-dark flex items-center gap-1.5">
-                                <span>{u.full_name || 'Unnamed Staff'}</span>
-                                {isSelf && (
-                                  <span className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.2 rounded border border-slate-200">
-                                    You
-                                  </span>
+              <Table className="w-full">
+                <Table.ScrollContainer>
+                  <Table.Content aria-label="Staff and User Accounts Table" >
+                    <Table.Header >
+                      <Table.Column isRowHeader className="py-3 px-4">Staff Member</Table.Column>
+                      <Table.Column className="py-3 px-4">Email Address</Table.Column>
+                      <Table.Column className="py-3 px-4">Access Role</Table.Column>
+                      <Table.Column className="py-3 px-4">Account Status</Table.Column>
+                      <Table.Column className="py-3 px-4">Registered</Table.Column>
+                      <Table.Column className="py-3 px-4">Last Activity</Table.Column>
+                      <Table.Column className="py-3 px-4 text-right">Actions</Table.Column>
+                    </Table.Header>
+                    <Table.Body >
+                      {users.map(u => {
+                        const roleStyle = ROLE_STYLES[u.role] || ROLE_STYLES.viewer;
+                        const initials = (u.full_name || u.email)
+                          .split(' ')
+                          .map(p => p[0])
+                          .join('')
+                          .slice(0, 2)
+                          .toUpperCase();
+                        const isSelf = currentUser?.id === u.id;
+
+                        return (
+                          <Table.Row key={u.id} className="hover:bg-slate-50/50 transition-colors">
+                            <Table.Cell className="py-3 px-4">
+                              <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center font-bold text-slate-700 text-[11px]">
+                                  {initials}
+                                </div>
+                                <div>
+                                  <div className="font-semibold text-industrial-dark flex items-center gap-1.5">
+                                    <span>{u.full_name || 'Unnamed Staff'}</span>
+                                    {isSelf && (
+                                      <span className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.2 rounded border border-slate-200">
+                                        You
+                                      </span>
+                                    )}
+                                  </div>
+                                  <div className="text-[11px] text-slate-400 font-mono">
+                                    ID: {u.id.slice(0, 8)}...
+                                  </div>
+                                </div>
+                              </div>
+                            </Table.Cell>
+                            <Table.Cell className="py-3 px-4 text-slate-600 font-mono text-[11px]">
+                              {u.email}
+                            </Table.Cell>
+                            <Table.Cell className="py-3 px-4">
+                              <Chip
+                                variant="soft"
+                                color={roleStyle.color}
+                                size="sm"
+                                className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${roleStyle.bg} ${roleStyle.text} ${roleStyle.border}`}
+                              >
+                                {u.role === 'admin' ? (
+                                  <ShieldCheck className="w-3 h-3 text-sky-600" />
+                                ) : (
+                                  <Shield className="w-3 h-3 text-slate-400" />
                                 )}
-                              </div>
-                              <div className="text-[11px] text-slate-400 font-mono">
-                                ID: {u.id.slice(0, 8)}...
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="py-3 px-4 text-slate-600 font-mono text-[11px]">
-                          {u.email}
-                        </td>
-                        <td className="py-3 px-4">
-                          <span
-                            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${roleStyle.bg} ${roleStyle.text} ${roleStyle.border}`}
-                          >
-                            {u.role === 'admin' ? (
-                              <ShieldCheck className="w-3 h-3 text-sky-600" />
-                            ) : (
-                              <Shield className="w-3 h-3 text-slate-400" />
-                            )}
-                            {roleStyle.label}
-                          </span>
-                        </td>
-                        <td className="py-3 px-4">
-                          <span
-                            className={`inline-flex items-center gap-1 text-[11px] font-semibold ${
-                              u.active ? 'text-emerald-700' : 'text-slate-400'
-                            }`}
-                          >
-                            {u.active ? (
-                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                            ) : (
-                              <XCircle className="w-3.5 h-3.5 text-slate-400" />
-                            )}
-                            {u.active ? 'Active' : 'Inactive'}
-                          </span>
-                        </td>
-                        <td className="py-3 px-4 text-slate-500 text-[11px]">
-                          {formatDate(u.created_at)}
-                        </td>
-                        <td className="py-3 px-4 text-slate-400 text-[11px]">
-                          {formatDate(u.updated_at || u.created_at)}
-                        </td>
-                        <td className="py-3 px-4 text-right">
-                          <div className="inline-flex items-center gap-2">
-                            {/* Edit Action Button */}
-                            <button
-                              type="button"
-                              onClick={() => handleOpenEdit(u)}
-                              className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-colors shadow-2xs"
-                              title="Edit user details"
-                            >
-                              <Edit3 className="w-3 h-3 text-slate-500" />
-                              <span>Edit</span>
-                            </button>
+                                <Chip.Label>{roleStyle.label}</Chip.Label>
+                              </Chip>
+                            </Table.Cell>
+                            <Table.Cell className="py-3 px-4">
+                              <Chip
+                                variant="soft"
+                                color={u.active ? 'success' : 'default'}
+                                size="sm"
+                                className={`inline-flex items-center gap-1 text-[11px] font-semibold ${
+                                  u.active ? 'text-emerald-700' : 'text-slate-400'
+                                }`}
+                              >
+                                {u.active ? (
+                                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                                ) : (
+                                  <XCircle className="w-3.5 h-3.5 text-slate-400" />
+                                )}
+                                <Chip.Label>{u.active ? 'Active' : 'Inactive'}</Chip.Label>
+                              </Chip>
+                            </Table.Cell>
+                            <Table.Cell className="py-3 px-4 text-slate-500 text-[11px]">
+                              {formatDate(u.created_at)}
+                            </Table.Cell>
+                            <Table.Cell className="py-3 px-4 text-slate-400 text-[11px]">
+                              {formatDate(u.updated_at || u.created_at)}
+                            </Table.Cell>
+                            <Table.Cell className="py-3 px-4 text-right">
+                              <div className="inline-flex items-center gap-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onPress={() => handleOpenEdit(u)}
+                                  onClick={() => handleOpenEdit(u)}
+                                  className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-colors shadow-2xs cursor-pointer"
+                                  aria-label="Edit user details"
+                                >
+                                  <Edit3 className="w-3 h-3 text-slate-500" />
+                                  <span>Edit</span>
+                                </Button>
 
-                            {/* Deactivate / Delete Action Button */}
-                            <button
-                              type="button"
-                              onClick={() => handleOpenManage(u)}
-                              className={`inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium rounded-lg border transition-colors shadow-2xs ${
-                                u.active
-                                  ? 'border-rose-200 text-rose-700 hover:bg-rose-50'
-                                  : 'border-emerald-200 text-emerald-700 hover:bg-emerald-50'
-                              }`}
-                              title={u.active ? 'Deactivate or delete account' : 'Reactivate account'}
-                            >
-                              {u.active ? (
-                                <>
-                                  <UserX className="w-3 h-3 text-rose-500" />
-                                  <span>Manage</span>
-                                </>
-                              ) : (
-                                <>
-                                  <UserCheck className="w-3 h-3 text-emerald-600" />
-                                  <span>Manage</span>
-                                </>
-                              )}
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onPress={() => handleOpenManage(u)}
+                                  onClick={() => handleOpenManage(u)}
+                                  className={`inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium rounded-lg border transition-colors shadow-2xs cursor-pointer ${
+                                    u.active
+                                      ? 'border-rose-200 text-rose-700 hover:bg-rose-50'
+                                      : 'border-emerald-200 text-emerald-700 hover:bg-emerald-50'
+                                  }`}
+                                  aria-label={u.active ? 'Manage active account' : 'Manage inactive account'}
+                                >
+                                  {u.active ? (
+                                    <>
+                                      <UserX className="w-3 h-3 text-rose-500" />
+                                      <span>Manage</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <UserCheck className="w-3 h-3 text-emerald-600" />
+                                      <span>Manage</span>
+                                    </>
+                                  )}
+                                </Button>
+                              </div>
+                            </Table.Cell>
+                          </Table.Row>
+                        );
+                      })}
+                    </Table.Body>
+                  </Table.Content>
+                </Table.ScrollContainer>
+              </Table>
+           
 
             {/* Mobile / Tablet Card Stack View */}
             <div className="lg:hidden space-y-3">
@@ -557,7 +616,7 @@ export const AdminUsers: React.FC = () => {
                 const isSelf = currentUser?.id === u.id;
 
                 return (
-                  <div key={u.id} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                  <Card key={u.id} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="font-semibold text-industrial-dark flex items-center gap-1.5">
@@ -573,11 +632,14 @@ export const AdminUsers: React.FC = () => {
                           {u.email}
                         </div>
                       </div>
-                      <span
+                      <Chip
+                        variant="soft"
+                        color={roleStyle.color}
+                        size="sm"
                         className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold border ${roleStyle.bg} ${roleStyle.text} ${roleStyle.border}`}
                       >
-                        {roleStyle.label}
-                      </span>
+                        <Chip.Label>{roleStyle.label}</Chip.Label>
+                      </Chip>
                     </div>
 
                     <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px]">
@@ -586,18 +648,22 @@ export const AdminUsers: React.FC = () => {
                         <span>Registered {formatDate(u.created_at)}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <button
-                          type="button"
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onPress={() => handleOpenEdit(u)}
                           onClick={() => handleOpenEdit(u)}
-                          className="px-2.5 py-1 text-[11px] font-medium rounded border border-slate-200 text-slate-700 hover:bg-slate-50 inline-flex items-center gap-1"
+                          className="px-2.5 py-1 text-[11px] font-medium rounded border border-slate-200 text-slate-700 hover:bg-slate-50 inline-flex items-center gap-1 cursor-pointer"
                         >
                           <Edit3 className="w-3 h-3" />
                           <span>Edit</span>
-                        </button>
-                        <button
-                          type="button"
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onPress={() => handleOpenManage(u)}
                           onClick={() => handleOpenManage(u)}
-                          className={`px-2.5 py-1 text-[11px] font-medium rounded border inline-flex items-center gap-1 ${
+                          className={`px-2.5 py-1 text-[11px] font-medium rounded border inline-flex items-center gap-1 cursor-pointer ${
                             u.active
                               ? 'border-rose-200 text-rose-700 hover:bg-rose-50'
                               : 'border-emerald-200 text-emerald-700 hover:bg-emerald-50'
@@ -605,10 +671,10 @@ export const AdminUsers: React.FC = () => {
                         >
                           {u.active ? <UserX className="w-3 h-3" /> : <UserCheck className="w-3 h-3" />}
                           <span>Manage</span>
-                        </button>
+                        </Button>
                       </div>
                     </div>
-                  </div>
+                  </Card>
                 );
               })}
             </div>
@@ -617,8 +683,9 @@ export const AdminUsers: React.FC = () => {
 
         {/* 1. Edit User Modal */}
         {editingUser && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
-            <div className="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-md w-full p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
+          <Modal.Backdrop isOpen={!!editingUser} onOpenChange={(open) => { if (!open) setEditingUser(null); }}>
+            <Modal.Container>
+            <Card className="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-md w-full p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div className="flex items-center gap-2">
                   <span className="p-1.5 rounded-lg bg-sky-50 text-sky-700">
@@ -633,13 +700,17 @@ export const AdminUsers: React.FC = () => {
                     </p>
                   </div>
                 </div>
-                <button
-                  type="button"
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  isIconOnly
+                  onPress={() => setEditingUser(null)}
                   onClick={() => setEditingUser(null)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                  className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer"
+                  aria-label="Close edit modal"
                 >
                   <X className="w-4 h-4" />
-                </button>
+                </Button>
               </div>
 
               {editError && (
@@ -654,29 +725,29 @@ export const AdminUsers: React.FC = () => {
                   <label className="block font-semibold text-slate-700 mb-1">
                     Full Name <span className="text-rose-500">*</span>
                   </label>
-                  <input
+                  <Input
                     type="text"
                     required
                     value={editForm.fullName}
                     onChange={e => setEditForm(prev => ({ ...prev, fullName: e.target.value }))}
                     placeholder="Enter full display name"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-sky-500 font-medium text-slate-800"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 font-medium text-slate-800 text-xs font-sans"
                   />
                 </div>
 
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="block font-semibold text-slate-700">Business Email</label>
+                    <Label className="block font-semibold text-slate-700 text-xs">Business Email</Label>
                     <span className="text-[10px] text-slate-400 flex items-center gap-1 font-normal">
                       <Info className="w-3 h-3 text-slate-400" />
                       Read-only (Auth identity)
                     </span>
                   </div>
-                  <input
+                  <Input
                     type="email"
                     disabled
                     value={editingUser.email}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-500 font-mono cursor-not-allowed text-xs"
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-slate-50 text-slate-500 font-mono cursor-not-allowed text-xs"
                   />
                   <p className="text-[10px] text-slate-400 mt-1">
                     Email updates must be initiated via Supabase Authentication identity provider to prevent credential desync.
@@ -684,20 +755,41 @@ export const AdminUsers: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Assigned Access Role</label>
-                  <select
+                  <Label className="block font-semibold text-slate-700 mb-1 text-xs">Assigned Access Role</Label>
+                  <Select
                     value={editForm.role}
-                    onChange={e => setEditForm(prev => ({ ...prev, role: e.target.value as UserRole }))}
-                    disabled={currentUser?.id === editingUser.id}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-sky-500 disabled:bg-slate-50 disabled:text-slate-400"
+                    onChange={val => setEditForm(prev => ({ ...prev, role: (val as UserRole) || 'staff' }))}
+                    isDisabled={currentUser?.id === editingUser.id}
+                    className="w-full"
+                    aria-label="Assigned Access Role"
                   >
-                    <option value="staff">Staff Member (Restricted to Assigned Tasks)</option>
-                    <option value="admin">Administrator (Full System & RBAC Governance)</option>
-                    <option value="sales">Sales Engineer</option>
-                    <option value="manager">Manager</option>
-                    <option value="editor">Editor</option>
-                    <option value="viewer">Viewer (Read-only)</option>
-                  </select>
+                    <Select.Trigger className="w-full h-9 px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white text-slate-700 flex items-center justify-between shadow-2xs hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/20 disabled:bg-slate-50 disabled:text-slate-400 transition-colors cursor-pointer">
+                      <Select.Value className="text-xs font-medium text-slate-700 truncate" />
+                      <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
+                    </Select.Trigger>
+                    <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[280px]">
+                      <ListBox className="outline-none space-y-0.5">
+                        {[
+                          { id: 'staff', label: 'Staff Member (Restricted to Assigned Tasks)' },
+                          { id: 'admin', label: 'Administrator (Full System & RBAC Governance)' },
+                          { id: 'sales', label: 'Sales Engineer' },
+                          { id: 'manager', label: 'Manager' },
+                          { id: 'editor', label: 'Editor' },
+                          { id: 'viewer', label: 'Viewer (Read-only)' },
+                        ].map(r => (
+                          <ListBox.Item
+                            key={r.id}
+                            id={r.id}
+                            textValue={r.label}
+                            className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-sky-50 data-[selected=true]:text-sky-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                          >
+                            {r.label}
+                            <ListBox.ItemIndicator />
+                          </ListBox.Item>
+                        ))}
+                      </ListBox>
+                    </Select.Popover>
+                  </Select>
                   {currentUser?.id === editingUser.id && (
                     <p className="text-[10px] text-amber-600 mt-1">
                       Self-demotion protection: Administrator role cannot be removed from active session.
@@ -708,11 +800,13 @@ export const AdminUsers: React.FC = () => {
                 <div>
                   <label className="block font-semibold text-slate-700 mb-1.5">Account Status</label>
                   <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      disabled={currentUser?.id === editingUser.id && !editForm.active}
+                    <Button
+                      variant={editForm.active ? 'primary' : 'outline'}
+                      size="sm"
+                      isDisabled={currentUser?.id === editingUser.id && !editForm.active}
+                      onPress={() => setEditForm(prev => ({ ...prev, active: true }))}
                       onClick={() => setEditForm(prev => ({ ...prev, active: true }))}
-                      className={`py-2 px-3 rounded-lg border text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors ${
+                      className={`py-2 px-3 rounded-lg border text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer ${
                         editForm.active
                           ? 'border-emerald-300 bg-emerald-50 text-emerald-700 shadow-xs'
                           : 'border-slate-200 text-slate-500 hover:bg-slate-50'
@@ -720,12 +814,14 @@ export const AdminUsers: React.FC = () => {
                     >
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                       <span>Active</span>
-                    </button>
-                    <button
-                      type="button"
-                      disabled={currentUser?.id === editingUser.id}
+                    </Button>
+                    <Button
+                      variant={!editForm.active ? 'danger' : 'outline'}
+                      size="sm"
+                      isDisabled={currentUser?.id === editingUser.id}
+                      onPress={() => setEditForm(prev => ({ ...prev, active: false }))}
                       onClick={() => setEditForm(prev => ({ ...prev, active: false }))}
-                      className={`py-2 px-3 rounded-lg border text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors ${
+                      className={`py-2 px-3 rounded-lg border text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer ${
                         !editForm.active
                           ? 'border-rose-300 bg-rose-50 text-rose-700 shadow-xs'
                           : 'border-slate-200 text-slate-500 hover:bg-slate-50'
@@ -733,7 +829,7 @@ export const AdminUsers: React.FC = () => {
                     >
                       <XCircle className="w-3.5 h-3.5 text-rose-600" />
                       <span>Inactive</span>
-                    </button>
+                    </Button>
                   </div>
                   {currentUser?.id === editingUser.id && (
                     <p className="text-[10px] text-amber-600 mt-1">
@@ -743,31 +839,37 @@ export const AdminUsers: React.FC = () => {
                 </div>
 
                 <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2.5">
-                  <button
-                    type="button"
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onPress={() => setEditingUser(null)}
                     onClick={() => setEditingUser(null)}
-                    className="px-3.5 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold"
+                    className="px-3.5 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold cursor-pointer"
                   >
                     Cancel
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    variant="primary"
+                    size="sm"
                     type="submit"
-                    disabled={isSavingEdit}
-                    className="px-4 py-2 rounded-lg bg-industrial-dark text-white hover:bg-slate-800 font-semibold inline-flex items-center gap-1.5 shadow-sm disabled:opacity-50"
+                    isDisabled={isSavingEdit}
+                    className="px-4 py-2 rounded-lg bg-industrial-dark text-white hover:bg-slate-800 font-semibold inline-flex items-center gap-1.5 shadow-sm disabled:opacity-50 cursor-pointer"
                   >
                     {isSavingEdit && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                    Save Changes
-                  </button>
+                    <span>Save Changes</span>
+                  </Button>
                 </div>
               </form>
-            </div>
-          </div>
+            </Card>
+          </Modal.Container>
+        </Modal.Backdrop>
         )}
 
         {/* 2. Deactivate / Delete Confirmation Modal */}
         {managingUser && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
-            <div className="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-md w-full p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
+          <Modal.Backdrop isOpen={!!managingUser} onOpenChange={(open) => { if (!open) setManagingUser(null); }}>
+            <Modal.Container>
+              <Card className="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-md w-full p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div className="flex items-center gap-2">
                   <span className={`p-1.5 rounded-lg ${managingUser.active ? 'bg-rose-50 text-rose-600' : 'bg-emerald-50 text-emerald-600'}`}>
@@ -782,13 +884,17 @@ export const AdminUsers: React.FC = () => {
                     </p>
                   </div>
                 </div>
-                <button
-                  type="button"
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  isIconOnly
+                  onPress={() => setManagingUser(null)}
                   onClick={() => setManagingUser(null)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                  className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer"
+                  aria-label="Close manage modal"
                 >
                   <X className="w-4 h-4" />
-                </button>
+                </Button>
               </div>
 
               {actionModalError && (
@@ -856,11 +962,13 @@ export const AdminUsers: React.FC = () => {
               {/* Action Buttons */}
               <div className="space-y-2.5 pt-2">
                 {/* Primary Action: Deactivate / Reactivate */}
-                <button
-                  type="button"
+                <Button
+                  variant={managingUser.active ? 'danger' : 'primary'}
+                  size="md"
+                  onPress={handleToggleActiveFromModal}
                   onClick={handleToggleActiveFromModal}
-                  disabled={isPerformingAction || (currentUser?.id === managingUser.id && managingUser.active)}
-                  className={`w-full py-2.5 px-4 rounded-xl text-xs font-semibold inline-flex items-center justify-center gap-2 transition-colors shadow-xs ${
+                  isDisabled={isPerformingAction || (currentUser?.id === managingUser.id && managingUser.active)}
+                  className={`w-full py-2.5 px-4 rounded-xl text-xs font-semibold inline-flex items-center justify-center gap-2 transition-colors shadow-xs cursor-pointer ${
                     managingUser.active
                       ? 'bg-amber-600 text-white hover:bg-amber-700'
                       : 'bg-emerald-600 text-white hover:bg-emerald-700'
@@ -878,43 +986,49 @@ export const AdminUsers: React.FC = () => {
                       <span>Reactivate User Account</span>
                     </>
                   )}
-                </button>
+                </Button>
 
                 {/* Secondary Action: Permanent Delete */}
                 {managingUser.active && !userDeps?.hasDependencies && (
                   <>
                     {!showHardDeleteConfirm ? (
-                      <button
-                        type="button"
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onPress={() => setShowHardDeleteConfirm(true)}
                         onClick={() => setShowHardDeleteConfirm(true)}
-                        disabled={isPerformingAction || currentUser?.id === managingUser.id}
-                        className="w-full py-2 px-3 rounded-xl border border-rose-200 text-rose-700 hover:bg-rose-50 text-xs font-medium transition-colors inline-flex items-center justify-center gap-1.5 disabled:opacity-50"
+                        isDisabled={isPerformingAction || currentUser?.id === managingUser.id}
+                        className="w-full py-2 px-3 rounded-xl border border-rose-200 text-rose-700 hover:bg-rose-50 text-xs font-medium transition-colors inline-flex items-center justify-center gap-1.5 disabled:opacity-50 cursor-pointer"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                         <span>Permanent Delete Options...</span>
-                      </button>
+                      </Button>
                     ) : (
                       <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl space-y-2">
                         <p className="text-[11px] font-semibold text-rose-900">
                           Confirm permanent deletion of {managingUser.email}? This cannot be undone.
                         </p>
                         <div className="flex items-center justify-end gap-2">
-                          <button
-                            type="button"
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onPress={() => setShowHardDeleteConfirm(false)}
                             onClick={() => setShowHardDeleteConfirm(false)}
-                            className="px-2.5 py-1 text-xs border border-slate-300 rounded bg-white text-slate-700"
+                            className="px-2.5 py-1 text-xs border border-slate-300 rounded bg-white text-slate-700 cursor-pointer"
                           >
                             Cancel
-                          </button>
-                          <button
-                            type="button"
+                          </Button>
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            onPress={handlePermanentDelete}
                             onClick={handlePermanentDelete}
-                            disabled={isPerformingAction}
-                            className="px-3 py-1 text-xs font-semibold bg-rose-600 text-white rounded hover:bg-rose-700 inline-flex items-center gap-1 shadow-xs"
+                            isDisabled={isPerformingAction}
+                            className="px-3 py-1 text-xs font-semibold bg-rose-600 text-white rounded hover:bg-rose-700 inline-flex items-center gap-1 shadow-xs cursor-pointer"
                           >
                             {isPerformingAction && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                             <span>Permanently Delete</span>
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     )}
@@ -922,22 +1036,25 @@ export const AdminUsers: React.FC = () => {
                 )}
 
                 {/* Cancel button */}
-                <button
-                  type="button"
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onPress={() => setManagingUser(null)}
                   onClick={() => setManagingUser(null)}
-                  className="w-full py-2 text-xs font-medium text-slate-500 hover:text-slate-800 transition-colors text-center"
+                  className="w-full py-2 text-xs font-medium text-slate-500 hover:text-slate-800 transition-colors text-center cursor-pointer"
                 >
                   Dismiss
-                </button>
+                </Button>
               </div>
-            </div>
-          </div>
+            </Card>
+          </Modal.Container>
+        </Modal.Backdrop>
         )}
 
         {/* 3. Create Staff User Modal */}
-        {showCreateModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
-            <div className="bg-white rounded-xl shadow-xl border border-slate-200 max-w-md w-full p-6 space-y-4">
+        <Modal.Backdrop isOpen={showCreateModal} onOpenChange={setShowCreateModal}>
+          <Modal.Container>
+            <Card className="bg-white rounded-xl shadow-xl border border-slate-200 max-w-md w-full p-6 space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div className="flex items-center gap-2">
                   <UserPlus className="w-5 h-5 text-sky-600" />
@@ -945,12 +1062,17 @@ export const AdminUsers: React.FC = () => {
                     Create Assigned Staff User
                   </h3>
                 </div>
-                <button
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  isIconOnly
+                  onPress={() => setShowCreateModal(false)}
                   onClick={() => setShowCreateModal(false)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                  className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer"
+                  aria-label="Close create staff modal"
                 >
                   <X className="w-4 h-4" />
-                </button>
+                </Button>
               </div>
 
               {createError && (
@@ -962,77 +1084,102 @@ export const AdminUsers: React.FC = () => {
 
               <form onSubmit={handleCreateSubmit} className="space-y-3.5 text-xs">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Full Name</label>
-                  <input
+                  <Label className="block font-semibold text-slate-700 mb-1 text-xs">Full Name</Label>
+                  <Input
                     type="text"
                     required
                     value={createForm.fullName}
                     onChange={e => setCreateForm(prev => ({ ...prev, fullName: e.target.value }))}
                     placeholder="e.g. Suresh Patel"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-sky-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-xs font-sans"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Business Email</label>
-                  <input
+                  <Label className="block font-semibold text-slate-700 mb-1 text-xs">Business Email</Label>
+                  <Input
                     type="email"
                     required
                     value={createForm.email}
                     onChange={e => setCreateForm(prev => ({ ...prev, email: e.target.value }))}
                     placeholder="suresh@akiraautomation.com"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-sky-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-xs font-sans"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
+                  <Label className="block font-semibold text-slate-700 mb-1 text-xs">
                     Temporary Password <span className="text-slate-400 font-normal">(Optional, defaults to AkiraStaff@2026)</span>
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                     type="password"
                     value={createForm.password}
                     onChange={e => setCreateForm(prev => ({ ...prev, password: e.target.value }))}
                     placeholder="••••••••"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-sky-500 font-mono"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 font-mono text-xs"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Assigned Role</label>
-                  <select
+                  <Label className="block font-semibold text-slate-700 mb-1 text-xs">Assigned Role</Label>
+                  <Select
                     value={createForm.role}
-                    onChange={e => setCreateForm(prev => ({ ...prev, role: e.target.value as UserRole }))}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                    onChange={val => setCreateForm(prev => ({ ...prev, role: (val as UserRole) || 'staff' }))}
+                    className="w-full"
+                    aria-label="Assigned Role"
                   >
-                    <option value="staff">Staff Member (Restricted to Assigned Tasks)</option>
-                    <option value="sales">Sales Engineer</option>
-                    <option value="manager">Manager</option>
-                    <option value="admin">Administrator (Full System Access)</option>
-                  </select>
+                    <Select.Trigger className="w-full h-9 px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white text-slate-700 flex items-center justify-between shadow-2xs hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-colors cursor-pointer">
+                      <Select.Value className="text-xs font-medium text-slate-700 truncate" />
+                      <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
+                    </Select.Trigger>
+                    <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[280px]">
+                      <ListBox className="outline-none space-y-0.5">
+                        {[
+                          { id: 'staff', label: 'Staff Member (Restricted to Assigned Tasks)' },
+                          { id: 'sales', label: 'Sales Engineer' },
+                          { id: 'manager', label: 'Manager' },
+                          { id: 'admin', label: 'Administrator (Full System Access)' },
+                        ].map(r => (
+                          <ListBox.Item
+                            key={r.id}
+                            id={r.id}
+                            textValue={r.label}
+                            className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-sky-50 data-[selected=true]:text-sky-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                          >
+                            {r.label}
+                            <ListBox.ItemIndicator />
+                          </ListBox.Item>
+                        ))}
+                      </ListBox>
+                    </Select.Popover>
+                  </Select>
                 </div>
 
                 <div className="pt-3 flex items-center justify-end gap-2.5">
-                  <button
-                    type="button"
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onPress={() => setShowCreateModal(false)}
                     onClick={() => setShowCreateModal(false)}
-                    className="px-3.5 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold"
+                    className="px-3.5 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold cursor-pointer"
                   >
                     Cancel
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    variant="primary"
+                    size="sm"
                     type="submit"
-                    disabled={isCreating}
-                    className="px-4 py-2 rounded-lg bg-industrial-dark text-white hover:bg-slate-800 font-semibold inline-flex items-center gap-1.5 shadow-sm disabled:opacity-50"
+                    isDisabled={isCreating}
+                    className="px-4 py-2 rounded-lg bg-industrial-dark text-white hover:bg-slate-800 font-semibold inline-flex items-center gap-1.5 shadow-sm disabled:opacity-50 cursor-pointer"
                   >
                     {isCreating && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                    Create Staff Member
-                  </button>
+                    <span>Create Staff Member</span>
+                  </Button>
                 </div>
               </form>
-            </div>
-          </div>
-        )}
+            </Card>
+          </Modal.Container>
+        </Modal.Backdrop>
       </div>
     </>
   );

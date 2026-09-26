@@ -16,6 +16,7 @@ import {
   Loader2,
   ExternalLink,
 } from 'lucide-react';
+import { Button, Modal, Input, TextArea, Select, ListBox, Label, Checkbox } from '@heroui/react';
 import { CreateProductInput, UpdateProductInput, ProductImage } from '../../types/database';
 import { productService } from '../../services/productService';
 import { ProductImageManager } from '../../components/admin/ProductImageManager';
@@ -375,36 +376,36 @@ export const AdminProductForm: React.FC = () => {
                 </h3>
 
                 <div>
-                  <label htmlFor="product-name" className="block text-xs font-semibold text-slate-700 mb-1">
+                  <Label htmlFor="product-name" className="block text-xs font-semibold text-slate-700 mb-1">
                     Official Product Name <span className="text-rose-500">*</span>
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                     id="product-name"
                     type="text"
                     required
                     value={name}
                     onChange={handleNameChange}
                     placeholder="e.g. Air Plug Gauge to Check ID Bore"
-                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-industrial-primary/20 focus:border-industrial-primary"
+                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 bg-white font-sans"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="product-slug" className="block text-xs font-semibold text-slate-700 mb-1">
+                  <Label htmlFor="product-slug" className="block text-xs font-semibold text-slate-700 mb-1">
                     URL Slug Identifier <span className="text-rose-500">*</span>
-                  </label>
+                  </Label>
                   <div className="relative">
-                    <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 font-mono text-xs">
+                    <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 font-mono text-xs z-10">
                       /products/
                     </span>
-                    <input
+                    <Input
                       id="product-slug"
                       type="text"
                       required
                       value={slug}
                       onChange={handleSlugChange}
                       placeholder="air-plug-gauge"
-                      className="w-full pl-24 pr-3 py-2 text-xs font-mono border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-industrial-primary/20 focus:border-industrial-primary"
+                      className="w-full pl-24 pr-3 py-2 text-xs font-mono border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 bg-white"
                     />
                   </div>
                   <p className="text-[11px] text-slate-400 mt-1">
@@ -413,44 +414,44 @@ export const AdminProductForm: React.FC = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="product-tagline" className="block text-xs font-semibold text-slate-700 mb-1">
+                  <Label htmlFor="product-tagline" className="block text-xs font-semibold text-slate-700 mb-1">
                     Technical Tagline / Subheading
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                     id="product-tagline"
                     type="text"
                     value={tagline}
                     onChange={(e) => setTagline(e.target.value)}
                     placeholder="e.g. Precision Internal Diameter & Bore Measurement with Setting Rings"
-                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-industrial-primary/20 focus:border-industrial-primary"
+                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 bg-white font-sans"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="product-short-desc" className="block text-xs font-semibold text-slate-700 mb-1">
+                  <Label htmlFor="product-short-desc" className="block text-xs font-semibold text-slate-700 mb-1">
                     Card Short Description
-                  </label>
-                  <textarea
+                  </Label>
+                  <TextArea
                     id="product-short-desc"
                     rows={2}
                     value={shortDescription}
                     onChange={(e) => setShortDescription(e.target.value)}
                     placeholder="Brief 1-2 sentence engineering overview for catalogue listings..."
-                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-industrial-primary/20 focus:border-industrial-primary"
+                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 font-sans"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="product-full-desc" className="block text-xs font-semibold text-slate-700 mb-1">
+                  <Label htmlFor="product-full-desc" className="block text-xs font-semibold text-slate-700 mb-1">
                     Detailed Engineering Overview
-                  </label>
-                  <textarea
+                  </Label>
+                  <TextArea
                     id="product-full-desc"
                     rows={4}
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Comprehensive description of measurement principles, metallurgy, and construction..."
-                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-industrial-primary/20 focus:border-industrial-primary"
+                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 font-sans"
                   />
                 </div>
               </div>
@@ -475,19 +476,19 @@ export const AdminProductForm: React.FC = () => {
                 <div className="space-y-2">
                   {specs.map((row, idx) => (
                     <div key={idx} className="flex items-center gap-2">
-                      <input
+                      <Input
                         type="text"
                         value={row.key}
                         onChange={(e) => handleSpecChange(idx, 'key', e.target.value)}
                         placeholder="Parameter (e.g. Diameter Range)"
-                        className="w-1/2 px-3 py-1.5 text-xs font-mono border border-slate-200 rounded-lg focus:outline-none focus:border-industrial-primary"
+                        className="w-1/2 px-3 py-1.5 text-xs font-mono border border-slate-200 rounded-xl focus:outline-none focus:border-industrial-primary bg-white"
                       />
-                      <input
+                      <Input
                         type="text"
                         value={row.value}
                         onChange={(e) => handleSpecChange(idx, 'value', e.target.value)}
                         placeholder="Specification Value (e.g. 2 mm to 200 mm)"
-                        className="w-1/2 px-3 py-1.5 text-xs font-mono border border-slate-200 rounded-lg focus:outline-none focus:border-industrial-primary"
+                        className="w-1/2 px-3 py-1.5 text-xs font-mono border border-slate-200 rounded-xl focus:outline-none focus:border-industrial-primary bg-white"
                       />
                       <button
                         type="button"
@@ -510,44 +511,44 @@ export const AdminProductForm: React.FC = () => {
                 </h3>
 
                 <div>
-                  <label htmlFor="product-highlights" className="block text-xs font-semibold text-slate-700 mb-1">
+                  <Label htmlFor="product-highlights" className="block text-xs font-semibold text-slate-700 mb-1">
                     Key Highlights (Top Bullet Points)
-                  </label>
-                  <textarea
+                  </Label>
+                  <TextArea
                     id="product-highlights"
                     rows={3}
                     value={highlightsText}
                     onChange={(e) => setHighlightsText(e.target.value)}
                     placeholder="Range: 2 mm to 200 mm&#10;Supplied for through bore / blind bore&#10;Hard chrome plated gauging surface"
-                    className="w-full px-3 py-2 text-xs font-mono border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-industrial-primary/20 focus:border-industrial-primary"
+                    className="w-full px-3 py-2 text-xs font-mono border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="product-features" className="block text-xs font-semibold text-slate-700 mb-1">
+                  <Label htmlFor="product-features" className="block text-xs font-semibold text-slate-700 mb-1">
                     Technical Features & Capabilities
-                  </label>
-                  <textarea
+                  </Label>
+                  <TextArea
                     id="product-features"
                     rows={3}
                     value={featuresText}
                     onChange={(e) => setFeaturesText(e.target.value)}
                     placeholder="Adjustable depth collars for specific depth checks&#10;Two setting rings ensure precise comparative zero"
-                    className="w-full px-3 py-2 text-xs font-mono border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-industrial-primary/20 focus:border-industrial-primary"
+                    className="w-full px-3 py-2 text-xs font-mono border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="product-applications" className="block text-xs font-semibold text-slate-700 mb-1">
+                  <Label htmlFor="product-applications" className="block text-xs font-semibold text-slate-700 mb-1">
                     Industrial Manufacturing Applications
-                  </label>
-                  <textarea
+                  </Label>
+                  <TextArea
                     id="product-applications"
                     rows={3}
                     value={applicationsText}
                     onChange={(e) => setApplicationsText(e.target.value)}
                     placeholder="Automotive engine cylinder and liner inspection&#10;Precision bushings, sleeves, and bearing ID checks"
-                    className="w-full px-3 py-2 text-xs font-mono border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-industrial-primary/20 focus:border-industrial-primary"
+                    className="w-full px-3 py-2 text-xs font-mono border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
                   />
                 </div>
               </div>
@@ -563,7 +564,7 @@ export const AdminProductForm: React.FC = () => {
                 </h3>
 
                 {/* Active Toggle */}
-                <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                <div className="flex items-center justify-between p-3 rounded-xl border border-slate-100 bg-slate-50/50">
                   <div>
                     <span className="text-xs font-bold text-industrial-dark block">
                       Active on Public Website
@@ -572,16 +573,19 @@ export const AdminProductForm: React.FC = () => {
                       When active, visitors can browse and request RFQs.
                     </span>
                   </div>
-                  <input
-                    type="checkbox"
-                    checked={active}
-                    onChange={(e) => setActive(e.target.checked)}
-                    className="w-4 h-4 text-industrial-primary rounded focus:ring-industrial-primary"
-                  />
+                  <Checkbox
+                    isSelected={active}
+                    onChange={(isSelected) => setActive(isSelected)}
+                    aria-label="Active on Public Website"
+                  >
+                    <Checkbox.Control>
+                      <Checkbox.Indicator />
+                    </Checkbox.Control>
+                  </Checkbox>
                 </div>
 
                 {/* Featured Toggle */}
-                <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                <div className="flex items-center justify-between p-3 rounded-xl border border-slate-100 bg-slate-50/50">
                   <div>
                     <span className="text-xs font-bold text-industrial-dark block">
                       Homepage Featured Showcase
@@ -590,12 +594,15 @@ export const AdminProductForm: React.FC = () => {
                       Display prominently on the website homepage.
                     </span>
                   </div>
-                  <input
-                    type="checkbox"
-                    checked={featured}
-                    onChange={(e) => setFeatured(e.target.checked)}
-                    className="w-4 h-4 text-industrial-primary rounded focus:ring-industrial-primary"
-                  />
+                  <Checkbox
+                    isSelected={featured}
+                    onChange={(isSelected) => setFeatured(isSelected)}
+                    aria-label="Homepage Featured Showcase"
+                  >
+                    <Checkbox.Control>
+                      <Checkbox.Indicator />
+                    </Checkbox.Control>
+                  </Checkbox>
                 </div>
               </div>
 
@@ -607,36 +614,57 @@ export const AdminProductForm: React.FC = () => {
                 </h3>
 
                 <div>
-                  <label htmlFor="product-category" className="block text-xs font-semibold text-slate-700 mb-1">
+                  <Label htmlFor="product-category" className="block text-xs font-semibold text-slate-700 mb-1">
                     Metrology Category <span className="text-rose-500">*</span>
-                  </label>
-                  <select
-                    id="product-category"
+                  </Label>
+                  <Select
                     value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-industrial-primary/20 focus:border-industrial-primary bg-white text-slate-800"
+                    onChange={(val) => setCategory((val as string) || '')}
+                    className="w-full"
+                    aria-label="Metrology Category"
                   >
-                    {KNOWN_CATEGORIES.map((c) => (
-                      <option key={c} value={c}>
-                        {c}
-                      </option>
-                    ))}
-                    <option value="custom">+ Custom Category</option>
-                  </select>
+                    <Select.Trigger className="w-full h-9 px-3 py-2 text-xs border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 bg-white text-slate-800 flex items-center justify-between cursor-pointer shadow-2xs">
+                      <Select.Value className="text-xs font-medium text-slate-800 truncate" />
+                      <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
+                    </Select.Trigger>
+                    <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[240px] max-h-60 overflow-y-auto">
+                      <ListBox className="outline-none space-y-0.5">
+                        {KNOWN_CATEGORIES.map((c) => (
+                          <ListBox.Item
+                            key={c}
+                            id={c}
+                            textValue={c}
+                            className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-sky-50 data-[selected=true]:text-sky-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                          >
+                            {c}
+                            <ListBox.ItemIndicator />
+                          </ListBox.Item>
+                        ))}
+                        <ListBox.Item
+                          id="custom"
+                          textValue="+ Custom Category"
+                          className="px-2.5 py-1.5 text-xs rounded-lg text-sky-700 font-semibold hover:bg-sky-50 cursor-pointer outline-none"
+                        >
+                          + Custom Category
+                          <ListBox.ItemIndicator />
+                        </ListBox.Item>
+                      </ListBox>
+                    </Select.Popover>
+                  </Select>
                 </div>
 
                 {category === 'custom' && (
                   <div>
-                    <label htmlFor="custom-category" className="block text-xs font-semibold text-slate-700 mb-1">
+                    <Label htmlFor="custom-category" className="block text-xs font-semibold text-slate-700 mb-1">
                       Custom Category Name
-                    </label>
-                    <input
+                    </Label>
+                    <Input
                       id="custom-category"
                       type="text"
                       value={customCategory}
                       onChange={(e) => setCustomCategory(e.target.value)}
                       placeholder="e.g. Laser Micrometers"
-                      className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-industrial-primary/20 focus:border-industrial-primary"
+                      className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 bg-white font-sans"
                     />
                   </div>
                 )}
@@ -664,44 +692,45 @@ export const AdminProductForm: React.FC = () => {
         </form>
 
         {/* Delete Confirmation Modal */}
-        {showDeleteModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-industrial-dark/60 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
-              <div className="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto">
-                <Trash2 className="w-6 h-6" />
-              </div>
-
-              <div className="text-center space-y-1">
-                <h3 className="text-base font-bold text-industrial-dark">
-                  Delete Product Permanently?
-                </h3>
+        <Modal.Backdrop isOpen={showDeleteModal} onOpenChange={setShowDeleteModal}>
+          <Modal.Container>
+            <Modal.Dialog className="sm:max-w-md">
+              <Modal.CloseTrigger />
+              <Modal.Header>
+                <Modal.Icon className="bg-rose-50 text-rose-600">
+                  <Trash2 className="w-5 h-5" />
+                </Modal.Icon>
+                <Modal.Heading>Delete Product Permanently?</Modal.Heading>
+              </Modal.Header>
+              <Modal.Body>
                 <p className="text-xs text-slate-500 leading-relaxed">
                   Are you sure you want to delete <strong className="text-slate-800 font-semibold">{name}</strong>?
                   This action cannot be undone and will purge all associated photography from Supabase Storage.
                 </p>
-              </div>
-
-              <div className="flex items-center gap-3 pt-2">
-                <button
-                  type="button"
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  variant="secondary"
+                  size="md"
+                  onPress={() => setShowDeleteModal(false)}
                   onClick={() => setShowDeleteModal(false)}
-                  disabled={isDeleting}
-                  className="flex-1 py-2.5 px-4 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50 min-h-[44px]"
+                  isDisabled={isDeleting}
                 >
                   Cancel
-                </button>
-                <button
-                  type="button"
+                </Button>
+                <Button
+                  variant="danger"
+                  size="md"
+                  onPress={handleDeleteProduct}
                   onClick={handleDeleteProduct}
-                  disabled={isDeleting}
-                  className="flex-1 py-2.5 px-4 rounded-lg bg-rose-600 text-white text-xs font-semibold hover:bg-rose-700 disabled:opacity-50 min-h-[44px] shadow-sm flex items-center justify-center gap-2"
+                  isDisabled={isDeleting}
                 >
                   {isDeleting ? 'Deleting...' : 'Delete Product'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+                </Button>
+              </Modal.Footer>
+            </Modal.Dialog>
+          </Modal.Container>
+        </Modal.Backdrop>
       </div>
     </>
   );

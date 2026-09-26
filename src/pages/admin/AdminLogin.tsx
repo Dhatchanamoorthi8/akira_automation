@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, useSearchParams, Link } from 'react-router-dom';
 import { Lock, Mail, AlertCircle, ArrowLeft, Loader2, Shield, Eye, EyeOff } from 'lucide-react';
+import { Button, Card, Chip, InputGroup, Label, TextField } from '@heroui/react';
 import { useAuth } from '../../auth/useAuth';
 import { SEOHead } from '../../components/layout/SEOHead';
 import { company } from '../../config/company';
@@ -108,7 +109,7 @@ export const AdminLogin: React.FC = () => {
           </div>
 
           {/* Login Card */}
-          <div className="bg-white py-8 px-6 sm:px-8 shadow-card border border-slate-200 rounded-xl">
+          <Card className="py-8 px-6 sm:px-8 shadow-card border border-slate-200">
             <div className="mb-6 pb-4 border-b border-slate-100 flex items-center justify-between">
               <div>
                 <h2 className="text-base font-bold text-industrial-dark">
@@ -118,9 +119,9 @@ export const AdminLogin: React.FC = () => {
                   Enter authorized engineering credentials
                 </p>
               </div>
-              <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-semibold uppercase bg-slate-100 text-slate-600 border border-slate-200">
+              <Chip variant="secondary" className="text-[10px] font-mono font-semibold uppercase">
                 SSL Secured
-              </span>
+              </Chip>
             </div>
 
             {!isConfigured && (
@@ -146,75 +147,60 @@ export const AdminLogin: React.FC = () => {
             )}
 
             <form onSubmit={handleSubmit} noValidate className="space-y-4">
-              <div>
-                <label
-                  htmlFor="admin-email"
-                  className="block text-xs font-semibold text-slate-700 mb-1.5"
-                >
-                  Authorized Email
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                    <Mail className="w-4 h-4" />
-                  </div>
-                  <input
+              <TextField className="w-full" name="email" type="email" isRequired>
+                <Label className="text-xs font-semibold text-slate-700">Authorized Email</Label>
+                <InputGroup>
+                  <InputGroup.Prefix>
+                    <Mail className="w-4 h-4 text-slate-400" />
+                  </InputGroup.Prefix>
+                  <InputGroup.Input
                     id="admin-email"
-                    name="email"
-                    type="email"
                     autoComplete="email"
-                    required
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                     placeholder="admin@akiraautomation.com"
-                    className="block w-full pl-9 pr-3 py-2.5 border border-slate-300 rounded-lg text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-industrial-primary/20 focus:border-industrial-primary transition-colors"
+                    className="w-full text-xs"
                   />
-                </div>
-              </div>
+                </InputGroup>
+              </TextField>
 
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label
-                    htmlFor="admin-password"
-                    className="block text-xs font-semibold text-slate-700"
-                  >
-                    Password
-                  </label>
-                </div>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                    <Lock className="w-4 h-4" />
-                  </div>
-                  <input
+              <TextField className="w-full" name="password" isRequired>
+                <Label className="text-xs font-semibold text-slate-700">Password</Label>
+                <InputGroup>
+                  <InputGroup.Prefix>
+                    <Lock className="w-4 h-4 text-slate-400" />
+                  </InputGroup.Prefix>
+                  <InputGroup.Input
                     id="admin-password"
-                    name="password"
                     type={showPassword ? 'text' : 'password'}
                     autoComplete="current-password"
-                    required
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                     placeholder="••••••••••••"
-                    className="block w-full pl-9 pr-10 py-2.5 border border-slate-300 rounded-lg text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-industrial-primary/20 focus:border-industrial-primary transition-colors"
+                    className="w-full text-xs"
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none"
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="w-4 h-4" />
-                    ) : (
-                      <Eye className="w-4 h-4" />
-                    )}
-                  </button>
-                </div>
-              </div>
+                  <InputGroup.Suffix className="pe-0">
+                    <Button
+                      isIconOnly
+                      size="sm"
+                      variant="ghost"
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      onPress={() => setShowPassword(!showPassword)}
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </Button>
+                  </InputGroup.Suffix>
+                </InputGroup>
+              </TextField>
 
               <div className="pt-2">
-                <button
+                <Button
                   type="submit"
-                  disabled={isSubmitting}
-                  className="w-full min-h-[44px] flex items-center justify-center gap-2 py-2.5 px-4 border border-transparent rounded-lg text-xs font-semibold text-white bg-industrial-primary hover:bg-industrial-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-industrial-primary shadow-subtle disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                  variant="primary"
+                  isDisabled={isSubmitting}
+                  onPress={() => {}}
+                  className="w-full min-h-[44px] gap-2 text-xs font-semibold bg-industrial-primary hover:bg-industrial-hover text-white"
                 >
                   {isSubmitting ? (
                     <>
@@ -224,7 +210,7 @@ export const AdminLogin: React.FC = () => {
                   ) : (
                     <span>Sign In to Admin Portal</span>
                   )}
-                </button>
+                </Button>
               </div>
             </form>
 
@@ -240,7 +226,7 @@ export const AdminLogin: React.FC = () => {
                 ISO 9001:2015 Console
               </span>
             </div>
-          </div>
+          </Card>
         </div>
       </div>
     </>

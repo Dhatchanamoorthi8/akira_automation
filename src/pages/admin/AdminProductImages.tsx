@@ -21,6 +21,7 @@ import { ProductImageManager } from '../../components/admin/ProductImageManager'
 import { AdminTableSkeleton } from '../../components/admin/AdminSkeleton';
 import { AdminErrorState } from '../../components/admin/AdminErrorState';
 import { SEOHead } from '../../components/layout/SEOHead';
+import { Button, Chip, Card, Table, Input, Checkbox } from '@heroui/react';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -242,9 +243,9 @@ export const AdminProductImages: React.FC = () => {
               <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
                 Product Image Manager
               </h1>
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-sky-100 text-industrial-primary border border-sky-200">
-                {totalRegisteredImages} Images
-              </span>
+              <Chip size="sm" variant="soft" color="accent" className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-sky-100 text-industrial-primary border border-sky-200">
+                <Chip.Label>{totalRegisteredImages} Images</Chip.Label>
+              </Chip>
             </div>
             <p className="text-xs text-gray-500 mt-0.5">
               Upload, organize, and assign high-resolution photography and technical CAD diagrams per catalogue product.
@@ -252,20 +253,20 @@ export const AdminProductImages: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => {
+            <Button
+              variant="outline"
+              size="sm"
+              onPress={() => {
                 fetchProducts();
                 if (selectedProductId) fetchImagesForProduct(selectedProductId);
               }}
-              disabled={isLoadingProducts || isLoadingImages}
-              className="p-2 rounded-lg bg-white border border-gray-200 text-gray-600 hover:text-gray-900 hover:bg-gray-50 shadow-2xs transition-colors flex items-center gap-1.5 text-xs font-medium"
-              title="Refresh Media Assets"
+              isDisabled={isLoadingProducts || isLoadingImages}
+              className="p-2 rounded-lg bg-white border border-gray-200 text-gray-600 hover:text-gray-900 hover:bg-gray-50 shadow-2xs transition-colors flex items-center gap-1.5 text-xs font-medium cursor-pointer"
               aria-label="Refresh Media Assets"
             >
               <RotateCw className={`w-3.5 h-3.5 ${(isLoadingProducts || isLoadingImages) ? 'animate-spin text-blue-600' : ''}`} />
               <span>Refresh</span>
-            </button>
+            </Button>
 
             <Link
               to="/admin/products"
@@ -295,14 +296,15 @@ export const AdminProductImages: React.FC = () => {
             const isSelected = selectedFilter === opt.key;
 
             return (
-              <button
+              <Button
                 key={opt.key}
-                type="button"
-                onClick={() => {
+                variant={isSelected ? 'primary' : 'outline'}
+                size="sm"
+                onPress={() => {
                   setSelectedFilter(opt.key);
                   setCurrentPage(1);
                 }}
-                className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all shadow-2xs whitespace-nowrap shrink-0 ${
+                className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all shadow-2xs whitespace-nowrap shrink-0 cursor-pointer ${
                   isSelected
                     ? 'bg-gray-900 text-white border border-gray-900 shadow-sm'
                     : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 hover:border-gray-300'
@@ -316,15 +318,15 @@ export const AdminProductImages: React.FC = () => {
                 >
                   {opt.count}
                 </span>
-              </button>
+              </Button>
             );
           })}
         </div>
 
         {/* Search Bar */}
         <div className="relative">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-          <input
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none z-10" />
+          <Input
             type="text"
             value={search}
             onChange={(e) => {
@@ -332,7 +334,7 @@ export const AdminProductImages: React.FC = () => {
               setCurrentPage(1);
             }}
             placeholder="Search products by name, category, or slug to manage visual assets..."
-            className="w-full pl-10 pr-9 py-2 text-xs bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 placeholder:text-gray-400 shadow-2xs transition-all"
+            className="w-full pl-10 pr-9 py-2 text-xs bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 placeholder:text-gray-400 shadow-2xs transition-all font-sans"
           />
           {search && (
             <button
@@ -377,181 +379,191 @@ export const AdminProductImages: React.FC = () => {
             )}
           </div>
         ) : (
-          <div className="bg-white rounded-2xl border border-gray-200/90 shadow-2xs overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse min-w-[950px]">
-                {/* Table Header */}
-                <thead>
-                  <tr className="border-b border-gray-100 bg-gray-50/40 text-[12px] font-medium text-gray-500">
-                    <th className="py-3.5 pl-5 pr-3 w-10">
-                      <input
-                        type="checkbox"
-                        checked={
+          <Card className="bg-white rounded-2xl border border-gray-200/90 shadow-2xs overflow-hidden p-0">
+            <Table className="w-full">
+              <Table.ScrollContainer className="overflow-x-auto">
+                <Table.Content aria-label="Product Media Catalogue Table" className="w-full text-left border-collapse min-w-[950px]">
+                  {/* Table Header */}
+                  <Table.Header className="border-b border-gray-100 bg-gray-50/40 text-[12px] font-medium text-gray-500">
+                    <Table.Column className="py-3.5 pl-5 pr-3 w-10">
+                      <Checkbox
+                        slot="selection"
+                        isSelected={
                           paginatedProducts.length > 0 &&
                           selectedRowIds.size === paginatedProducts.length
                         }
                         onChange={toggleSelectAll}
-                        className="w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-0 focus:ring-offset-0 cursor-pointer"
                         aria-label="Select all rows"
-                      />
-                    </th>
-                    <th className="py-3.5 px-4 w-16">Primary Cover</th>
-                    <th className="py-3.5 px-4">Product Name & Identifier</th>
-                    <th className="py-3.5 px-4">Category</th>
-                    <th className="py-3.5 px-4">Gallery Previews</th>
-                    <th className="py-3.5 px-4 text-center">Total Assets</th>
-                    <th className="py-3.5 px-4 text-center">Status</th>
-                    <th className="py-3.5 px-4 text-right">Actions</th>
-                  </tr>
-                </thead>
-
-                {/* Table Body */}
-                <tbody className="divide-y divide-gray-100 text-xs">
-                  {paginatedProducts.map((prod) => {
-                    const isRowSelected = selectedRowIds.has(prod.id);
-                    const images = prod.product_images || [];
-                    const primaryImg =
-                      images.find((img) => img.is_primary)?.image_url ||
-                      images[0]?.image_url;
-
-                    return (
-                      <tr
-                        key={prod.id}
-                        onClick={() => openDrawerForProduct(prod.id)}
-                        className={`transition-colors cursor-pointer group ${
-                          isRowSelected ? 'bg-blue-50/30' : 'hover:bg-gray-50/70'
-                        }`}
                       >
-                        {/* Row Checkbox */}
-                        <td className="py-3.5 pl-5 pr-3 w-10" onClick={(e) => toggleSelectRow(prod.id, e)}>
-                          <input
-                            type="checkbox"
-                            checked={isRowSelected}
-                            onChange={() => {}}
-                            className="w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-0 focus:ring-offset-0 cursor-pointer"
-                            aria-label={`Select ${prod.name}`}
-                          />
-                        </td>
+                        <Checkbox.Control>
+                          <Checkbox.Indicator />
+                        </Checkbox.Control>
+                      </Checkbox>
+                    </Table.Column>
+                    <Table.Column className="py-3.5 px-4 w-16">Primary Cover</Table.Column>
+                    <Table.Column isRowHeader className="py-3.5 px-4">Product Name & Identifier</Table.Column>
+                    <Table.Column className="py-3.5 px-4">Category</Table.Column>
+                    <Table.Column className="py-3.5 px-4">Gallery Previews</Table.Column>
+                    <Table.Column className="py-3.5 px-4 text-center">Total Assets</Table.Column>
+                    <Table.Column className="py-3.5 px-4 text-center">Status</Table.Column>
+                    <Table.Column className="py-3.5 px-4 text-right">Actions</Table.Column>
+                  </Table.Header>
 
-                        {/* Primary Image Cover */}
-                        <td className="py-3 px-4 w-16">
-                          <div className="w-12 h-12 rounded-xl border border-gray-200 bg-gray-50 flex items-center justify-center shrink-0 overflow-hidden relative group/img">
-                            {primaryImg ? (
-                              <img
-                                src={primaryImg}
-                                alt={prod.name}
-                                className="w-full h-full object-contain p-1"
-                                onError={(e) => {
-                                  (e.target as HTMLImageElement).src =
-                                    'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="1.5"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>';
-                                }}
-                              />
+                  {/* Table Body */}
+                  <Table.Body className="divide-y divide-gray-100 text-xs">
+                    {paginatedProducts.map((prod) => {
+                      const isRowSelected = selectedRowIds.has(prod.id);
+                      const images = prod.product_images || [];
+                      const primaryImg =
+                        images.find((img) => img.is_primary)?.image_url ||
+                        images[0]?.image_url;
+
+                      return (
+                        <Table.Row
+                          key={prod.id}
+                          onClick={() => openDrawerForProduct(prod.id)}
+                          className={`transition-colors cursor-pointer group ${
+                            isRowSelected ? 'bg-blue-50/30' : 'hover:bg-gray-50/70'
+                          }`}
+                        >
+                          {/* Row Checkbox */}
+                          <Table.Cell className="py-3.5 pl-5 pr-3 w-10" onClick={(e) => toggleSelectRow(prod.id, e)}>
+                            <Checkbox
+                              slot="selection"
+                              isSelected={isRowSelected}
+                              aria-label={`Select ${prod.name}`}
+                            >
+                              <Checkbox.Control>
+                                <Checkbox.Indicator />
+                              </Checkbox.Control>
+                            </Checkbox>
+                          </Table.Cell>
+
+                          {/* Primary Image Cover */}
+                          <Table.Cell className="py-3 px-4 w-16">
+                            <div className="w-12 h-12 rounded-xl border border-gray-200 bg-gray-50 flex items-center justify-center shrink-0 overflow-hidden relative group/img">
+                              {primaryImg ? (
+                                <img
+                                  src={primaryImg}
+                                  alt={prod.name}
+                                  className="w-full h-full object-contain p-1"
+                                  onError={(e) => {
+                                    (e.target as HTMLImageElement).src =
+                                      'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="1.5"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>';
+                                  }}
+                                />
+                              ) : (
+                                <ImageIcon className="w-5 h-5 text-gray-300" />
+                              )}
+                            </div>
+                          </Table.Cell>
+
+                          {/* Name & Slug */}
+                          <Table.Cell className="py-3.5 px-4 whitespace-nowrap">
+                            <div className="font-semibold text-gray-900 text-sm group-hover:text-blue-600 transition-colors">
+                              {prod.name}
+                            </div>
+                            <div className="text-[11px] font-mono text-gray-400 mt-0.5">
+                              /{prod.slug}
+                            </div>
+                          </Table.Cell>
+
+                          {/* Category */}
+                          <Table.Cell className="py-3.5 px-4 whitespace-nowrap">
+                            <Chip size="sm" variant="soft" color="default" className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200">
+                              <Chip.Label>{prod.category || 'General'}</Chip.Label>
+                            </Chip>
+                          </Table.Cell>
+
+                          {/* Gallery Previews (Mini thumbnails strip) */}
+                          <Table.Cell className="py-3.5 px-4 whitespace-nowrap">
+                            <div className="flex items-center gap-1.5">
+                              {images.length === 0 ? (
+                                <span className="text-gray-400 italic text-xs">No media uploaded</span>
+                              ) : (
+                                <>
+                                  {images.slice(0, 4).map((img) => (
+                                    <div
+                                      key={img.id}
+                                      className="w-8 h-8 rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center overflow-hidden shrink-0"
+                                    >
+                                      <img
+                                        src={img.image_url}
+                                        alt={img.alt_text || 'Asset'}
+                                        className="w-full h-full object-contain p-0.5"
+                                      />
+                                    </div>
+                                  ))}
+                                  {images.length > 4 && (
+                                    <span className="w-8 h-8 rounded-lg bg-gray-100 border border-gray-200 text-gray-600 text-[10px] font-mono font-bold flex items-center justify-center shrink-0">
+                                      +{images.length - 4}
+                                    </span>
+                                  )}
+                                </>
+                              )}
+                            </div>
+                          </Table.Cell>
+
+                          {/* Total Assets Badge */}
+                          <Table.Cell className="py-3.5 px-4 whitespace-nowrap text-center">
+                            {images.length > 0 ? (
+                              <Chip size="sm" variant="soft" color="accent" className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-sky-50 text-blue-700 border border-sky-200">
+                                <ImageIcon className="w-3 h-3" />
+                                <Chip.Label>{images.length} {images.length === 1 ? 'Asset' : 'Assets'}</Chip.Label>
+                              </Chip>
                             ) : (
-                              <ImageIcon className="w-5 h-5 text-gray-300" />
+                              <Chip size="sm" variant="soft" color="warning" className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                                <AlertCircle className="w-3 h-3" />
+                                <Chip.Label>Missing Cover</Chip.Label>
+                              </Chip>
                             )}
-                          </div>
-                        </td>
+                          </Table.Cell>
 
-                        {/* Name & Slug */}
-                        <td className="py-3.5 px-4 whitespace-nowrap">
-                          <div className="font-semibold text-gray-900 text-sm group-hover:text-blue-600 transition-colors">
-                            {prod.name}
-                          </div>
-                          <div className="text-[11px] font-mono text-gray-400 mt-0.5">
-                            /{prod.slug}
-                          </div>
-                        </td>
-
-                        {/* Category */}
-                        <td className="py-3.5 px-4 whitespace-nowrap">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200">
-                            {prod.category || 'General'}
-                          </span>
-                        </td>
-
-                        {/* Gallery Previews (Mini thumbnails strip) */}
-                        <td className="py-3.5 px-4 whitespace-nowrap">
-                          <div className="flex items-center gap-1.5">
-                            {images.length === 0 ? (
-                              <span className="text-gray-400 italic text-xs">No media uploaded</span>
-                            ) : (
-                              <>
-                                {images.slice(0, 4).map((img) => (
-                                  <div
-                                    key={img.id}
-                                    className="w-8 h-8 rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center overflow-hidden shrink-0"
-                                  >
-                                    <img
-                                      src={img.image_url}
-                                      alt={img.alt_text || 'Asset'}
-                                      className="w-full h-full object-contain p-0.5"
-                                    />
-                                  </div>
-                                ))}
-                                {images.length > 4 && (
-                                  <span className="w-8 h-8 rounded-lg bg-gray-100 border border-gray-200 text-gray-600 text-[10px] font-mono font-bold flex items-center justify-center shrink-0">
-                                    +{images.length - 4}
-                                  </span>
-                                )}
-                              </>
-                            )}
-                          </div>
-                        </td>
-
-                        {/* Total Assets Badge */}
-                        <td className="py-3.5 px-4 whitespace-nowrap text-center">
-                          {images.length > 0 ? (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-sky-50 text-blue-700 border border-sky-200">
-                              <ImageIcon className="w-3 h-3" />
-                              <span>{images.length} {images.length === 1 ? 'Asset' : 'Assets'}</span>
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
-                              <AlertCircle className="w-3 h-3" />
-                              <span>Missing Cover</span>
-                            </span>
-                          )}
-                        </td>
-
-                        {/* Active/Inactive Status */}
-                        <td className="py-3.5 px-4 whitespace-nowrap text-center">
-                          <span
-                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${
-                              prod.active
-                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                                : 'bg-gray-100 text-gray-600 border-gray-200'
-                            }`}
-                          >
-                            <span
-                              className={`w-1.5 h-1.5 rounded-full ${
-                                prod.active ? 'bg-emerald-500' : 'bg-gray-400'
+                          {/* Active/Inactive Status */}
+                          <Table.Cell className="py-3.5 px-4 whitespace-nowrap text-center">
+                            <Chip
+                              size="sm"
+                              variant="soft"
+                              color={prod.active ? 'success' : 'default'}
+                              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${
+                                prod.active
+                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                  : 'bg-gray-100 text-gray-600 border-gray-200'
                               }`}
-                            />
-                            <span>{prod.active ? 'Active' : 'Inactive'}</span>
-                          </span>
-                        </td>
+                            >
+                              <span
+                                className={`w-1.5 h-1.5 rounded-full ${
+                                  prod.active ? 'bg-emerald-500' : 'bg-gray-400'
+                                }`}
+                              />
+                              <Chip.Label>{prod.active ? 'Active' : 'Inactive'}</Chip.Label>
+                            </Chip>
+                          </Table.Cell>
 
-                        {/* Actions */}
-                        <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              openDrawerForProduct(prod.id);
-                            }}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-900 text-white hover:bg-gray-800 shadow-2xs transition-all"
-                          >
-                            <ImageIcon className="w-3.5 h-3.5" />
-                            <span>Manage Gallery</span>
-                            <ChevronRightIcon className="w-3 h-3 text-gray-400" />
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                          {/* Actions */}
+                          <Table.Cell className="py-3.5 px-4 text-right whitespace-nowrap">
+                            <Button
+                              variant="primary"
+                              size="sm"
+                              onPress={() => openDrawerForProduct(prod.id)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openDrawerForProduct(prod.id);
+                              }}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-900 text-white hover:bg-gray-800 shadow-2xs transition-all cursor-pointer"
+                            >
+                              <ImageIcon className="w-3.5 h-3.5" />
+                              <span>Manage Gallery</span>
+                              <ChevronRightIcon className="w-3 h-3 text-gray-400" />
+                            </Button>
+                          </Table.Cell>
+                        </Table.Row>
+                      );
+                    })}
+                  </Table.Body>
+                </Table.Content>
+              </Table.ScrollContainer>
+            </Table>
 
             {/* Pagination Footer */}
             <div className="border-t border-gray-100 px-6 py-3.5 flex items-center justify-between text-xs text-gray-500">
@@ -560,63 +572,71 @@ export const AdminProductImages: React.FC = () => {
               </div>
 
               <div className="flex items-center gap-1.5">
-                <button
-                  type="button"
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  isIconOnly
+                  isDisabled={currentPage === 1}
+                  onPress={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   className="p-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                   aria-label="Previous page"
                 >
                   <ChevronLeft className="w-3.5 h-3.5" />
-                </button>
+                </Button>
 
                 {Array.from({ length: Math.min(5, totalPages) }, (_, i) => i + 1).map((pageNum) => {
                   const isActive = currentPage === pageNum;
                   return (
-                    <button
+                    <Button
                       key={pageNum}
-                      type="button"
-                      onClick={() => setCurrentPage(pageNum)}
-                      className={`w-7 h-7 rounded-lg text-xs font-semibold flex items-center justify-center transition-colors ${
+                      variant={isActive ? 'primary' : 'ghost'}
+                      size="sm"
+                      isIconOnly
+                      onPress={() => setCurrentPage(pageNum)}
+                      className={`w-7 h-7 rounded-lg text-xs font-semibold flex items-center justify-center transition-colors cursor-pointer ${
                         isActive
                           ? 'bg-gray-900 text-white shadow-2xs'
                           : 'text-gray-600 hover:bg-gray-100'
                       }`}
                     >
                       {pageNum}
-                    </button>
+                    </Button>
                   );
                 })}
 
                 {totalPages > 5 && (
                   <>
                     <span className="px-1 text-gray-400 font-mono">...</span>
-                    <button
-                      type="button"
-                      onClick={() => setCurrentPage(totalPages)}
-                      className={`w-7 h-7 rounded-lg text-xs font-semibold flex items-center justify-center transition-colors ${
+                    <Button
+                      variant={currentPage === totalPages ? 'primary' : 'ghost'}
+                      size="sm"
+                      isIconOnly
+                      onPress={() => setCurrentPage(totalPages)}
+                      className={`w-7 h-7 rounded-lg text-xs font-semibold flex items-center justify-center transition-colors cursor-pointer ${
                         currentPage === totalPages
                           ? 'bg-gray-900 text-white shadow-2xs'
                           : 'text-gray-600 hover:bg-gray-100'
                       }`}
                     >
                       {totalPages}
-                    </button>
+                    </Button>
                   </>
                 )}
 
-                <button
-                  type="button"
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  isIconOnly
+                  isDisabled={currentPage === totalPages}
+                  onPress={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   className="p-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                   aria-label="Next page"
                 >
                   <ChevronRight className="w-3.5 h-3.5" />
-                </button>
+                </Button>
               </div>
             </div>
-          </div>
+          </Card>
         )}
       </div>
 
@@ -684,15 +704,17 @@ export const AdminProductImages: React.FC = () => {
                     <ExternalLink className="w-4 h-4" />
                   </a>
 
-                  <button
-                    type="button"
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    isIconOnly
+                    onPress={closeDrawer}
                     onClick={closeDrawer}
-                    className="p-2 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
-                    title="Close drawer"
+                    className="p-2 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer"
                     aria-label="Close drawer"
                   >
                     <X className="w-5 h-5" />
-                  </button>
+                  </Button>
                 </div>
               </div>
 
@@ -712,13 +734,15 @@ export const AdminProductImages: React.FC = () => {
                   <span>CDN Real-time Sync Active</span>
                 </div>
 
-                <button
-                  type="button"
+                <Button
+                  variant="primary"
+                  size="md"
+                  onPress={closeDrawer}
                   onClick={closeDrawer}
-                  className="px-4 py-2 rounded-xl bg-gray-900 text-white font-semibold hover:bg-gray-800 transition-colors shadow-2xs"
+                  className="px-4 py-2 rounded-xl bg-gray-900 text-white font-semibold hover:bg-gray-800 transition-colors shadow-2xs cursor-pointer"
                 >
                   Done Managing
-                </button>
+                </Button>
               </div>
             </div>
           </div>

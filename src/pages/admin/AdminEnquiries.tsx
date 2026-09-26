@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { Card, Button, Chip, Table } from '@heroui/react';
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
+import { Card, Button, Chip, Table, Input, Checkbox } from "@heroui/react";
 import {
   Search,
   RotateCw,
@@ -14,61 +14,101 @@ import {
   ArrowUp,
   ArrowDown,
   Eye,
-} from 'lucide-react';
+} from "lucide-react";
 import {
   EnquiryWithDetails,
   EnquiryStatus,
   EnquiryFilters,
   StaffProfile,
-} from '../../types/database';
-import { enquiryService, StatusCounts } from '../../services/enquiryService';
-import { formatDateTimeDDMMYYYY } from '../../utils/date';
-import { AdminTableSkeleton } from '../../components/admin/AdminSkeleton';
-import { AdminErrorState } from '../../components/admin/AdminErrorState';
-import { SEOHead } from '../../components/layout/SEOHead';
-import { PersonAvatar, CompanyAvatar } from '../../utils/avatarHelper';
-import { AdminEnquiryDossierDrawer } from '../../components/admin/AdminEnquiryDossierDrawer';
+} from "../../types/database";
+import { enquiryService, StatusCounts } from "../../services/enquiryService";
+import { formatDateTimeDDMMYYYY } from "../../utils/date";
+import { AdminTableSkeleton } from "../../components/admin/AdminSkeleton";
+import { AdminErrorState } from "../../components/admin/AdminErrorState";
+import { SEOHead } from "../../components/layout/SEOHead";
+import { PersonAvatar, CompanyAvatar } from "../../utils/avatarHelper";
+import { AdminEnquiryDossierDrawer } from "../../components/admin/AdminEnquiryDossierDrawer";
 
 const ITEMS_PER_PAGE = 10;
-const STORAGE_KEY = 'akira_enquiries_columns_v3';
+const STORAGE_KEY = "akira_enquiries_columns_v3";
 
 interface StatusFilterOption {
-  status: EnquiryStatus | 'all';
+  status: EnquiryStatus | "all";
   label: string;
   countKey: keyof StatusCounts;
 }
 
 const STATUS_FILTER_OPTIONS: StatusFilterOption[] = [
-  { status: 'all', label: 'All Leads', countKey: 'all' },
-  { status: 'new', label: 'New RFQ', countKey: 'new' },
-  { status: 'contacted', label: 'Contacted', countKey: 'contacted' },
-  { status: 'quotation_sent', label: 'Quotation Sent', countKey: 'quotation_sent' },
-  { status: 'follow_up', label: 'In Follow-up', countKey: 'follow_up' },
-  { status: 'converted', label: 'Converted', countKey: 'converted' },
-  { status: 'closed', label: 'Closed / Inactive', countKey: 'closed' },
+  { status: "all", label: "All Leads", countKey: "all" },
+  { status: "new", label: "New RFQ", countKey: "new" },
+  { status: "contacted", label: "Contacted", countKey: "contacted" },
+  {
+    status: "quotation_sent",
+    label: "Quotation Sent",
+    countKey: "quotation_sent",
+  },
+  { status: "follow_up", label: "In Follow-up", countKey: "follow_up" },
+  { status: "converted", label: "Converted", countKey: "converted" },
+  { status: "closed", label: "Closed / Inactive", countKey: "closed" },
 ];
 
 export const STATUS_CONFIG: Record<
   EnquiryStatus,
   { label: string; bg: string; text: string; border: string; dot: string }
 > = {
-  new: { label: 'New RFQ', bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200', dot: 'bg-blue-500' },
-  contacted: { label: 'Contacted', bg: 'bg-amber-50', text: 'text-amber-800', border: 'border-amber-200', dot: 'bg-amber-500' },
-  quotation_sent: { label: 'Quotation Sent', bg: 'bg-purple-50', text: 'text-purple-700', border: 'border-purple-200', dot: 'bg-purple-500' },
-  follow_up: { label: 'In Follow-up', bg: 'bg-cyan-50', text: 'text-cyan-800', border: 'border-cyan-200', dot: 'bg-cyan-500' },
-  converted: { label: 'Converted', bg: 'bg-emerald-50', text: 'text-emerald-800', border: 'border-emerald-200', dot: 'bg-emerald-500' },
-  closed: { label: 'Closed / Inactive', bg: 'bg-slate-100', text: 'text-slate-700', border: 'border-slate-200', dot: 'bg-slate-400' },
+  new: {
+    label: "New RFQ",
+    bg: "bg-blue-50",
+    text: "text-blue-700",
+    border: "border-blue-200",
+    dot: "bg-blue-500",
+  },
+  contacted: {
+    label: "Contacted",
+    bg: "bg-amber-50",
+    text: "text-amber-800",
+    border: "border-amber-200",
+    dot: "bg-amber-500",
+  },
+  quotation_sent: {
+    label: "Quotation Sent",
+    bg: "bg-purple-50",
+    text: "text-purple-700",
+    border: "border-purple-200",
+    dot: "bg-purple-500",
+  },
+  follow_up: {
+    label: "In Follow-up",
+    bg: "bg-cyan-50",
+    text: "text-cyan-800",
+    border: "border-cyan-200",
+    dot: "bg-cyan-500",
+  },
+  converted: {
+    label: "Converted",
+    bg: "bg-emerald-50",
+    text: "text-emerald-800",
+    border: "border-emerald-200",
+    dot: "bg-emerald-500",
+  },
+  closed: {
+    label: "Closed / Inactive",
+    bg: "bg-slate-100",
+    text: "text-slate-700",
+    border: "border-slate-200",
+    dot: "bg-slate-400",
+  },
 };
 
 export type ColumnKey =
-  | 'datetime'
-  | 'name'
-  | 'company'
-  | 'email'
-  | 'requirement'
-  | 'phone'
-  | 'assigned'
-  | 'status';
+  | "datetime"
+  | "name"
+  | "company"
+  | "email"
+  | "requirement"
+  | "phone"
+  | "assigned"
+  | "status";
 
 export interface ColumnConfig {
   key: ColumnKey;
@@ -77,14 +117,14 @@ export interface ColumnConfig {
 }
 
 export const DEFAULT_COLUMNS: ColumnConfig[] = [
-  { key: 'datetime', label: 'Date & Time', visible: true },
-  { key: 'name', label: 'Name', visible: true },
-  { key: 'company', label: 'Company', visible: true },
-  { key: 'email', label: 'Email', visible: true },
-  { key: 'requirement', label: 'Requirement', visible: true },
-  { key: 'phone', label: 'Phone numbers', visible: true },
-  { key: 'assigned', label: 'Assigned', visible: true },
-  { key: 'status', label: 'Status', visible: true },
+  { key: "datetime", label: "Date & Time", visible: true },
+  { key: "name", label: "Name", visible: true },
+  { key: "company", label: "Company", visible: true },
+  { key: "email", label: "Email", visible: true },
+  { key: "requirement", label: "Requirement", visible: true },
+  { key: "phone", label: "Phone numbers", visible: true },
+  { key: "assigned", label: "Assigned", visible: true },
+  { key: "status", label: "Status", visible: true },
 ];
 
 function loadColumns(): ColumnConfig[] {
@@ -101,7 +141,7 @@ function loadColumns(): ColumnConfig[] {
             return {
               key: c.key,
               label: def.label,
-              visible: typeof c.visible === 'boolean' ? c.visible : true,
+              visible: typeof c.visible === "boolean" ? c.visible : true,
             };
           });
 
@@ -122,7 +162,7 @@ function loadColumns(): ColumnConfig[] {
 
 export const AdminEnquiries: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialStatus = (searchParams.get('status') as EnquiryStatus) || 'all';
+  const initialStatus = (searchParams.get("status") as EnquiryStatus) || "all";
 
   const [enquiries, setEnquiries] = useState<EnquiryWithDetails[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
@@ -139,8 +179,10 @@ export const AdminEnquiries: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Filters
-  const [search, setSearch] = useState<string>('');
-  const [selectedStatus, setSelectedStatus] = useState<EnquiryStatus | 'all'>(initialStatus);
+  const [search, setSearch] = useState<string>("");
+  const [selectedStatus, setSelectedStatus] = useState<EnquiryStatus | "all">(
+    initialStatus,
+  );
   const [selectedRowIds, setSelectedRowIds] = useState<Set<string>>(new Set());
 
   // Drag & Drop Column Customization with LocalStorage Persistence
@@ -152,18 +194,19 @@ export const AdminEnquiries: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   // Selected row for dossier view
-  const [selectedDossierEnquiry, setSelectedDossierEnquiry] = useState<EnquiryWithDetails | null>(null);
+  const [selectedDossierEnquiry, setSelectedDossierEnquiry] =
+    useState<EnquiryWithDetails | null>(null);
 
   // Close column dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (!target.closest('.column-customizer-container')) {
+      if (!target.closest(".column-customizer-container")) {
         setIsColumnMenuOpen(false);
       }
     };
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
   const saveColumns = (updated: ColumnConfig[]) => {
@@ -175,13 +218,14 @@ export const AdminEnquiries: React.FC = () => {
 
   const toggleColumn = (key: ColumnKey) => {
     const updated = columns.map((col) =>
-      col.key === key ? { ...col, visible: !col.visible } : col
+      col.key === key ? { ...col, visible: !col.visible } : col,
     );
     saveColumns(updated);
   };
 
   const moveColumn = (fromIndex: number, toIndex: number) => {
-    if (fromIndex === toIndex || toIndex < 0 || toIndex >= columns.length) return;
+    if (fromIndex === toIndex || toIndex < 0 || toIndex >= columns.length)
+      return;
     const reordered = [...columns];
     const [moved] = reordered.splice(fromIndex, 1);
     reordered.splice(toIndex, 0, moved);
@@ -207,7 +251,10 @@ export const AdminEnquiries: React.FC = () => {
     setDraggedIndex(null);
   };
 
-  const activeColumns = useMemo(() => columns.filter((c) => c.visible), [columns]);
+  const activeColumns = useMemo(
+    () => columns.filter((c) => c.visible),
+    [columns],
+  );
 
   // Fetch enquiries & counts from service
   const fetchEnquiries = useCallback(async () => {
@@ -216,9 +263,9 @@ export const AdminEnquiries: React.FC = () => {
 
     const filters: EnquiryFilters = {
       search: search.trim() || undefined,
-      status: selectedStatus !== 'all' ? selectedStatus : undefined,
-      sortBy: 'created_at',
-      sortOrder: 'desc',
+      status: selectedStatus !== "all" ? selectedStatus : undefined,
+      sortBy: "created_at",
+      sortOrder: "desc",
       limit: 100,
       offset: 0,
     };
@@ -244,36 +291,49 @@ export const AdminEnquiries: React.FC = () => {
   }, [fetchEnquiries]);
 
   // Handle status tab change
-  const handleStatusChange = (status: EnquiryStatus | 'all') => {
+  const handleStatusChange = (status: EnquiryStatus | "all") => {
     setSelectedStatus(status);
     setCurrentPage(1);
-    if (status === 'all') {
-      searchParams.delete('status');
+    if (status === "all") {
+      searchParams.delete("status");
     } else {
-      searchParams.set('status', status);
+      searchParams.set("status", status);
     }
     setSearchParams(searchParams);
   };
 
   // Direct Status Update Handler
-  const handleStatusUpdate = async (id: string, newStatus: EnquiryStatus, oldStatus?: EnquiryStatus) => {
+  const handleStatusUpdate = async (
+    id: string,
+    newStatus: EnquiryStatus,
+    oldStatus?: EnquiryStatus,
+  ) => {
     // Optimistically update local list
     setEnquiries((prev) =>
-      prev.map((e) => (e.id === id ? { ...e, status: newStatus } : e))
+      prev.map((e) => (e.id === id ? { ...e, status: newStatus } : e)),
     );
 
     if (selectedDossierEnquiry && selectedDossierEnquiry.id === id) {
-      setSelectedDossierEnquiry((prev) => (prev ? { ...prev, status: newStatus } : null));
+      setSelectedDossierEnquiry((prev) =>
+        prev ? { ...prev, status: newStatus } : null,
+      );
     }
 
     // Call service
-    const res = await enquiryService.updateEnquiryStatus(id, newStatus, oldStatus);
+    const res = await enquiryService.updateEnquiryStatus(
+      id,
+      newStatus,
+      oldStatus,
+    );
     if (!res.success) {
       // Revert if error
       fetchEnquiries();
     } else {
       // Re-fetch accurate counts
-      enquiryService.getStatusCounts().then(setStatusCounts).catch(() => {});
+      enquiryService
+        .getStatusCounts()
+        .then(setStatusCounts)
+        .catch(() => {});
     }
   };
 
@@ -281,13 +341,16 @@ export const AdminEnquiries: React.FC = () => {
   const [adminProfiles, setAdminProfiles] = useState<StaffProfile[]>([]);
 
   useEffect(() => {
-    enquiryService.getAdminProfiles().then(setAdminProfiles).catch(() => {});
+    enquiryService
+      .getAdminProfiles()
+      .then(setAdminProfiles)
+      .catch(() => {});
   }, []);
 
   const handleAssignStaff = async (
     id: string,
     profileId: string | null,
-    staffProfile?: StaffProfile | null
+    staffProfile?: StaffProfile | null,
   ) => {
     setEnquiries((prev) =>
       prev.map((e) =>
@@ -297,8 +360,8 @@ export const AdminEnquiries: React.FC = () => {
               assigned_to: profileId,
               assigned_profile: staffProfile || null,
             }
-          : e
-      )
+          : e,
+      ),
     );
 
     if (selectedDossierEnquiry && selectedDossierEnquiry.id === id) {
@@ -309,19 +372,19 @@ export const AdminEnquiries: React.FC = () => {
               assigned_to: profileId,
               assigned_profile: staffProfile || null,
             }
-          : null
+          : null,
       );
     }
 
     const res = await enquiryService.assignEnquiry(
       id,
       profileId,
-      staffProfile?.full_name || undefined
+      staffProfile?.full_name || undefined,
     );
 
     if (!res.success) {
       fetchEnquiries();
-      alert(res.error || 'Failed to assign staff member');
+      alert(res.error || "Failed to assign staff member");
     }
   };
 
@@ -376,7 +439,8 @@ export const AdminEnquiries: React.FC = () => {
               </Chip>
             </div>
             <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-              Manage inbound measurement requirements, customer requests for quotations, and active sales leads.
+              Manage inbound measurement requirements, customer requests for
+              quotations, and active sales leads.
             </p>
           </div>
 
@@ -389,8 +453,8 @@ export const AdminEnquiries: React.FC = () => {
                 onPress={() => setIsColumnMenuOpen(!isColumnMenuOpen)}
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all shadow-2xs font-sans cursor-pointer ${
                   isColumnMenuOpen
-                    ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
-                    : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                    ? "bg-slate-900 text-white border-slate-900 shadow-sm"
+                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
                 }`}
                 aria-label="Customize visible columns"
               >
@@ -402,16 +466,22 @@ export const AdminEnquiries: React.FC = () => {
                 <Card className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-slate-200 p-0 z-40 text-xs animate-in fade-in zoom-in-95 duration-150 overflow-hidden">
                   <div className="px-3.5 py-2.5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                     <div>
-                      <span className="font-bold text-slate-800 font-heading block">Display & Order</span>
-                      <span className="text-[10px] text-slate-400 font-mono">Drag or use arrows to reorder</span>
+                      <span className="font-bold text-slate-800 font-heading block">
+                        Display & Order
+                      </span>
+                      <span className="text-[10px] text-slate-400 font-mono">
+                        Drag or use arrows to reorder
+                      </span>
                     </div>
-                    <button
-                      type="button"
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onPress={resetColumns}
                       onClick={resetColumns}
-                      className="text-[11px] text-blue-600 hover:text-blue-800 font-semibold cursor-pointer"
+                      className="text-[11px] text-blue-600 hover:text-blue-800 font-semibold cursor-pointer h-auto p-1 min-w-0"
                     >
                       Reset All
-                    </button>
+                    </Button>
                   </div>
 
                   <div className="p-2 space-y-1 max-h-80 overflow-y-auto">
@@ -424,52 +494,64 @@ export const AdminEnquiries: React.FC = () => {
                         onDragEnd={handleDragEnd}
                         className={`flex items-center justify-between px-2.5 py-1.5 rounded-xl border text-xs cursor-grab active:cursor-grabbing transition-all ${
                           draggedIndex === idx
-                            ? 'bg-blue-50 border-blue-300 opacity-60'
-                            : 'bg-white hover:bg-slate-50 border-slate-100'
+                            ? "bg-blue-50 border-blue-300 opacity-60"
+                            : "bg-white hover:bg-slate-50 border-slate-100"
                         }`}
                       >
                         <div className="flex items-center gap-2 min-w-0">
                           <GripVertical className="w-3.5 h-3.5 text-slate-400 shrink-0 cursor-grab" />
-                          <label className="flex items-center gap-2 cursor-pointer select-none truncate">
-                            <input
-                              type="checkbox"
-                              checked={col.visible}
+                          <div className="flex items-center gap-2 select-none truncate">
+                            <Checkbox
+                              isSelected={col.visible}
                               onChange={() => toggleColumn(col.key)}
-                              className="w-3.5 h-3.5 rounded border-slate-300 text-slate-900 focus:ring-0 cursor-pointer shrink-0"
-                            />
-                            <span className={`text-xs font-semibold truncate ${col.visible ? 'text-slate-800' : 'text-slate-400 line-through'}`}>
+                              aria-label={col.label}
+                            >
+                              <Checkbox.Control>
+                                <Checkbox.Indicator />
+                              </Checkbox.Control>
+                            </Checkbox>
+                            <span
+                              onClick={() => toggleColumn(col.key)}
+                              className={`text-xs font-semibold truncate cursor-pointer ${col.visible ? "text-slate-800" : "text-slate-400 line-through"}`}
+                            >
                               {col.label}
                             </span>
-                          </label>
+                          </div>
                         </div>
 
                         <div className="flex items-center gap-0.5 shrink-0">
-                          <button
-                            type="button"
-                            disabled={idx === 0}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              moveColumn(idx, idx - 1);
-                            }}
-                            className="p-1 rounded text-slate-400 hover:text-slate-700 disabled:opacity-20 hover:bg-slate-100 transition-colors cursor-pointer"
-                            title="Move column up"
+                          <Button
+                            isIconOnly
+                            variant="ghost"
+                            size="sm"
+                            isDisabled={idx === 0}
+                            onPress={() => moveColumn(idx, idx - 1)}
+                            className="p-1 rounded text-slate-400 hover:text-slate-700 disabled:opacity-20 hover:bg-slate-100 transition-colors cursor-pointer min-w-0 h-auto"
                             aria-label={`Move ${col.label} column up`}
                           >
-                            <ArrowUp className="w-3 h-3" />
-                          </button>
-                          <button
-                            type="button"
-                            disabled={idx === columns.length - 1}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              moveColumn(idx, idx + 1);
-                            }}
-                            className="p-1 rounded text-slate-400 hover:text-slate-700 disabled:opacity-20 hover:bg-slate-100 transition-colors cursor-pointer"
-                            title="Move column down"
+                            <span
+                              title="Move column up"
+                              className="pointer-events-none"
+                            >
+                              <ArrowUp className="w-3 h-3" />
+                            </span>
+                          </Button>
+                          <Button
+                            isIconOnly
+                            variant="ghost"
+                            size="sm"
+                            isDisabled={idx === columns.length - 1}
+                            onPress={() => moveColumn(idx, idx + 1)}
+                            className="p-1 rounded text-slate-400 hover:text-slate-700 disabled:opacity-20 hover:bg-slate-100 transition-colors cursor-pointer min-w-0 h-auto"
                             aria-label={`Move ${col.label} column down`}
                           >
-                            <ArrowDown className="w-3 h-3" />
-                          </button>
+                            <span
+                              title="Move column down"
+                              className="pointer-events-none"
+                            >
+                              <ArrowDown className="w-3 h-3" />
+                            </span>
+                          </Button>
                         </div>
                       </div>
                     ))}
@@ -477,7 +559,9 @@ export const AdminEnquiries: React.FC = () => {
 
                   <div className="px-3.5 py-2 border-t border-slate-100 text-[10px] text-slate-400 flex items-center justify-between bg-slate-50/50 font-mono">
                     <span>Reorder applies to table</span>
-                    <span className="text-emerald-600 font-bold">Auto-saved</span>
+                    <span className="text-emerald-600 font-bold">
+                      Auto-saved
+                    </span>
                   </div>
                 </Card>
               )}
@@ -491,7 +575,9 @@ export const AdminEnquiries: React.FC = () => {
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:text-slate-900 hover:bg-slate-50 shadow-2xs transition-all text-xs font-semibold font-sans cursor-pointer"
               aria-label="Refresh lead data"
             >
-              <RotateCw className={`w-3.5 h-3.5 shrink-0 ${isLoading ? 'animate-spin text-blue-600' : ''}`} />
+              <RotateCw
+                className={`w-3.5 h-3.5 shrink-0 ${isLoading ? "animate-spin text-blue-600" : ""}`}
+              />
               <span>Refresh</span>
             </Button>
           </div>
@@ -506,21 +592,21 @@ export const AdminEnquiries: React.FC = () => {
             return (
               <Button
                 key={opt.status}
-                variant={isSelected ? 'primary' : 'outline'}
+                variant={isSelected ? "primary" : "outline"}
                 size="sm"
                 onPress={() => handleStatusChange(opt.status)}
                 className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all shadow-2xs whitespace-nowrap shrink-0 font-sans cursor-pointer ${
                   isSelected
-                    ? 'bg-slate-900 text-white border border-slate-900 shadow-sm'
-                    : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300'
+                    ? "bg-slate-900 text-white border border-slate-900 shadow-sm"
+                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300"
                 }`}
               >
                 <span>{opt.label}</span>
                 <span
                   className={`px-1.5 py-0.5 rounded-md text-[11px] font-mono font-bold ${
                     isSelected
-                      ? 'bg-white/20 text-white'
-                      : 'bg-slate-100 text-slate-700'
+                      ? "bg-white/20 text-white"
+                      : "bg-slate-100 text-slate-700"
                   }`}
                 >
                   {count}
@@ -533,8 +619,8 @@ export const AdminEnquiries: React.FC = () => {
         {/* Search Bar & Selected Rows Bar */}
         <div className="space-y-2">
           <div className="relative flex items-center">
-            <Search className="w-4 h-4 absolute left-3.5 text-slate-400 pointer-events-none" />
-            <input
+            <Search className="w-4 h-4 absolute left-3.5 text-slate-400 pointer-events-none z-10" />
+            <Input
               type="text"
               value={search}
               onChange={(e) => {
@@ -544,19 +630,23 @@ export const AdminEnquiries: React.FC = () => {
               placeholder="Search by customer name, company, email, phone, or requirement..."
               className="w-full pl-10 pr-28 py-2.5 text-xs bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 placeholder:text-slate-400 shadow-2xs transition-all font-sans text-slate-800"
             />
-            <div className="absolute right-3 flex items-center gap-2">
+            <div className="absolute right-3 flex items-center gap-2 z-10">
               {search && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSearch('');
+                <Button
+                  isIconOnly
+                  variant="ghost"
+                  size="sm"
+                  onPress={() => {
+                    setSearch("");
                     setCurrentPage(1);
                   }}
-                  className="text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer"
-                  title="Clear search"
+                  className="text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer min-w-0 h-auto"
+                  aria-label="Clear search"
                 >
-                  <X className="w-3.5 h-3.5" />
-                </button>
+                  <span title="Clear search" className="pointer-events-none">
+                    <X className="w-3.5 h-3.5" />
+                  </span>
+                </Button>
               )}
               <span className="hidden sm:inline-block text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-500 border border-slate-200/80">
                 {paginatedEnquiries.length} of {totalCount}
@@ -567,7 +657,9 @@ export const AdminEnquiries: React.FC = () => {
           {selectedRowIds.size > 0 && (
             <div className="flex items-center justify-between px-4 py-2 bg-blue-50/80 border border-blue-200 rounded-xl text-xs text-blue-900 font-sans shadow-2xs">
               <div className="flex items-center gap-2 font-medium">
-                <span className="font-bold text-blue-700 font-mono">{selectedRowIds.size}</span>
+                <span className="font-bold text-blue-700 font-mono">
+                  {selectedRowIds.size}
+                </span>
                 <span>leads selected</span>
               </div>
               <Button
@@ -596,19 +688,21 @@ export const AdminEnquiries: React.FC = () => {
             <div className="w-12 h-12 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto border border-slate-200/60">
               <Inbox className="w-6 h-6" />
             </div>
-            <h3 className="text-base font-bold text-slate-900 font-heading">No enquiries found</h3>
+            <h3 className="text-base font-bold text-slate-900 font-heading">
+              No enquiries found
+            </h3>
             <p className="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
-              {search || selectedStatus !== 'all'
-                ? 'No items match your active search filters. Try adjusting query parameters or reset filters.'
-                : 'No customer enquiries or technical RFQs have been received yet. All new inbound leads will appear here automatically.'}
+              {search || selectedStatus !== "all"
+                ? "No items match your active search filters. Try adjusting query parameters or reset filters."
+                : "No customer enquiries or technical RFQs have been received yet. All new inbound leads will appear here automatically."}
             </p>
-            {(search || selectedStatus !== 'all') && (
+            {(search || selectedStatus !== "all") && (
               <Button
                 variant="outline"
                 size="sm"
                 onPress={() => {
-                  setSearch('');
-                  handleStatusChange('all');
+                  setSearch("");
+                  handleStatusChange("all");
                 }}
                 className="mt-2 text-xs font-semibold text-blue-600 hover:text-blue-800 bg-blue-50/50 border border-blue-200 px-3 py-1.5 rounded-xl cursor-pointer"
               >
@@ -617,30 +711,36 @@ export const AdminEnquiries: React.FC = () => {
             )}
           </Card>
         ) : (
-          <Card className="rounded-2xl border shadow-2xs overflow-hidden p-0">
+          <>
             <Table className="w-full">
               <Table.ScrollContainer className="overflow-x-auto">
-                <Table.Content aria-label="Customer Enquiries and RFQs Data Grid" className="w-full text-left text-xs min-w-[840px]">
+                <Table.Content
+                  aria-label="Customer Enquiries and RFQs Data Grid"
+                  className="w-full text-left text-xs min-w-[840px]"
+                >
                   {/* Table Header */}
-                  <Table.Header className="border-b border-slate-100 bg-slate-50/60 text-[11px] font-semibold text-slate-500 font-mono uppercase tracking-wider">
+                  <Table.Header className="sticky top-0 z-10 bg-surface-secondary">
                     <Table.Column isRowHeader className="py-3.5 pl-5 pr-3 w-10">
-                      <input
-                        type="checkbox"
-                        checked={
+                      <Checkbox
+                        slot="selection"
+                        isSelected={
                           paginatedEnquiries.length > 0 &&
                           selectedRowIds.size === paginatedEnquiries.length
                         }
                         onChange={toggleSelectAll}
-                        className="w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-0 cursor-pointer"
                         aria-label="Select all rows"
-                      />
+                      >
+                        <Checkbox.Control>
+                          <Checkbox.Indicator />
+                        </Checkbox.Control>
+                      </Checkbox>
                     </Table.Column>
 
                     {activeColumns.map((col) => (
                       <Table.Column
                         key={col.key}
                         className={`py-3.5 px-4 font-semibold text-slate-600 whitespace-nowrap ${
-                          col.key === 'status' ? 'text-center' : ''
+                          col.key === "status" ? "text-center" : ""
                         }`}
                       >
                         {col.label}
@@ -657,44 +757,63 @@ export const AdminEnquiries: React.FC = () => {
                     {paginatedEnquiries.map((enq) => {
                       const isRowSelected = selectedRowIds.has(enq.id);
                       const requirementDisplay =
-                        enq.specific_product || enq.subject || enq.message || 'Custom Gauging Requirement';
-                      const statusConfig = STATUS_CONFIG[enq.status] || STATUS_CONFIG.new;
+                        enq.specific_product ||
+                        enq.subject ||
+                        enq.message ||
+                        "Custom Gauging Requirement";
+                      const statusConfig =
+                        STATUS_CONFIG[enq.status] || STATUS_CONFIG.new;
 
                       return (
                         <Table.Row
                           key={enq.id}
                           onClick={() => setSelectedDossierEnquiry(enq)}
                           className={`transition-colors cursor-pointer group ${
-                            isRowSelected ? 'bg-blue-50/30' : 'hover:bg-slate-50/80'
+                            isRowSelected
+                              ? "bg-blue-50/30"
+                              : "hover:bg-slate-50/80"
                           }`}
                         >
                           {/* Row Checkbox */}
-                          <Table.Cell className="py-3.5 pl-5 pr-3 w-10" onClick={(e) => toggleSelectRow(enq.id, e)}>
-                            <input
-                              type="checkbox"
-                              checked={isRowSelected}
-                              onChange={() => {}}
-                              className="w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-0 cursor-pointer"
+                          <Table.Cell
+                            className="py-3.5 pl-5 pr-3 w-10"
+                            onClick={(e) => toggleSelectRow(enq.id, e)}
+                          >
+                            <Checkbox
+                              slot="selection"
+                              isSelected={isRowSelected}
                               aria-label={`Select ${enq.name}`}
-                            />
+                            >
+                              <Checkbox.Control>
+                                <Checkbox.Indicator />
+                              </Checkbox.Control>
+                            </Checkbox>
                           </Table.Cell>
 
                           {/* Dynamic Ordered Column Cells */}
                           {activeColumns.map((col) => {
                             switch (col.key) {
-                              case 'datetime':
+                              case "datetime":
                                 return (
-                                  <Table.Cell key={col.key} className="py-3.5 px-4 whitespace-nowrap text-slate-500 font-mono text-[11px]">
+                                  <Table.Cell
+                                    key={col.key}
+                                    className="py-3.5 px-4 whitespace-nowrap text-slate-500 font-mono text-[11px]"
+                                  >
                                     <div className="flex items-center gap-1.5">
                                       <Clock className="w-3 h-3 text-slate-400 shrink-0" />
-                                      <span>{formatDateTimeDDMMYYYY(enq.created_at)}</span>
+                                      <span>
+                                        {formatDateTimeDDMMYYYY(enq.created_at)}
+                                      </span>
                                     </div>
                                   </Table.Cell>
                                 );
 
-                              case 'name':
+                              case "name":
                                 return (
-                                  <Table.Cell key={col.key} className="py-3.5 px-4 whitespace-nowrap">
+                                  <Table.Cell
+                                    key={col.key}
+                                    className="py-3.5 px-4 whitespace-nowrap"
+                                  >
                                     <div className="flex items-center gap-3">
                                       <PersonAvatar name={enq.name} size="md" />
                                       <div>
@@ -703,7 +822,7 @@ export const AdminEnquiries: React.FC = () => {
                                         </span>
                                         {enq.source && (
                                           <span className="text-[10px] text-slate-400 font-mono capitalize">
-                                            via {enq.source.replace('_', ' ')}
+                                            via {enq.source.replace("_", " ")}
                                           </span>
                                         )}
                                       </div>
@@ -711,21 +830,30 @@ export const AdminEnquiries: React.FC = () => {
                                   </Table.Cell>
                                 );
 
-                              case 'company':
+                              case "company":
                                 return (
-                                  <Table.Cell key={col.key} className="py-3.5 px-4 whitespace-nowrap">
+                                  <Table.Cell
+                                    key={col.key}
+                                    className="py-3.5 px-4 whitespace-nowrap"
+                                  >
                                     <div className="flex items-center gap-2.5">
-                                      <CompanyAvatar company={enq.company} size="sm" />
+                                      <CompanyAvatar
+                                        company={enq.company}
+                                        size="sm"
+                                      />
                                       <span className="text-sm text-slate-800 font-medium">
-                                        {enq.company || 'Direct Client'}
+                                        {enq.company || "Direct Client"}
                                       </span>
                                     </div>
                                   </Table.Cell>
                                 );
 
-                              case 'email':
+                              case "email":
                                 return (
-                                  <Table.Cell key={col.key} className="py-3.5 px-4 whitespace-nowrap">
+                                  <Table.Cell
+                                    key={col.key}
+                                    className="py-3.5 px-4 whitespace-nowrap"
+                                  >
                                     {enq.email ? (
                                       <a
                                         href={`mailto:${enq.email}`}
@@ -735,14 +863,19 @@ export const AdminEnquiries: React.FC = () => {
                                         {enq.email}
                                       </a>
                                     ) : (
-                                      <span className="text-slate-400 italic text-xs">No email</span>
+                                      <span className="text-slate-400 italic text-xs">
+                                        No email
+                                      </span>
                                     )}
                                   </Table.Cell>
                                 );
 
-                              case 'requirement':
+                              case "requirement":
                                 return (
-                                  <Table.Cell key={col.key} className="py-3.5 px-4 whitespace-nowrap">
+                                  <Table.Cell
+                                    key={col.key}
+                                    className="py-3.5 px-4 whitespace-nowrap"
+                                  >
                                     <div className="max-w-[240px]">
                                       <span className="text-xs text-slate-700 truncate block font-medium">
                                         {requirementDisplay}
@@ -756,46 +889,66 @@ export const AdminEnquiries: React.FC = () => {
                                   </Table.Cell>
                                 );
 
-                              case 'phone':
+                              case "phone":
                                 return (
-                                  <Table.Cell key={col.key} className="py-3.5 px-4 whitespace-nowrap">
+                                  <Table.Cell
+                                    key={col.key}
+                                    className="py-3.5 px-4 whitespace-nowrap"
+                                  >
                                     <span className="text-xs text-slate-600 font-mono">
-                                      {enq.phone || '—'}
+                                      {enq.phone || "—"}
                                     </span>
                                   </Table.Cell>
                                 );
 
-                              case 'assigned':
+                              case "assigned":
                                 return (
-                                  <Table.Cell key={col.key} className="py-3.5 px-4 whitespace-nowrap">
+                                  <Table.Cell
+                                    key={col.key}
+                                    className="py-3.5 px-4 whitespace-nowrap"
+                                  >
                                     {enq.assigned_profile ? (
                                       <div className="flex items-center gap-2">
                                         <PersonAvatar
-                                          name={enq.assigned_profile.full_name || enq.assigned_profile.email}
+                                          name={
+                                            enq.assigned_profile.full_name ||
+                                            enq.assigned_profile.email
+                                          }
                                           size="sm"
                                         />
                                         <span className="text-xs font-semibold text-slate-800">
-                                          {enq.assigned_profile.full_name || enq.assigned_profile.email}
+                                          {enq.assigned_profile.full_name ||
+                                            enq.assigned_profile.email}
                                         </span>
                                       </div>
                                     ) : (
-                                      <Chip size="sm" variant="soft" color="default" className="text-[11px] font-medium text-slate-500 bg-slate-100 border border-slate-200">
+                                      <Chip
+                                        size="sm"
+                                        variant="soft"
+                                        color="default"
+                                        className="text-[11px] font-medium text-slate-500 bg-slate-100 border border-slate-200"
+                                      >
                                         Unassigned
                                       </Chip>
                                     )}
                                   </Table.Cell>
                                 );
 
-                              case 'status':
+                              case "status":
                                 return (
-                                  <Table.Cell key={col.key} className="py-3.5 px-4 whitespace-nowrap text-center">
+                                  <Table.Cell
+                                    key={col.key}
+                                    className="py-3.5 px-4 whitespace-nowrap text-center"
+                                  >
                                     <Chip
                                       size="sm"
                                       variant="soft"
                                       color="default"
                                       className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${statusConfig.bg} ${statusConfig.text} ${statusConfig.border}`}
                                     >
-                                      <span className={`w-1.5 h-1.5 rounded-full ${statusConfig.dot}`} />
+                                      <span
+                                        className={`w-1.5 h-1.5 rounded-full ${statusConfig.dot}`}
+                                      />
                                       <span>{statusConfig.label}</span>
                                     </Chip>
                                   </Table.Cell>
@@ -829,8 +982,11 @@ export const AdminEnquiries: React.FC = () => {
             {/* Pagination Console */}
             <div className="border-t border-slate-100 px-6 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-500 bg-slate-50/40">
               <div className="font-mono text-[11px]">
-                Page <span className="font-bold text-slate-700">{currentPage}</span> of{' '}
-                <span className="font-bold text-slate-700">{totalPages}</span> ({totalCount} total)
+                Page{" "}
+                <span className="font-bold text-slate-700">{currentPage}</span>{" "}
+                of{" "}
+                <span className="font-bold text-slate-700">{totalPages}</span> (
+                {totalCount} total)
               </div>
 
               <div className="flex items-center gap-1.5">
@@ -845,18 +1001,21 @@ export const AdminEnquiries: React.FC = () => {
                   <ChevronLeft className="w-3.5 h-3.5" />
                 </Button>
 
-                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => i + 1).map((pageNum) => {
+                {Array.from(
+                  { length: Math.min(5, totalPages) },
+                  (_, i) => i + 1,
+                ).map((pageNum) => {
                   const isActive = currentPage === pageNum;
                   return (
                     <Button
                       key={pageNum}
-                      variant={isActive ? 'primary' : 'outline'}
+                      variant={isActive ? "primary" : "outline"}
                       size="sm"
                       onPress={() => setCurrentPage(pageNum)}
                       className={`w-7 h-7 min-w-7 p-0 rounded-lg text-xs font-semibold flex items-center justify-center transition-colors font-mono ${
                         isActive
-                          ? 'bg-slate-900 text-white border-slate-900 shadow-2xs'
-                          : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                          ? "bg-slate-900 text-white border-slate-900 shadow-2xs"
+                          : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
                       }`}
                     >
                       {pageNum}
@@ -868,13 +1027,15 @@ export const AdminEnquiries: React.FC = () => {
                   <>
                     <span className="px-1 text-slate-400 font-mono">...</span>
                     <Button
-                      variant={currentPage === totalPages ? 'primary' : 'outline'}
+                      variant={
+                        currentPage === totalPages ? "primary" : "outline"
+                      }
                       size="sm"
                       onPress={() => setCurrentPage(totalPages)}
                       className={`w-7 h-7 min-w-7 p-0 rounded-lg text-xs font-semibold flex items-center justify-center transition-colors font-mono ${
                         currentPage === totalPages
-                          ? 'bg-slate-900 text-white border-slate-900 shadow-2xs'
-                          : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                          ? "bg-slate-900 text-white border-slate-900 shadow-2xs"
+                          : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
                       }`}
                     >
                       {totalPages}
@@ -886,7 +1047,9 @@ export const AdminEnquiries: React.FC = () => {
                   variant="outline"
                   size="sm"
                   isDisabled={currentPage === totalPages}
-                  onPress={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  onPress={() =>
+                    setCurrentPage((p) => Math.min(totalPages, p + 1))
+                  }
                   className="p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-white hover:text-slate-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                   aria-label="Next page"
                 >
@@ -894,7 +1057,7 @@ export const AdminEnquiries: React.FC = () => {
                 </Button>
               </div>
             </div>
-          </Card>
+          </>
         )}
       </div>
 
@@ -904,7 +1067,11 @@ export const AdminEnquiries: React.FC = () => {
         isOpen={!!selectedDossierEnquiry}
         onClose={() => setSelectedDossierEnquiry(null)}
         onStatusChange={async (id, newStatus) => {
-          await handleStatusUpdate(id, newStatus, selectedDossierEnquiry?.status);
+          await handleStatusUpdate(
+            id,
+            newStatus,
+            selectedDossierEnquiry?.status,
+          );
         }}
         onAssignStaff={handleAssignStaff}
         staffProfiles={adminProfiles}

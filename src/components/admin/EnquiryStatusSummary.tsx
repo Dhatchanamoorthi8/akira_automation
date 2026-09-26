@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card } from '@heroui/react';
+import { Card, Button } from '@heroui/react';
 import { EnquiryStatusDistribution } from '../../types/database';
 import { Layers, MoreHorizontal } from 'lucide-react';
 
@@ -77,13 +77,15 @@ export const EnquiryStatusSummary: React.FC<EnquiryStatusSummaryProps> = ({
             RFQ stage & deal progression breakdown
           </p>
         </div>
-        <button
-          type="button"
-          className="text-slate-400 hover:text-slate-600 p-1 rounded-md transition-colors shrink-0"
+        <Button
+          isIconOnly
+          variant="ghost"
+          size="sm"
+          className="text-slate-400 hover:text-slate-600 p-1 rounded-md transition-colors shrink-0 min-w-0 h-auto"
           aria-label="Distribution options"
         >
           <MoreHorizontal className="w-4 h-4" />
-        </button>
+        </Button>
       </div>
 
       {total === 0 ? (

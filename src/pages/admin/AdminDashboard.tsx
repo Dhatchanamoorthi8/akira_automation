@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import { Button, Chip, Card } from '@heroui/react';
+import { Button, Chip, Card, Input, Label } from '@heroui/react';
 import { analyticsService } from '../../services/analyticsService';
 import { dashboardService } from '../../services/dashboardService';
 import {
@@ -172,22 +172,29 @@ export const AdminDashboard: React.FC = () => {
           <div className="flex flex-wrap items-center gap-2.5 self-start md:self-auto">
             {/* Date Range Selector Pills */}
             <div className="inline-flex rounded-xl border border-slate-200/90 p-1 bg-white shadow-xs text-xs font-semibold">
-              {(['today', '7d', '30d', '90d', 'year'] as DateRangePreset[]).map((p) => (
-                <button
-                  key={p}
-                  type="button"
-                  onClick={() => handlePresetSelect(p)}
-                  className={`px-3 py-1.5 rounded-lg transition-all font-sans cursor-pointer ${
-                    selectedPreset === p && !showCustomPicker
-                      ? 'bg-blue-600 text-white shadow-xs font-bold'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-                  }`}
-                >
-                  {presetLabels[p]}
-                </button>
-              ))}
-              <button
-                type="button"
+              {(['today', '7d', '30d', '90d', 'year'] as DateRangePreset[]).map((p) => {
+                const isActive = selectedPreset === p && !showCustomPicker;
+                return (
+                  <Button
+                    key={p}
+                    variant={isActive ? 'primary' : 'ghost'}
+                    size="sm"
+                    onPress={() => handlePresetSelect(p)}
+                    onClick={() => handlePresetSelect(p)}
+                    className={`px-3 py-1.5 rounded-lg transition-all font-sans cursor-pointer ${
+                      isActive
+                        ? 'bg-blue-600 text-white shadow-xs font-bold'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    }`}
+                  >
+                    {presetLabels[p]}
+                  </Button>
+                );
+              })}
+              <Button
+                variant={selectedPreset === 'custom' || showCustomPicker ? 'primary' : 'ghost'}
+                size="sm"
+                onPress={() => setShowCustomPicker(!showCustomPicker)}
                 onClick={() => setShowCustomPicker(!showCustomPicker)}
                 className={`px-3 py-1.5 rounded-lg transition-all font-sans cursor-pointer ${
                   selectedPreset === 'custom' || showCustomPicker
@@ -196,7 +203,7 @@ export const AdminDashboard: React.FC = () => {
                 }`}
               >
                 Custom
-              </button>
+              </Button>
             </div>
 
             {/* Refresh Button */}
@@ -221,23 +228,23 @@ export const AdminDashboard: React.FC = () => {
               className="flex flex-wrap items-center gap-3 text-xs"
             >
               <div className="flex items-center gap-2">
-                <span className="font-semibold text-slate-700 font-mono">Start Date:</span>
-                <input
+                <Label className="font-semibold text-slate-700 font-mono text-xs">Start Date:</Label>
+                <Input
                   type="date"
                   required
                   value={customStart}
                   onChange={(e) => setCustomStart(e.target.value)}
-                  className="px-3 py-1.5 border border-slate-200/90 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 font-sans"
+                  className="px-3 py-1.5 border border-slate-200/90 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 font-sans text-xs"
                 />
               </div>
               <div className="flex items-center gap-2">
-                <span className="font-semibold text-slate-700 font-mono">End Date:</span>
-                <input
+                <Label className="font-semibold text-slate-700 font-mono text-xs">End Date:</Label>
+                <Input
                   type="date"
                   required
                   value={customEnd}
                   onChange={(e) => setCustomEnd(e.target.value)}
-                  className="px-3 py-1.5 border border-slate-200/90 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 font-sans"
+                  className="px-3 py-1.5 border border-slate-200/90 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 font-sans text-xs"
                 />
               </div>
               <Button

@@ -24,6 +24,7 @@ import { emailConfig } from '../../config/email';
 import { useAuth } from '../../auth/useAuth';
 import { SEOHead } from '../../components/layout/SEOHead';
 import { DomainStatusResult, EmailSendResult } from '../../types/email';
+import { Button, Input, Label, Checkbox } from '@heroui/react';
 
 export const AdminEmailSettings: React.FC = () => {
   const { user } = useAuth();
@@ -368,16 +369,16 @@ export const AdminEmailSettings: React.FC = () => {
 
               <form onSubmit={handleSaveRecipients} className="space-y-3.5 text-xs">
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-1">
+                  <Label className="block text-slate-700 font-semibold mb-1">
                     Primary Alert Recipient <span className="text-rose-500">*</span>
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                     type="email"
                     required
                     value={primaryAlertEmail}
                     onChange={(e) => setPrimaryAlertEmail(e.target.value)}
                     placeholder="milestonegauges@gmail.com"
-                    className="w-full px-3.5 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-industrial-primary/20 focus:border-industrial-primary text-slate-800 text-xs transition-colors"
+                    className="w-full px-3.5 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 text-xs transition-colors bg-white font-sans"
                   />
                   <span className="text-[11px] text-slate-400 mt-1 block">
                     Receives customer requirements, tolerances, and direct CRM dossier links.
@@ -385,15 +386,15 @@ export const AdminEmailSettings: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-1">
+                  <Label className="block text-slate-700 font-semibold mb-1">
                     CC Team Recipient(s)
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                     type="text"
                     value={ccAlertEmails}
                     onChange={(e) => setCcAlertEmails(e.target.value)}
                     placeholder="messalessarvices@gmail.com, sales@akiraautomation.com"
-                    className="w-full px-3.5 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-industrial-primary/20 focus:border-industrial-primary text-slate-800 text-xs transition-colors"
+                    className="w-full px-3.5 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 text-xs transition-colors bg-white font-sans"
                   />
                   <span className="text-[11px] text-slate-400 mt-1 block">
                     Comma-separated list of secondary team mailboxes.
@@ -401,17 +402,18 @@ export const AdminEmailSettings: React.FC = () => {
                 </div>
 
                 <div className="pt-1">
-                  <label className="flex items-start gap-2 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      checked={sendCustomerAck}
-                      onChange={(e) => setSendCustomerAck(e.target.checked)}
-                      className="rounded border-slate-300 text-industrial-primary focus:ring-industrial-primary/30 mt-0.5"
-                    />
-                    <span className="text-slate-700 font-medium leading-snug text-xs">
-                      Send auto-acknowledgement email to the customer
-                    </span>
-                  </label>
+                  <Checkbox
+                    isSelected={sendCustomerAck}
+                    onChange={(isSelected) => setSendCustomerAck(isSelected)}
+                    className="text-xs font-medium text-slate-700"
+                  >
+                    <Checkbox.Control>
+                      <Checkbox.Indicator />
+                    </Checkbox.Control>
+                    <Checkbox.Content>
+                      <span>Send auto-acknowledgement email to the customer</span>
+                    </Checkbox.Content>
+                  </Checkbox>
                 </div>
 
                 {recipientsSaveMessage && (
@@ -428,10 +430,10 @@ export const AdminEmailSettings: React.FC = () => {
                   </div>
                 )}
 
-                <button
+                <Button
                   type="submit"
-                  disabled={isSavingRecipients}
-                  className="w-full py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold disabled:opacity-50 transition-colors flex items-center justify-center gap-2 shadow-subtle"
+                  isDisabled={isSavingRecipients}
+                  className="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold disabled:opacity-50 transition-colors flex items-center justify-center gap-2 shadow-subtle cursor-pointer"
                 >
                   {isSavingRecipients ? (
                     <>
@@ -444,7 +446,7 @@ export const AdminEmailSettings: React.FC = () => {
                       <span>Save Alert Recipients</span>
                     </>
                   )}
-                </button>
+                </Button>
               </form>
             </div>
 
@@ -463,16 +465,16 @@ export const AdminEmailSettings: React.FC = () => {
 
               <form onSubmit={handleSendTest} className="space-y-3.5 text-xs">
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-1.5">
+                  <Label className="block text-slate-700 font-semibold mb-1.5">
                     Authorized Test Recipient
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                     type="email"
                     required
                     value={recipientEmail}
                     onChange={(e) => setRecipientEmail(e.target.value)}
                     placeholder="admin@akiraautomation.com"
-                    className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-industrial-primary/20 focus:border-industrial-primary text-slate-800 text-xs transition-colors"
+                    className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 text-xs transition-colors bg-white font-sans"
                   />
                 </div>
 
@@ -487,10 +489,10 @@ export const AdminEmailSettings: React.FC = () => {
                   </div>
                 </div>
 
-                <button
+                <Button
                   type="submit"
-                  disabled={isSendingTest || !recipientEmail.trim()}
-                  className="w-full py-2.5 rounded-lg bg-industrial-primary text-white text-xs font-semibold hover:bg-industrial-hover disabled:opacity-50 transition-colors flex items-center justify-center gap-2 shadow-subtle"
+                  isDisabled={isSendingTest || !recipientEmail.trim()}
+                  className="w-full py-2.5 rounded-xl bg-industrial-primary text-white text-xs font-semibold hover:bg-industrial-hover disabled:opacity-50 transition-colors flex items-center justify-center gap-2 shadow-subtle cursor-pointer"
                 >
                   {isSendingTest ? (
                     <>
@@ -503,7 +505,7 @@ export const AdminEmailSettings: React.FC = () => {
                       <span>Send Test Email</span>
                     </>
                   )}
-                </button>
+                </Button>
               </form>
 
               {/* Real Provider Test Result */}

@@ -1,13 +1,12 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import { useAuth } from '../../auth/useAuth';
 import { User, LogOut, ExternalLink, ChevronDown, ShieldCheck } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { Dropdown, Button, Label, Separator, Chip } from '@heroui/react';
 
 export const AdminProfileMenu: React.FC = () => {
   const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
 
   const displayName = profile?.full_name || user?.email?.split('@')[0] || 'Administrator';
   const displayEmail = user?.email || 'admin@akiraautomation.com';
@@ -20,41 +19,12 @@ export const AdminProfileMenu: React.FC = () => {
     .substring(0, 2)
     .toUpperCase();
 
-  // Close on Escape or click outside
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setIsOpen(false);
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      document.addEventListener('keydown', handleKeyDown);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isOpen]);
-
   return (
-    <div className="relative" ref={menuRef}>
-      {/* Trigger Button */}
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2.5 p-1 sm:px-2.5 sm:py-1.5 rounded-lg hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-industrial-primary/20 min-h-[44px]"
-        aria-expanded={isOpen}
-        aria-haspopup="true"
+    <Dropdown>
+      <Button
+        variant="ghost"
         aria-label="Admin Profile Menu"
+        className="flex items-center gap-2.5 p-1 sm:px-2.5 sm:py-1.5 rounded-lg hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-industrial-primary/20 min-h-[44px] cursor-pointer"
       >
         <div className="w-8 h-8 rounded-full bg-industrial-dark text-white font-bold text-xs flex items-center justify-center border border-slate-300 shrink-0">
           {initials || <User className="w-4 h-4" />}
@@ -68,60 +38,57 @@ export const AdminProfileMenu: React.FC = () => {
             {roleLabel}
           </span>
         </div>
-        <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 hidden sm:block ${isOpen ? 'rotate-180' : ''}`} />
-      </button>
+        <ChevronDown className="w-3.5 h-3.5 text-slate-400 transition-transform duration-200 hidden sm:block" />
+      </Button>
 
-      {/* Dropdown Menu */}
-      {isOpen && (
-        <div
-          className="absolute right-0 mt-2 w-64 rounded-xl bg-white border border-slate-200 shadow-card py-2 z-50 animate-in fade-in zoom-in-95 duration-150"
-          role="menu"
-          aria-orientation="vertical"
-        >
-          {/* User Info Header */}
-          <div className="px-4 py-3 border-b border-slate-100">
-            <p className="text-xs font-bold text-industrial-dark truncate">
-              {displayName}
-            </p>
-            <p className="text-[11px] text-slate-500 font-mono truncate mt-0.5">
-              {displayEmail}
-            </p>
-            <div className="mt-2 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-semibold uppercase bg-sky-50 text-industrial-primary border border-sky-200">
-              <ShieldCheck className="w-3 h-3" />
-              <span>{roleLabel} Access</span>
-            </div>
-          </div>
-
-          {/* Links */}
-          <div className="py-1">
-            <Link
-              to="/"
-              onClick={() => setIsOpen(false)}
-              className="flex items-center justify-between px-4 py-2.5 text-xs text-slate-700 hover:bg-slate-50 transition-colors min-h-[44px]"
-              role="menuitem"
-            >
-              <div className="flex items-center gap-2">
-                <ExternalLink className="w-4 h-4 text-slate-400" />
-                <span>Return to Public Website</span>
-              </div>
-            </Link>
-
-            <button
-              type="button"
-              onClick={async () => {
-                setIsOpen(false);
-                await signOut();
-                navigate('/admin/login');
-              }}
-              className="w-full flex items-center gap-2 px-4 py-2.5 text-xs text-rose-600 hover:bg-rose-50 transition-colors text-left min-h-[44px]"
-              role="menuitem"
-            >
-              <LogOut className="w-4 h-4 text-rose-500" />
-              <span className="font-semibold">Sign Out</span>
-            </button>
-          </div>
+      <Dropdown.Popover placement="bottom end" className="w-64 rounded-xl bg-white border border-slate-200 shadow-card py-2 z-50">
+        <div className="px-4 py-3 border-b border-slate-100">
+          <p className="text-xs font-bold text-industrial-dark truncate">
+            {displayName}
+          </p>
+          <p className="text-[11px] text-slate-500 font-mono truncate mt-0.5">
+            {displayEmail}
+          </p>
+          <Chip
+            variant="soft"
+            color="accent"
+            size="sm"
+            className="mt-2 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-semibold uppercase bg-sky-50 text-industrial-primary border border-sky-200"
+          >
+            <ShieldCheck className="w-3 h-3" />
+            <span>{roleLabel} Access</span>
+          </Chip>
         </div>
-      )}
-    </div>
+
+        <Dropdown.Menu
+          aria-label="User account actions"
+          onAction={async (key) => {
+            if (key === 'public-site') {
+              navigate('/');
+            } else if (key === 'sign-out') {
+              await signOut();
+              navigate('/admin/login');
+            }
+          }}
+          className="p-1"
+        >
+          <Dropdown.Item id="public-site" textValue="Return to Public Website" className="rounded-lg px-3 py-2 cursor-pointer hover:bg-slate-50">
+            <div className="flex items-center gap-2 text-xs text-slate-700">
+              <ExternalLink className="w-4 h-4 text-slate-400" />
+              <Label>Return to Public Website</Label>
+            </div>
+          </Dropdown.Item>
+
+          <Separator className="my-1 border-slate-100" />
+
+          <Dropdown.Item id="sign-out" variant="danger" textValue="Sign Out" className="rounded-lg px-3 py-2 cursor-pointer text-rose-600 hover:bg-rose-50">
+            <div className="flex items-center gap-2 text-xs font-semibold text-rose-600">
+              <LogOut className="w-4 h-4 text-rose-500" />
+              <Label>Sign Out</Label>
+            </div>
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown.Popover>
+    </Dropdown>
   );
 };

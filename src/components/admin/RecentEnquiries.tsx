@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Card, Table, Chip, Button } from '@heroui/react';
+import { Card, Table, Chip, Button, Input, Select, ListBox } from '@heroui/react';
 import { Enquiry, EnquiryStatus } from '../../types/database';
 import { formatDate } from '../../utils/date';
 import { Inbox, Search, ArrowUpRight, ChevronRight } from 'lucide-react';
@@ -99,9 +99,9 @@ export const RecentEnquiries: React.FC<RecentEnquiriesProps> = ({ enquiries, isL
 
           {/* Search, Filter & View All Link */}
           <div className="flex items-center gap-2 flex-wrap">
-            <div className="relative">
-              <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-              <input
+            <div className="relative flex items-center">
+              <Search className="w-3.5 h-3.5 absolute left-3 text-slate-400 pointer-events-none z-10" />
+              <Input
                 type="text"
                 placeholder="Search enquiries..."
                 value={searchTerm}
@@ -110,18 +110,41 @@ export const RecentEnquiries: React.FC<RecentEnquiriesProps> = ({ enquiries, isL
               />
             </div>
 
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="text-xs py-1.5 px-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 font-sans cursor-pointer"
-            >
-              <option value="all">All Status</option>
-              <option value="new">New</option>
-              <option value="contacted">Contacted</option>
-              <option value="quotation_sent">Quote Sent</option>
-              <option value="follow_up">Follow-up</option>
-              <option value="converted">Converted</option>
-            </select>
+            <div className="min-w-[130px]">
+              <Select
+                value={statusFilter}
+                onChange={(val) => setStatusFilter((val as string) || 'all')}
+                className="w-full"
+                aria-label="Filter by enquiry status"
+              >
+                <Select.Trigger className="w-full h-8 px-2.5 py-1 text-xs bg-slate-50 border border-slate-200/80 rounded-xl text-slate-700 flex items-center justify-between shadow-2xs hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 cursor-pointer">
+                  <Select.Value className="text-xs font-medium text-slate-700 truncate" />
+                  <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
+                </Select.Trigger>
+                <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[140px]">
+                  <ListBox className="outline-none space-y-0.5">
+                    {[
+                      { id: 'all', label: 'All Status' },
+                      { id: 'new', label: 'New' },
+                      { id: 'contacted', label: 'Contacted' },
+                      { id: 'quotation_sent', label: 'Quote Sent' },
+                      { id: 'follow_up', label: 'Follow-up' },
+                      { id: 'converted', label: 'Converted' },
+                    ].map(st => (
+                      <ListBox.Item
+                        key={st.id}
+                        id={st.id}
+                        textValue={st.label}
+                        className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-blue-50 data-[selected=true]:text-blue-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                      >
+                        {st.label}
+                        <ListBox.ItemIndicator />
+                      </ListBox.Item>
+                    ))}
+                  </ListBox>
+                </Select.Popover>
+              </Select>
+            </div>
 
             <Button
               variant="outline"

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Drawer, Card, Chip, Button } from '@heroui/react';
 import {
   X,
   Mail,
@@ -193,38 +194,42 @@ export const AdminEnquiryDossierDrawer: React.FC<AdminEnquiryDossierDrawerProps>
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden flex justify-end bg-black/40 backdrop-blur-xs transition-opacity animate-in fade-in duration-200">
-      {/* Slide-over panel */}
-      <div
-        className="w-full max-w-4xl bg-white h-full shadow-2xl overflow-y-auto flex flex-col transform transition-transform duration-300"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="dossier-title"
-      >
-        {/* Sticky Header Bar */}
-        <div className="sticky top-0 bg-white/95 backdrop-blur-md z-20 border-b border-gray-100 px-6 py-4 flex items-center justify-between">
-          {/* Breadcrumb & Close */}
-          <div className="flex items-center gap-2 text-xs text-gray-500">
-            <button
-              type="button"
-              onClick={onClose}
-              className="hover:text-gray-900 flex items-center gap-1 font-medium transition-colors"
-            >
-              <span>People</span>
-            </button>
-            <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
-            <span className="text-gray-900 font-semibold">{enquiry.name}</span>
-          </div>
+    <Drawer isOpen={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <Drawer.Backdrop className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs transition-opacity" />
+      <Drawer.Content placement="right" className="fixed inset-y-0 right-0 z-50 w-full max-w-4xl h-full outline-none">
+        <Drawer.Dialog
+          className="w-full max-w-4xl bg-white h-full shadow-2xl overflow-y-auto flex flex-col"
+          aria-labelledby="dossier-title"
+        >
+          {/* Sticky Header Bar */}
+          <div className="sticky top-0 bg-white/95 backdrop-blur-md z-20 border-b border-gray-100 px-6 py-4 flex items-center justify-between">
+            {/* Breadcrumb & Close */}
+            <div className="flex items-center gap-2 text-xs text-gray-500">
+              <Button
+                variant="ghost"
+                size="sm"
+                onPress={onClose}
+                onClick={onClose}
+                className="hover:text-gray-900 flex items-center gap-1 font-medium transition-colors h-auto p-1 min-w-0"
+              >
+                <span>People</span>
+              </Button>
+              <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
+              <span className="text-gray-900 font-semibold">{enquiry.name}</span>
+            </div>
 
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
-            aria-label="Close dossier"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+            <Button
+              isIconOnly
+              variant="ghost"
+              size="sm"
+              onPress={onClose}
+              onClick={onClose}
+              className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+              aria-label="Close dossier"
+            >
+              <X className="w-5 h-5" />
+            </Button>
+          </div>
 
         {/* Title & Action Row */}
         <div className="px-8 pt-6 pb-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -408,20 +413,21 @@ export const AdminEnquiryDossierDrawer: React.FC<AdminEnquiryDossierDrawerProps>
                 <span>Send Email</span>
               </a>
             ) : (
-              <button
-                type="button"
-                disabled
-                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-gray-300 text-white text-xs font-semibold cursor-not-allowed"
+              <Button
+                variant="secondary"
+                size="sm"
+                isDisabled
+                className="gap-1.5 px-4 py-1.5 text-xs font-semibold cursor-not-allowed"
               >
                 <Send className="w-3.5 h-3.5" />
                 <span>Send Email</span>
-              </button>
+              </Button>
             )}
           </div>
         </div>
 
         {/* Navigation Tabs */}
-        <div className="px-8 border-b border-gray-100 flex items-center gap-6 overflow-x-auto no-scrollbar text-xs font-medium text-gray-500 mt-4">
+        <div className="px-8 border-b border-gray-100 flex items-center gap-2 overflow-x-auto no-scrollbar text-xs font-medium text-gray-500 mt-4">
           {[
             { id: 'overview', label: 'Contact overview' },
             { id: 'sequences', label: 'Sequences' },
@@ -430,25 +436,26 @@ export const AdminEnquiryDossierDrawer: React.FC<AdminEnquiryDossierDrawerProps>
             { id: 'meetings', label: 'Meetings' },
             { id: 'custom', label: 'Custom fields' },
           ].map((tab) => (
-            <button
+            <Button
               key={tab.id}
-              type="button"
-              onClick={() => setActiveTab(tab.id as any)}
-              className={`py-3 relative whitespace-nowrap transition-colors ${
+              variant={activeTab === tab.id ? 'primary' : 'ghost'}
+              size="sm"
+              onPress={() => setActiveTab(tab.id as any)}
+              className={`py-2 px-3 relative whitespace-nowrap transition-colors rounded-lg font-sans text-xs ${
                 activeTab === tab.id
-                  ? 'text-gray-900 font-semibold border-b-2 border-gray-900'
-                  : 'hover:text-gray-700'
+                  ? 'bg-slate-900 text-white font-semibold'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
               }`}
             >
               {tab.label}
-            </button>
+            </Button>
           ))}
         </div>
 
         {/* Tab Content */}
         <div className="p-8 space-y-6 flex-1 bg-[#FAFAFA]">
           {/* Company Bio Card */}
-          <div className="bg-white p-5 rounded-xl border border-gray-200/80 shadow-2xs space-y-3">
+          <Card className="bg-white p-5 rounded-xl border border-gray-200/80 shadow-2xs space-y-3">
             <div className="flex items-center gap-3">
               <CompanyAvatar company={companyName} size="lg" />
               <div>
@@ -463,25 +470,26 @@ export const AdminEnquiryDossierDrawer: React.FC<AdminEnquiryDossierDrawerProps>
                 ? `${enquiry.company} is an active enterprise partner engaged in dimensional quality verification and automated air-electronic multi-channel inspection.`
                 : 'Customer is exploring industrial metrology systems and custom fixture engineering.'}
             </p>
-          </div>
+          </Card>
 
           {/* Two Columns Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Left Column: Contact info & Attributes */}
             <div className="space-y-6">
               {/* Contact Information Card */}
-              <div className="bg-white p-5 rounded-xl border border-gray-200/80 shadow-2xs space-y-4">
+              <Card className="bg-white p-5 rounded-xl border border-gray-200/80 shadow-2xs space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wider">
                     Contact information
                   </h3>
-                  <button
-                    type="button"
-                    className="text-xs text-gray-500 hover:text-gray-900 flex items-center gap-1 font-medium"
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs text-gray-500 hover:text-gray-900 flex items-center gap-1 font-medium h-auto p-1 min-w-0"
                   >
                     <Plus className="w-3 h-3" />
                     <span>Add information</span>
-                  </button>
+                  </Button>
                 </div>
 
                 <div className="space-y-3 text-xs">
@@ -491,9 +499,9 @@ export const AdminEnquiryDossierDrawer: React.FC<AdminEnquiryDossierDrawerProps>
                         <Mail className="w-4 h-4 text-gray-400 shrink-0" />
                         <span className="text-gray-800 truncate font-mono">{enquiry.email}</span>
                       </div>
-                      <span className="text-[10px] text-gray-500 bg-white px-2 py-0.5 rounded border border-gray-200 font-medium shrink-0">
+                      <Chip size="sm" variant="soft" color="default" className="text-[10px] text-gray-500 bg-white px-2 py-0.5 rounded border border-gray-200 font-medium shrink-0 font-mono">
                         Business
-                      </span>
+                      </Chip>
                     </div>
                   )}
 
@@ -503,9 +511,9 @@ export const AdminEnquiryDossierDrawer: React.FC<AdminEnquiryDossierDrawerProps>
                         <Phone className="w-4 h-4 text-gray-400 shrink-0" />
                         <span className="text-gray-800 font-mono">{enquiry.phone}</span>
                       </div>
-                      <span className="text-[10px] text-gray-500 bg-white px-2 py-0.5 rounded border border-gray-200 font-medium shrink-0">
+                      <Chip size="sm" variant="soft" color="default" className="text-[10px] text-gray-500 bg-white px-2 py-0.5 rounded border border-gray-200 font-medium shrink-0 font-mono">
                         Direct Line
-                      </span>
+                      </Chip>
                     </div>
                   )}
 
@@ -514,15 +522,15 @@ export const AdminEnquiryDossierDrawer: React.FC<AdminEnquiryDossierDrawerProps>
                       <Building2 className="w-4 h-4 text-gray-400 shrink-0" />
                       <span className="text-gray-800 truncate">{companyName}</span>
                     </div>
-                    <span className="text-[10px] text-gray-500 bg-white px-2 py-0.5 rounded border border-gray-200 font-medium shrink-0">
+                    <Chip size="sm" variant="soft" color="default" className="text-[10px] text-gray-500 bg-white px-2 py-0.5 rounded border border-gray-200 font-medium shrink-0 font-mono">
                       Corporate
-                    </span>
+                    </Chip>
                   </div>
                 </div>
-              </div>
+              </Card>
 
               {/* CRM Key Fields */}
-              <div className="bg-white p-5 rounded-xl border border-gray-200/80 shadow-2xs space-y-3.5 text-xs">
+              <Card className="bg-white p-5 rounded-xl border border-gray-200/80 shadow-2xs space-y-3.5 text-xs">
                 <div className="flex items-center justify-between pb-2 border-b border-gray-100">
                   <span className="text-gray-500">Requirement</span>
                   <span className="font-medium text-gray-900">{jobTitle}</span>
@@ -530,24 +538,28 @@ export const AdminEnquiryDossierDrawer: React.FC<AdminEnquiryDossierDrawerProps>
 
                 <div className="flex items-center justify-between pb-2 border-b border-gray-100">
                   <span className="text-gray-500">Contact Stage</span>
-                  <span
+                  <Chip
+                    size="sm"
+                    variant="soft"
+                    color="default"
                     className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${currentStatusConfig.bg} ${currentStatusConfig.text} ${currentStatusConfig.border}`}
                   >
                     <span className={`w-1.5 h-1.5 rounded-full ${currentStatusConfig.dot}`} />
-                    {currentStatusConfig.label}
-                  </span>
+                    <span>{currentStatusConfig.label}</span>
+                  </Chip>
                 </div>
 
                 <div className="flex items-center justify-between pb-2 border-b border-gray-100">
                   <span className="text-gray-500">Contact Owner</span>
-                  <button
-                    type="button"
-                    onClick={() => {
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onPress={() => {
                       setIsStaffMenuOpen(true);
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
-                    className="flex items-center gap-1.5 font-medium text-gray-800 hover:text-blue-600 hover:bg-gray-50 px-2 py-1 rounded-lg border border-transparent hover:border-gray-200 transition-all text-xs"
-                    title="Click to assign staff member"
+                    className="flex items-center gap-1.5 font-medium text-gray-800 hover:text-blue-600 hover:bg-gray-50 px-2 py-1 rounded-lg border border-transparent hover:border-gray-200 transition-all text-xs h-auto min-w-0"
+                    aria-label="Assign staff member"
                   >
                     <PersonAvatar
                       name={enquiry.assigned_profile?.full_name || enquiry.assigned_profile?.email || 'Unassigned'}
@@ -557,7 +569,7 @@ export const AdminEnquiryDossierDrawer: React.FC<AdminEnquiryDossierDrawerProps>
                       {enquiry.assigned_profile?.full_name || enquiry.assigned_profile?.email || 'Unassigned'}
                     </span>
                     <ChevronDown className="w-3 h-3 text-gray-400" />
-                  </button>
+                  </Button>
                 </div>
 
                 <div className="flex items-center justify-between pb-2 border-b border-gray-100">
@@ -576,24 +588,25 @@ export const AdminEnquiryDossierDrawer: React.FC<AdminEnquiryDossierDrawerProps>
                     {enquiry.id.slice(0, 8).toUpperCase()}
                   </span>
                 </div>
-              </div>
+              </Card>
             </div>
 
             {/* Right Column: Activities, Data Sync, Notes */}
             <div className="space-y-6">
               {/* Activities details */}
-              <div className="bg-white p-5 rounded-xl border border-gray-200/80 shadow-2xs space-y-4">
+              <Card className="bg-white p-5 rounded-xl border border-gray-200/80 shadow-2xs space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wider">
                     Activities details
                   </h3>
-                  <button
-                    type="button"
-                    className="text-xs text-gray-500 hover:text-gray-900 flex items-center gap-1 font-medium"
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs text-gray-500 hover:text-gray-900 flex items-center gap-1 font-medium h-auto p-1 min-w-0"
                   >
                     <Edit2 className="w-3 h-3" />
                     <span>Edit</span>
-                  </button>
+                  </Button>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 text-xs">
@@ -608,10 +621,10 @@ export const AdminEnquiryDossierDrawer: React.FC<AdminEnquiryDossierDrawerProps>
                     </span>
                   </div>
                 </div>
-              </div>
+              </Card>
 
               {/* Data Synchronization */}
-              <div className="bg-white p-5 rounded-xl border border-gray-200/80 shadow-2xs space-y-4">
+              <Card className="bg-white p-5 rounded-xl border border-gray-200/80 shadow-2xs space-y-4">
                 <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wider">
                   Data Synchronization
                 </h3>
@@ -638,15 +651,15 @@ export const AdminEnquiryDossierDrawer: React.FC<AdminEnquiryDossierDrawerProps>
 
                   <div className="flex items-center justify-between">
                     <span className="text-gray-500">Status Tag</span>
-                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <Chip size="sm" variant="soft" color="success" className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                       Active
-                    </span>
+                    </Chip>
                   </div>
                 </div>
-              </div>
+              </Card>
 
               {/* Notes Card */}
-              <div className="bg-white p-5 rounded-xl border border-gray-200/80 shadow-2xs space-y-2.5">
+              <Card className="bg-white p-5 rounded-xl border border-gray-200/80 shadow-2xs space-y-2.5">
                 <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wider">
                   Inquiry Requirement & Notes
                 </h3>
@@ -658,11 +671,12 @@ export const AdminEnquiryDossierDrawer: React.FC<AdminEnquiryDossierDrawerProps>
                     {enquiry.message || 'No additional specifications provided.'}
                   </p>
                 </div>
-              </div>
+              </Card>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </Drawer.Dialog>
+    </Drawer.Content>
+  </Drawer>
   );
 };

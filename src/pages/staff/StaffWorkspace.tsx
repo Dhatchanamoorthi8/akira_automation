@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { Card, Chip, Button, Modal, Input, TextArea, Select, ListBox, Label, Checkbox } from '@heroui/react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Briefcase,
@@ -714,9 +715,9 @@ export const StaffWorkspace: React.FC = () => {
                   <span className="text-sm font-bold text-industrial-dark font-heading">
                     {company.name}
                   </span>
-                  <span className="px-1.5 py-0.2 rounded text-[10px] font-mono font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase">
+                  <Chip size="sm" color="success" variant="soft" className="font-mono text-[10px] uppercase font-bold">
                     Staff Portal
-                  </span>
+                  </Chip>
                 </div>
                 <p className="text-[11px] text-slate-500">Precision CRM, Field Visits & Billing</p>
               </div>
@@ -741,14 +742,17 @@ export const StaffWorkspace: React.FC = () => {
                   {profile?.role || 'Staff'} Access
                 </div>
               </div>
-              <button
+              <Button
+                variant="ghost"
+                size="sm"
+                onPress={handleSignOut}
                 onClick={handleSignOut}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900 transition-colors"
-                title="Sign Out"
+                className="gap-1.5 text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900"
+                aria-label="Sign Out"
               >
                 <LogOut className="w-3.5 h-3.5 text-slate-500" />
                 <span className="hidden sm:inline">Sign Out</span>
-              </button>
+              </Button>
             </div>
           </div>
         </header>
@@ -757,7 +761,7 @@ export const StaffWorkspace: React.FC = () => {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
           {/* Top Banner: ERP Attendance Widget (Hidden for Admin, active for field & sales staff) */}
           {profile?.role !== 'admin' ? (
-            <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <Card className="p-4 shadow-xs border border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm ${
                   todayAttendance && !todayAttendance.clock_out_at
@@ -771,22 +775,22 @@ export const StaffWorkspace: React.FC = () => {
                     <h2 className="text-sm font-bold text-industrial-dark">ERP Daily Attendance</h2>
                     {todayAttendance ? (
                       todayAttendance.clock_out_at ? (
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-100 text-slate-600 border border-slate-200">
+                        <Chip size="sm" color="default" variant="soft" className="font-bold uppercase text-[10px]">
                           Clocked Out
-                        </span>
+                        </Chip>
                       ) : todayAttendance.status === 'on_field' ? (
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-50 text-amber-700 border border-amber-200">
+                        <Chip size="sm" color="warning" variant="soft" className="font-bold uppercase text-[10px]">
                           On Field
-                        </span>
+                        </Chip>
                       ) : (
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <Chip size="sm" color="success" variant="soft" className="font-bold uppercase text-[10px]">
                           Present
-                        </span>
+                        </Chip>
                       )
                     ) : (
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-rose-50 text-rose-700 border border-rose-200">
+                      <Chip size="sm" color="danger" variant="soft" className="font-bold uppercase text-[10px]">
                         Not Clocked In
-                      </span>
+                      </Chip>
                     )}
                   </div>
                   <p className="text-xs text-slate-500 mt-0.5">
@@ -807,43 +811,52 @@ export const StaffWorkspace: React.FC = () => {
               <div className="flex items-center gap-2">
                 {!todayAttendance && (
                   <>
-                    <button
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onPress={() => handleClockIn('present')}
                       onClick={() => handleClockIn('present')}
-                      disabled={isClocking}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50 transition-colors shadow-xs"
+                      isDisabled={isClocking}
+                      className="gap-1.5 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white"
                     >
                       {isClocking ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
                       Clock In (Office)
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onPress={() => handleClockIn('on_field')}
                       onClick={() => handleClockIn('on_field')}
-                      disabled={isClocking}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-amber-600 text-white hover:bg-amber-700 disabled:opacity-50 transition-colors shadow-xs"
+                      isDisabled={isClocking}
+                      className="gap-1.5 text-xs font-semibold bg-amber-600 hover:bg-amber-700 text-white"
                     >
                       <Navigation className="w-3.5 h-3.5" />
                       Clock In (Field)
-                    </button>
+                    </Button>
                   </>
                 )}
 
                 {todayAttendance && !todayAttendance.clock_out_at && (
-                  <button
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onPress={handleClockOut}
                     onClick={handleClockOut}
-                    disabled={isClocking}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-rose-600 text-white hover:bg-rose-700 disabled:opacity-50 transition-colors shadow-xs"
+                    isDisabled={isClocking}
+                    className="gap-1.5 text-xs font-semibold"
                   >
                     {isClocking ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <LogOut className="w-3.5 h-3.5" />}
                     Clock Out
-                  </button>
+                  </Button>
                 )}
               </div>
-            </div>
+            </Card>
           ) : (
-            <div className="bg-slate-100/80 rounded-xl border border-slate-200 p-3.5 flex items-center justify-between gap-4 text-xs">
+            <Card className="bg-slate-100/80 p-3.5 border border-slate-200 flex flex-row items-center justify-between gap-4 text-xs">
               <div className="flex items-center gap-2.5">
-                <span className="px-2 py-0.5 rounded font-mono uppercase text-[10px] font-bold bg-sky-100 text-sky-800 border border-sky-200">
+                <Chip size="sm" color="accent" variant="soft" className="font-mono uppercase text-[10px] font-bold">
                   Administrator
-                </span>
+                </Chip>
                 <span className="text-slate-600 font-medium">
                   Logged in with full supervisory access. ERP daily attendance punch is exempt for administrators.
                 </span>
@@ -855,7 +868,7 @@ export const StaffWorkspace: React.FC = () => {
                 <span>Team Attendance Roster</span>
                 <ExternalLink className="w-3 h-3" />
               </Link>
-            </div>
+            </Card>
           )}
 
           {/* Welcome & Actions Row */}
@@ -870,40 +883,52 @@ export const StaffWorkspace: React.FC = () => {
             </div>
 
             <div className="flex flex-wrap items-center gap-2.5">
-              <button
+              <Button
+                variant="outline"
+                size="sm"
+                onPress={() => loadStaffData()}
                 onClick={() => loadStaffData()}
-                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors shadow-sm"
+                className="gap-1.5 text-xs font-semibold bg-white border-slate-300 text-slate-700 hover:bg-slate-50 shadow-xs"
               >
                 <RotateCw className="w-3.5 h-3.5" />
                 <span>Refresh</span>
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onPress={() => setShowVisitModal(true)}
                 onClick={() => setShowVisitModal(true)}
-                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors shadow-sm"
+                className="gap-1.5 text-xs font-semibold bg-white border-slate-300 text-slate-700 hover:bg-slate-50 shadow-xs"
               >
                 <MapPin className="w-3.5 h-3.5 text-rose-600" />
                 <span>Schedule Visit</span>
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onPress={() => setShowInvoiceModal(true)}
                 onClick={() => setShowInvoiceModal(true)}
-                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors shadow-sm"
+                className="gap-1.5 text-xs font-semibold bg-white border-slate-300 text-slate-700 hover:bg-slate-50 shadow-xs"
               >
                 <Receipt className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Create Invoice</span>
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                onPress={() => setShowCreateModal(true)}
                 onClick={() => setShowCreateModal(true)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg bg-industrial-blue text-white hover:bg-sky-700 transition-colors shadow-sm"
+                className="gap-1.5 text-xs font-semibold bg-industrial-blue hover:bg-sky-700 shadow-xs text-white"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Follow-up</span>
-              </button>
+              </Button>
             </div>
           </div>
 
           {/* Operational Counts Strip */}
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4">
-            <div className="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
+            <Card className="p-3.5 border border-slate-200 shadow-xs">
               <div className="flex items-center gap-1.5 text-slate-500 text-[11px] font-semibold uppercase tracking-wider">
                 <Inbox className="w-3.5 h-3.5 text-sky-600" />
                 <span>New RFQs</span>
@@ -911,9 +936,9 @@ export const StaffWorkspace: React.FC = () => {
               <p className="text-xl font-bold font-mono text-industrial-dark mt-1">
                 {stats.myNewEnquiries}
               </p>
-            </div>
+            </Card>
 
-            <div className="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
+            <Card className="p-3.5 border border-slate-200 shadow-xs">
               <div className="flex items-center gap-1.5 text-blue-700 text-[11px] font-semibold uppercase tracking-wider">
                 <Clock className="w-3.5 h-3.5 text-blue-600" />
                 <span>Due Today</span>
@@ -921,9 +946,9 @@ export const StaffWorkspace: React.FC = () => {
               <p className="text-xl font-bold font-mono text-blue-700 mt-1">
                 {stats.dueToday}
               </p>
-            </div>
+            </Card>
 
-            <div className={`p-3.5 rounded-xl border shadow-sm ${
+            <Card className={`p-3.5 border shadow-xs ${
               stats.overdue > 0 ? 'bg-rose-50/50 border-rose-200' : 'bg-white border-slate-200'
             }`}>
               <div className="flex items-center gap-1.5 text-rose-700 text-[11px] font-semibold uppercase tracking-wider">
@@ -933,9 +958,9 @@ export const StaffWorkspace: React.FC = () => {
               <p className="text-xl font-bold font-mono text-rose-700 mt-1">
                 {stats.overdue}
               </p>
-            </div>
+            </Card>
 
-            <div className="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
+            <Card className="p-3.5 border border-slate-200 shadow-xs">
               <div className="flex items-center gap-1.5 text-slate-600 text-[11px] font-semibold uppercase tracking-wider">
                 <MapPin className="w-3.5 h-3.5 text-rose-500" />
                 <span>Site Visits</span>
@@ -943,9 +968,9 @@ export const StaffWorkspace: React.FC = () => {
               <p className="text-xl font-bold font-mono text-industrial-dark mt-1">
                 {visitTotal}
               </p>
-            </div>
+            </Card>
 
-            <div className="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm col-span-2 sm:col-span-1">
+            <Card className="p-3.5 border border-slate-200 shadow-xs col-span-2 sm:col-span-1">
               <div className="flex items-center gap-1.5 text-emerald-700 text-[11px] font-semibold uppercase tracking-wider">
                 <Receipt className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Invoices</span>
@@ -953,7 +978,7 @@ export const StaffWorkspace: React.FC = () => {
               <p className="text-xl font-bold font-mono text-emerald-700 mt-1">
                 {invoiceTotal}
               </p>
-            </div>
+            </Card>
           </div>
 
           {/* Navigation Tabs */}
@@ -1027,34 +1052,37 @@ export const StaffWorkspace: React.FC = () => {
                       : 'All Follow-ups';
 
                   return (
-                    <button
+                    <Button
                       key={tf}
+                      size="sm"
+                      variant={isActive ? 'primary' : 'outline'}
+                      onPress={() => setTimeframe(tf)}
                       onClick={() => setTimeframe(tf)}
-                      className={`px-3 py-1.5 rounded-lg font-semibold whitespace-nowrap transition-colors ${
+                      className={`text-xs font-semibold whitespace-nowrap ${
                         isActive
                           ? 'bg-industrial-dark text-white'
-                          : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                          : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
                       }`}
                     >
                       {label}
-                    </button>
+                    </Button>
                   );
                 })}
               </div>
 
               {isLoadingFollowups ? (
-                <div className="bg-white rounded-xl border border-slate-200 p-8 text-center">
+                <Card className="p-8 text-center border border-slate-200">
                   <Loader2 className="w-6 h-6 animate-spin text-sky-600 mx-auto mb-2" />
                   <p className="text-xs text-slate-500">Loading follow-ups...</p>
-                </div>
+                </Card>
               ) : followups.length === 0 ? (
-                <div className="bg-white rounded-xl border border-slate-200 p-12 text-center shadow-sm">
+                <Card className="p-12 text-center border border-slate-200 shadow-xs">
                   <CheckCircle2 className="w-10 h-10 text-emerald-500 mx-auto mb-2" />
                   <h3 className="text-sm font-bold text-slate-800 font-heading">No Tasks in this Timeframe</h3>
                   <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1">
                     You have no scheduled follow-ups matching this filter. Schedule a new touchpoint or review other tabs.
                   </p>
-                </div>
+                </Card>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {followups.map(item => {
@@ -1066,18 +1094,29 @@ export const StaffWorkspace: React.FC = () => {
                       item.status !== 'cancelled';
 
                     return (
-                      <div
+                      <Card
                         key={item.id}
-                        className={`bg-white rounded-xl border p-4 shadow-sm hover:shadow-md transition-shadow space-y-3 ${
+                        className={`p-4 border shadow-xs hover:shadow-md transition-shadow space-y-3 ${
                           isOverdue ? 'border-rose-300 ring-1 ring-rose-200' : 'border-slate-200'
                         }`}
                       >
                         <div className="flex items-start justify-between gap-3">
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${priorityStyle.bg} ${priorityStyle.text} ${priorityStyle.border}`}>
+                              <Chip
+                                size="sm"
+                                variant="soft"
+                                color={
+                                  item.priority === 'urgent'
+                                    ? 'danger'
+                                    : item.priority === 'high'
+                                    ? 'warning'
+                                    : 'accent'
+                                }
+                                className="font-bold uppercase text-[10px]"
+                              >
                                 {priorityStyle.label}
-                              </span>
+                              </Chip>
                               <span className="text-[11px] font-semibold text-slate-500 capitalize">
                                 {item.type}
                               </span>
@@ -1121,26 +1160,31 @@ export const StaffWorkspace: React.FC = () => {
                         )}
 
                         <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
-                          <button
-                            type="button"
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onPress={() => handleOpenDossier(item.enquiry_id)}
                             onClick={() => handleOpenDossier(item.enquiry_id)}
-                            className="inline-flex items-center gap-1 text-slate-600 hover:text-industrial-blue font-semibold transition-colors"
+                            className="gap-1 text-slate-600 hover:text-industrial-blue font-semibold text-xs h-7 px-2"
                           >
                             <span>Dossier</span>
                             <ExternalLink className="w-3 h-3" />
-                          </button>
+                          </Button>
 
                           {item.status !== 'completed' && item.status !== 'cancelled' && (
-                            <button
+                            <Button
+                              variant="primary"
+                              size="sm"
+                              onPress={() => setCompletingTask(item)}
                               onClick={() => setCompletingTask(item)}
-                              className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors shadow-xs"
+                              className="gap-1 text-xs font-semibold h-7 px-3 bg-emerald-600 hover:bg-emerald-700 text-white"
                             >
                               <Check className="w-3.5 h-3.5" />
                               Complete Follow-up
-                            </button>
+                            </Button>
                           )}
                         </div>
-                      </div>
+                      </Card>
                     );
                   })}
                 </div>
@@ -1152,24 +1196,24 @@ export const StaffWorkspace: React.FC = () => {
           {activeTab === 'enquiries' && (
             <div className="space-y-4">
               {isLoadingEnquiries ? (
-                <div className="bg-white rounded-xl border border-slate-200 p-8 text-center">
+                <Card className="p-8 text-center border border-slate-200">
                   <Loader2 className="w-6 h-6 animate-spin text-sky-600 mx-auto mb-2" />
                   <p className="text-xs text-slate-500">Loading assigned inquiries...</p>
-                </div>
+                </Card>
               ) : enquiries.length === 0 ? (
-                <div className="bg-white rounded-xl border border-slate-200 p-12 text-center shadow-sm">
+                <Card className="p-12 text-center border border-slate-200 shadow-xs">
                   <Inbox className="w-10 h-10 text-slate-300 mx-auto mb-2" />
                   <h3 className="text-sm font-bold text-slate-800 font-heading">No Assigned Inquiries</h3>
                   <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1">
                     You do not currently have any prospective inquiries delegated to your account.
                   </p>
-                </div>
+                </Card>
               ) : (
                 <div className="space-y-3">
                   {enquiries.map(enq => (
-                    <div
+                    <Card
                       key={enq.id}
-                      className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow space-y-3"
+                      className="p-4 border border-slate-200 shadow-xs hover:shadow-md transition-shadow space-y-3"
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div>
@@ -1190,18 +1234,21 @@ export const StaffWorkspace: React.FC = () => {
                               {enq.specific_product || enq.product_category || 'General Metrology Inquiry'}
                             </strong>
                           </div>
-                        </div>
-
-                        <div className="text-right">
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${
-                            enq.status === 'converted'
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                              : enq.status === 'closed'
-                              ? 'bg-slate-100 text-slate-600 border-slate-200'
-                              : 'bg-sky-50 text-sky-700 border-sky-200'
-                          }`}>
+                        </div>                        <div className="text-right">
+                          <Chip
+                            size="sm"
+                            variant="soft"
+                            color={
+                              enq.status === 'converted'
+                                ? 'success'
+                                : enq.status === 'closed'
+                                ? 'default'
+                                : 'accent'
+                            }
+                            className="font-bold uppercase text-[10px]"
+                          >
                             {enq.status.replace('_', ' ')}
-                          </span>
+                          </Chip>
                           <span className="text-[11px] text-slate-400 block font-mono mt-0.5">
                             {formatDate(enq.created_at)}
                           </span>
@@ -1254,8 +1301,20 @@ export const StaffWorkspace: React.FC = () => {
                         </div>
 
                         <div className="flex flex-wrap items-center gap-2">
-                          <button
-                            type="button"
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onPress={() => {
+                              setCreateForm({
+                                enquiryId: enq.id,
+                                title: `Follow-up: ${enq.company || enq.name}`,
+                                scheduledAt: new Date().toISOString().slice(0, 16),
+                                type: 'call',
+                                priority: 'high',
+                                notes: `Follow-up on inquiry: ${enq.specific_product || enq.product_category || 'General requirement'}`,
+                              });
+                              setShowCreateModal(true);
+                            }}
                             onClick={() => {
                               setCreateForm({
                                 enquiryId: enq.id,
@@ -1267,15 +1326,27 @@ export const StaffWorkspace: React.FC = () => {
                               });
                               setShowCreateModal(true);
                             }}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg bg-sky-50 text-sky-700 border border-sky-200 hover:bg-sky-100 transition-colors"
-                            title="Schedule Follow-up"
+                            className="gap-1 px-2.5 h-7 text-xs font-semibold bg-sky-50 text-sky-700 border-sky-200 hover:bg-sky-100"
+                            aria-label="Schedule Follow-up"
                           >
                             <Clock className="w-3 h-3" />
                             <span>Follow-up</span>
-                          </button>
+                          </Button>
 
-                          <button
-                            type="button"
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onPress={() => {
+                              setVisitForm({
+                                enquiryId: enq.id,
+                                title: `Site Visit: ${enq.company || enq.name}`,
+                                visitPurpose: 'consultation',
+                                scheduledAt: '',
+                                customerContactPerson: enq.name,
+                                notes: enq.requirement || '',
+                              });
+                              setShowVisitModal(true);
+                            }}
                             onClick={() => {
                               setVisitForm({
                                 enquiryId: enq.id,
@@ -1287,15 +1358,35 @@ export const StaffWorkspace: React.FC = () => {
                               });
                               setShowVisitModal(true);
                             }}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 transition-colors"
-                            title="Schedule Customer Site Visit"
+                            className="gap-1 px-2.5 h-7 text-xs font-semibold bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100"
+                            aria-label="Schedule Customer Site Visit"
                           >
                             <MapPin className="w-3 h-3" />
                             <span>Visit</span>
-                          </button>
+                          </Button>
 
-                          <button
-                            type="button"
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onPress={() => {
+                              setInvoiceForm({
+                                enquiryId: enq.id,
+                                customerName: enq.name,
+                                customerCompany: enq.company || '',
+                                customerEmail: enq.email,
+                                customerPhone: enq.phone || '',
+                                customerAddress: '',
+                                customerGst: '',
+                                type: 'quotation',
+                                items: [{
+                                  description: enq.specific_product || enq.product_category || 'Metrology Gauging Requirement',
+                                  quantity: 1,
+                                  unitPrice: 0,
+                                  taxRate: 18,
+                                }],
+                              });
+                              setShowInvoiceModal(true);
+                            }}
                             onClick={() => {
                               setInvoiceForm({
                                 enquiryId: enq.id,
@@ -1315,16 +1406,27 @@ export const StaffWorkspace: React.FC = () => {
                               });
                               setShowInvoiceModal(true);
                             }}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition-colors"
-                            title="Create Quotation"
+                            className="gap-1 px-2.5 h-7 text-xs font-semibold bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
+                            aria-label="Create Quotation"
                           >
                             <Receipt className="w-3 h-3" />
                             <span>Quote</span>
-                          </button>
+                          </Button>
 
                           {enq.status !== 'converted' && enq.status !== 'closed' && (
                             <>
-                              <button
+                              <Button
+                                size="sm"
+                                variant="primary"
+                                onPress={() => {
+                                  setConvertingEnquiry(enq);
+                                  setDealForm({
+                                    dealTitle: `${enq.company || enq.name} - ${enq.specific_product || 'Gauging Requirement'}`,
+                                    dealValue: '',
+                                    expectedCloseDate: '',
+                                    notes: '',
+                                  });
+                                }}
                                 onClick={() => {
                                   setConvertingEnquiry(enq);
                                   setDealForm({
@@ -1334,36 +1436,44 @@ export const StaffWorkspace: React.FC = () => {
                                     notes: '',
                                   });
                                 }}
-                                className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors shadow-xs"
+                                className="gap-1 px-2.5 h-7 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white"
                               >
                                 <TrendingUp className="w-3 h-3" />
                                 Convert to Deal
-                              </button>
-                              <button
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onPress={() => {
+                                  setClosingEnquiry(enq);
+                                  setLostReason(LOST_REASONS[0]);
+                                  setLostNotes('');
+                                }}
                                 onClick={() => {
                                   setClosingEnquiry(enq);
                                   setLostReason(LOST_REASONS[0]);
                                   setLostNotes('');
                                 }}
-                                className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors"
+                                className="gap-1 px-2.5 h-7 text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 border-slate-200"
                               >
                                 <XCircle className="w-3 h-3" />
                                 Close Lead
-                              </button>
+                              </Button>
                             </>
                           )}
 
-                          <button
-                            type="button"
+                          <Button
+                            size="sm"
+                            onPress={() => handleOpenDossier(enq.id)}
                             onClick={() => handleOpenDossier(enq.id)}
-                            className="inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold rounded-lg bg-industrial-dark text-white hover:bg-slate-800 transition-colors shadow-xs"
+                            className="gap-1 px-3 h-7 text-xs font-semibold bg-industrial-dark text-white hover:bg-slate-800"
                           >
                             <span>Dossier</span>
                             <ExternalLink className="w-3 h-3" />
-                          </button>
+                          </Button>
                         </div>
                       </div>
-                    </div>
+                    </Card>
                   ))}
                 </div>
               )}
@@ -1377,45 +1487,55 @@ export const StaffWorkspace: React.FC = () => {
                 <h3 className="text-sm font-bold text-industrial-dark font-heading">
                   Customer Site Visits & Inspections
                 </h3>
-                <button
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onPress={() => setShowVisitModal(true)}
                   onClick={() => setShowVisitModal(true)}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg bg-industrial-blue text-white hover:bg-sky-700 shadow-xs"
+                  className="gap-1 text-xs font-semibold bg-industrial-blue hover:bg-sky-700 shadow-xs text-white"
                 >
                   <Plus className="w-3 h-3" />
                   Schedule Visit
-                </button>
+                </Button>
               </div>
 
               {visits.length === 0 ? (
-                <div className="bg-white rounded-xl border border-slate-200 p-12 text-center shadow-sm">
+                <Card className="p-12 text-center border border-slate-200 shadow-xs">
                   <MapPin className="w-10 h-10 text-slate-300 mx-auto mb-2" />
                   <h3 className="text-sm font-bold text-slate-800 font-heading">No Field Visits Scheduled</h3>
                   <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1">
                     Schedule customer on-site visits to record GPS check-in/out and inspection evidence.
                   </p>
-                </div>
+                </Card>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {visits.map((vis) => (
-                    <div
+                    <Card
                       key={vis.id}
-                      className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm space-y-3"
+                      className="p-4 border border-slate-200 shadow-xs space-y-3"
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${
-                            vis.status === 'completed'
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                              : vis.status === 'in_progress'
-                              ? 'bg-amber-50 text-amber-700 border-amber-200'
-                              : 'bg-sky-50 text-sky-700 border-sky-200'
-                          }`}>
-                            {vis.status.replace('_', ' ')}
-                          </span>
+                          <Chip
+                            size="sm"
+                            variant="soft"
+                            color={
+                              vis.status === 'completed'
+                                ? 'success'
+                                : vis.status === 'in_progress'
+                                ? 'warning'
+                                : 'accent'
+                            }
+                            className="font-bold uppercase text-[10px]"
+                          >
+                            {(vis.status || '').replace('_', ' ')}
+                          </Chip>
                           <h4 className="text-sm font-bold text-industrial-dark font-heading mt-1">
                             {vis.title}
                           </h4>
-                          <p className="text-xs text-slate-500 capitalize">Purpose: {vis.visit_purpose.replace('_', ' ')}</p>
+                          <p className="text-xs text-slate-500 capitalize">
+                            Purpose: {(vis.visit_purpose || (vis as any).purpose || 'General').replace('_', ' ')}
+                          </p>
                         </div>
                         <span className="text-xs font-mono font-bold text-slate-700">
                           {formatDate(vis.scheduled_at)}
@@ -1451,26 +1571,32 @@ export const StaffWorkspace: React.FC = () => {
                         </span>
 
                         {vis.status === 'scheduled' && (
-                          <button
+                          <Button
+                            size="sm"
+                            variant="primary"
+                            onPress={() => handleCheckInVisit(vis.id)}
                             onClick={() => handleCheckInVisit(vis.id)}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 font-semibold rounded-lg bg-amber-600 text-white hover:bg-amber-700 transition-colors shadow-xs"
+                            className="gap-1 px-3 h-7 text-xs font-semibold bg-amber-600 hover:bg-amber-700 text-white"
                           >
                             <Navigation className="w-3 h-3" />
                             Check In (GPS)
-                          </button>
+                          </Button>
                         )}
 
                         {vis.status === 'in_progress' && (
-                          <button
+                          <Button
+                            size="sm"
+                            variant="primary"
+                            onPress={() => setCompletingVisit(vis)}
                             onClick={() => setCompletingVisit(vis)}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors shadow-xs"
+                            className="gap-1 px-3 h-7 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white"
                           >
-                            <Check className="w-3 h-3" />
+                            <Check className="w-3.5 h-3.5" />
                             Complete Visit
-                          </button>
+                          </Button>
                         )}
                       </div>
-                    </div>
+                    </Card>
                   ))}
                 </div>
               )}
@@ -1484,29 +1610,32 @@ export const StaffWorkspace: React.FC = () => {
                 <h3 className="text-sm font-bold text-industrial-dark font-heading">
                   Generated Quotations & Tax Invoices
                 </h3>
-                <button
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onPress={() => setShowInvoiceModal(true)}
                   onClick={() => setShowInvoiceModal(true)}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 shadow-xs"
+                  className="gap-1 text-xs font-semibold shadow-xs bg-emerald-600 hover:bg-emerald-700 text-white"
                 >
                   <Plus className="w-3 h-3" />
                   New Quotation / Invoice
-                </button>
+                </Button>
               </div>
 
               {invoices.length === 0 ? (
-                <div className="bg-white rounded-xl border border-slate-200 p-12 text-center shadow-sm">
+                <Card className="p-12 text-center border border-slate-200 shadow-xs">
                   <Receipt className="w-10 h-10 text-slate-300 mx-auto mb-2" />
                   <h3 className="text-sm font-bold text-slate-800 font-heading">No Invoices or Quotations</h3>
                   <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1">
                     Create formal quotations or proforma invoices with tax calculations for your assigned leads.
                   </p>
-                </div>
+                </Card>
               ) : (
                 <div className="space-y-3">
                   {invoices.map((inv) => (
-                    <div
+                    <Card
                       key={inv.id}
-                      className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow space-y-2.5"
+                      className="p-4 border border-slate-200 shadow-xs hover:shadow-md transition-shadow space-y-2.5"
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div>
@@ -1514,9 +1643,9 @@ export const StaffWorkspace: React.FC = () => {
                             <span className="text-sm font-bold font-mono text-industrial-dark">
                               {inv.invoice_number}
                             </span>
-                            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-100 text-slate-700 border border-slate-200">
+                            <Chip size="sm" variant="soft" color="default" className="font-bold uppercase text-[10px]">
                               {inv.type}
-                            </span>
+                            </Chip>
                           </div>
                           <p className="text-xs font-semibold text-slate-700 mt-0.5">
                             {inv.customer_name} {inv.customer_company ? `(${inv.customer_company})` : ''}
@@ -1524,15 +1653,20 @@ export const StaffWorkspace: React.FC = () => {
                         </div>
 
                         <div className="text-right">
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${
-                            inv.status === 'paid'
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                              : inv.status === 'sent'
-                              ? 'bg-sky-50 text-sky-700 border-sky-200'
-                              : 'bg-slate-100 text-slate-600 border-slate-200'
-                          }`}>
+                          <Chip
+                            size="sm"
+                            variant="soft"
+                            color={
+                              inv.status === 'paid'
+                                ? 'success'
+                                : inv.status === 'sent'
+                                ? 'accent'
+                                : 'default'
+                            }
+                            className="font-bold uppercase text-[10px]"
+                          >
                             {inv.status}
-                          </span>
+                          </Chip>
                           <span className="text-sm font-bold font-mono text-emerald-700 block mt-1">
                             ₹{inv.total_amount.toLocaleString('en-IN')}
                           </span>
@@ -1556,10 +1690,13 @@ export const StaffWorkspace: React.FC = () => {
                         </span>
 
                         <div className="flex items-center gap-2">
-                          <button
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onPress={() => handleSendInvoice(inv.id)}
                             onClick={() => handleSendInvoice(inv.id)}
-                            disabled={sendingInvoiceId === inv.id}
-                            className="inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold rounded-lg bg-sky-50 text-sky-700 border border-sky-200 hover:bg-sky-100 transition-colors"
+                            isDisabled={sendingInvoiceId === inv.id}
+                            className="gap-1 px-3 h-7 text-xs font-semibold bg-sky-50 text-sky-700 border-sky-200 hover:bg-sky-100"
                           >
                             {sendingInvoiceId === inv.id ? (
                               <Loader2 className="w-3 h-3 animate-spin" />
@@ -1567,10 +1704,10 @@ export const StaffWorkspace: React.FC = () => {
                               <Send className="w-3 h-3" />
                             )}
                             Send to Customer
-                          </button>
+                          </Button>
                         </div>
                       </div>
-                    </div>
+                    </Card>
                   ))}
                 </div>
               )}
@@ -1580,8 +1717,9 @@ export const StaffWorkspace: React.FC = () => {
 
         {/* Modal 1: Complete Follow-up Modal */}
         {completingTask && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
-            <div className="bg-white rounded-xl shadow-xl border border-slate-200 max-w-md w-full p-6 space-y-4">
+          <Modal.Backdrop isOpen={!!completingTask} onOpenChange={(open) => { if (!open) setCompletingTask(null); }}>
+            <Modal.Container>
+              <Card className="shadow-xl border border-slate-200 max-w-md w-full p-6 space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div>
                   <h3 className="text-sm font-bold text-industrial-dark font-heading">
@@ -1591,12 +1729,17 @@ export const StaffWorkspace: React.FC = () => {
                     Customer: {completingTask.enquiry?.name} ({completingTask.enquiry?.company})
                   </p>
                 </div>
-                <button
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  isIconOnly
+                  onPress={() => setCompletingTask(null)}
                   onClick={() => setCompletingTask(null)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                  aria-label="Close modal"
+                  className="text-slate-400 hover:text-slate-600"
                 >
                   <X className="w-4 h-4" />
-                </button>
+                </Button>
               </div>
 
               {completeError && (
@@ -1608,84 +1751,95 @@ export const StaffWorkspace: React.FC = () => {
 
               <form onSubmit={handleCompleteSubmit} className="space-y-3.5 text-xs">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
+                  <Label className="block font-semibold text-slate-700 mb-1 text-xs">
                     Customer Outcome & Technical Notes <span className="text-rose-500">*</span>
-                  </label>
-                  <textarea
+                  </Label>
+                  <TextArea
                     required
                     rows={3}
                     value={outcomeNotes}
                     onChange={e => setOutcomeNotes(e.target.value)}
                     placeholder="e.g. Discussed air plug gauge tolerances. Customer requested formal quotation by Friday."
-                    className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-hidden"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-xs font-sans"
                   />
                 </div>
 
                 <div className="pt-2 border-t border-slate-100 space-y-2.5">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={scheduleNext}
-                      onChange={e => setScheduleNext(e.target.checked)}
-                      className="rounded border-slate-300 text-industrial-blue focus:ring-sky-500"
-                    />
-                    <span className="font-semibold text-slate-700">
-                      Schedule successive touchpoint
-                    </span>
-                  </label>
+                  <Checkbox
+                    isSelected={scheduleNext}
+                    onChange={(isSelected) => setScheduleNext(isSelected)}
+                    className="font-semibold text-slate-700 text-xs"
+                  >
+                    <Checkbox.Control>
+                      <Checkbox.Indicator />
+                    </Checkbox.Control>
+                    <Checkbox.Content>
+                      <span>Schedule successive touchpoint</span>
+                    </Checkbox.Content>
+                  </Checkbox>
 
                   {scheduleNext && (
                     <div>
-                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                      <Label className="block text-[11px] font-semibold text-slate-600 mb-1">
                         Next Touchpoint Date & Time
-                      </label>
-                      <input
+                      </Label>
+                      <Input
                         type="datetime-local"
                         required={scheduleNext}
                         value={nextDate}
                         onChange={e => setNextDate(e.target.value)}
-                        className="w-full px-3 py-1.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden font-mono"
+                        className="w-full px-3 py-1.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 font-mono text-xs"
                       />
                     </div>
                   )}
                 </div>
 
                 <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
-                  <button
-                    type="button"
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onPress={() => setCompletingTask(null)}
                     onClick={() => setCompletingTask(null)}
-                    className="px-3 py-1.5 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold"
+                    className="border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold"
                   >
                     Cancel
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="submit"
-                    disabled={isSubmittingComplete}
-                    className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-emerald-600 text-white font-semibold hover:bg-emerald-700 disabled:opacity-50"
+                    variant="primary"
+                    size="sm"
+                    isDisabled={isSubmittingComplete}
+                    className="gap-1.5 font-semibold bg-emerald-600 hover:bg-emerald-700 text-white"
                   >
                     {isSubmittingComplete ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
                     Confirm Complete
-                  </button>
+                  </Button>
                 </div>
               </form>
-            </div>
-          </div>
+            </Card>
+          </Modal.Container>
+        </Modal.Backdrop>
         )}
 
         {/* Modal 2: Schedule Follow-up Modal */}
-        {showCreateModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
-            <div className="bg-white rounded-xl shadow-xl border border-slate-200 max-w-md w-full p-6 space-y-4">
+        <Modal.Backdrop isOpen={showCreateModal} onOpenChange={setShowCreateModal}>
+          <Modal.Container>
+            <Card className="shadow-xl border border-slate-200 max-w-md w-full p-6 space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <h3 className="text-sm font-bold text-industrial-dark font-heading">
                   Schedule New Follow-up
                 </h3>
-                <button
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  isIconOnly
+                  onPress={() => setShowCreateModal(false)}
                   onClick={() => setShowCreateModal(false)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                  aria-label="Close modal"
+                  className="text-slate-400 hover:text-slate-600"
                 >
                   <X className="w-4 h-4" />
-                </button>
+                </Button>
               </div>
 
               {createError && (
@@ -1697,116 +1851,180 @@ export const StaffWorkspace: React.FC = () => {
 
               <form onSubmit={handleCreateSubmit} className="space-y-3.5 text-xs">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
+                  <Label className="block font-semibold text-slate-700 mb-1 text-xs">
                     Select Client Inquiry <span className="text-rose-500">*</span>
-                  </label>
-                  <select
-                    required
+                  </Label>
+                  <Select
                     value={createForm.enquiryId}
-                    onChange={e => setCreateForm({ ...createForm, enquiryId: e.target.value })}
-                    className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden bg-white"
+                    onChange={val => setCreateForm({ ...createForm, enquiryId: (val as string) || '' })}
+                    className="w-full"
+                    aria-label="Select Client Inquiry"
+                    placeholder="-- Choose Assigned Client --"
                   >
-                    <option value="">-- Choose Assigned Client --</option>
-                    {enquiries.map(e => (
-                      <option key={e.id} value={e.id}>
-                        {e.name} {e.company ? `(${e.company})` : ''} - {e.specific_product || e.product_category || 'Inquiry'}
-                      </option>
-                    ))}
-                  </select>
+                    <Select.Trigger className="w-full h-9 px-3 py-2 text-xs border border-slate-300 rounded-xl bg-white text-slate-700 flex items-center justify-between shadow-2xs hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/20 cursor-pointer">
+                      <Select.Value className="text-xs font-medium text-slate-700 truncate" />
+                      <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
+                    </Select.Trigger>
+                    <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[280px] max-h-60 overflow-y-auto">
+                      <ListBox className="outline-none space-y-0.5">
+                        {enquiries.map(e => {
+                          const label = `${e.name} ${e.company ? `(${e.company})` : ''} - ${e.specific_product || e.product_category || 'Inquiry'}`;
+                          return (
+                            <ListBox.Item
+                              key={e.id}
+                              id={e.id}
+                              textValue={label}
+                              className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-sky-50 data-[selected=true]:text-sky-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                            >
+                              {label}
+                              <ListBox.ItemIndicator />
+                            </ListBox.Item>
+                          );
+                        })}
+                      </ListBox>
+                    </Select.Popover>
+                  </Select>
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Task Title</label>
-                  <input
+                  <Label className="block font-semibold text-slate-700 mb-1 text-xs">Task Title</Label>
+                  <Input
                     type="text"
                     value={createForm.title}
                     onChange={e => setCreateForm({ ...createForm, title: e.target.value })}
                     placeholder="e.g. Call client regarding quotation feedback"
-                    className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-xs font-sans"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-semibold text-slate-700 mb-1">Type</label>
-                    <select
+                    <Label className="block font-semibold text-slate-700 mb-1 text-xs">Type</Label>
+                    <Select
                       value={createForm.type}
-                      onChange={e => setCreateForm({ ...createForm, type: e.target.value as FollowupType })}
-                      className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden bg-white"
+                      onChange={val => setCreateForm({ ...createForm, type: (val as FollowupType) || 'call' })}
+                      className="w-full"
+                      aria-label="Type"
                     >
-                      <option value="call">Call</option>
-                      <option value="email">Email</option>
-                      <option value="meeting">Meeting</option>
-                      <option value="demo">Demo</option>
-                      <option value="quotation">Quotation</option>
-                      <option value="other">Other</option>
-                    </select>
+                      <Select.Trigger className="w-full h-9 px-3 py-2 text-xs border border-slate-300 rounded-xl bg-white text-slate-700 flex items-center justify-between shadow-2xs hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/20 cursor-pointer">
+                        <Select.Value className="text-xs font-medium text-slate-700 capitalize truncate" />
+                        <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
+                      </Select.Trigger>
+                      <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[140px]">
+                        <ListBox className="outline-none space-y-0.5">
+                          {[
+                            { id: 'call', label: 'Call' },
+                            { id: 'email', label: 'Email' },
+                            { id: 'meeting', label: 'Meeting' },
+                            { id: 'demo', label: 'Demo' },
+                            { id: 'quotation', label: 'Quotation' },
+                            { id: 'other', label: 'Other' },
+                          ].map(t => (
+                            <ListBox.Item
+                              key={t.id}
+                              id={t.id}
+                              textValue={t.label}
+                              className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-sky-50 data-[selected=true]:text-sky-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                            >
+                              {t.label}
+                              <ListBox.ItemIndicator />
+                            </ListBox.Item>
+                          ))}
+                        </ListBox>
+                      </Select.Popover>
+                    </Select>
                   </div>
                   <div>
-                    <label className="block font-semibold text-slate-700 mb-1">Priority</label>
-                    <select
+                    <Label className="block font-semibold text-slate-700 mb-1 text-xs">Priority</Label>
+                    <Select
                       value={createForm.priority}
-                      onChange={e => setCreateForm({ ...createForm, priority: e.target.value as FollowupPriority })}
-                      className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden bg-white"
+                      onChange={val => setCreateForm({ ...createForm, priority: (val as FollowupPriority) || 'medium' })}
+                      className="w-full"
+                      aria-label="Priority"
                     >
-                      <option value="low">Low</option>
-                      <option value="medium">Medium</option>
-                      <option value="high">High</option>
-                      <option value="urgent">Urgent</option>
-                    </select>
+                      <Select.Trigger className="w-full h-9 px-3 py-2 text-xs border border-slate-300 rounded-xl bg-white text-slate-700 flex items-center justify-between shadow-2xs hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/20 cursor-pointer">
+                        <Select.Value className="text-xs font-medium text-slate-700 capitalize truncate" />
+                        <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
+                      </Select.Trigger>
+                      <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[140px]">
+                        <ListBox className="outline-none space-y-0.5">
+                          {[
+                            { id: 'low', label: 'Low' },
+                            { id: 'medium', label: 'Medium' },
+                            { id: 'high', label: 'High' },
+                            { id: 'urgent', label: 'Urgent' },
+                          ].map(p => (
+                            <ListBox.Item
+                              key={p.id}
+                              id={p.id}
+                              textValue={p.label}
+                              className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-sky-50 data-[selected=true]:text-sky-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                            >
+                              {p.label}
+                              <ListBox.ItemIndicator />
+                            </ListBox.Item>
+                          ))}
+                        </ListBox>
+                      </Select.Popover>
+                    </Select>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
+                  <Label className="block font-semibold text-slate-700 mb-1 text-xs">
                     Scheduled Date & Time <span className="text-rose-500">*</span>
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                     type="datetime-local"
                     required
                     value={createForm.scheduledAt}
                     onChange={e => setCreateForm({ ...createForm, scheduledAt: e.target.value })}
-                    className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden font-mono"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 font-mono text-xs"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Internal Notes</label>
-                  <textarea
+                  <Label className="block font-semibold text-slate-700 mb-1 text-xs">Internal Notes</Label>
+                  <TextArea
                     rows={2}
                     value={createForm.notes}
                     onChange={e => setCreateForm({ ...createForm, notes: e.target.value })}
                     placeholder="Specific points to discuss or client requests..."
-                    className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-xs font-sans"
                   />
                 </div>
 
                 <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
-                  <button
-                    type="button"
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onPress={() => setShowCreateModal(false)}
                     onClick={() => setShowCreateModal(false)}
-                    className="px-3 py-1.5 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold"
+                    className="border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold"
                   >
                     Cancel
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="submit"
-                    disabled={isSubmittingCreate}
-                    className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-industrial-blue text-white font-semibold hover:bg-sky-700 disabled:opacity-50"
+                    variant="primary"
+                    size="sm"
+                    isDisabled={isSubmittingCreate}
+                    className="gap-1.5 bg-industrial-blue hover:bg-sky-700 text-white font-semibold"
                   >
                     {isSubmittingCreate ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-3.5 h-3.5" />}
                     Create Task
-                  </button>
+                  </Button>
                 </div>
               </form>
-            </div>
-          </div>
-        )}
+            </Card>
+          </Modal.Container>
+        </Modal.Backdrop>
 
         {/* Modal 3: Convert Lead to Deal */}
         {convertingEnquiry && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
-            <div className="bg-white rounded-xl shadow-xl border border-slate-200 max-w-md w-full p-6 space-y-4">
+          <Modal.Backdrop isOpen={!!convertingEnquiry} onOpenChange={(open) => { if (!open) setConvertingEnquiry(null); }}>
+            <Modal.Container>
+              <Card className="shadow-xl border border-slate-200 max-w-md w-full p-6 space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div>
                   <h3 className="text-sm font-bold text-industrial-dark font-heading">
@@ -1816,12 +2034,17 @@ export const StaffWorkspace: React.FC = () => {
                     Client: {convertingEnquiry.name} ({convertingEnquiry.company || 'N/A'})
                   </p>
                 </div>
-                <button
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  isIconOnly
+                  onPress={() => setConvertingEnquiry(null)}
                   onClick={() => setConvertingEnquiry(null)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                  aria-label="Close modal"
+                  className="text-slate-400 hover:text-slate-600"
                 >
                   <X className="w-4 h-4" />
-                </button>
+                </Button>
               </div>
 
               {conversionError && (
@@ -1833,79 +2056,85 @@ export const StaffWorkspace: React.FC = () => {
 
               <form onSubmit={handleConvertSubmit} className="space-y-3.5 text-xs">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
+                  <Label className="block font-semibold text-slate-700 mb-1 text-xs">
                     Deal Title / Order Description <span className="text-rose-500">*</span>
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                     type="text"
                     required
                     value={dealForm.dealTitle}
                     onChange={e => setDealForm({ ...dealForm, dealTitle: e.target.value })}
                     placeholder="e.g. 5x Custom Air Ring Gauges Ø30mm"
-                    className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-xs font-sans"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-semibold text-slate-700 mb-1">Estimated Value (₹)</label>
-                    <input
+                    <Label className="block font-semibold text-slate-700 mb-1 text-xs">Estimated Value (₹)</Label>
+                    <Input
                       type="number"
                       step="0.01"
                       value={dealForm.dealValue}
                       onChange={e => setDealForm({ ...dealForm, dealValue: e.target.value })}
                       placeholder="e.g. 75000"
-                      className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden font-mono"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 font-mono text-xs"
                     />
                   </div>
                   <div>
-                    <label className="block font-semibold text-slate-700 mb-1">Target Close Date</label>
-                    <input
+                    <Label className="block font-semibold text-slate-700 mb-1 text-xs">Target Close Date</Label>
+                    <Input
                       type="date"
                       value={dealForm.expectedCloseDate}
                       onChange={e => setDealForm({ ...dealForm, expectedCloseDate: e.target.value })}
-                      className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden font-mono"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 font-mono text-xs"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Conversion Notes</label>
-                  <textarea
+                  <Label className="block font-semibold text-slate-700 mb-1 text-xs">Conversion Notes</Label>
+                  <TextArea
                     rows={2}
                     value={dealForm.notes}
                     onChange={e => setDealForm({ ...dealForm, notes: e.target.value })}
                     placeholder="Client agreed on technical parameters and formal proposal..."
-                    className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-xs font-sans"
                   />
                 </div>
 
                 <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
-                  <button
-                    type="button"
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onPress={() => setConvertingEnquiry(null)}
                     onClick={() => setConvertingEnquiry(null)}
-                    className="px-3 py-1.5 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold"
+                    className="border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold"
                   >
                     Cancel
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="submit"
-                    disabled={isSubmittingConversion}
-                    className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-emerald-600 text-white font-semibold hover:bg-emerald-700 disabled:opacity-50"
+                    variant="primary"
+                    size="sm"
+                    isDisabled={isSubmittingConversion}
+                    className="gap-1.5 font-semibold bg-emerald-600 hover:bg-emerald-700 text-white"
                   >
                     {isSubmittingConversion ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <TrendingUp className="w-3.5 h-3.5" />}
                     Confirm Deal Conversion
-                  </button>
+                  </Button>
                 </div>
               </form>
-            </div>
-          </div>
+            </Card>
+          </Modal.Container>
+        </Modal.Backdrop>
         )}
 
         {/* Modal 4: Close Lead (Lost Reason) */}
         {closingEnquiry && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
-            <div className="bg-white rounded-xl shadow-xl border border-slate-200 max-w-md w-full p-6 space-y-4">
+          <Modal.Backdrop isOpen={!!closingEnquiry} onOpenChange={(open) => { if (!open) setClosingEnquiry(null); }}>
+            <Modal.Container>
+              <Card className="shadow-xl border border-slate-200 max-w-md w-full p-6 space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div>
                   <h3 className="text-sm font-bold text-industrial-dark font-heading">
@@ -1915,12 +2144,17 @@ export const StaffWorkspace: React.FC = () => {
                     Client: {closingEnquiry.name} ({closingEnquiry.company || 'N/A'})
                   </p>
                 </div>
-                <button
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  isIconOnly
+                  onPress={() => setClosingEnquiry(null)}
                   onClick={() => setClosingEnquiry(null)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                  aria-label="Close modal"
+                  className="text-slate-400 hover:text-slate-600"
                 >
                   <X className="w-4 h-4" />
-                </button>
+                </Button>
               </div>
 
               {closureError && (
@@ -1932,68 +2166,93 @@ export const StaffWorkspace: React.FC = () => {
 
               <form onSubmit={handleCloseSubmit} className="space-y-3.5 text-xs">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
+                  <Label className="block font-semibold text-slate-700 mb-1">
                     Primary Reason for Closing <span className="text-rose-500">*</span>
-                  </label>
-                  <select
-                    required
+                  </Label>
+                  <Select
                     value={lostReason}
-                    onChange={e => setLostReason(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden bg-white"
+                    onChange={(val) => setLostReason((val as string) || '')}
+                    className="w-full"
+                    aria-label="Primary Reason for Closing"
                   >
-                    {LOST_REASONS.map((r) => (
-                      <option key={r} value={r}>{r}</option>
-                    ))}
-                  </select>
+                    <Select.Trigger className="w-full h-9 px-3 py-2 text-xs border border-slate-300 rounded-xl bg-white text-slate-700 flex items-center justify-between shadow-2xs hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/20 cursor-pointer">
+                      <Select.Value className="text-xs font-medium text-slate-700 truncate" />
+                      <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
+                    </Select.Trigger>
+                    <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[240px]">
+                      <ListBox className="outline-none space-y-0.5">
+                        {LOST_REASONS.map((r) => (
+                          <ListBox.Item
+                            key={r}
+                            id={r}
+                            textValue={r}
+                            className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-sky-50 data-[selected=true]:text-sky-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                          >
+                            {r}
+                            <ListBox.ItemIndicator />
+                          </ListBox.Item>
+                        ))}
+                      </ListBox>
+                    </Select.Popover>
+                  </Select>
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Detailed Explanation</label>
-                  <textarea
+                  <Label className="block font-semibold text-slate-700 mb-1">Detailed Explanation</Label>
+                  <TextArea
                     rows={3}
                     value={lostNotes}
                     onChange={e => setLostNotes(e.target.value)}
                     placeholder="Provide context on why the client opted not to proceed..."
-                    className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden"
+                    className="w-full text-xs font-sans"
                   />
                 </div>
 
                 <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
-                  <button
-                    type="button"
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onPress={() => setClosingEnquiry(null)}
                     onClick={() => setClosingEnquiry(null)}
-                    className="px-3 py-1.5 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold"
+                    className="border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold"
                   >
                     Cancel
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="submit"
-                    disabled={isSubmittingClosure}
-                    className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-slate-800 text-white font-semibold hover:bg-slate-900 disabled:opacity-50"
+                    size="sm"
+                    isDisabled={isSubmittingClosure}
+                    className="gap-1.5 bg-slate-800 text-white font-semibold hover:bg-slate-900"
                   >
                     {isSubmittingClosure ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <XCircle className="w-3.5 h-3.5" />}
                     Confirm Closure
-                  </button>
+                  </Button>
                 </div>
               </form>
-            </div>
-          </div>
+            </Card>
+          </Modal.Container>
+        </Modal.Backdrop>
         )}
 
         {/* Modal 5: Schedule Field Visit */}
-        {showVisitModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
-            <div className="bg-white rounded-xl shadow-xl border border-slate-200 max-w-md w-full p-6 space-y-4">
+        <Modal.Backdrop isOpen={showVisitModal} onOpenChange={setShowVisitModal}>
+          <Modal.Container>
+            <Card className="shadow-xl border border-slate-200 max-w-md w-full p-6 space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <h3 className="text-sm font-bold text-industrial-dark font-heading">
                   Schedule Client Site Visit
                 </h3>
-                <button
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  isIconOnly
+                  onPress={() => setShowVisitModal(false)}
                   onClick={() => setShowVisitModal(false)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                  aria-label="Close modal"
+                  className="text-slate-400 hover:text-slate-600"
                 >
                   <X className="w-4 h-4" />
-                </button>
+                </Button>
               </div>
 
               {visitError && (
@@ -2005,113 +2264,155 @@ export const StaffWorkspace: React.FC = () => {
 
               <form onSubmit={handleCreateVisitSubmit} className="space-y-3.5 text-xs">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
+                  <Label className="block font-semibold text-slate-700 mb-1">
                     Select Client Inquiry <span className="text-rose-500">*</span>
-                  </label>
-                  <select
-                    required
+                  </Label>
+                  <Select
                     value={visitForm.enquiryId}
-                    onChange={e => setVisitForm({ ...visitForm, enquiryId: e.target.value })}
-                    className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden bg-white"
+                    onChange={(val) => setVisitForm({ ...visitForm, enquiryId: (val as string) || '' })}
+                    className="w-full"
+                    aria-label="Select Client Inquiry"
+                    placeholder="-- Choose Client --"
                   >
-                    <option value="">-- Choose Client --</option>
-                    {enquiries.map(e => (
-                      <option key={e.id} value={e.id}>
-                        {e.name} {e.company ? `(${e.company})` : ''} - {e.specific_product || e.product_category || 'Inquiry'}
-                      </option>
-                    ))}
-                  </select>
+                    <Select.Trigger className="w-full h-9 px-3 py-2 text-xs border border-slate-300 rounded-xl bg-white text-slate-700 flex items-center justify-between shadow-2xs hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/20 cursor-pointer">
+                      <Select.Value className="text-xs font-medium text-slate-700 truncate" />
+                      <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
+                    </Select.Trigger>
+                    <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[280px] max-h-60 overflow-y-auto">
+                      <ListBox className="outline-none space-y-0.5">
+                        {enquiries.map((e) => (
+                          <ListBox.Item
+                            key={e.id}
+                            id={e.id}
+                            textValue={`${e.name} ${e.company ? `(${e.company})` : ''} - ${e.specific_product || e.product_category || 'Inquiry'}`}
+                            className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-sky-50 data-[selected=true]:text-sky-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                          >
+                            <span className="font-semibold text-slate-800">{e.name}</span>
+                            {e.company && <span className="text-slate-500 font-normal"> ({e.company})</span>}
+                            <span className="text-slate-400"> - {e.specific_product || e.product_category || 'Inquiry'}</span>
+                            <ListBox.ItemIndicator />
+                          </ListBox.Item>
+                        ))}
+                      </ListBox>
+                    </Select.Popover>
+                  </Select>
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Visit Title</label>
-                  <input
+                  <Label className="block font-semibold text-slate-700 mb-1">Visit Title</Label>
+                  <Input
                     type="text"
                     value={visitForm.title}
                     onChange={e => setVisitForm({ ...visitForm, title: e.target.value })}
                     placeholder="e.g. On-site Calibration & Dimension Verification"
-                    className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden"
+                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 bg-white font-sans"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-semibold text-slate-700 mb-1">Purpose</label>
-                    <select
+                    <Label className="block font-semibold text-slate-700 mb-1">Purpose</Label>
+                    <Select
                       value={visitForm.visitPurpose}
-                      onChange={e => setVisitForm({ ...visitForm, visitPurpose: e.target.value as VisitPurpose })}
-                      className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden bg-white"
+                      onChange={(val) => setVisitForm({ ...visitForm, visitPurpose: (val as VisitPurpose) || 'consultation' })}
+                      className="w-full"
+                      aria-label="Visit Purpose"
                     >
-                      <option value="consultation">Consultation</option>
-                      <option value="demo">Demo</option>
-                      <option value="site_inspection">Site Inspection</option>
-                      <option value="installation">Installation</option>
-                      <option value="troubleshooting">Troubleshooting</option>
-                      <option value="other">Other</option>
-                    </select>
+                      <Select.Trigger className="w-full h-9 px-3 py-2 text-xs border border-slate-300 rounded-xl bg-white text-slate-700 flex items-center justify-between shadow-2xs hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/20 cursor-pointer">
+                        <Select.Value className="text-xs font-medium text-slate-700 capitalize truncate" />
+                        <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
+                      </Select.Trigger>
+                      <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[160px]">
+                        <ListBox className="outline-none space-y-0.5">
+                          {[
+                            { id: 'consultation', label: 'Consultation' },
+                            { id: 'demo', label: 'Demo' },
+                            { id: 'site_inspection', label: 'Site Inspection' },
+                            { id: 'installation', label: 'Installation' },
+                            { id: 'troubleshooting', label: 'Troubleshooting' },
+                            { id: 'other', label: 'Other' },
+                          ].map((item) => (
+                            <ListBox.Item
+                              key={item.id}
+                              id={item.id}
+                              textValue={item.label}
+                              className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-sky-50 data-[selected=true]:text-sky-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                            >
+                              {item.label}
+                              <ListBox.ItemIndicator />
+                            </ListBox.Item>
+                          ))}
+                        </ListBox>
+                      </Select.Popover>
+                    </Select>
                   </div>
                   <div>
-                    <label className="block font-semibold text-slate-700 mb-1">Contact Person</label>
-                    <input
+                    <Label className="block font-semibold text-slate-700 mb-1">Contact Person</Label>
+                    <Input
                       type="text"
                       value={visitForm.customerContactPerson}
                       onChange={e => setVisitForm({ ...visitForm, customerContactPerson: e.target.value })}
                       placeholder="e.g. Quality Manager"
-                      className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden"
+                      className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 bg-white font-sans"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
+                  <Label className="block font-semibold text-slate-700 mb-1">
                     Scheduled Date & Time <span className="text-rose-500">*</span>
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                     type="datetime-local"
                     required
                     value={visitForm.scheduledAt}
                     onChange={e => setVisitForm({ ...visitForm, scheduledAt: e.target.value })}
-                    className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden font-mono"
+                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 bg-white font-mono"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Visit Agenda / Notes</label>
-                  <textarea
+                  <Label className="block font-semibold text-slate-700 mb-1">Visit Agenda / Notes</Label>
+                  <TextArea
                     rows={2}
                     value={visitForm.notes}
                     onChange={e => setVisitForm({ ...visitForm, notes: e.target.value })}
                     placeholder="Inspect workpiece fixture, verify air line pressure..."
-                    className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden"
+                    className="w-full text-xs font-sans"
                   />
                 </div>
 
                 <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
-                  <button
-                    type="button"
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onPress={() => setShowVisitModal(false)}
                     onClick={() => setShowVisitModal(false)}
-                    className="px-3 py-1.5 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold"
+                    className="border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold"
                   >
                     Cancel
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="submit"
-                    disabled={isSubmittingVisit}
-                    className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-industrial-blue text-white font-semibold hover:bg-sky-700 disabled:opacity-50"
+                    variant="primary"
+                    size="sm"
+                    isDisabled={isSubmittingVisit}
+                    className="gap-1.5 bg-industrial-blue text-white font-semibold hover:bg-sky-700"
                   >
                     {isSubmittingVisit ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <MapPin className="w-3.5 h-3.5" />}
                     Confirm Visit
-                  </button>
+                  </Button>
                 </div>
               </form>
-            </div>
-          </div>
-        )}
+            </Card>
+          </Modal.Container>
+        </Modal.Backdrop>
 
         {/* Modal 6: Complete Field Visit */}
         {completingVisit && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
-            <div className="bg-white rounded-xl shadow-xl border border-slate-200 max-w-md w-full p-6 space-y-4">
+          <Modal.Backdrop isOpen={!!completingVisit} onOpenChange={(open) => { if (!open) setCompletingVisit(null); }}>
+            <Modal.Container>
+              <Card className="shadow-xl border border-slate-200 max-w-md w-full p-6 space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div>
                   <h3 className="text-sm font-bold text-industrial-dark font-heading">
@@ -2119,12 +2420,17 @@ export const StaffWorkspace: React.FC = () => {
                   </h3>
                   <p className="text-[11px] text-slate-500">{completingVisit.title}</p>
                 </div>
-                <button
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  isIconOnly
+                  onPress={() => setCompletingVisit(null)}
                   onClick={() => setCompletingVisit(null)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                  aria-label="Close modal"
+                  className="text-slate-400 hover:text-slate-600"
                 >
                   <X className="w-4 h-4" />
-                </button>
+                </Button>
               </div>
 
               {visitCompleteError && (
@@ -2136,68 +2442,78 @@ export const StaffWorkspace: React.FC = () => {
 
               <form onSubmit={handleCompleteVisitSubmit} className="space-y-3.5 text-xs">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
+                  <Label className="block font-semibold text-slate-700 mb-1">
                     Visit Outcome & Findings <span className="text-rose-500">*</span>
-                  </label>
-                  <textarea
+                  </Label>
+                  <TextArea
                     required
                     rows={3}
                     value={visitOutcomeNotes}
                     onChange={e => setVisitOutcomeNotes(e.target.value)}
                     placeholder="Documented component dimensions. Customer agreed to standard 2-jet air ring gauge."
-                    className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden"
+                    className="w-full text-xs font-sans"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
+                  <Label className="block font-semibold text-slate-700 mb-1">
                     Inspection Photo / Proof URL
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                     type="url"
                     value={visitPhotoUrl}
                     onChange={e => setVisitPhotoUrl(e.target.value)}
                     placeholder="https://... (photo of setup or job card)"
-                    className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden font-mono"
+                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 bg-white font-mono"
                   />
                 </div>
 
                 <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
-                  <button
-                    type="button"
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onPress={() => setCompletingVisit(null)}
                     onClick={() => setCompletingVisit(null)}
-                    className="px-3 py-1.5 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold"
+                    className="border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold"
                   >
                     Cancel
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="submit"
-                    disabled={isSubmittingVisitComplete}
-                    className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-emerald-600 text-white font-semibold hover:bg-emerald-700 disabled:opacity-50"
+                    variant="primary"
+                    size="sm"
+                    isDisabled={isSubmittingVisitComplete}
+                    className="gap-1.5 font-semibold bg-emerald-600 hover:bg-emerald-700 text-white"
                   >
                     {isSubmittingVisitComplete ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
                     Confirm Check-out
-                  </button>
+                  </Button>
                 </div>
               </form>
-            </div>
-          </div>
+            </Card>
+          </Modal.Container>
+        </Modal.Backdrop>
         )}
 
         {/* Modal 7: Create Invoice / Quotation */}
-        {showInvoiceModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
-            <div className="bg-white rounded-xl shadow-xl border border-slate-200 max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+        <Modal.Backdrop isOpen={showInvoiceModal} onOpenChange={setShowInvoiceModal}>
+          <Modal.Container size="lg">
+            <Card className="shadow-xl border border-slate-200 max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <h3 className="text-sm font-bold text-industrial-dark font-heading">
                   Create Formal Quotation / Tax Invoice
                 </h3>
-                <button
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  isIconOnly
+                  onPress={() => setShowInvoiceModal(false)}
                   onClick={() => setShowInvoiceModal(false)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                  aria-label="Close modal"
+                  className="text-slate-400 hover:text-slate-600"
                 >
                   <X className="w-4 h-4" />
-                </button>
+                </Button>
               </div>
 
               {invoiceErrorMsg && (
@@ -2210,23 +2526,44 @@ export const StaffWorkspace: React.FC = () => {
               <form onSubmit={handleCreateInvoiceSubmit} className="space-y-3.5 text-xs">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-semibold text-slate-700 mb-1">Document Type</label>
-                    <select
+                    <Label className="block font-semibold text-slate-700 mb-1">Document Type</Label>
+                    <Select
                       value={invoiceForm.type}
-                      onChange={e => setInvoiceForm({ ...invoiceForm, type: e.target.value as InvoiceType })}
-                      className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden bg-white"
+                      onChange={(val) => setInvoiceForm({ ...invoiceForm, type: (val as InvoiceType) || 'quotation' })}
+                      className="w-full"
+                      aria-label="Document Type"
                     >
-                      <option value="quotation">Formal Quotation</option>
-                      <option value="proforma">Proforma Invoice</option>
-                      <option value="tax_invoice">Tax Invoice</option>
-                    </select>
+                      <Select.Trigger className="w-full h-9 px-3 py-2 text-xs border border-slate-300 rounded-xl bg-white text-slate-700 flex items-center justify-between shadow-2xs hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/20 cursor-pointer">
+                        <Select.Value className="text-xs font-medium text-slate-700 truncate" />
+                        <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
+                      </Select.Trigger>
+                      <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[160px]">
+                        <ListBox className="outline-none space-y-0.5">
+                          {[
+                            { id: 'quotation', label: 'Formal Quotation' },
+                            { id: 'proforma', label: 'Proforma Invoice' },
+                            { id: 'tax_invoice', label: 'Tax Invoice' },
+                          ].map((t) => (
+                            <ListBox.Item
+                              key={t.id}
+                              id={t.id}
+                              textValue={t.label}
+                              className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-sky-50 data-[selected=true]:text-sky-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                            >
+                              {t.label}
+                              <ListBox.ItemIndicator />
+                            </ListBox.Item>
+                          ))}
+                        </ListBox>
+                      </Select.Popover>
+                    </Select>
                   </div>
                   <div>
-                    <label className="block font-semibold text-slate-700 mb-1">Link to Inquiry</label>
-                    <select
+                    <Label className="block font-semibold text-slate-700 mb-1">Link to Inquiry</Label>
+                    <Select
                       value={invoiceForm.enquiryId}
-                      onChange={e => {
-                        const selectedId = e.target.value;
+                      onChange={(val) => {
+                        const selectedId = (val as string) || '';
                         const matched = enquiries.find(en => en.id === selectedId);
                         if (matched) {
                           setInvoiceForm({
@@ -2241,28 +2578,66 @@ export const StaffWorkspace: React.FC = () => {
                           setInvoiceForm({ ...invoiceForm, enquiryId: selectedId });
                         }
                       }}
-                      className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden bg-white"
+                      className="w-full"
+                      aria-label="Link to Inquiry"
+                      placeholder="-- Standalone (No Inquiry) --"
                     >
-                      <option value="">-- Standalone (No Inquiry) --</option>
-                      {enquiries.map(e => (
-                        <option key={e.id} value={e.id}>
-                          {e.name} ({e.company || 'Client'})
-                        </option>
-                      ))}
-                    </select>
+                      <Select.Trigger className="w-full h-9 px-3 py-2 text-xs border border-slate-300 rounded-xl bg-white text-slate-700 flex items-center justify-between shadow-2xs hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/20 cursor-pointer">
+                        <Select.Value className="text-xs font-medium text-slate-700 truncate" />
+                        <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
+                      </Select.Trigger>
+                      <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[280px] max-h-60 overflow-y-auto">
+                        <ListBox className="outline-none space-y-0.5">
+                          <ListBox.Item
+                            id=""
+                            textValue="-- Standalone (No Inquiry) --"
+                            className="px-2.5 py-1.5 text-xs rounded-lg text-slate-500 italic hover:bg-slate-100 hover:text-slate-900 cursor-pointer outline-none"
+                          >
+                            -- Standalone (No Inquiry) --
+                            <ListBox.ItemIndicator />
+                          </ListBox.Item>
+                          {enquiries.map((e) => (
+                            <ListBox.Item
+                              key={e.id}
+                              id={e.id}
+                              textValue={`${e.name} (${e.company || 'Client'})`}
+                              className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-sky-50 data-[selected=true]:text-sky-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                            >
+                              <span className="font-semibold text-slate-800">{e.name}</span>
+                              <span className="text-slate-500"> ({e.company || 'Client'})</span>
+                              <ListBox.ItemIndicator />
+                            </ListBox.Item>
+                          ))}
+                        </ListBox>
+                      </Select.Popover>
+                    </Select>
                   </div>
                 </div>
 
                 {/* Customer Auto-fill / Search Bar */}
                 <div className="relative p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-2">
                   <div className="flex items-center justify-between">
-                    <label className="text-[11px] font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                    <Label className="text-[11px] font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
                       <Search className="w-3 h-3 text-sky-600" />
                       <span>Search Customer Database (Auto-fill)</span>
-                    </label>
+                    </Label>
                     {(invoiceForm.customerName || invoiceForm.customerEmail) && (
-                      <button
-                        type="button"
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onPress={() => {
+                          setInvoiceForm({
+                            ...invoiceForm,
+                            enquiryId: '',
+                            customerName: '',
+                            customerCompany: '',
+                            customerEmail: '',
+                            customerPhone: '',
+                            customerAddress: '',
+                            customerGst: '',
+                          });
+                          setCustomerSearchQuery('');
+                        }}
                         onClick={() => {
                           setInvoiceForm({
                             ...invoiceForm,
@@ -2276,14 +2651,14 @@ export const StaffWorkspace: React.FC = () => {
                           });
                           setCustomerSearchQuery('');
                         }}
-                        className="text-[10px] text-sky-700 hover:underline font-semibold"
+                        className="h-5 px-1 text-[10px] text-sky-700 hover:underline font-semibold"
                       >
                         + New Customer (Clear)
-                      </button>
+                      </Button>
                     )}
                   </div>
                   <div className="relative">
-                    <input
+                    <Input
                       type="text"
                       placeholder="Type name, company, or email to search past records..."
                       value={customerSearchQuery}
@@ -2291,7 +2666,7 @@ export const StaffWorkspace: React.FC = () => {
                       onFocus={() => {
                         if (customerSuggestions.length > 0) setShowCustomerDropdown(true);
                       }}
-                      className="w-full px-2.5 py-1.5 rounded border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden bg-white text-xs"
+                      className="w-full px-2.5 py-1.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 bg-white text-xs font-sans"
                     />
                     {isSearchingCustomers && (
                       <div className="absolute right-2.5 top-2">
@@ -2341,71 +2716,71 @@ export const StaffWorkspace: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-semibold text-slate-700 mb-1">
+                    <Label className="block font-semibold text-slate-700 mb-1">
                       Customer Name <span className="text-rose-500">*</span>
-                    </label>
-                    <input
+                    </Label>
+                    <Input
                       type="text"
                       required
                       value={invoiceForm.customerName}
                       onChange={e => setInvoiceForm({ ...invoiceForm, customerName: e.target.value })}
-                      className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 bg-white font-sans"
                     />
                   </div>
                   <div>
-                    <label className="block font-semibold text-slate-700 mb-1">Company / Organization</label>
-                    <input
+                    <Label className="block font-semibold text-slate-700 mb-1">Company / Organization</Label>
+                    <Input
                       type="text"
                       value={invoiceForm.customerCompany}
                       onChange={e => setInvoiceForm({ ...invoiceForm, customerCompany: e.target.value })}
-                      className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 bg-white font-sans"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-semibold text-slate-700 mb-1">
+                    <Label className="block font-semibold text-slate-700 mb-1">
                       Customer Email <span className="text-rose-500">*</span>
-                    </label>
-                    <input
+                    </Label>
+                    <Input
                       type="email"
                       required
                       value={invoiceForm.customerEmail}
                       onChange={e => setInvoiceForm({ ...invoiceForm, customerEmail: e.target.value })}
-                      className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 bg-white font-sans"
                     />
                   </div>
                   <div>
-                    <label className="block font-semibold text-slate-700 mb-1">Customer Phone</label>
-                    <input
+                    <Label className="block font-semibold text-slate-700 mb-1">Customer Phone</Label>
+                    <Input
                       type="text"
                       value={invoiceForm.customerPhone}
                       onChange={e => setInvoiceForm({ ...invoiceForm, customerPhone: e.target.value })}
-                      className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden font-mono"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 bg-white font-mono"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-semibold text-slate-700 mb-1">Billing Address</label>
-                    <input
+                    <Label className="block font-semibold text-slate-700 mb-1">Billing Address</Label>
+                    <Input
                       type="text"
                       placeholder="Plot No, Industrial Estate, City..."
                       value={invoiceForm.customerAddress}
                       onChange={e => setInvoiceForm({ ...invoiceForm, customerAddress: e.target.value })}
-                      className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 bg-white font-sans"
                     />
                   </div>
                   <div>
-                    <label className="block font-semibold text-slate-700 mb-1">GSTIN Number</label>
-                    <input
+                    <Label className="block font-semibold text-slate-700 mb-1">GSTIN Number</Label>
+                    <Input
                       type="text"
                       placeholder="e.g. 33AAAAA0000A1Z5"
                       value={invoiceForm.customerGst}
                       onChange={e => setInvoiceForm({ ...invoiceForm, customerGst: e.target.value })}
-                      className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden font-mono uppercase"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 bg-white font-mono uppercase"
                     />
                   </div>
                 </div>
@@ -2413,43 +2788,55 @@ export const StaffWorkspace: React.FC = () => {
                 {/* Line Items Table */}
                 <div className="space-y-2 pt-2 border-t border-slate-100">
                   <div className="flex items-center justify-between">
-                    <label className="font-semibold text-slate-700">Line Items</label>
-                    <button
-                      type="button"
+                    <Label className="font-semibold text-slate-700">Line Items</Label>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onPress={() => setInvoiceForm({
+                        ...invoiceForm,
+                        items: [...invoiceForm.items, { description: '', quantity: 1, unitPrice: 0, taxRate: 18 }],
+                      })}
                       onClick={() => setInvoiceForm({
                         ...invoiceForm,
                         items: [...invoiceForm.items, { description: '', quantity: 1, unitPrice: 0, taxRate: 18 }],
                       })}
-                      className="text-xs font-semibold text-sky-700 hover:text-sky-800 inline-flex items-center gap-1"
+                      className="h-7 text-xs font-semibold text-sky-700 hover:text-sky-800 gap-1"
                     >
                       <Plus className="w-3 h-3" /> Add Item
-                    </button>
+                    </Button>
                   </div>
 
                   {invoiceForm.items.map((item, idx) => (
                     <div key={idx} className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg space-y-2">
                       <div className="space-y-1">
                         <div className="flex items-center justify-between gap-2">
-                          <label className="text-[10px] font-bold uppercase tracking-wider text-slate-600">
+                          <Label className="text-[10px] font-bold uppercase tracking-wider text-slate-600">
                             Select Product from Catalogue
-                          </label>
+                          </Label>
                           {invoiceForm.items.length > 1 && (
-                            <button
-                              type="button"
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              isIconOnly
+                              onPress={() => {
+                                const newItems = invoiceForm.items.filter((_, i) => i !== idx);
+                                setInvoiceForm({ ...invoiceForm, items: newItems });
+                              }}
                               onClick={() => {
                                 const newItems = invoiceForm.items.filter((_, i) => i !== idx);
                                 setInvoiceForm({ ...invoiceForm, items: newItems });
                               }}
-                              className="p-1 text-slate-400 hover:text-rose-600"
+                              aria-label="Remove item"
+                              className="h-7 w-7 text-slate-400 hover:text-rose-600"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
-                            </button>
+                            </Button>
                           )}
                         </div>
-                        <select
+                        <Select
                           value={item.productId || ''}
-                          onChange={(e) => {
-                            const pId = e.target.value;
+                          onChange={(val) => {
+                            const pId = (val as string) || '';
                             const p = productCatalog.find((prod) => prod.id === pId);
                             const newItems = [...invoiceForm.items];
                             if (p) {
@@ -2467,20 +2854,44 @@ export const StaffWorkspace: React.FC = () => {
                             }
                             setInvoiceForm({ ...invoiceForm, items: newItems });
                           }}
-                          className="w-full px-2.5 py-1.5 rounded border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden bg-white text-xs font-medium text-slate-700"
+                          className="w-full"
+                          aria-label="Select Product from Catalogue"
+                          placeholder="-- Custom / Service Line Item --"
                         >
-                          <option value="">-- Custom / Service Line Item --</option>
-                          {productCatalog.map((prod) => (
-                            <option key={prod.id} value={prod.id}>
-                              {prod.title} ({prod.category})
-                            </option>
-                          ))}
-                        </select>
+                          <Select.Trigger className="w-full h-8 px-2.5 py-1.5 text-xs border border-slate-300 rounded-xl bg-white text-slate-700 flex items-center justify-between shadow-2xs hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/20 cursor-pointer">
+                            <Select.Value className="text-xs font-medium text-slate-700 truncate" />
+                            <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
+                          </Select.Trigger>
+                          <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[280px] max-h-60 overflow-y-auto">
+                            <ListBox className="outline-none space-y-0.5">
+                              <ListBox.Item
+                                id=""
+                                textValue="-- Custom / Service Line Item --"
+                                className="px-2.5 py-1.5 text-xs rounded-lg text-slate-500 italic hover:bg-slate-100 hover:text-slate-900 cursor-pointer outline-none"
+                              >
+                                -- Custom / Service Line Item --
+                                <ListBox.ItemIndicator />
+                              </ListBox.Item>
+                              {productCatalog.map((prod) => (
+                                <ListBox.Item
+                                  key={prod.id}
+                                  id={prod.id}
+                                  textValue={`${prod.title} (${prod.category})`}
+                                  className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-sky-50 data-[selected=true]:text-sky-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                                >
+                                  <span className="font-semibold text-slate-800">{prod.title}</span>
+                                  <span className="text-slate-400 text-[11px]"> ({prod.category})</span>
+                                  <ListBox.ItemIndicator />
+                                </ListBox.Item>
+                              ))}
+                            </ListBox>
+                          </Select.Popover>
+                        </Select>
                       </div>
 
                       <div>
-                        <label className="text-[10px] text-slate-500 block mb-0.5">Item Description / Specifications</label>
-                        <input
+                        <Label className="text-[10px] text-slate-500 block mb-0.5">Item Description / Specifications</Label>
+                        <Input
                           type="text"
                           required
                           placeholder="Item Description (e.g. Air Electronic Column Gauge Model AEC-100)"
@@ -2490,14 +2901,14 @@ export const StaffWorkspace: React.FC = () => {
                             newItems[idx].description = e.target.value;
                             setInvoiceForm({ ...invoiceForm, items: newItems });
                           }}
-                          className="w-full px-2.5 py-1.5 rounded border border-slate-300 focus:ring-2 focus:ring-sky-500 outline-hidden bg-white text-xs"
+                          className="w-full px-2.5 py-1.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 bg-white text-xs font-sans"
                         />
                       </div>
 
                       <div className="grid grid-cols-3 gap-2 text-xs">
                         <div>
-                          <label className="text-[10px] text-slate-500 block">Quantity</label>
-                          <input
+                          <Label className="text-[10px] text-slate-500 block">Quantity</Label>
+                          <Input
                             type="number"
                             min="1"
                             value={item.quantity}
@@ -2506,12 +2917,12 @@ export const StaffWorkspace: React.FC = () => {
                               newItems[idx].quantity = parseInt(e.target.value) || 1;
                               setInvoiceForm({ ...invoiceForm, items: newItems });
                             }}
-                            className="w-full px-2 py-1 rounded border border-slate-300 font-mono bg-white"
+                            className="w-full px-2 py-1 rounded-xl border border-slate-300 font-mono bg-white text-xs"
                           />
                         </div>
                         <div>
-                          <label className="text-[10px] text-slate-500 block">Unit Price (₹)</label>
-                          <input
+                          <Label className="text-[10px] text-slate-500 block">Unit Price (₹)</Label>
+                          <Input
                             type="number"
                             min="0"
                             step="0.01"
@@ -2521,25 +2932,46 @@ export const StaffWorkspace: React.FC = () => {
                               newItems[idx].unitPrice = parseFloat(e.target.value) || 0;
                               setInvoiceForm({ ...invoiceForm, items: newItems });
                             }}
-                            className="w-full px-2 py-1 rounded border border-slate-300 font-mono bg-white"
+                            className="w-full px-2 py-1 rounded-xl border border-slate-300 font-mono bg-white text-xs"
                           />
                         </div>
                         <div>
-                          <label className="text-[10px] text-slate-500 block">GST Rate (%)</label>
-                          <select
-                            value={item.taxRate}
-                            onChange={e => {
+                          <Label className="text-[10px] text-slate-500 block">GST Rate (%)</Label>
+                          <Select
+                            value={String(item.taxRate)}
+                            onChange={(val) => {
                               const newItems = [...invoiceForm.items];
-                              newItems[idx].taxRate = parseFloat(e.target.value);
+                              newItems[idx].taxRate = parseFloat(val as string) || 0;
                               setInvoiceForm({ ...invoiceForm, items: newItems });
                             }}
-                            className="w-full px-2 py-1 rounded border border-slate-300 font-mono bg-white text-xs"
+                            className="w-full"
+                            aria-label="GST Rate"
                           >
-                            <option value="18">18% (Metrology Standard)</option>
-                            <option value="12">12%</option>
-                            <option value="5">5%</option>
-                            <option value="0">0% (Exempt)</option>
-                          </select>
+                            <Select.Trigger className="w-full h-8 px-2 py-1 text-xs border border-slate-300 rounded-xl bg-white text-slate-700 flex items-center justify-between shadow-2xs hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/20 cursor-pointer">
+                              <Select.Value className="text-xs font-medium text-slate-700 truncate" />
+                              <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
+                            </Select.Trigger>
+                            <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[140px]">
+                              <ListBox className="outline-none space-y-0.5">
+                                {[
+                                  { id: '18', label: '18% (Metrology Standard)' },
+                                  { id: '12', label: '12%' },
+                                  { id: '5', label: '5%' },
+                                  { id: '0', label: '0% (Exempt)' },
+                                ].map((rate) => (
+                                  <ListBox.Item
+                                    key={rate.id}
+                                    id={rate.id}
+                                    textValue={rate.label}
+                                    className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-sky-50 data-[selected=true]:text-sky-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                                  >
+                                    {rate.label}
+                                    <ListBox.ItemIndicator />
+                                  </ListBox.Item>
+                                ))}
+                              </ListBox>
+                            </Select.Popover>
+                          </Select>
                         </div>
                       </div>
                     </div>
@@ -2572,26 +3004,30 @@ export const StaffWorkspace: React.FC = () => {
                 })()}
 
                 <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
-                  <button
-                    type="button"
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onPress={() => setShowInvoiceModal(false)}
                     onClick={() => setShowInvoiceModal(false)}
-                    className="px-3 py-1.5 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold"
+                    className="border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold"
                   >
                     Cancel
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="submit"
-                    disabled={isSubmittingInvoice}
-                    className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-emerald-600 text-white font-semibold hover:bg-emerald-700 disabled:opacity-50"
+                    variant="primary"
+                    size="sm"
+                    isDisabled={isSubmittingInvoice}
+                    className="gap-1.5 font-semibold bg-emerald-600 hover:bg-emerald-700 text-white"
                   >
                     {isSubmittingInvoice ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Receipt className="w-3.5 h-3.5" />}
                     Generate Document
-                  </button>
+                  </Button>
                 </div>
               </form>
-            </div>
-          </div>
-        )}
+            </Card>
+          </Modal.Container>
+        </Modal.Backdrop>
         {/* Drawer: Enquiry Dossier Drawer */}
         <AdminEnquiryDossierDrawer
           enquiry={selectedDossierEnquiry}

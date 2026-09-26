@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { Button, Input, Select, ListBox, Label } from '@heroui/react';
 import { Link } from 'react-router-dom';
 import {
   History,
@@ -245,28 +246,33 @@ export const AdminActivity: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 self-start sm:self-auto">
-            <button
+            <Button
               type="button"
+              variant="outline"
+              size="sm"
+              onPress={exportCSV}
               onClick={exportCSV}
-              disabled={logs.length === 0}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-2xs disabled:opacity-50"
-              title="Export CSV"
+              isDisabled={logs.length === 0}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-2xs cursor-pointer"
+              aria-label="Export CSV"
             >
               <Download className="w-3.5 h-3.5 text-gray-500" />
               <span>Export CSV</span>
-            </button>
+            </Button>
 
-            <button
+            <Button
               type="button"
+              variant="outline"
+              size="sm"
+              onPress={fetchLogs}
               onClick={fetchLogs}
-              disabled={loading}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-2xs disabled:opacity-50"
-              title="Refresh logs"
+              isDisabled={loading}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-2xs cursor-pointer"
               aria-label="Refresh logs"
             >
               <RefreshCw className={`w-3.5 h-3.5 text-gray-500 ${loading ? 'animate-spin' : ''}`} />
               <span>Refresh</span>
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -274,38 +280,41 @@ export const AdminActivity: React.FC = () => {
         <div className="bg-white p-3.5 rounded-2xl border border-gray-200/90 shadow-2xs space-y-3">
           <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
             {/* Search Input */}
-            <div className="relative flex-1 max-w-md">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-              <input
+            <div className="relative flex-1 max-w-md flex items-center">
+              <Search className="w-4 h-4 absolute left-3 text-gray-400 pointer-events-none z-10" />
+              <Input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => handleFilterChange(setSearchTerm, e.target.value)}
                 placeholder="Search audit descriptions, users, IDs..."
-                className="w-full pl-9 pr-3 py-1.5 text-xs bg-gray-50/70 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-400 placeholder:text-gray-400"
+                className="w-full pl-9 pr-3 py-1.5 text-xs bg-gray-50/70 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 placeholder:text-gray-400 font-sans"
               />
             </div>
 
             {/* Date Preset Buttons */}
             <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-              <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mr-1">Date:</span>
+              <Label className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mr-1">Date:</Label>
               {[
                 { id: 'all', label: 'All' },
                 { id: 'today', label: 'Today' },
                 { id: '7d', label: '7 Days' },
                 { id: '30d', label: '30 Days' },
               ].map((d) => (
-                <button
+                <Button
                   key={d.id}
                   type="button"
+                  size="sm"
+                  variant={dateFilter === d.id ? 'primary' : 'outline'}
+                  onPress={() => handleFilterChange(setDateFilter, d.id)}
                   onClick={() => handleFilterChange(setDateFilter, d.id)}
-                  className={`px-2.5 py-1 text-xs font-medium rounded-lg transition-colors ${
+                  className={`px-2.5 py-1 text-xs font-medium rounded-xl transition-colors cursor-pointer ${
                     dateFilter === d.id
                       ? 'bg-gray-900 text-white shadow-2xs'
                       : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
                   }`}
                 >
                   {d.label}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
@@ -313,59 +322,126 @@ export const AdminActivity: React.FC = () => {
           {/* Secondary Filters: Action, Entity, Actor */}
           <div className="flex flex-wrap items-center gap-3 pt-2.5 border-t border-gray-100 text-xs text-gray-600">
             {/* Action Filter */}
-            <div className="flex items-center gap-1.5">
-              <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Action:</span>
-              <select
+            <div className="flex items-center gap-1.5 min-w-[170px]">
+              <Label className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Action:</Label>
+              <Select
                 value={selectedAction}
-                onChange={(e) => handleFilterChange(setSelectedAction, e.target.value)}
-                className="px-2.5 py-1 text-xs bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-400 text-gray-700"
+                onChange={(val) => handleFilterChange(setSelectedAction, (val as string) || 'all')}
+                className="w-full"
+                aria-label="Filter by action"
               >
-                <option value="all">All Actions</option>
-                <option value="ENQUIRY_CREATED">Enquiry Created</option>
-                <option value="ENQUIRY_STATUS_CHANGED">Enquiry Status Changed</option>
-                <option value="ENQUIRY_ASSIGNED">Enquiry Assigned</option>
-                <option value="FOLLOWUP_CREATED">Followup Created</option>
-                <option value="FOLLOWUP_COMPLETED">Followup Completed</option>
-                <option value="AUTH_LOGIN">User Login</option>
-                <option value="PRODUCT_CREATED">Product Created</option>
-                <option value="PRODUCT_UPDATED">Product Updated</option>
-                <option value="PRODUCT_DELETED">Product Deleted</option>
-                <option value="USER_ROLE_CHANGED">User Role Changed</option>
-              </select>
+                <Select.Trigger className="w-full h-8 px-2.5 py-1 text-xs bg-gray-50 border border-gray-200 rounded-xl text-gray-700 flex items-center justify-between shadow-2xs hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-500/20 cursor-pointer">
+                  <Select.Value className="text-xs font-medium text-gray-700 truncate" />
+                  <Select.Indicator className="text-gray-400 text-xs ml-1 shrink-0" />
+                </Select.Trigger>
+                <Select.Popover className="bg-white rounded-xl shadow-xl border border-gray-200 p-1 z-50 min-w-[190px] max-h-60 overflow-y-auto">
+                  <ListBox className="outline-none space-y-0.5">
+                    {[
+                      { id: 'all', label: 'All Actions' },
+                      { id: 'ENQUIRY_CREATED', label: 'Enquiry Created' },
+                      { id: 'ENQUIRY_STATUS_CHANGED', label: 'Enquiry Status Changed' },
+                      { id: 'ENQUIRY_ASSIGNED', label: 'Enquiry Assigned' },
+                      { id: 'FOLLOWUP_CREATED', label: 'Followup Created' },
+                      { id: 'FOLLOWUP_COMPLETED', label: 'Followup Completed' },
+                      { id: 'AUTH_LOGIN', label: 'User Login' },
+                      { id: 'PRODUCT_CREATED', label: 'Product Created' },
+                      { id: 'PRODUCT_UPDATED', label: 'Product Updated' },
+                      { id: 'PRODUCT_DELETED', label: 'Product Deleted' },
+                      { id: 'USER_ROLE_CHANGED', label: 'User Role Changed' },
+                    ].map(a => (
+                      <ListBox.Item
+                        key={a.id}
+                        id={a.id}
+                        textValue={a.label}
+                        className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-sky-50 data-[selected=true]:text-sky-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                      >
+                        {a.label}
+                        <ListBox.ItemIndicator />
+                      </ListBox.Item>
+                    ))}
+                  </ListBox>
+                </Select.Popover>
+              </Select>
             </div>
 
             {/* Entity Filter */}
-            <div className="flex items-center gap-1.5">
-              <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Entity:</span>
-              <select
+            <div className="flex items-center gap-1.5 min-w-[150px]">
+              <Label className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Entity:</Label>
+              <Select
                 value={selectedEntity}
-                onChange={(e) => handleFilterChange(setSelectedEntity, e.target.value)}
-                className="px-2.5 py-1 text-xs bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-400 text-gray-700"
+                onChange={(val) => handleFilterChange(setSelectedEntity, (val as string) || 'all')}
+                className="w-full"
+                aria-label="Filter by entity"
               >
-                <option value="all">All Entities</option>
-                <option value="enquiry">Enquiries</option>
-                <option value="followup">Follow-ups</option>
-                <option value="product">Products</option>
-                <option value="profile">Staff Profiles</option>
-                <option value="auth">Authentication</option>
-              </select>
+                <Select.Trigger className="w-full h-8 px-2.5 py-1 text-xs bg-gray-50 border border-gray-200 rounded-xl text-gray-700 flex items-center justify-between shadow-2xs hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-500/20 cursor-pointer">
+                  <Select.Value className="text-xs font-medium text-gray-700 truncate" />
+                  <Select.Indicator className="text-gray-400 text-xs ml-1 shrink-0" />
+                </Select.Trigger>
+                <Select.Popover className="bg-white rounded-xl shadow-xl border border-gray-200 p-1 z-50 min-w-[170px] max-h-60 overflow-y-auto">
+                  <ListBox className="outline-none space-y-0.5">
+                    {[
+                      { id: 'all', label: 'All Entities' },
+                      { id: 'enquiry', label: 'Enquiries' },
+                      { id: 'followup', label: 'Follow-ups' },
+                      { id: 'product', label: 'Products' },
+                      { id: 'profile', label: 'Staff Profiles' },
+                      { id: 'auth', label: 'Authentication' },
+                    ].map(e => (
+                      <ListBox.Item
+                        key={e.id}
+                        id={e.id}
+                        textValue={e.label}
+                        className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-sky-50 data-[selected=true]:text-sky-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                      >
+                        {e.label}
+                        <ListBox.ItemIndicator />
+                      </ListBox.Item>
+                    ))}
+                  </ListBox>
+                </Select.Popover>
+              </Select>
             </div>
 
             {/* Actor Filter */}
-            <div className="flex items-center gap-1.5">
-              <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Actor:</span>
-              <select
+            <div className="flex items-center gap-1.5 min-w-[170px]">
+              <Label className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Actor:</Label>
+              <Select
                 value={selectedActor}
-                onChange={(e) => handleFilterChange(setSelectedActor, e.target.value)}
-                className="px-2.5 py-1 text-xs bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-400 text-gray-700"
+                onChange={(val) => handleFilterChange(setSelectedActor, (val as string) || 'all')}
+                className="w-full"
+                aria-label="Filter by actor"
               >
-                <option value="all">All Actors</option>
-                {staffProfiles.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.full_name || s.email} ({s.role})
-                  </option>
-                ))}
-              </select>
+                <Select.Trigger className="w-full h-8 px-2.5 py-1 text-xs bg-gray-50 border border-gray-200 rounded-xl text-gray-700 flex items-center justify-between shadow-2xs hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-500/20 cursor-pointer">
+                  <Select.Value className="text-xs font-medium text-gray-700 truncate" />
+                  <Select.Indicator className="text-gray-400 text-xs ml-1 shrink-0" />
+                </Select.Trigger>
+                <Select.Popover className="bg-white rounded-xl shadow-xl border border-gray-200 p-1 z-50 min-w-[200px] max-h-60 overflow-y-auto">
+                  <ListBox className="outline-none space-y-0.5">
+                    <ListBox.Item
+                      id="all"
+                      textValue="All Actors"
+                      className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 cursor-pointer outline-none"
+                    >
+                      All Actors
+                      <ListBox.ItemIndicator />
+                    </ListBox.Item>
+                    {staffProfiles.map((s) => {
+                      const label = `${s.full_name || s.email} (${s.role})`;
+                      return (
+                        <ListBox.Item
+                          key={s.id}
+                          id={s.id}
+                          textValue={label}
+                          className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-sky-50 data-[selected=true]:text-sky-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                        >
+                          {label}
+                          <ListBox.ItemIndicator />
+                        </ListBox.Item>
+                      );
+                    })}
+                  </ListBox>
+                </Select.Popover>
+              </Select>
             </div>
 
             <div className="ml-auto text-xs text-gray-500 font-medium">

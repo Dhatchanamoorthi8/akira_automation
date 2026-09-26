@@ -10,7 +10,7 @@ import {
   Cpu,
   ZoomIn 
 } from 'lucide-react';
-import { Button, Card, Chip } from '@heroui/react';
+import { Button, Card, Chip, Input } from '@heroui/react';
 import { motion } from 'motion/react';
 import { Breadcrumb } from '../components/layout/Breadcrumb';
 import { SEOHead } from '../components/layout/SEOHead';
@@ -284,13 +284,13 @@ export const Products: React.FC = () => {
             
             {/* Search Input Container */}
             <div className="relative w-full md:w-80 shrink-0">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-              <input
+              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10" />
+              <Input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search products, specs, ranges..."
-                className="w-full pl-9.5 pr-9 py-2 text-xs font-medium rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-industrial-primary focus:border-transparent bg-slate-50 text-slate-900 placeholder:text-slate-400 min-h-[40px] transition-all"
+                className="w-full pl-9.5 pr-9 py-2 text-xs font-medium rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-industrial-primary focus:border-transparent bg-slate-50 text-slate-900 placeholder:text-slate-400 min-h-[40px] transition-all font-sans"
               />
               {searchQuery && (
                 <button 

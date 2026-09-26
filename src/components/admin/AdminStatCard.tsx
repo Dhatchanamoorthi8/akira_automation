@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Chip } from '@heroui/react';
+import { Card, Chip, Button } from '@heroui/react';
 import { LucideIcon, MoreHorizontal, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 
 export interface AdminStatCardProps {
@@ -46,13 +46,15 @@ export const AdminStatCard: React.FC<AdminStatCardProps> = ({
               <Icon className="w-4 h-4" />
             </div>
           )}
-          <button
-            type="button"
-            className="text-slate-400 hover:text-slate-600 p-1 rounded-md transition-colors"
+          <Button
+            isIconOnly
+            variant="ghost"
+            size="sm"
+            className="text-slate-400 hover:text-slate-600 p-1 rounded-md transition-colors min-w-0 h-auto"
             aria-label="More options"
           >
             <MoreHorizontal className="w-4 h-4" />
-          </button>
+          </Button>
         </div>
       </div>
 

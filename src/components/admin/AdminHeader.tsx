@@ -1,5 +1,6 @@
 import React from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { Button, Breadcrumbs, Kbd, Chip, Input } from '@heroui/react';
 import {
   Menu,
   Search,
@@ -85,58 +86,54 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
     <header className="h-16 bg-white border-b border-slate-200 sticky top-0 z-30 px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4 shadow-subtle">
       {/* Left: Mobile Menu Trigger & Dynamic Breadcrumb */}
       <div className="flex items-center gap-3">
-        <button
-          type="button"
-          onClick={onToggleMobileSidebar}
-          className="lg:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-industrial-dark transition-colors focus:outline-none focus:ring-2 focus:ring-industrial-primary/20 min-h-[44px] min-w-[44px] flex items-center justify-center"
+        <Button
+          variant="ghost"
+          size="sm"
+          onPress={onToggleMobileSidebar}
+          className="lg:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-industrial-dark transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
           aria-label="Open navigation sidebar"
         >
           <Menu className="w-5 h-5" />
-        </button>
+        </Button>
 
         {/* Dynamic Breadcrumb (Desktop & Mobile) */}
-        <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs font-medium text-gray-500">
+        <div className="flex items-center gap-2">
           <div className="w-6 h-6 rounded-md bg-gray-100 flex items-center justify-center text-gray-700 shrink-0">
             <BreadcrumbIcon className="w-3.5 h-3.5" />
           </div>
-          <span className="text-gray-400">&gt;</span>
-          <Link
-            to={breadcrumb.to}
-            className={`transition-colors ${
-              breadcrumb.subLabel
-                ? 'text-gray-500 hover:text-gray-900 font-medium'
-                : 'text-gray-900 font-bold text-sm'
-            }`}
-          >
-            {breadcrumb.label}
-          </Link>
-          {breadcrumb.subLabel && (
-            <>
-              <span className="text-gray-400">&gt;</span>
-              <span className="text-gray-900 font-bold text-sm truncate max-w-[150px] sm:max-w-[220px]">
-                {breadcrumb.subLabel}
+          <Breadcrumbs aria-label="Breadcrumb" className="text-xs font-medium text-gray-500">
+            <Breadcrumbs.Item href={breadcrumb.to}>
+              <span className={breadcrumb.subLabel ? 'text-gray-500 hover:text-gray-900 font-medium' : 'text-gray-900 font-bold text-sm'}>
+                {breadcrumb.label}
               </span>
-            </>
-          )}
-        </nav>
+            </Breadcrumbs.Item>
+            {breadcrumb.subLabel && (
+              <Breadcrumbs.Item>
+                <span className="text-gray-900 font-bold text-sm truncate max-w-[150px] sm:max-w-[220px]">
+                  {breadcrumb.subLabel}
+                </span>
+              </Breadcrumbs.Item>
+            )}
+          </Breadcrumbs>
+        </div>
       </div>
 
       {/* Center: Search Bar */}
       <div className="hidden md:flex items-center flex-1 max-w-md mx-4">
         <div className="w-full relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 z-10">
             <Search className="w-4 h-4" />
           </div>
-          <input
+          <Input
             type="search"
             readOnly
             placeholder="Search products, RFQ numbers, customers..."
-            className="w-full pl-9 pr-16 py-1.5 bg-slate-50 hover:bg-slate-100/80 border border-slate-200 rounded-lg text-xs text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-industrial-primary/20 cursor-pointer transition-colors"
+            className="w-full pl-9 pr-16 py-1.5 bg-slate-50 hover:bg-slate-100/80 border border-slate-200 rounded-xl text-xs text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-industrial-primary/20 cursor-pointer transition-colors"
           />
-          <div className="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none">
-            <kbd className="inline-flex items-center px-1.5 py-0.5 border border-slate-200 rounded bg-white text-[10px] font-mono text-slate-400">
+          <div className="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none z-10">
+            <Kbd className="inline-flex items-center px-1.5 py-0.5 border border-slate-200 rounded bg-white text-[10px] font-mono text-slate-400">
               ⌘ K
-            </kbd>
+            </Kbd>
           </div>
         </div>
       </div>
@@ -144,7 +141,12 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
       {/* Right: Status Indicator, Notification & Profile */}
       <div className="flex items-center gap-2 sm:gap-3">
         {/* Backend Connection Badge */}
-        <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono font-medium border bg-slate-50 text-slate-600 border-slate-200">
+        <Chip
+          variant="soft"
+          color={isConfigured ? 'accent' : 'warning'}
+          size="sm"
+          className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono font-medium border bg-slate-50 text-slate-600 border-slate-200"
+        >
           <span
             className={`w-2 h-2 rounded-full ${
               isConfigured ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'
@@ -152,17 +154,18 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
           />
           <Database className="w-3 h-3 text-slate-400" />
           <span>{isConfigured ? 'DB Connected' : 'Offline Mode'}</span>
-        </div>
+        </Chip>
 
         {/* Notifications Icon Button */}
-        <button
-          type="button"
-          className="relative p-2 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-industrial-dark transition-colors focus:outline-none focus:ring-2 focus:ring-industrial-primary/20 min-h-[44px] min-w-[44px] flex items-center justify-center"
+        <Button
+          variant="ghost"
+          size="sm"
+          className="relative p-2 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-industrial-dark transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
           aria-label="View system notifications"
         >
           <Bell className="w-4 h-4" />
           <span className="absolute top-2 right-2 w-2 h-2 bg-sky-500 rounded-full ring-2 ring-white" />
-        </button>
+        </Button>
 
         {/* Profile Dropdown */}
         <AdminProfileMenu />
