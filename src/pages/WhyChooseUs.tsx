@@ -202,7 +202,7 @@ const operationalBenefits = [
 const whyChooseFAQs = [
   {
     question: "How does Akira compare in cost and lead times to multinational gauging brands?",
-    answer: "Akira Precision Automation LLP designs and manufactures precision gauging fixtures, air electronic display units, and pneumatic tooling domestically in Chennai, India. We deliver equivalent sub-micron accuracy (≤ 0.0005 mm) and ISO/IEC 17025 traceability at 40% to 50% lower capital cost than imported European or Japanese brands, with significantly shorter lead times for custom tooling and rapid local replacement support."
+    answer: "Akira Precision Automation designs and manufactures precision gauging fixtures, air electronic display units, and pneumatic tooling domestically in Chennai, India. We deliver equivalent sub-micron accuracy (≤ 0.0005 mm) and ISO/IEC 17025 traceability at 40% to 50% lower capital cost than imported European or Japanese brands, with significantly shorter lead times for custom tooling and rapid local replacement support."
   },
   {
     question: "Can Akira multi-gauging stations interface directly with our existing factory PLCs?",

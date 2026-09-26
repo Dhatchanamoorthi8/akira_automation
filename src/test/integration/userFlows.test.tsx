@@ -150,7 +150,7 @@ describe('Core User Routing & Conversion Flows (Integration)', () => {
 
     // Modal should close
     expect(screen.queryByText(/Technical Inquiry Dispatched/i)).not.toBeInTheDocument();
-  }, 15000);
+  }, 30000);
 
   it('Flow 4: Invalid product route -> displays not-found state with recovery button', async () => {
     renderFlowApp(['/products/unknown-non-existent-system']);

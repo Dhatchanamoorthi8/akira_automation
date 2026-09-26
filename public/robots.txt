@@ -1,4 +1,4 @@
-# Akira Precision Automation LLP - robots.txt
+# Akira Precision Automation - robots.txt
 # https://akiraautomation.com
 
 # -------------------------------------------------------------

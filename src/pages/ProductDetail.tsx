@@ -288,7 +288,7 @@ export const ProductDetail: React.FC = () => {
                       </span>
                     </div>
                     <p className="text-slate-700 text-xs leading-relaxed">
-                      Technical specifications reviewed and verified by <strong className="text-slate-900">Kalidoss</strong>, Lead Metrology Applications Engineer at AKIRA Precision Automation LLP. Calibration methodologies certified traceable to <span className="font-sans tabular-nums text-slate-800 font-semibold">ISO/IEC 17025:2017</span> and <span className="font-sans tabular-nums text-slate-800 font-semibold">DIN 2250-C</span> setting standards.
+                      Technical specifications reviewed and verified by <strong className="text-slate-900">Kalidoss</strong>, Lead Metrology Applications Engineer at AKIRA Precision Automation. Calibration methodologies certified traceable to <span className="font-sans tabular-nums text-slate-800 font-semibold">ISO/IEC 17025:2017</span> and <span className="font-sans tabular-nums text-slate-800 font-semibold">DIN 2250-C</span> setting standards.
                     </p>
                   </div>
                 </div>

@@ -22,18 +22,18 @@ describe('SEOHead Component', () => {
       />
     );
 
-    expect(document.title).toBe('Air Plug Gauges | AKIRA PRECISION AUTOMATION LLP');
+    expect(document.title).toBe('Air Plug Gauges | AKIRA PRECISION AUTOMATION');
   });
 
-  it('does NOT duplicate company branding suffix if title already contains AKIRA PRECISION AUTOMATION LLP', () => {
+  it('does NOT duplicate company branding suffix if title already contains AKIRA PRECISION AUTOMATION', () => {
     render(
       <SEOHead
-        title="AKIRA PRECISION AUTOMATION LLP | Precision Gauging Solutions"
+        title="AKIRA PRECISION AUTOMATION | Precision Gauging Solutions"
         description="High precision ID bore measuring systems"
       />
     );
 
-    expect(document.title).toBe('AKIRA PRECISION AUTOMATION LLP | Precision Gauging Solutions');
+    expect(document.title).toBe('AKIRA PRECISION AUTOMATION | Precision Gauging Solutions');
   });
 
   it('creates and updates the meta description tag in document.head', () => {
@@ -109,11 +109,11 @@ describe('SEOHead Component', () => {
     const ogSiteName = document.head.querySelector('meta[property="og:site_name"]');
     const ogType = document.head.querySelector('meta[property="og:type"]');
 
-    expect(ogTitle?.getAttribute('content')).toBe('Custom Multi-Gauging | AKIRA PRECISION AUTOMATION LLP');
+    expect(ogTitle?.getAttribute('content')).toBe('Custom Multi-Gauging | AKIRA PRECISION AUTOMATION');
     expect(ogDesc?.getAttribute('content')).toBe('Automated multi-gauging fixtures');
     expect(ogImage?.getAttribute('content')).toBe('https://akiraautomation.com/assets/custom-fixture.webp');
     expect(ogUrl?.getAttribute('content')).toBe('https://akiraautomation.com/solutions/multigauging');
-    expect(ogSiteName?.getAttribute('content')).toBe('AKIRA PRECISION AUTOMATION LLP');
+    expect(ogSiteName?.getAttribute('content')).toBe('AKIRA PRECISION AUTOMATION');
     expect(ogType?.getAttribute('content')).toBe('website');
   });
 
@@ -132,7 +132,7 @@ describe('SEOHead Component', () => {
     const twitterImage = document.head.querySelector('meta[name="twitter:image"]');
 
     expect(twitterCard?.getAttribute('content')).toBe('summary_large_image');
-    expect(twitterTitle?.getAttribute('content')).toBe('Precision Tooling | AKIRA PRECISION AUTOMATION LLP');
+    expect(twitterTitle?.getAttribute('content')).toBe('Precision Tooling | AKIRA PRECISION AUTOMATION');
     expect(twitterDesc?.getAttribute('content')).toBe('High accuracy metrology instruments');
     expect(twitterImage?.getAttribute('content')).toBe('https://akiraautomation.com/assets/tooling.webp');
   });

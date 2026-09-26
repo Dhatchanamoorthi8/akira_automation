@@ -1,7 +1,7 @@
 <!-- rsl-version: 1.0; ai-search: allowed; ai-training: commercial-inquiry-required -->
-# AKIRA PRECISION AUTOMATION LLP
+# AKIRA PRECISION AUTOMATION
 
-> Akira Precision Automation LLP is an Indian manufacturer of high-precision metrology systems, automated multi-gauging stations, air gauges, electronic gauges, digital display units, and custom inspection fixtures for automotive OEMs, Tier-1/Tier-2 suppliers, and precision engineering industries.
+> Akira Precision Automation is an Indian manufacturer of high-precision metrology systems, automated multi-gauging stations, air gauges, electronic gauges, digital display units, and custom inspection fixtures for automotive OEMs, Tier-1/Tier-2 suppliers, and precision engineering industries.
 
 ## Core Capabilities & Solutions
 
@@ -45,7 +45,7 @@
 
 ## Company & Contact Information
 
-- Legal Name: Akira Precision Automation LLP
+- Legal Name: Akira Precision Automation
 - Tagline: Precision • Innovation • Smart Solutions
 - Slogan: Automating Today... Building Tomorrow...
 - Primary Email: milestonegauges@gmail.com

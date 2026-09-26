@@ -273,7 +273,7 @@ export const AdminProductForm: React.FC = () => {
   return (
     <>
       <SEOHead
-        title={`${isEditMode ? 'Edit Product' : 'Create Product'} | Akira Precision Automation LLP Admin`}
+        title={`${isEditMode ? 'Edit Product' : 'Create Product'} | Akira Precision Automation Admin`}
         description="Engineering specification editor and photography asset manager."
       />
 

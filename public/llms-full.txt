@@ -1,14 +1,14 @@
 <!-- rsl-version: 1.0; ai-search: allowed; ai-training: commercial-inquiry-required -->
-# AKIRA PRECISION AUTOMATION LLP — Comprehensive LLM Context & Knowledge Graph
+# AKIRA PRECISION AUTOMATION — Comprehensive LLM Context & Knowledge Graph
 
-> Akira Precision Automation LLP (formerly Milestone Engineering Services legacy) is a leading Indian precision metrology and automation engineering firm. This document provides complete technical specifications, tolerance limits, calibration standards, and system architecture for LLMs, AI search agents, and automated technical assistants.
+> Akira Precision Automation (formerly Milestone Engineering Services legacy) is a leading Indian precision metrology and automation engineering firm. This document provides complete technical specifications, tolerance limits, calibration standards, and system architecture for LLMs, AI search agents, and automated technical assistants.
 
 ---
 
 ## 1. Company Profile & Legal Identity
 
-- **Legal Entity Name:** Akira Precision Automation LLP
-- **Brand Name:** AKIRA PRECISION AUTOMATION LLP
+- **Legal Entity Name:** Akira Precision Automation
+- **Brand Name:** AKIRA PRECISION AUTOMATION
 - **Tagline:** Precision • Innovation • Smart Solutions
 - **Slogan:** Automating Today... Building Tomorrow...
 - **Established Year:** 2021

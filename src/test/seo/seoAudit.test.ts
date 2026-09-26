@@ -14,7 +14,7 @@ import {
 } from '../../config/seo';
 import { company } from '../../config/company';
 
-describe('AKIRA PRECISION AUTOMATION LLP — Senior SEO Audit Test Suite', () => {
+describe('AKIRA PRECISION AUTOMATION — Senior SEO Audit Test Suite', () => {
   const publicDir = path.resolve(__dirname, '../../../public');
 
   describe('Phase 1 & 2: Route & URL Inventory', () => {
@@ -58,19 +58,19 @@ describe('AKIRA PRECISION AUTOMATION LLP — Senior SEO Audit Test Suite', () =>
   });
 
   describe('Phase 3: Brand Consistency & Obsolescence Audit', () => {
-    it('ensures company brand name is AKIRA PRECISION AUTOMATION LLP', () => {
-      expect(company.name).toBe('AKIRA PRECISION AUTOMATION LLP');
-      expect(company.legalName).toBe('Akira Precision Automation LLP');
+    it('ensures company brand name is AKIRA PRECISION AUTOMATION', () => {
+      expect(company.name).toBe('AKIRA PRECISION AUTOMATION');
+      expect(company.legalName).toBe('Akira Precision Automation');
       expect(company.tagline).toBe('Precision • Innovation • Smart Solutions');
       expect(company.slogan).toBe('Automating Today... Building Tomorrow...');
     });
 
     it('ensures formatTitle avoids duplicate brand name appending and prevents SERP truncation', () => {
-      const alreadyBranded = 'AKIRA PRECISION AUTOMATION LLP | Precision Gauging Solutions';
-      expect(formatTitle(alreadyBranded)).toBe('AKIRA PRECISION AUTOMATION LLP | Precision Gauging Solutions');
+      const alreadyBranded = 'AKIRA PRECISION AUTOMATION | Precision Gauging Solutions';
+      expect(formatTitle(alreadyBranded)).toBe('AKIRA PRECISION AUTOMATION | Precision Gauging Solutions');
 
       const unbranded = 'Air Plug Gauges';
-      expect(formatTitle(unbranded)).toBe('Air Plug Gauges | AKIRA PRECISION AUTOMATION LLP');
+      expect(formatTitle(unbranded)).toBe('Air Plug Gauges | AKIRA PRECISION AUTOMATION');
 
       // Long titles (> 60 chars) should not have 33 characters blindly appended
       const longTitle = 'Engine Block & Liner Multigauging Station | Technical Specifications';
@@ -85,7 +85,7 @@ describe('AKIRA PRECISION AUTOMATION LLP — Senior SEO Audit Test Suite', () =>
       expect(fs.existsSync(llmsFullPath)).toBe(true);
 
       const llmsContent = fs.readFileSync(llmsPath, 'utf-8');
-      expect(llmsContent).toContain('# AKIRA PRECISION AUTOMATION LLP');
+      expect(llmsContent).toContain('# AKIRA PRECISION AUTOMATION');
       expect(llmsContent).toContain('## Core Capabilities & Solutions');
       expect(llmsContent).toContain('## Precision Products Catalogue');
       expect(llmsContent).toContain('https://akiraautomation.com/products/air-plug-gauge');
@@ -190,8 +190,8 @@ describe('AKIRA PRECISION AUTOMATION LLP — Senior SEO Audit Test Suite', () =>
       const schema = createOrganizationSchema();
       expect(schema['@context']).toBe('https://schema.org');
       expect(schema['@type']).toBe('LocalBusiness');
-      expect(schema.name).toBe('AKIRA PRECISION AUTOMATION LLP');
-      expect(schema.legalName).toBe('Akira Precision Automation LLP');
+      expect(schema.name).toBe('AKIRA PRECISION AUTOMATION');
+      expect(schema.legalName).toBe('Akira Precision Automation');
       expect(schema.url).toBe('https://akiraautomation.com');
       expect(schema.address['@type']).toBe('PostalAddress');
       expect(schema.address.addressCountry).toBe('IN');
@@ -201,8 +201,8 @@ describe('AKIRA PRECISION AUTOMATION LLP — Senior SEO Audit Test Suite', () =>
       expect(schema.contactPoint).toBeDefined();
       expect(schema.contactPoint.length).toBeGreaterThan(0);
       expect(schema['@type']).toBe('LocalBusiness');
-      expect(schema.name).toBe('AKIRA PRECISION AUTOMATION LLP');
-      expect(schema.legalName).toBe('Akira Precision Automation LLP');
+      expect(schema.name).toBe('AKIRA PRECISION AUTOMATION');
+      expect(schema.legalName).toBe('Akira Precision Automation');
       expect(schema.url).toBe('https://akiraautomation.com');
       expect(schema.address['@type']).toBe('PostalAddress');
       expect(schema.address.addressCountry).toBe('IN');
@@ -219,7 +219,7 @@ describe('AKIRA PRECISION AUTOMATION LLP — Senior SEO Audit Test Suite', () =>
       expect(schema['@context']).toBe('https://schema.org');
       expect(schema['@type']).toBe('WebSite');
       expect(schema.url).toBe('https://akiraautomation.com/');
-      expect(schema.name).toBe('AKIRA PRECISION AUTOMATION LLP');
+      expect(schema.name).toBe('AKIRA PRECISION AUTOMATION');
     });
 
     it('generates valid BreadcrumbList schema with sequential positions', () => {
@@ -253,7 +253,7 @@ describe('AKIRA PRECISION AUTOMATION LLP — Senior SEO Audit Test Suite', () =>
         expect(schema.name).toBe(prod.title);
         expect(schema.description).toBe(prod.description);
         expect(schema.image.startsWith('https://akiraautomation.com')).toBe(true);
-        expect(schema.brand.name).toBe('AKIRA PRECISION AUTOMATION LLP');
+        expect(schema.brand.name).toBe('AKIRA PRECISION AUTOMATION');
         expect(schema.url).toBe(`https://akiraautomation.com/products/${prod.slug}`);
 
         // Zero hallucination check

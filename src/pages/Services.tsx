@@ -190,7 +190,7 @@ const serviceFAQs = [
   },
   {
     question: 'Can Akira service, calibrate, or retrofit third-party air gauges and fixtures?',
-    answer: 'Yes. Akira Precision Automation LLP manufactures compatible replacement air plug gauges, air ring gauges, carbide wear mandrels, and digital display units that interface directly with third-party pneumatic back-pressure systems, standard inductive LVDT probes, and legacy multi-gauging fixtures.'
+    answer: 'Yes. Akira Precision Automation manufactures compatible replacement air plug gauges, air ring gauges, carbide wear mandrels, and digital display units that interface directly with third-party pneumatic back-pressure systems, standard inductive LVDT probes, and legacy multi-gauging fixtures.'
   },
   {
     question: 'What documentation and certification is provided upon service completion?',

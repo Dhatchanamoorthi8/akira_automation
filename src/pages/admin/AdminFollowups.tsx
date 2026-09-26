@@ -358,7 +358,7 @@ export const AdminFollowups: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="CRM Follow-ups | Akira Precision Automation LLP CRM"
+        title="CRM Follow-ups | Akira Precision Automation CRM"
         description="Executive follow-up management and scheduled client communications tracking."
       />
 

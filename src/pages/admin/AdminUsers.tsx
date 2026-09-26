@@ -287,7 +287,7 @@ export const AdminUsers: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="User & Staff Management | Akira Precision Automation LLP"
+        title="User & Staff Management | Akira Precision Automation"
         description="Administrative personnel management and role-based access control."
       />
 

@@ -231,7 +231,7 @@ const KNOWN_BRANDS: Record<string, CompanyBrandInfo> = {
     ),
   },
   akira: {
-    name: 'Akira Precision Automation LLP',
+    name: 'Akira Precision Automation',
     bgColor: 'bg-[#0055A5]',
     renderLogo: () => (
       <span className="text-[9px] font-bold tracking-tighter text-white">AKR</span>

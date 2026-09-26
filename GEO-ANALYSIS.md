@@ -1,7 +1,7 @@
 # Generative Engine Optimization (GEO) Audit & AI Visibility Report
 
 **Target Domain:** `https://akiraautomation.com`  
-**Brand:** AKIRA PRECISION AUTOMATION LLP  
+**Brand:** AKIRA PRECISION AUTOMATION  
 **Audit Date:** February / March 2026  
 **Auditor:** Antigravity GEO Engine  
 **Focus Search Engines:** Google AI Overviews, OpenAI ChatGPT / SearchGPT, Perplexity AI, Bing Copilot  
@@ -133,7 +133,7 @@ Sitemap: https://akiraautomation.com/sitemap.xml
 
 | Platform | Current Status | AI Impact | Action Required |
 | :--- | :--- | :---: | :--- |
-| **Wikipedia / Wikidata** | Not Listed | **CRITICAL** | Create a Wikidata item for *Akira Precision Automation LLP* (claims: manufacturer, Coimbatore, precision metrology, ISO/IEC standards). |
+| **Wikipedia / Wikidata** | Not Listed | **CRITICAL** | Create a Wikidata item for *Akira Precision Automation* (claims: manufacturer, Coimbatore, precision metrology, ISO/IEC standards). |
 | **YouTube** | Minimal / No channel linking in schema | **HIGH** | Publish short 60-90s video clips demonstrating: 1. Air plug gauge calibration with master rings, 2. Multigauging station cycle for camshafts. Link via `sameAs`. |
 | **Reddit** | Zero organic mentions | **HIGH** | Participate in discussions on `r/Machinists`, `r/Metrology`, `r/QualityEngineering` answering technical queries regarding bore gauge calibration and 3-lobe air ring inspection. |
 | **LinkedIn** | Profile exists | **MODERATE** | Regular technical posts with engineering diagrams; ensure employee profiles list company as primary employer. |

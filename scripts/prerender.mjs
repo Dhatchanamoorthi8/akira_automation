@@ -59,8 +59,8 @@ async function runPrerender() {
     {
       path: '/',
       title: `${company.name} | ${company.tagline}`,
-      description: `Akira Precision Automation LLP provides high-precision gauging fixtures, automated multi-gauging stations, air gauges, digital DRO displays, and work-holding solutions for manufacturing.`,
-      keywords: `Akira Precision Automation LLP, Precision Gauging India, Multi Gauging Solutions, Air Gauging, Air Plug Gauge, Air Ring Gauge, Inspection Fixtures, Industrial Metrology`,
+      description: `Akira Precision Automation provides high-precision gauging fixtures, automated multi-gauging stations, air gauges, digital DRO displays, and work-holding solutions for manufacturing.`,
+      keywords: `Akira Precision Automation, Precision Gauging India, Multi Gauging Solutions, Air Gauging, Air Plug Gauge, Air Ring Gauge, Inspection Fixtures, Industrial Metrology`,
       ogImage: '/assets/company/akira-automation-logo.jpeg',
       structuredData: [
         createOrganizationSchema(),
@@ -96,7 +96,7 @@ async function runPrerender() {
       generateBody: () => `
         <main>
           <nav aria-label="Breadcrumb"><a href="/">Home</a> / <span>About Us</span></nav>
-          <h1>About Akira Precision Automation LLP</h1>
+          <h1>About Akira Precision Automation</h1>
           <p>${company.name} focuses on high quality products and innovative solutions that help customers increase productivity and profitability.</p>
           <h2>Metrology Standards & Quality Assurance</h2>
           <p>Sub-micron comparator repeatability (up to 0.1 µm), master calibration traceable to NABL / ISO/IEC 17025 accredited laboratories, and 100% pre-dispatch Gage R&R verification.</p>
@@ -199,7 +199,7 @@ async function runPrerender() {
       generateBody: () => `
         <main>
           <nav aria-label="Breadcrumb"><a href="/">Home</a> / <span>Why Choose Us</span></nav>
-          <h1>Why Choose Akira Precision Automation LLP</h1>
+          <h1>Why Choose Akira Precision Automation</h1>
           <p>Automated multi-gauging expertise, OEM and automation-ready solutions, custom-built fixtures, and competitive value-driven pricing.</p>
         </main>
       `
@@ -303,7 +303,7 @@ async function runPrerender() {
           ` : ''}
           <section>
             <h2>Technical Review & Metrology Validation</h2>
-            <p>Reviewed and validated by <strong>Kalidoss</strong>, Lead Metrology Applications Engineer at AKIRA Precision Automation LLP. All tolerances and measurement parameters comply with ISO/DIN manufacturing standards.</p>
+            <p>Reviewed and validated by <strong>Kalidoss</strong>, Lead Metrology Applications Engineer at AKIRA Precision Automation. All tolerances and measurement parameters comply with ISO/DIN manufacturing standards.</p>
           </section>
           ${sol.standardsCompliance && sol.standardsCompliance.length > 0 ? `
             <section>
@@ -422,7 +422,7 @@ async function runPrerender() {
               ` : ''}
               <div class="technical-review">
                 <h3>Technical Review & Specification Sign-off</h3>
-                <p>Technical specifications reviewed and verified by <strong>Kalidoss</strong>, Lead Metrology Applications Engineer at AKIRA Precision Automation LLP. Calibration methodologies certified traceable to <strong>ISO/IEC 17025:2017</strong> and <strong>DIN 2250-C</strong> setting standards.</p>
+                <p>Technical specifications reviewed and verified by <strong>Kalidoss</strong>, Lead Metrology Applications Engineer at AKIRA Precision Automation. Calibration methodologies certified traceable to <strong>ISO/IEC 17025:2017</strong> and <strong>DIN 2250-C</strong> setting standards.</p>
               </div>
             </section>
             <section>

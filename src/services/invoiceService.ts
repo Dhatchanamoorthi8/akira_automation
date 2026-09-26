@@ -24,7 +24,7 @@ const DEFAULT_INVOICE_SETTINGS: InvoiceSettings = {
   yearFormat: 'YYYY',
   defaultTaxRate: 18,
   currency: 'INR',
-  companyName: 'Akira Precision Automation LLP',
+  companyName: 'Akira Precision Automation',
   companyAddress: 'No. 12, Industrial Area, Bangalore - 560058',
   companyGst: '29ABCDE1234F1Z5',
   paymentTerms: 'Payment due within 15 days of invoice date.',
