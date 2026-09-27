@@ -29,9 +29,9 @@ export const StaffWorkloadTable: React.FC<StaffWorkloadTableProps> = ({ workload
       <div className="p-5 sm:px-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="text-base font-bold text-slate-900 tracking-tight font-heading">
+            <h2 className="text-base font-bold text-slate-900 tracking-tight font-heading">
               Team Workload & Execution Performance
-            </h3>
+            </h2>
             <Chip
               variant="soft"
               color="accent"
@@ -85,7 +85,7 @@ export const StaffWorkloadTable: React.FC<StaffWorkloadTableProps> = ({ workload
                             <PersonAvatar name={staff.fullName} size="sm" />
                             <div>
                               <div className="font-bold text-slate-900">{staff.fullName}</div>
-                              <div className="text-[11px] text-slate-400 font-mono">{staff.email}</div>
+                              <div className="text-[11px] text-slate-600 font-mono">{staff.email}</div>
                             </div>
                           </div>
                         </Table.Cell>
@@ -128,7 +128,7 @@ export const StaffWorkloadTable: React.FC<StaffWorkloadTableProps> = ({ workload
                               <span>{staff.overdueFollowups}</span>
                             </span>
                           ) : (
-                            <span className="text-slate-400 font-mono font-normal">0</span>
+                            <span className="text-slate-600 font-mono font-normal">0</span>
                           )}
                         </Table.Cell>
 

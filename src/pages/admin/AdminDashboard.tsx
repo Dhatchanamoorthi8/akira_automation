@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import { Button, Chip, Card, Input, Label } from '@heroui/react';
+import { Button, Chip, Card, Label, DatePicker, DateField, Calendar } from '@heroui/react';
+import { DateValue, parseDate } from '@internationalized/date';
 import { analyticsService } from '../../services/analyticsService';
 import { dashboardService } from '../../services/dashboardService';
 import {
@@ -39,6 +40,8 @@ export const AdminDashboard: React.FC = () => {
   const [selectedPreset, setSelectedPreset] = useState<DateRangePreset>('30d');
   const [customStart, setCustomStart] = useState<string>('');
   const [customEnd, setCustomEnd] = useState<string>('');
+  const [startDateValue, setStartDateValue] = useState<DateValue | null>(null);
+  const [endDateValue, setEndDateValue] = useState<DateValue | null>(null);
   const [showCustomPicker, setShowCustomPicker] = useState<boolean>(false);
 
   // Analytics Data
@@ -124,6 +127,20 @@ export const AdminDashboard: React.FC = () => {
 
   const handlePresetSelect = (preset: DateRangePreset) => {
     if (preset === 'custom') {
+      if (customStart && !startDateValue) {
+        try {
+          setStartDateValue(parseDate(customStart));
+        } catch {
+          // ignore parse error
+        }
+      }
+      if (customEnd && !endDateValue) {
+        try {
+          setEndDateValue(parseDate(customEnd));
+        } catch {
+          // ignore parse error
+        }
+      }
       setShowCustomPicker(true);
     } else {
       setShowCustomPicker(false);
@@ -133,7 +150,11 @@ export const AdminDashboard: React.FC = () => {
 
   const handleApplyCustomRange = (e: React.FormEvent) => {
     e.preventDefault();
-    if (customStart && customEnd) {
+    const startStr = startDateValue ? startDateValue.toString() : customStart;
+    const endStr = endDateValue ? endDateValue.toString() : customEnd;
+    if (startStr && endStr) {
+      setCustomStart(startStr);
+      setCustomEnd(endStr);
       setSelectedPreset('custom');
       setShowCustomPicker(false);
     }
@@ -164,14 +185,14 @@ export const AdminDashboard: React.FC = () => {
                 <Chip.Label>Executive Intelligence</Chip.Label>
               </Chip>
             </div>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1 font-normal">
+            <p className="text-xs sm:text-sm text-slate-600 mt-1 font-normal">
               Precision metrology operations, RFQ pipeline, follow-up velocity, and staff performance
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5 self-start md:self-auto">
             {/* Date Range Selector Pills */}
-            <div className="inline-flex rounded-xl border border-slate-200/90 p-1 bg-white shadow-xs text-xs font-semibold">
+            <div className="flex items-center max-w-full overflow-x-auto no-scrollbar rounded-xl border border-slate-200/90 p-1 bg-white shadow-xs text-xs font-semibold">
               {(['today', '7d', '30d', '90d', 'year'] as DateRangePreset[]).map((p) => {
                 const isActive = selectedPreset === p && !showCustomPicker;
                 return (
@@ -181,7 +202,7 @@ export const AdminDashboard: React.FC = () => {
                     size="sm"
                     onPress={() => handlePresetSelect(p)}
                     onClick={() => handlePresetSelect(p)}
-                    className={`px-3 py-1.5 rounded-lg transition-all font-sans cursor-pointer ${
+                    className={`whitespace-nowrap shrink-0 px-3 py-1.5 rounded-lg transition-all font-sans cursor-pointer ${
                       isActive
                         ? 'bg-blue-600 text-white shadow-xs font-bold'
                         : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
@@ -196,7 +217,7 @@ export const AdminDashboard: React.FC = () => {
                 size="sm"
                 onPress={() => setShowCustomPicker(!showCustomPicker)}
                 onClick={() => setShowCustomPicker(!showCustomPicker)}
-                className={`px-3 py-1.5 rounded-lg transition-all font-sans cursor-pointer ${
+                className={`whitespace-nowrap shrink-0 px-3 py-1.5 rounded-lg transition-all font-sans cursor-pointer ${
                   selectedPreset === 'custom' || showCustomPicker
                     ? 'bg-blue-600 text-white shadow-xs font-bold'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
@@ -225,45 +246,199 @@ export const AdminDashboard: React.FC = () => {
           <Card className="p-4 bg-white border border-slate-200/90 rounded-2xl shadow-sm animate-in fade-in">
             <form
               onSubmit={handleApplyCustomRange}
-              className="flex flex-wrap items-center gap-3 text-xs"
+              className="flex flex-wrap items-end gap-3 text-xs"
             >
-              <div className="flex items-center gap-2">
-                <Label className="font-semibold text-slate-700 font-mono text-xs">Start Date:</Label>
-                <Input
-                  type="date"
-                  required
-                  value={customStart}
-                  onChange={(e) => setCustomStart(e.target.value)}
-                  className="px-3 py-1.5 border border-slate-200/90 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 font-sans text-xs"
-                />
+              <div className="min-w-[150px]">
+                <DatePicker
+                  isRequired
+                  value={startDateValue}
+                  onChange={(val) => {
+                    setStartDateValue(val);
+                    if (val) setCustomStart(val.toString());
+                  }}
+                  className="flex flex-col gap-1"
+                  aria-label="Filter Start Date"
+                >
+                  {() => (
+                    <>
+                      <Label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono">
+                        Start Date
+                      </Label>
+                      <DateField.Group
+                        fullWidth
+                        className="w-full h-9 px-2.5 py-1 text-xs border border-slate-200/90 rounded-xl focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500 bg-white font-mono flex items-center justify-between"
+                      >
+                        <DateField.Input className="flex items-center gap-0.5 text-xs">
+                          {(segment) => (
+                            <DateField.Segment
+                              segment={segment}
+                              className="px-0.5 rounded-xs outline-none focus:bg-blue-100 focus:text-blue-900"
+                            />
+                          )}
+                        </DateField.Input>
+                        <DateField.Suffix>
+                          <DatePicker.Trigger className="p-1 text-slate-400 hover:text-slate-600 rounded-md cursor-pointer transition-colors">
+                            <DatePicker.TriggerIndicator />
+                          </DatePicker.Trigger>
+                        </DateField.Suffix>
+                      </DateField.Group>
+                      <DatePicker.Popover className="bg-white rounded-2xl shadow-2xl border border-slate-200 p-3 z-50 flex flex-col gap-3">
+                        <Calendar aria-label="Start Date" className="w-full">
+                          <Calendar.Header className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
+                            <Calendar.YearPickerTrigger className="text-xs font-bold text-slate-800 flex items-center gap-1 cursor-pointer hover:text-blue-600">
+                              <Calendar.YearPickerTriggerHeading />
+                              <Calendar.YearPickerTriggerIndicator />
+                            </Calendar.YearPickerTrigger>
+                            <div className="flex items-center gap-1">
+                              <Calendar.NavButton
+                                slot="previous"
+                                className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
+                              />
+                              <Calendar.NavButton
+                                slot="next"
+                                className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
+                              />
+                            </div>
+                          </Calendar.Header>
+                          <Calendar.Grid className="w-full border-collapse">
+                            <Calendar.GridHeader>
+                              {(day) => (
+                                <Calendar.HeaderCell className="text-[11px] font-semibold text-slate-400 pb-1.5 text-center">
+                                  {day}
+                                </Calendar.HeaderCell>
+                              )}
+                            </Calendar.GridHeader>
+                            <Calendar.GridBody>
+                              {(date) => (
+                                <Calendar.Cell
+                                  date={date}
+                                  className="text-xs p-1 text-center rounded-lg cursor-pointer hover:bg-slate-100 data-[selected=true]:bg-blue-600 data-[selected=true]:text-white data-[disabled=true]:text-slate-300 data-[unavailable=true]:text-slate-300"
+                                />
+                              )}
+                            </Calendar.GridBody>
+                          </Calendar.Grid>
+                          <Calendar.YearPickerGrid className="w-full">
+                            <Calendar.YearPickerGridBody>
+                              {({ year }) => (
+                                <Calendar.YearPickerCell
+                                  year={year}
+                                  className="text-xs p-1.5 text-center rounded-lg cursor-pointer hover:bg-slate-100 data-[selected=true]:bg-blue-600 data-[selected=true]:text-white"
+                                />
+                              )}
+                            </Calendar.YearPickerGridBody>
+                          </Calendar.YearPickerGrid>
+                        </Calendar>
+                      </DatePicker.Popover>
+                    </>
+                  )}
+                </DatePicker>
               </div>
-              <div className="flex items-center gap-2">
-                <Label className="font-semibold text-slate-700 font-mono text-xs">End Date:</Label>
-                <Input
-                  type="date"
-                  required
-                  value={customEnd}
-                  onChange={(e) => setCustomEnd(e.target.value)}
-                  className="px-3 py-1.5 border border-slate-200/90 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 font-sans text-xs"
-                />
+
+              <div className="min-w-[150px]">
+                <DatePicker
+                  isRequired
+                  value={endDateValue}
+                  onChange={(val) => {
+                    setEndDateValue(val);
+                    if (val) setCustomEnd(val.toString());
+                  }}
+                  className="flex flex-col gap-1"
+                  aria-label="Filter End Date"
+                >
+                  {() => (
+                    <>
+                      <Label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono">
+                        End Date
+                      </Label>
+                      <DateField.Group
+                        fullWidth
+                        className="w-full h-9 px-2.5 py-1 text-xs border border-slate-200/90 rounded-xl focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500 bg-white font-mono flex items-center justify-between"
+                      >
+                        <DateField.Input className="flex items-center gap-0.5 text-xs">
+                          {(segment) => (
+                            <DateField.Segment
+                              segment={segment}
+                              className="px-0.5 rounded-xs outline-none focus:bg-blue-100 focus:text-blue-900"
+                            />
+                          )}
+                        </DateField.Input>
+                        <DateField.Suffix>
+                          <DatePicker.Trigger className="p-1 text-slate-400 hover:text-slate-600 rounded-md cursor-pointer transition-colors">
+                            <DatePicker.TriggerIndicator />
+                          </DatePicker.Trigger>
+                        </DateField.Suffix>
+                      </DateField.Group>
+                      <DatePicker.Popover className="bg-white rounded-2xl shadow-2xl border border-slate-200 p-3 z-50 flex flex-col gap-3">
+                        <Calendar aria-label="End Date" className="w-full">
+                          <Calendar.Header className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
+                            <Calendar.YearPickerTrigger className="text-xs font-bold text-slate-800 flex items-center gap-1 cursor-pointer hover:text-blue-600">
+                              <Calendar.YearPickerTriggerHeading />
+                              <Calendar.YearPickerTriggerIndicator />
+                            </Calendar.YearPickerTrigger>
+                            <div className="flex items-center gap-1">
+                              <Calendar.NavButton
+                                slot="previous"
+                                className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
+                              />
+                              <Calendar.NavButton
+                                slot="next"
+                                className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
+                              />
+                            </div>
+                          </Calendar.Header>
+                          <Calendar.Grid className="w-full border-collapse">
+                            <Calendar.GridHeader>
+                              {(day) => (
+                                <Calendar.HeaderCell className="text-[11px] font-semibold text-slate-400 pb-1.5 text-center">
+                                  {day}
+                                </Calendar.HeaderCell>
+                              )}
+                            </Calendar.GridHeader>
+                            <Calendar.GridBody>
+                              {(date) => (
+                                <Calendar.Cell
+                                  date={date}
+                                  className="text-xs p-1 text-center rounded-lg cursor-pointer hover:bg-slate-100 data-[selected=true]:bg-blue-600 data-[selected=true]:text-white data-[disabled=true]:text-slate-300 data-[unavailable=true]:text-slate-300"
+                                />
+                              )}
+                            </Calendar.GridBody>
+                          </Calendar.Grid>
+                          <Calendar.YearPickerGrid className="w-full">
+                            <Calendar.YearPickerGridBody>
+                              {({ year }) => (
+                                <Calendar.YearPickerCell
+                                  year={year}
+                                  className="text-xs p-1.5 text-center rounded-lg cursor-pointer hover:bg-slate-100 data-[selected=true]:bg-blue-600 data-[selected=true]:text-white"
+                                />
+                              )}
+                            </Calendar.YearPickerGridBody>
+                          </Calendar.YearPickerGrid>
+                        </Calendar>
+                      </DatePicker.Popover>
+                    </>
+                  )}
+                </DatePicker>
               </div>
-              <Button
-                type="submit"
-                variant="primary"
-                size="sm"
-                className="px-4 py-1.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-xs font-sans cursor-pointer"
-              >
-                Apply Filter
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onPress={() => setShowCustomPicker(false)}
-                className="px-3 py-1.5 text-slate-500 hover:text-slate-800 transition-colors font-sans cursor-pointer"
-              >
-                Cancel
-              </Button>
+
+              <div className="flex items-center gap-2 pb-0.5">
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="sm"
+                  className="h-9 px-4 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-xs font-sans cursor-pointer"
+                >
+                  Apply Filter
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onPress={() => setShowCustomPicker(false)}
+                  className="h-9 px-3 text-slate-500 hover:text-slate-800 transition-colors font-sans cursor-pointer"
+                >
+                  Cancel
+                </Button>
+              </div>
             </form>
           </Card>
         )}

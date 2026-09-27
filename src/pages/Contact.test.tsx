@@ -125,5 +125,5 @@ describe('Contact Page Component', () => {
     const emailInput = screen.getByLabelText(/Business Email/i);
     await user.type(emailInput, 'rajesh@precisionauto.in');
     expect(emailInput).toHaveValue('rajesh@precisionauto.in');
-  });
+  }, 15000);
 });

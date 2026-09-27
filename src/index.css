@@ -32,12 +32,38 @@
 }
 
 :root {
-  /* HeroUI semantic tokens mapped to Akira Industrial theme */
-  --accent: #0055A5;
-  --accent-foreground: #FFFFFF;
-  --primary: #0055A5;
-  --primary-foreground: #FFFFFF;
+  /* HeroUI v3 semantic tokens mapped to Akira Industrial theme */
+  --accent: oklch(0.468 0.165 251.6); /* #0055A5 Industrial Primary */
+  --accent-foreground: oklch(1 0 0); /* #FFFFFF */
+  --primary: var(--accent);
+  --primary-foreground: var(--accent-foreground);
+
+  --background: oklch(0.975 0.005 240); /* #F5F7F9 Industrial BG */
+  --foreground: oklch(0.18 0.03 250); /* #0F172A Industrial Text */
+
+  --surface: oklch(1 0 0); /* #FFFFFF */
+  --surface-foreground: var(--foreground);
+
+  --overlay: oklch(1 0 0); /* #FFFFFF */
+  --overlay-foreground: var(--foreground);
+
+  --muted: oklch(0.55 0.02 250); /* #334155 Industrial Muted */
+
+  --default: oklch(0.95 0.005 240); /* #F1F5F9 */
+  --default-foreground: var(--foreground);
+
+  --border: oklch(0.9 0.01 240); /* #E2E8F0 Industrial Border */
+  --separator: oklch(0.92 0.005 240);
+
+  --focus: var(--accent);
+  --link: var(--accent);
+
   --radius: 0.5rem;
+  --field-radius: 0.5rem;
+
+  --success: oklch(0.7 0.18 150);
+  --warning: oklch(0.75 0.16 75);
+  --danger: oklch(0.6 0.22 25);
 }
 
 @layer base {

@@ -127,7 +127,7 @@ export const AdminFollowups: React.FC = () => {
   const [completingFollowup, setCompletingFollowup] = useState<FollowupWithEnquiry | null>(null);
   const [outcomeNotes, setOutcomeNotes] = useState('');
   const [scheduleNext, setScheduleNext] = useState(false);
-  const [nextDate, setNextDate] = useState('');
+  const [nextDateValue, setNextDateValue] = useState<DateValue | null>(null);
   const [nextType, setNextType] = useState<FollowupType>('call');
   const [nextNotes, setNextNotes] = useState('');
   const [isSubmittingOutcome, setIsSubmittingOutcome] = useState(false);
@@ -296,11 +296,17 @@ export const AdminFollowups: React.FC = () => {
       return;
     }
 
-    if (scheduleNext && nextDate) {
+    if (scheduleNext && nextDateValue) {
+      const tz = getLocalTimeZone();
+      const scheduledAt =
+        'toDate' in nextDateValue && typeof (nextDateValue as any).toDate === 'function'
+          ? (nextDateValue as any).toDate(tz).toISOString()
+          : new Date(nextDateValue.toString()).toISOString();
+
       await followupService.scheduleNextFollowup(
         completingFollowup.id,
         completingFollowup.enquiry_id,
-        new Date(nextDate).toISOString(),
+        scheduledAt,
         nextType,
         nextNotes.trim() || undefined
       );
@@ -310,7 +316,7 @@ export const AdminFollowups: React.FC = () => {
     setCompletingFollowup(null);
     setOutcomeNotes('');
     setScheduleNext(false);
-    setNextDate('');
+    setNextDateValue(null);
     setNextNotes('');
     fetchFollowups();
   };
@@ -330,7 +336,7 @@ export const AdminFollowups: React.FC = () => {
     switch (type) {
       case 'call':
         return (
-          <Chip size="sm" variant="soft" color="default" className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+          <Chip size="sm" variant="soft" color="default" className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-blue-100 text-blue-900 border border-blue-200">
             <Phone className="w-3 h-3" /> Call
           </Chip>
         );
@@ -372,8 +378,8 @@ export const AdminFollowups: React.FC = () => {
     const styles: Record<string, string> = {
       urgent: 'bg-rose-50 text-rose-700 border-rose-200',
       high: 'bg-amber-50 text-amber-800 border-amber-200',
-      medium: 'bg-sky-50 text-sky-700 border-sky-200',
-      low: 'bg-slate-100 text-slate-600 border-slate-200',
+      medium: 'bg-sky-50 text-sky-800 border-sky-200',
+      low: 'bg-slate-100 text-slate-700 border-slate-200',
     };
     return (
       <Chip
@@ -404,7 +410,7 @@ export const AdminFollowups: React.FC = () => {
             <h1 className="text-xl sm:text-2xl font-bold text-slate-900 font-heading tracking-tight">
               CRM Follow-ups
             </h1>
-            <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+            <p className="text-xs text-slate-600 mt-1 leading-relaxed">
               Track customer calls, demos, quotations, and scheduled touchpoints.
             </p>
           </div>
@@ -706,14 +712,14 @@ export const AdminFollowups: React.FC = () => {
               <Table.ScrollContainer className="overflow-x-auto">
                 <Table.Content aria-label="CRM Follow-ups Data Table" className="w-full text-left text-xs min-w-[860px]">
                   {/* Table head */}
-                  <Table.Header className="border-b border-slate-100 bg-slate-50/60 text-[11px] font-semibold text-slate-500 font-mono uppercase tracking-wider">
-                    <Table.Column isRowHeader className="py-3.5 px-5">Customer</Table.Column>
-                    <Table.Column className="py-3.5 px-4">Type</Table.Column>
-                    <Table.Column className="py-3.5 px-4">Scheduled</Table.Column>
-                    <Table.Column className="py-3.5 px-4">Priority</Table.Column>
-                    <Table.Column className="py-3.5 px-4">Assigned</Table.Column>
-                    <Table.Column className="py-3.5 px-4">Notes / Outcome</Table.Column>
-                    <Table.Column className="py-3.5 px-4 text-right">Actions</Table.Column>
+                  <Table.Header className="border-b border-slate-100 bg-slate-50/60 text-[11px] font-semibold text-slate-700 font-mono uppercase tracking-wider">
+                    <Table.Column isRowHeader className="py-3.5 px-5 text-slate-700 font-semibold">Customer</Table.Column>
+                    <Table.Column className="py-3.5 px-4 text-slate-700 font-semibold">Type</Table.Column>
+                    <Table.Column className="py-3.5 px-4 text-slate-700 font-semibold">Scheduled</Table.Column>
+                    <Table.Column className="py-3.5 px-4 text-slate-700 font-semibold">Priority</Table.Column>
+                    <Table.Column className="py-3.5 px-4 text-slate-700 font-semibold">Assigned</Table.Column>
+                    <Table.Column className="py-3.5 px-4 text-slate-700 font-semibold">Notes / Outcome</Table.Column>
+                    <Table.Column className="py-3.5 px-4 text-right text-slate-700 font-semibold">Actions</Table.Column>
                   </Table.Header>
 
                   {/* Table body */}
@@ -728,11 +734,11 @@ export const AdminFollowups: React.FC = () => {
                           key={item.id}
                           className={`transition-colors group ${
                             overdue
-                              ? 'bg-rose-50/30 hover:bg-rose-50/50'
+                              ? 'bg-rose-50/40 hover:bg-rose-50/70'
                               : isCompleted
-                              ? 'opacity-80 hover:bg-slate-50/60'
+                              ? 'bg-emerald-50/20 hover:bg-emerald-50/40'
                               : isCancelled
-                              ? 'opacity-50 hover:bg-slate-50/40'
+                              ? 'bg-slate-50/60 hover:bg-slate-100/60'
                               : 'hover:bg-slate-50/60'
                           }`}
                         >
@@ -768,13 +774,13 @@ export const AdminFollowups: React.FC = () => {
                                   </span>
                                 )}
                                 {item.enquiry?.company && (
-                                  <div className="flex items-center gap-1 text-[11px] text-slate-500 mt-0.5">
+                                  <div className="flex items-center gap-1 text-[11px] text-slate-700 mt-0.5">
                                     <Building2 className="w-3 h-3 text-slate-400 shrink-0" />
                                     <span>{item.enquiry.company}</span>
                                   </div>
                                 )}
                                 {item.title && (
-                                  <div className="text-[11px] text-slate-500 mt-0.5 italic truncate max-w-[180px]">
+                                  <div className="text-[11px] text-slate-700 mt-0.5 italic truncate max-w-[180px]">
                                     {item.title}
                                   </div>
                                 )}
@@ -790,7 +796,7 @@ export const AdminFollowups: React.FC = () => {
                           {/* Scheduled */}
                           <Table.Cell className="py-3.5 px-4 whitespace-nowrap">
                             <div className="flex flex-col gap-1">
-                              <div className="flex items-center gap-1.5 text-[11px] text-slate-600 font-mono">
+                              <div className="flex items-center gap-1.5 text-[11px] text-slate-700 font-mono">
                                 <Clock className="w-3 h-3 text-slate-400 shrink-0" />
                                 <span>{formatDate(item.scheduled_at)}</span>
                               </div>
@@ -810,7 +816,7 @@ export const AdminFollowups: React.FC = () => {
                                   size="sm"
                                   variant="soft"
                                   color="default"
-                                  className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-600 text-white uppercase tracking-wide w-fit font-mono border-none"
+                                  className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-800 text-white uppercase tracking-wide w-fit font-mono border-none"
                                 >
                                   Completed
                                 </Chip>
@@ -820,7 +826,7 @@ export const AdminFollowups: React.FC = () => {
                                   size="sm"
                                   variant="soft"
                                   color="default"
-                                  className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-slate-500 text-white uppercase tracking-wide w-fit font-mono border-none"
+                                  className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-slate-600 text-white uppercase tracking-wide w-fit font-mono border-none"
                                 >
                                   Cancelled
                                 </Chip>
@@ -847,7 +853,7 @@ export const AdminFollowups: React.FC = () => {
                                 </span>
                               </div>
                             ) : (
-                              <Chip size="sm" variant="soft" color="default" className="text-slate-400 italic text-[11px] bg-slate-50 border border-slate-200/80">
+                              <Chip size="sm" variant="soft" color="default" className="text-slate-700 italic text-[11px] bg-slate-50 border border-slate-200/80">
                                 Unassigned
                               </Chip>
                             )}
@@ -864,7 +870,7 @@ export const AdminFollowups: React.FC = () => {
                                 {item.notes}
                               </p>
                             ) : (
-                              <span className="text-slate-400 italic text-[11px]">No notes</span>
+                              <span className="text-slate-600 italic text-[11px]">No notes</span>
                             )}
                           </Table.Cell>
 
@@ -973,168 +979,285 @@ export const AdminFollowups: React.FC = () => {
         )}
 
         {/* ── MODAL: Complete Follow-up ───────────────────────────────────── */}
-        {completingFollowup && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs" role="dialog" aria-modal="true" aria-labelledby="complete-followup-title">
-            <Card className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-150">
-              <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-100">
-                    <CheckCircle2 className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 id="complete-followup-title" className="font-bold text-slate-900 font-heading">Complete Follow-up</h3>
-                    <p className="text-xs text-slate-500">
-                      Record outcome for {completingFollowup.enquiry?.name || 'Customer'}
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  isIconOnly
-                  variant="ghost"
-                  size="sm"
-                  onPress={() => setCompletingFollowup(null)}
-                  onClick={() => setCompletingFollowup(null)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer min-w-0 h-auto"
-                  aria-label="Close dialog"
-                >
-                  <X className="w-5 h-5" />
-                </Button>
-              </div>
+        <Modal.Backdrop
+          isOpen={!!completingFollowup}
+          onOpenChange={(open) => {
+            if (!open) {
+              setCompletingFollowup(null);
+              setOutcomeError(null);
+            }
+          }}
+          variant="blur"
+          isDismissable
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-150"
+        >
+          <Modal.Container placement="center" className="w-full max-w-lg">
+            <Modal.Dialog
+              className="bg-white rounded-2xl p-6 shadow-2xl border border-slate-200 w-full overflow-hidden relative flex flex-col focus:outline-none animate-in zoom-in-95 duration-150"
+              aria-labelledby="complete-followup-title"
+            >
+              <Modal.CloseTrigger
+                onPress={() => setCompletingFollowup(null)}
+                className="absolute top-5 right-5 p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer transition-colors focus:outline-none"
+                aria-label="Close dialog"
+              >
+                <X className="w-5 h-5" />
+              </Modal.CloseTrigger>
 
-              <form onSubmit={handleCompleteSubmit} className="space-y-4 pt-4">
-                {outcomeError && (
-                  <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs">
-                    {outcomeError}
-                  </div>
-                )}
-
+              <Modal.Header className="flex items-center gap-3 pb-4 border-b border-slate-100">
+                <Modal.Icon className="p-2 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-100 shrink-0">
+                  <CheckCircle2 className="w-5 h-5" />
+                </Modal.Icon>
                 <div>
-                  <Label htmlFor="outcomeNotes" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono">
-                    Outcome &amp; Discussion Notes *
-                  </Label>
-                  <TextArea
-                    id="outcomeNotes"
-                    rows={3}
-                    required
-                    value={outcomeNotes}
-                    onChange={(e) => setOutcomeNotes(e.target.value)}
-                    placeholder="Summarize client response, key requirements discussed, or next agreements..."
-                    className="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none font-sans"
-                  />
-                </div>
-
-                <div className="p-3.5 bg-slate-50/70 border border-slate-200 rounded-xl space-y-3">
-                  <Checkbox
-                    id="scheduleNextCheck"
-                    isSelected={scheduleNext}
-                    onChange={setScheduleNext}
-                    className="cursor-pointer"
+                  <Modal.Heading
+                    id="complete-followup-title"
+                    className="font-bold text-slate-900 font-heading text-base leading-snug"
                   >
-                    <Checkbox.Content className="flex items-center gap-2">
-                      <Checkbox.Control className="w-4 h-4 rounded border border-slate-300 flex items-center justify-center data-[selected=true]:bg-blue-600 data-[selected=true]:border-blue-600 transition-colors">
-                        <Checkbox.Indicator />
-                      </Checkbox.Control>
-                      <span className="text-xs font-bold text-slate-800">
-                        Schedule Next Follow-up with this customer
-                      </span>
-                    </Checkbox.Content>
-                  </Checkbox>
+                    Complete Follow-up
+                  </Modal.Heading>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Record outcome for {completingFollowup?.enquiry?.name || 'Customer'}
+                  </p>
+                </div>
+              </Modal.Header>
 
-                  {scheduleNext && (
-                    <div className="space-y-3 pt-2 border-t border-slate-200">
-                      <div className="grid grid-cols-2 gap-2">
-                        <div>
-                          <Label htmlFor="nextDate" className="block text-xs font-medium text-slate-600 mb-1 font-mono">
-                            Date &amp; Time *
-                          </Label>
-                          <Input
-                            id="nextDate"
-                            type="datetime-local"
-                            required={scheduleNext}
-                            value={nextDate}
-                            onChange={(e) => setNextDate(e.target.value)}
-                            className="w-full px-2.5 py-1.5 text-xs border border-slate-200 rounded-xl font-mono bg-white"
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="nextType" className="block text-xs font-medium text-slate-600 mb-1 font-mono">
-                            Type
-                          </Label>
-                          <Select
-                            id="nextType"
-                            selectedKey={nextType}
-                            onSelectionChange={(key) => setNextType(String(key) as FollowupType)}
-                            className="w-full"
-                            aria-label="Next follow-up type"
-                          >
-                            <Select.Trigger className="w-full h-8 px-2.5 py-1.5 text-xs border border-slate-200 rounded-xl bg-white font-sans flex items-center justify-between">
-                              <Select.Value className="text-xs font-medium text-slate-800 capitalize truncate" />
-                              <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
-                            </Select.Trigger>
-                            <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[130px]">
-                              <ListBox className="outline-none space-y-0.5">
-                                {[
-                                  { key: 'call', label: 'Call' },
-                                  { key: 'email', label: 'Email' },
-                                  { key: 'meeting', label: 'Meeting' },
-                                  { key: 'demo', label: 'Demo' },
-                                  { key: 'quotation', label: 'Quotation' },
-                                  { key: 'other', label: 'Other' },
-                                ].map((item) => (
-                                  <ListBox.Item
-                                    key={item.key}
-                                    id={item.key}
-                                    textValue={item.label}
-                                    className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-blue-50 data-[selected=true]:text-blue-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
-                                  >
-                                    {item.label}
-                                  </ListBox.Item>
-                                ))}
-                              </ListBox>
-                            </Select.Popover>
-                          </Select>
-                        </div>
-                      </div>
-                      <div>
-                        <Label htmlFor="nextNotes" className="block text-xs font-medium text-slate-600 mb-1 font-mono">
-                          Next Agenda / Notes
-                        </Label>
-                        <Input
-                          id="nextNotes"
-                          type="text"
-                          value={nextNotes}
-                          onChange={(e) => setNextNotes(e.target.value)}
-                          placeholder="e.g. Send formal quote revision #2"
-                          className="w-full px-2.5 py-1.5 text-xs border border-slate-200 rounded-xl font-sans bg-white"
-                        />
-                      </div>
+              <Modal.Body className="pt-4 overflow-visible">
+                <Form onSubmit={handleCompleteSubmit} className="space-y-4">
+                  {outcomeError && (
+                    <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs flex items-center gap-2">
+                      <AlertTriangle className="w-4 h-4 shrink-0 text-rose-600" />
+                      <span>{outcomeError}</span>
                     </div>
                   )}
-                </div>
 
-                <div className="flex items-center justify-end gap-2.5 pt-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onPress={() => setCompletingFollowup(null)}
-                    className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer border-slate-200"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    type="submit"
-                    isDisabled={isSubmittingOutcome}
-                    className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-semibold hover:bg-emerald-700 transition-colors shadow-2xs cursor-pointer border-none"
-                  >
-                    {isSubmittingOutcome ? 'Saving...' : 'Save & Mark Complete'}
-                  </Button>
-                </div>
-              </form>
-            </Card>
-          </div>
-        )}
+                  <div>
+                    <Label htmlFor="outcomeNotes" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono">
+                      Outcome &amp; Discussion Notes <span className="text-rose-500">*</span>
+                    </Label>
+                    <TextArea
+                      id="outcomeNotes"
+                      rows={3}
+                      required
+                      value={outcomeNotes}
+                      onChange={(e) => setOutcomeNotes(e.target.value)}
+                      placeholder="Summarize client response, key requirements discussed, or next agreements..."
+                      className="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none font-sans bg-white"
+                    />
+                  </div>
+
+                  <div className="p-3.5 bg-slate-50/70 border border-slate-200 rounded-xl space-y-3">
+                    <Checkbox
+                      id="scheduleNextCheck"
+                      isSelected={scheduleNext}
+                      onChange={(checked) => {
+                        setScheduleNext(checked);
+                        if (checked && !nextDateValue) {
+                          try {
+                            const tz = getLocalTimeZone();
+                            setNextDateValue(now(tz).add({ days: 3 }));
+                          } catch {}
+                        }
+                      }}
+                      className="cursor-pointer"
+                    >
+                      <Checkbox.Content className="flex items-center gap-2">
+                        <Checkbox.Control className="w-4 h-4 rounded border border-slate-300 flex items-center justify-center data-[selected=true]:bg-blue-600 data-[selected=true]:border-blue-600 transition-colors">
+                          <Checkbox.Indicator />
+                        </Checkbox.Control>
+                        <span className="text-xs font-bold text-slate-800">
+                          Schedule Next Follow-up with this customer
+                        </span>
+                      </Checkbox.Content>
+                    </Checkbox>
+
+                    {scheduleNext && (
+                      <div className="space-y-3 pt-2 border-t border-slate-200">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <DatePicker
+                              isRequired
+                              granularity="minute"
+                              hourCycle={12}
+                              value={nextDateValue}
+                              onChange={setNextDateValue}
+                              className="w-full flex flex-col gap-1"
+                              aria-label="Next Follow-up Date and Time"
+                            >
+                              {({ state }) => (
+                                <>
+                                  <Label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono">
+                                    Next Date &amp; Time
+                                  </Label>
+                                  <DateField.Group
+                                    fullWidth
+                                    className="w-full h-9 px-2.5 py-1.5 text-xs border border-slate-200 rounded-xl focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500 bg-white font-mono flex items-center justify-between"
+                                  >
+                                    <DateField.Input className="flex items-center gap-0.5 text-xs">
+                                      {(segment) => (
+                                        <DateField.Segment
+                                          segment={segment}
+                                          className="px-0.5 rounded-xs outline-none focus:bg-blue-100 focus:text-blue-900"
+                                        />
+                                      )}
+                                    </DateField.Input>
+                                    <DateField.Suffix>
+                                      <DatePicker.Trigger className="p-1 text-slate-400 hover:text-slate-600 rounded-md cursor-pointer transition-colors">
+                                        <DatePicker.TriggerIndicator />
+                                      </DatePicker.Trigger>
+                                    </DateField.Suffix>
+                                  </DateField.Group>
+                                  <DatePicker.Popover className="bg-white rounded-2xl shadow-2xl border border-slate-200 p-3 z-50 flex flex-col gap-3">
+                                    <Calendar aria-label="Next Follow-up Date" className="w-full">
+                                      <Calendar.Header className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
+                                        <Calendar.YearPickerTrigger className="text-xs font-bold text-slate-800 flex items-center gap-1 cursor-pointer hover:text-blue-600">
+                                          <Calendar.YearPickerTriggerHeading />
+                                          <Calendar.YearPickerTriggerIndicator />
+                                        </Calendar.YearPickerTrigger>
+                                        <div className="flex items-center gap-1">
+                                          <Calendar.NavButton
+                                            slot="previous"
+                                            className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
+                                          />
+                                          <Calendar.NavButton
+                                            slot="next"
+                                            className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
+                                          />
+                                        </div>
+                                      </Calendar.Header>
+                                      <Calendar.Grid className="w-full border-collapse">
+                                        <Calendar.GridHeader>
+                                          {(day) => (
+                                            <Calendar.HeaderCell className="text-[11px] font-semibold text-slate-400 pb-1.5 text-center">
+                                              {day}
+                                            </Calendar.HeaderCell>
+                                          )}
+                                        </Calendar.GridHeader>
+                                        <Calendar.GridBody>
+                                          {(date) => (
+                                            <Calendar.Cell
+                                              date={date}
+                                              className="text-xs p-1 text-center rounded-lg cursor-pointer hover:bg-slate-100 data-[selected=true]:bg-blue-600 data-[selected=true]:text-white data-[disabled=true]:text-slate-300 data-[unavailable=true]:text-slate-300"
+                                            />
+                                          )}
+                                        </Calendar.GridBody>
+                                      </Calendar.Grid>
+                                      <Calendar.YearPickerGrid className="w-full">
+                                        <Calendar.YearPickerGridBody>
+                                          {({ year }) => (
+                                            <Calendar.YearPickerCell
+                                              year={year}
+                                              className="text-xs p-1.5 text-center rounded-lg cursor-pointer hover:bg-slate-100 data-[selected=true]:bg-blue-600 data-[selected=true]:text-white"
+                                            />
+                                          )}
+                                        </Calendar.YearPickerGridBody>
+                                      </Calendar.YearPickerGrid>
+                                    </Calendar>
+                                    <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+                                      <span className="font-semibold text-slate-600 font-mono">Time</span>
+                                      <TimeField
+                                        aria-label="Next Follow-up Time"
+                                        granularity="minute"
+                                        hourCycle={12}
+                                        value={state.timeValue}
+                                        onChange={(v) => { if (v) state.setTimeValue(v); }}
+                                      >
+                                        <TimeField.Group className="px-2 py-1 border border-slate-200 rounded-lg bg-slate-50 flex items-center font-mono text-xs">
+                                          <TimeField.Input className="flex items-center gap-0.5">
+                                            {(segment) => (
+                                              <TimeField.Segment
+                                                segment={segment}
+                                                className="px-0.5 rounded-xs outline-none focus:bg-blue-100 focus:text-blue-900"
+                                              />
+                                            )}
+                                          </TimeField.Input>
+                                        </TimeField.Group>
+                                      </TimeField>
+                                    </div>
+                                  </DatePicker.Popover>
+                                </>
+                              )}
+                            </DatePicker>
+                          </div>
+                          <div>
+                            <Label htmlFor="nextType" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono">
+                              Activity Type
+                            </Label>
+                            <Select
+                              id="nextType"
+                              selectedKey={nextType}
+                              onSelectionChange={(key) => setNextType(String(key) as FollowupType)}
+                              className="w-full"
+                              aria-label="Next follow-up type"
+                            >
+                              <Select.Trigger className="w-full h-9 px-3 py-2 text-xs border border-slate-200 rounded-xl bg-white font-sans flex items-center justify-between focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500">
+                                <Select.Value className="text-xs font-medium text-slate-800 capitalize truncate" />
+                                <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
+                              </Select.Trigger>
+                              <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[130px]">
+                                <ListBox className="outline-none space-y-0.5">
+                                  {[
+                                    { key: 'call', label: 'Call' },
+                                    { key: 'email', label: 'Email' },
+                                    { key: 'meeting', label: 'Meeting' },
+                                    { key: 'demo', label: 'Demo' },
+                                    { key: 'quotation', label: 'Quotation' },
+                                    { key: 'other', label: 'Other' },
+                                  ].map((item) => (
+                                    <ListBox.Item
+                                      key={item.key}
+                                      id={item.key}
+                                      textValue={item.label}
+                                      className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-blue-50 data-[selected=true]:text-blue-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                                    >
+                                      {item.label}
+                                    </ListBox.Item>
+                                  ))}
+                                </ListBox>
+                              </Select.Popover>
+                            </Select>
+                          </div>
+                        </div>
+                        <div>
+                          <Label htmlFor="nextNotes" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono">
+                            Next Agenda / Notes
+                          </Label>
+                          <Input
+                            id="nextNotes"
+                            type="text"
+                            value={nextNotes}
+                            onChange={(e) => setNextNotes(e.target.value)}
+                            placeholder="e.g. Send formal quote revision #2"
+                            className="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl font-sans bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onPress={() => setCompletingFollowup(null)}
+                      className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer border-slate-200"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      type="submit"
+                      isDisabled={isSubmittingOutcome}
+                      className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-semibold hover:bg-emerald-700 transition-colors shadow-2xs cursor-pointer border-none"
+                    >
+                      {isSubmittingOutcome ? 'Saving...' : 'Save & Mark Complete'}
+                    </Button>
+                  </div>
+                </Form>
+              </Modal.Body>
+            </Modal.Dialog>
+          </Modal.Container>
+        </Modal.Backdrop>
 
         {/* ── MODAL: Quick Schedule Follow-up ─────────────────────────────── */}
         <Modal.Backdrop
@@ -1240,7 +1363,7 @@ export const AdminFollowups: React.FC = () => {
                         {({ state }) => (
                           <>
                             <Label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono">
-                              Date &amp; Time <span className="text-rose-500">*</span>
+                              Date &amp; Time
                             </Label>
                             <DateField.Group
                               fullWidth

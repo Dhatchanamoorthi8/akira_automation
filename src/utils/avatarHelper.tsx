@@ -72,7 +72,8 @@ export const PersonAvatar: React.FC<PersonAvatarProps> = ({
     <div className={`${sizeClasses} rounded-full overflow-hidden shrink-0 bg-gray-100 border border-gray-200/80 shadow-2xs ${className}`}>
       <img
         src={avatarUrl}
-        alt={name}
+        alt=""
+        aria-hidden="true"
         onError={() => setImageError(true)}
         className="w-full h-full object-cover rounded-full"
         loading="lazy"

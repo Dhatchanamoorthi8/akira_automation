@@ -80,9 +80,9 @@ export const RecentEnquiries: React.FC<RecentEnquiriesProps> = ({ enquiries, isL
         <div className="p-5 sm:px-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-base font-bold text-slate-900 tracking-tight font-heading">
+              <h2 className="text-base font-bold text-slate-900 tracking-tight font-heading">
                 Recent Inbound Enquiries
-              </h3>
+              </h2>
               <Chip
                 variant="soft"
                 color="default"
@@ -112,8 +112,8 @@ export const RecentEnquiries: React.FC<RecentEnquiriesProps> = ({ enquiries, isL
 
             <div className="min-w-[130px]">
               <Select
-                value={statusFilter}
-                onChange={(val) => setStatusFilter((val as string) || 'all')}
+                selectedKey={statusFilter}
+                onSelectionChange={(key) => setStatusFilter(key ? String(key) : 'all')}
                 className="w-full"
                 aria-label="Filter by enquiry status"
               >
@@ -178,7 +178,14 @@ export const RecentEnquiries: React.FC<RecentEnquiriesProps> = ({ enquiries, isL
             <div className="hidden md:block overflow-x-auto">
               <Table className="w-full">
                 <Table.ScrollContainer>
-                  <Table.Content aria-label="Recent Inbound Enquiries" className="w-full text-left text-xs min-w-[700px]">
+                  <Table.Content
+                    aria-label="Recent Inbound Enquiries"
+                    onRowAction={(key) => {
+                      const enq = filteredEnquiries.find((e) => e.id === key);
+                      if (enq) handleRowClick(enq);
+                    }}
+                    className="w-full text-left text-xs min-w-[700px]"
+                  >
                     <Table.Header className="bg-slate-50/80 text-slate-500 uppercase font-bold text-[10px] tracking-wider border-b border-slate-100 font-mono">
                       <Table.Column isRowHeader className="py-3 px-6">Customer</Table.Column>
                       <Table.Column className="py-3 px-6">Company</Table.Column>
@@ -193,6 +200,8 @@ export const RecentEnquiries: React.FC<RecentEnquiriesProps> = ({ enquiries, isL
                         return (
                           <Table.Row
                             key={enq.id}
+                            id={enq.id}
+                            onAction={() => handleRowClick(enq)}
                             className="hover:bg-slate-50/70 transition-colors group cursor-pointer"
                             onClick={() => handleRowClick(enq)}
                           >
@@ -207,7 +216,7 @@ export const RecentEnquiries: React.FC<RecentEnquiriesProps> = ({ enquiries, isL
                                   <div className="font-bold text-slate-900 group-hover/user:text-blue-600 transition-colors">
                                     {enq.name}
                                   </div>
-                                  <div className="text-[11px] text-slate-400 font-mono">
+                                  <div className="text-[11px] text-slate-600 font-mono">
                                     {enq.email}
                                   </div>
                                 </div>

@@ -36,9 +36,9 @@ export const RecentActivity: React.FC<RecentActivityProps> = ({ logs, isLoading 
       {/* Header */}
       <div className="flex items-center justify-between pb-3 border-b border-slate-100">
         <div>
-          <h3 className="text-base font-bold text-slate-900 tracking-tight font-heading">
+          <h2 className="text-base font-bold text-slate-900 tracking-tight font-heading">
             System & Audit Activity
-          </h3>
+          </h2>
           <p className="text-xs text-slate-500 mt-0.5">
             Immutable operation log across catalogue and CRM
           </p>
@@ -78,7 +78,7 @@ export const RecentActivity: React.FC<RecentActivityProps> = ({ logs, isLoading 
                   <p className="font-semibold text-slate-800 truncate">
                     {log.description || log.action.replace(/_/g, ' ')}
                   </p>
-                  <span className="text-[10px] text-slate-400 font-mono">
+                  <span className="text-[10px] text-slate-600 font-mono">
                     {formatRelativeTime(log.created_at)}
                   </span>
                 </div>

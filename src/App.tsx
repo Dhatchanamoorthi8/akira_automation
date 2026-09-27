@@ -60,11 +60,12 @@ const ScrollToTop: React.FC = () => {
 const AppShell: React.FC = () => {
   const { pathname } = useLocation();
   const isPortalRoute = pathname.startsWith('/admin') || pathname.startsWith('/staff');
+  const MainTag = isPortalRoute ? 'div' : 'main';
 
   return (
     <div className="min-h-screen flex flex-col bg-industrial-bg w-full">
       {!isPortalRoute && <Header />}
-      <main className="flex-grow w-full">
+      <MainTag className="flex-grow w-full">
         <ErrorBoundary>
           <Suspense fallback={<PageLoader />}>
             <Routes>
@@ -127,7 +128,7 @@ const AppShell: React.FC = () => {
             </Routes>
           </Suspense>
         </ErrorBoundary>
-      </main>
+      </MainTag>
       {!isPortalRoute && (
         <>
           <Footer />

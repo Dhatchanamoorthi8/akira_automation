@@ -131,7 +131,7 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
             className="w-full pl-9 pr-16 py-1.5 bg-slate-50 hover:bg-slate-100/80 border border-slate-200 rounded-xl text-xs text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-industrial-primary/20 cursor-pointer transition-colors"
           />
           <div className="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none z-10">
-            <Kbd className="inline-flex items-center px-1.5 py-0.5 border border-slate-200 rounded bg-white text-[10px] font-mono text-slate-400">
+            <Kbd className="inline-flex items-center px-1.5 py-0.5 border border-slate-200 rounded bg-white text-[10px] font-mono text-slate-600">
               ⌘ K
             </Kbd>
           </div>

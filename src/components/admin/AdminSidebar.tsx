@@ -210,7 +210,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
                   <span className="text-xs font-bold text-industrial-dark font-heading block leading-tight tracking-tight truncate">
                     {company.name}
                   </span>
-                  <span className="text-[10px] font-mono text-slate-400 block tracking-wider uppercase truncate">
+                  <span className="text-[10px] font-mono text-slate-600 block tracking-wider uppercase truncate">
                     Admin Console
                   </span>
                 </div>
@@ -264,9 +264,9 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
           {navGroups.map((group) => (
             <div key={group.title} className="space-y-1.5">
               {!collapsed ? (
-                <h3 className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 font-mono">
+                <h2 className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-600 font-mono">
                   {group.title}
-                </h3>
+                </h2>
               ) : (
                 <div className="w-6 mx-auto border-t border-slate-200 my-2" />
               )}

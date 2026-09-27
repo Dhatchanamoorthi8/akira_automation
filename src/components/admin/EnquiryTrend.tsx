@@ -88,9 +88,9 @@ export const EnquiryTrend: React.FC<EnquiryTrendProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 min-w-0">
         <div className="min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="text-base font-bold text-slate-900 tracking-tight truncate font-heading">
+            <h2 className="text-base font-bold text-slate-900 tracking-tight truncate font-heading">
               {title}
-            </h3>
+            </h2>
             {badgeLabel && (
               <Chip
                 variant="soft"
@@ -147,7 +147,7 @@ export const EnquiryTrend: React.FC<EnquiryTrendProps> = ({
           <div className="relative h-56 flex flex-col justify-between pointer-events-none">
             {yTicks.map((tick, idx) => (
               <div key={idx} className="flex items-center w-full min-w-0">
-                <span className="w-8 text-[11px] font-mono font-semibold text-slate-400 text-right pr-2 shrink-0">
+                <span className="w-8 text-[11px] font-mono font-semibold text-slate-600 text-right pr-2 shrink-0">
                   {tick}
                 </span>
                 <div className="w-full border-b border-dashed border-slate-200" />
@@ -231,7 +231,7 @@ export const EnquiryTrend: React.FC<EnquiryTrendProps> = ({
                   </div>
 
                   {/* X-Axis Label */}
-                  <span className="text-[10px] font-medium text-slate-500 mt-2 truncate max-w-full text-center block px-0.5 font-mono">
+                  <span className="text-[10px] font-medium text-slate-600 mt-2 truncate max-w-full text-center block px-0.5 font-mono">
                     {item.label}
                   </span>
                 </div>

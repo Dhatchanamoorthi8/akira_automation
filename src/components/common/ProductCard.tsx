@@ -21,7 +21,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const { openEnquiry } = useEnquiry();
   const { openImageViewer } = useImageViewer();
   const highlightCount = variant === 'featured' ? 2 : 3;
-  const HeadingTag = variant === 'featured' ? 'h3' : 'h2';
 
   const handleImageClick = () => {
     openImageViewer({
@@ -30,7 +29,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       category: product.category,
       description: product.description,
       productSlug: product.slug,
-      badge: "Factory Verified"
+      badge: 'Factory Verified',
     });
   };
 
@@ -42,7 +41,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       >
         <div className="flex flex-col flex-1">
           {/* Image Area with Click to View Option */}
-          <div 
+          <div
             onClick={handleImageClick}
             className="relative h-52 sm:h-56 bg-slate-50 overflow-hidden flex items-center justify-center p-5 border-b border-slate-100 cursor-pointer group/img shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-industrial-primary"
             title="Click to view full-resolution image"
@@ -69,14 +68,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             />
             <div className="absolute top-3 left-3 z-10">
               <Chip
-                variant="soft"
-                color="default"
+                variant="secondary"
                 size="sm"
                 className="bg-white/95 text-industrial-dark shadow-subtle border border-slate-200 backdrop-blur-sm"
               >
-                <Chip.Label className="text-xs font-bold uppercase tracking-wider font-mono">
+                <span className="text-xs font-bold uppercase tracking-wider font-mono">
                   {product.category}
-                </Chip.Label>
+                </span>
               </Chip>
             </div>
 
@@ -89,19 +87,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             </div>
           </div>
 
-          {/* Content */}
-          <div className="p-5 sm:p-6 flex flex-col flex-1 space-y-3">
-            <HeadingTag className="text-base font-bold text-slate-900 font-heading group-hover:text-industrial-primary transition-colors leading-snug min-h-[2.75rem] sm:min-h-[3rem] line-clamp-2">
+          {/* Card Header with HeroUI v3 Compound Title and Description */}
+          <Card.Header className="p-5 sm:p-6 pb-2 flex flex-col space-y-2">
+            <Card.Title className="text-base font-bold text-slate-900 font-heading group-hover:text-industrial-primary transition-colors leading-snug min-h-[2.75rem] sm:min-h-[3rem] line-clamp-2">
               <Link to={`/products/${product.slug}`} className="line-clamp-2">
                 {product.title}
               </Link>
-            </HeadingTag>
+            </Card.Title>
 
             <Card.Description className="text-xs sm:text-sm text-slate-700 font-medium line-clamp-2 leading-relaxed min-h-[2.5rem]">
               {product.description}
             </Card.Description>
+          </Card.Header>
 
-            {/* Highlights List */}
+          {/* Card Content with Highlights */}
+          <Card.Content className="px-5 sm:px-6 py-2 flex-1 flex flex-col justify-end">
             <div className="pt-2.5 mt-auto space-y-1.5 border-t border-slate-100 min-h-[3.5rem] flex flex-col justify-center">
               {product.highlights.slice(0, highlightCount).map((h, i) => (
                 <div key={i} className="flex items-start gap-2 text-xs text-slate-800 font-medium">
@@ -110,24 +110,25 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 </div>
               ))}
             </div>
-          </div>
+          </Card.Content>
         </div>
 
-        {/* Card Actions */}
-        <Card.Footer className="p-5 sm:p-6 pt-0 border-t border-slate-100 flex items-center justify-between gap-3 mt-auto">
+        {/* Card Footer with HeroUI Button */}
+        <Card.Footer className="p-5 sm:p-6 pt-3 border-t border-slate-100 flex items-center justify-between gap-3 mt-auto">
           <Link
             to={`/products/${product.slug}`}
-            className="button button--ghost button--sm inline-flex items-center gap-1.5 text-xs font-bold text-industrial-primary hover:text-industrial-hover transition-colors group/link min-h-[44px] py-1 p-0"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-industrial-primary hover:text-industrial-hover transition-colors group/link min-h-[44px] py-1"
           >
             <Eye className="w-3.5 h-3.5" />
             <span>Specifications</span>
             <ArrowRight className="w-3 h-3 transition-transform duration-200 group-hover/link:translate-x-1" />
           </Link>
+
           <Button
             variant="secondary"
             size="sm"
             onPress={() => openEnquiry(product.title)}
-            className="px-4 py-2 min-h-[44px] rounded-lg bg-slate-100 hover:bg-industrial-primary hover:text-white text-xs font-semibold text-industrial-dark transition-colors border border-slate-200/80 font-sans"
+            className="px-4 py-2 min-h-[44px] rounded-lg bg-slate-100 hover:bg-industrial-primary hover:text-white text-xs font-semibold text-industrial-dark transition-colors border border-slate-200/80 font-sans cursor-pointer"
           >
             Enquire Now
           </Button>
@@ -136,4 +137,3 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     </SpotlightCard>
   );
 };
-

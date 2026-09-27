@@ -70,9 +70,9 @@ export const EnquiryStatusSummary: React.FC<EnquiryStatusSummaryProps> = ({
       {/* Header matching visual reference */}
       <div className="flex items-center justify-between pb-3 border-b border-slate-100 min-w-0">
         <div className="min-w-0">
-          <h3 className="text-base font-bold text-slate-900 tracking-tight truncate font-heading">
+          <h2 className="text-base font-bold text-slate-900 tracking-tight truncate font-heading">
             {title}
-          </h3>
+          </h2>
           <p className="text-xs text-slate-500 mt-0.5 truncate">
             RFQ stage & deal progression breakdown
           </p>
@@ -142,7 +142,7 @@ export const EnquiryStatusSummary: React.FC<EnquiryStatusSummaryProps> = ({
               <span className="text-2xl font-extrabold tracking-tight text-slate-900 font-mono">
                 {total}
               </span>
-              <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider font-mono">
+              <span className="text-[10px] uppercase font-bold text-slate-600 tracking-wider font-mono">
                 TOTAL RFQS
               </span>
             </div>
@@ -174,7 +174,7 @@ export const EnquiryStatusSummary: React.FC<EnquiryStatusSummaryProps> = ({
                   </div>
                   <div className="flex items-center gap-1 font-mono text-[11px] shrink-0">
                     <span className="font-bold text-slate-900">{item.count}</span>
-                    <span className="text-slate-400 text-[10px]">({item.percentage}%)</span>
+                    <span className="text-slate-600 text-[10px]">({item.percentage}%)</span>
                   </div>
                 </div>
               );

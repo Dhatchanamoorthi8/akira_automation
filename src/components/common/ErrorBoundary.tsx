@@ -1,4 +1,6 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
+import { Card, Button } from '@heroui/react';
+import { AlertTriangle, Home, RotateCcw } from 'lucide-react';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -51,50 +53,44 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
       return (
         <div className="min-h-[60vh] flex items-center justify-center p-6 bg-industrial-bg">
-          <div className="max-w-md w-full bg-white rounded-2xl p-8 border border-slate-200 shadow-card text-center space-y-5">
-            <div className="w-14 h-14 rounded-full bg-red-50 text-tolerance-red border border-red-200 flex items-center justify-center mx-auto">
-              <svg 
-                className="w-7 h-7" 
-                fill="none" 
-                viewBox="0 0 24 24" 
-                stroke="currentColor"
-                strokeWidth={2}
-                aria-hidden="true"
-              >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" 
-                />
-              </svg>
-            </div>
+          <Card
+            variant="default"
+            className="max-w-md w-full bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-card text-center space-y-4"
+          >
+            <Card.Header className="flex flex-col items-center gap-3 p-0">
+              <div className="w-14 h-14 rounded-full bg-red-50 text-tolerance-red border border-red-200 flex items-center justify-center mx-auto shadow-sm">
+                <AlertTriangle className="w-7 h-7 text-tolerance-red" aria-hidden="true" />
+              </div>
 
-            <div className="space-y-2">
-              <h2 className="text-xl font-bold font-heading text-industrial-dark">
-                Something went wrong
-              </h2>
-              <p className="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed">
-                An unexpected display error occurred while rendering this page. Our technical team has been notified.
-              </p>
-            </div>
+              <div className="space-y-1 text-center">
+                <Card.Title className="text-xl font-bold font-heading text-industrial-dark">
+                  Something went wrong
+                </Card.Title>
+                <Card.Description className="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed">
+                  An unexpected display error occurred while rendering this page. Our technical team has been notified.
+                </Card.Description>
+              </div>
+            </Card.Header>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-              <button
-                type="button"
-                onClick={this.handleReset}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-industrial-primary hover:bg-industrial-hover text-white text-xs font-semibold shadow-sm transition-colors"
+            <Card.Footer className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4 border-t border-slate-100 p-0">
+              <Button
+                variant="primary"
+                onPress={this.handleReset}
+                className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-industrial-primary hover:bg-industrial-hover text-white text-xs font-semibold shadow-sm transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer"
               >
-                Try Again
-              </button>
-              <button
-                type="button"
-                onClick={this.handleGoHome}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-industrial-dark text-xs font-semibold transition-colors"
+                <RotateCcw className="w-3.5 h-3.5 text-white" />
+                <span>Try Again</span>
+              </Button>
+              <Button
+                variant="secondary"
+                onPress={this.handleGoHome}
+                className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-industrial-dark text-xs font-semibold transition-colors inline-flex items-center justify-center gap-1.5 border border-slate-200/80 cursor-pointer"
               >
-                Go to Home
-              </button>
-            </div>
-          </div>
+                <Home className="w-3.5 h-3.5 text-slate-600" />
+                <span>Go to Home</span>
+              </Button>
+            </Card.Footer>
+          </Card>
         </div>
       );
     }

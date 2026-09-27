@@ -21,6 +21,7 @@ import { companyData } from '../../data/company';
 import { useCompanyEmails } from '../../hooks/useCompanyEmails';
 import { solutions } from '../../data/solutions';
 import { productSummaries } from '../../data/productSummaries';
+import { Button } from '@heroui/react';
 
 export const Header: React.FC = () => {
   const emails = useCompanyEmails();
@@ -349,15 +350,15 @@ export const Header: React.FC = () => {
 
           {/* Right Action: Enquire Now Button */}
           <div className="hidden lg:flex items-center gap-3">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => openEnquiry()}
-              className="btn-primary"
+            <Button
+              variant="primary"
+              size="md"
+              onPress={() => openEnquiry()}
+              className="btn-primary cursor-pointer"
             >
               <span>Enquire Now</span>
               <ArrowRight className="w-4 h-4" />
-            </motion.button>
+            </Button>
           </div>
 
           {/* Mobile Menu Toggle Button */}
@@ -554,17 +555,18 @@ export const Header: React.FC = () => {
               </div>
 
               <div className="pt-5 border-t border-slate-200 space-y-3">
-                <button
-                  type="button"
-                  onClick={() => {
+                <Button
+                  variant="primary"
+                  size="md"
+                  onPress={() => {
                     setMobileMenuOpen(false);
                     openEnquiry();
                   }}
-                  className="w-full btn-primary text-center"
+                  className="w-full btn-primary text-center justify-center cursor-pointer"
                 >
                   <span>Enquire Now</span>
                   <ArrowRight className="w-4 h-4" />
-                </button>
+                </Button>
                 <div className="text-xs text-slate-700 font-medium space-y-1 bg-slate-50 p-3 rounded-lg border border-slate-100">
                   <p className="font-bold text-slate-900 uppercase tracking-wider text-[10px] font-sans">Direct Lines & Email:</p>
                   <a href={`tel:${companyData.phones[0].replace(/\s+/g, '')}`} className="font-sans tabular-nums text-industrial-dark hover:text-industrial-primary block">

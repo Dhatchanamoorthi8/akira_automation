@@ -37,9 +37,9 @@ export const UpcomingFollowups: React.FC<UpcomingFollowupsProps> = ({ followups,
       {/* Header */}
       <div className="flex items-center justify-between pb-3 border-b border-slate-100">
         <div>
-          <h3 className="text-base font-bold text-slate-900 tracking-tight font-heading">
+          <h2 className="text-base font-bold text-slate-900 tracking-tight font-heading">
             Upcoming Follow-ups
-          </h3>
+          </h2>
           <p className="text-xs text-slate-500 mt-0.5">
             Scheduled client appointments and technical calls
           </p>
@@ -81,9 +81,9 @@ export const UpcomingFollowups: React.FC<UpcomingFollowupsProps> = ({ followups,
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-baseline justify-between gap-1">
-                    <h4 className="text-xs font-bold text-slate-900 truncate">
+                    <h3 className="text-xs font-bold text-slate-900 truncate">
                       {customerName}
-                    </h4>
+                    </h3>
                     <span className="text-[10px] font-mono font-semibold text-blue-600 shrink-0 bg-blue-50 px-2 py-0.5 rounded border border-blue-200/60">
                       {formatDateTime(item.scheduled_at)}
                     </span>

@@ -438,7 +438,7 @@ export const AdminEnquiries: React.FC = () => {
                 People
               </Chip>
             </div>
-            <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+            <p className="text-xs text-slate-600 mt-1 leading-relaxed">
               Manage inbound measurement requirements, customer requests for
               quotations, and active sales leads.
             </p>
@@ -648,7 +648,7 @@ export const AdminEnquiries: React.FC = () => {
                   </span>
                 </Button>
               )}
-              <span className="hidden sm:inline-block text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-500 border border-slate-200/80">
+              <span className="hidden sm:inline-block text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200/80">
                 {paginatedEnquiries.length} of {totalCount}
               </span>
             </div>
@@ -716,11 +716,16 @@ export const AdminEnquiries: React.FC = () => {
               <Table.ScrollContainer className="overflow-x-auto">
                 <Table.Content
                   aria-label="Customer Enquiries and RFQs Data Grid"
+                  onRowAction={(key) => {
+                    const found = enquiries.find((e) => e.id === String(key));
+                    if (found) setSelectedDossierEnquiry(found);
+                  }}
                   className="w-full text-left text-xs min-w-[840px]"
                 >
                   {/* Table Header */}
                   <Table.Header className="sticky top-0 z-10 bg-surface-secondary">
-                    <Table.Column isRowHeader className="py-3.5 pl-5 pr-3 w-10">
+                    <Table.Column className="py-3.5 pl-5 pr-3 w-10">
+                      <span className="sr-only">Select All</span>
                       <Checkbox
                         slot="selection"
                         isSelected={
@@ -739,6 +744,7 @@ export const AdminEnquiries: React.FC = () => {
                     {activeColumns.map((col) => (
                       <Table.Column
                         key={col.key}
+                        isRowHeader={col.key === "name"}
                         className={`py-3.5 px-4 font-semibold text-slate-600 whitespace-nowrap ${
                           col.key === "status" ? "text-center" : ""
                         }`}
@@ -747,7 +753,7 @@ export const AdminEnquiries: React.FC = () => {
                       </Table.Column>
                     ))}
 
-                    <Table.Column className="py-3.5 px-4 text-right w-16">
+                    <Table.Column className="py-3.5 px-4 text-right w-16 font-semibold text-slate-600 whitespace-nowrap">
                       Action
                     </Table.Column>
                   </Table.Header>
@@ -767,6 +773,8 @@ export const AdminEnquiries: React.FC = () => {
                       return (
                         <Table.Row
                           key={enq.id}
+                          id={enq.id}
+                          onAction={() => setSelectedDossierEnquiry(enq)}
                           onClick={() => setSelectedDossierEnquiry(enq)}
                           className={`transition-colors cursor-pointer group ${
                             isRowSelected
@@ -821,7 +829,7 @@ export const AdminEnquiries: React.FC = () => {
                                           {enq.name}
                                         </span>
                                         {enq.source && (
-                                          <span className="text-[10px] text-slate-400 font-mono capitalize">
+                                          <span className="text-[10px] text-slate-600 font-mono capitalize">
                                             via {enq.source.replace("_", " ")}
                                           </span>
                                         )}
@@ -881,7 +889,7 @@ export const AdminEnquiries: React.FC = () => {
                                         {requirementDisplay}
                                       </span>
                                       {enq.product_category && (
-                                        <span className="text-[10px] text-slate-400 font-mono">
+                                        <span className="text-[10px] text-slate-600 font-mono">
                                           {enq.product_category}
                                         </span>
                                       )}
@@ -926,7 +934,7 @@ export const AdminEnquiries: React.FC = () => {
                                         size="sm"
                                         variant="soft"
                                         color="default"
-                                        className="text-[11px] font-medium text-slate-500 bg-slate-100 border border-slate-200"
+                                        className="text-[11px] font-medium text-slate-700 bg-slate-100 border border-slate-200"
                                       >
                                         Unassigned
                                       </Chip>
@@ -980,7 +988,7 @@ export const AdminEnquiries: React.FC = () => {
             </Table>
 
             {/* Pagination Console */}
-            <div className="border-t border-slate-100 px-6 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-500 bg-slate-50/40">
+            <div className="border-t border-slate-100 px-6 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-700 bg-slate-50/40">
               <div className="font-mono text-[11px]">
                 Page{" "}
                 <span className="font-bold text-slate-700">{currentPage}</span>{" "}

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Spinner } from '@heroui/react';
 import { company } from '../../config/company';
 
 export const PageLoader: React.FC = () => {
@@ -9,13 +10,8 @@ export const PageLoader: React.FC = () => {
       aria-live="polite"
       aria-label="Loading page content"
     >
-      <div className="relative w-12 h-12">
-        {/* Outer subtle ring */}
-        <div className="w-12 h-12 rounded-full border-2 border-slate-200" />
-        {/* Spinning industrial ring */}
-        <div className="absolute top-0 left-0 w-12 h-12 rounded-full border-2 border-industrial-primary border-t-transparent animate-spin" />
-        {/* Center dot */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-industrial-primary" />
+      <div className="flex items-center justify-center">
+        <Spinner size="lg" color="accent" className="text-industrial-primary" />
       </div>
 
       <div className="text-center space-y-1">
