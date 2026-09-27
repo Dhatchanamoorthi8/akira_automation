@@ -24,12 +24,12 @@ export const StaffWorkloadTable: React.FC<StaffWorkloadTableProps> = ({ workload
   }
 
   return (
-    <Card className="bg-white border border-slate-200/90 rounded-2xl shadow-xs overflow-hidden">
+    <Card className="bg-white border border-slate-200/70 rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.02),0_4px_16px_rgba(0,0,0,0.02)] overflow-hidden font-sans">
       {/* Header */}
       <div className="p-5 sm:px-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-bold text-slate-900 tracking-tight font-heading">
+            <h2 className="text-base font-bold text-slate-900 tracking-tight font-sans">
               Team Workload & Execution Performance
             </h2>
             <Chip

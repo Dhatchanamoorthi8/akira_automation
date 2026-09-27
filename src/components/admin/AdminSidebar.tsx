@@ -1,25 +1,22 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
-  LayoutDashboard,
-  Mail,
-  CalendarClock,
-  Package,
+  Home,
+  Clock,
+  Bell,
+  Box,
+  CircleDollarSign,
+  Users,
+  CalendarCheck,
   Image as ImageIcon,
-  History,
+  FileText,
+  Search,
   LogOut,
   X,
-  Shield,
   ExternalLink,
-  Users,
-  ChevronsLeft,
-  ChevronsRight,
-  MailCheck,
-  Clock,
 } from 'lucide-react';
 import { useAuth } from '../../auth/useAuth';
-import { company } from '../../config/company';
-import { Drawer, Button } from '@heroui/react';
+import { Drawer, Button, Avatar } from '@heroui/react';
 
 interface AdminSidebarProps {
   isMobileOpen: boolean;
@@ -37,46 +34,65 @@ interface NavItemConfig {
 }
 
 interface NavGroupConfig {
-  title: string;
+  title?: string;
   items: NavItemConfig[];
 }
 
 const navGroups: NavGroupConfig[] = [
   {
-    title: 'Overview',
+    title: '', // Top unsectioned items
     items: [
       {
-        name: 'Dashboard',
+        name: 'Home',
         to: '/admin/dashboard',
-        icon: LayoutDashboard,
+        icon: Home,
         isImplemented: true,
+      },
+      {
+        name: 'Up next',
+        to: '/admin/followups',
+        icon: Clock,
+        isImplemented: true,
+      },
+      {
+        name: 'Notifications',
+        to: '/admin/activity',
+        icon: Bell,
+        isImplemented: true,
+        badge: '2',
       },
     ],
   },
   {
-    title: 'Customer & RFQs',
+    title: 'Records',
     items: [
       {
         name: 'Enquiries',
         to: '/admin/enquiries',
-        icon: Mail,
+        icon: Box,
         isImplemented: true,
       },
       {
-        name: 'Follow-ups',
-        to: '/admin/followups',
-        icon: CalendarClock,
+        name: 'Products',
+        to: '/admin/products',
+        icon: CircleDollarSign,
+        isImplemented: true,
+      },
+      {
+        name: 'Staff & Users',
+        to: '/admin/users',
+        icon: Users,
         isImplemented: true,
       },
     ],
   },
   {
-    title: 'Catalogue',
+    title: 'Resources',
     items: [
       {
-        name: 'Products',
-        to: '/admin/products',
-        icon: Package,
+        name: 'Attendance',
+        to: '/admin/attendance',
+        icon: CalendarCheck,
         isImplemented: true,
       },
       {
@@ -85,38 +101,10 @@ const navGroups: NavGroupConfig[] = [
         icon: ImageIcon,
         isImplemented: true,
       },
-    ],
-  },
-  {
-    title: 'Audit & Personnel',
-    items: [
-      {
-        name: 'Staff & Users',
-        to: '/admin/users',
-        icon: Users,
-        isImplemented: true,
-      },
-      {
-        name: 'Attendance & Tracking',
-        to: '/admin/attendance',
-        icon: Clock,
-        isImplemented: true,
-      },
-      {
-        name: 'Activity Logs',
-        to: '/admin/activity',
-        icon: History,
-        isImplemented: true,
-      },
-    ],
-  },
-  {
-    title: 'Configuration',
-    items: [
       {
         name: 'Email Settings',
         to: '/admin/settings/email',
-        icon: MailCheck,
+        icon: FileText,
         isImplemented: true,
       },
     ],
@@ -129,9 +117,11 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
   isCollapsed: propIsCollapsed,
   onToggleCollapse: propOnToggleCollapse,
 }) => {
-  const { signOut } = useAuth();
+  const { signOut, profile, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const displayName = profile?.full_name || user?.email?.split('@')[0] || 'Jordan Ellis';
 
   const [internalCollapsed, setInternalCollapsed] = useState<boolean>(() => {
     try {
@@ -142,22 +132,13 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
   });
 
   const isCollapsed = propIsCollapsed !== undefined ? propIsCollapsed : internalCollapsed;
-
-  const toggleCollapse = () => {
-    if (propOnToggleCollapse) {
-      propOnToggleCollapse();
-    } else {
-      setInternalCollapsed((prev) => {
-        const next = !prev;
-        try {
-          localStorage.setItem('akira_admin_sidebar_collapsed', String(next));
-        } catch {}
-        return next;
-      });
-    }
-  };
+  void propOnToggleCollapse;
+  void setInternalCollapsed;
 
   const isPathActive = (to: string) => {
+    if (to === '/admin/dashboard') {
+      return location.pathname === '/admin/dashboard' || location.pathname === '/admin' || location.pathname === '/admin/';
+    }
     if (to === '/admin/products') {
       return (
         (location.pathname === '/admin/products' || location.pathname.startsWith('/admin/products/')) &&
@@ -176,6 +157,9 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
     if (to === '/admin/users') {
       return location.pathname === '/admin/users' || location.pathname.startsWith('/admin/users/');
     }
+    if (to === '/admin/attendance') {
+      return location.pathname === '/admin/attendance' || location.pathname.startsWith('/admin/attendance/');
+    }
     if (to === '/admin/activity') {
       return location.pathname === '/admin/activity' || location.pathname.startsWith('/admin/activity/');
     }
@@ -189,58 +173,43 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
     const collapsed = !isMobile && isCollapsed;
 
     return (
-      <div className="flex flex-col h-full bg-white border-r border-slate-200">
-        {/* Top Brand Bar */}
-        <div
-          className={`h-16 border-b border-slate-200 flex items-center shrink-0 bg-slate-50/50 ${
-            collapsed ? 'justify-center px-2' : 'justify-between px-4'
-          }`}
-        >
+      <div className="flex flex-col h-full bg-white border-r border-slate-200/70 select-none">
+        {/* Top Workspace Header (HeroUI Team style) */}
+        <div className={`p-3 border-b border-slate-100 flex items-center shrink-0 ${collapsed ? 'flex-col justify-center gap-2' : 'justify-between gap-2'}`}>
           {!collapsed ? (
             <>
               <Link
                 to="/admin/dashboard"
                 onClick={onCloseMobile}
-                className="flex items-center gap-2.5 group overflow-hidden min-w-0"
+                className="flex items-center gap-2.5 px-2 py-1.5 rounded-xl hover:bg-slate-50 transition-colors flex-1 min-w-0"
               >
-                <div className="w-8 h-8 rounded-lg bg-industrial-dark text-white flex items-center justify-center font-bold text-sm shadow-sm group-hover:bg-slate-800 transition-colors shrink-0">
-                  <Shield className="w-4 h-4 text-sky-400" />
+                <div className="w-8 h-8 rounded-xl bg-[#FDE8EC] border border-[#FECDD3] flex items-center justify-center text-[#FB7185] shrink-0 font-bold text-xs shadow-2xs">
+                  <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                  </svg>
                 </div>
-                <div className="min-w-0">
-                  <span className="text-xs font-bold text-industrial-dark font-heading block leading-tight tracking-tight truncate">
-                    {company.name}
-                  </span>
-                  <span className="text-[10px] font-mono text-slate-600 block tracking-wider uppercase truncate">
-                    Admin Console
+                <div className="min-w-0 flex-1">
+                  <span className="text-sm font-semibold text-slate-900 block leading-tight truncate">
+                    HeroUI Team
                   </span>
                 </div>
               </Link>
 
-              {!isMobile && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  isIconOnly
-                  onPress={toggleCollapse}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors flex items-center justify-center shrink-0 ml-1 min-h-[36px] min-w-[36px] cursor-pointer"
-                  aria-label="Collapse sidebar"
-                >
-                  <ChevronsLeft className="w-4 h-4" />
-                </Button>
-              )}
-            </>
-          ) : (
-            <div className="flex items-center justify-center">
               <Button
                 variant="ghost"
                 size="sm"
                 isIconOnly
-                onPress={toggleCollapse}
-                className="p-2 rounded-lg text-slate-500 hover:text-industrial-dark hover:bg-slate-100 transition-colors flex items-center justify-center min-h-[40px] min-w-[40px] cursor-pointer"
-                aria-label="Expand sidebar"
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors min-h-[32px] min-w-[32px] flex items-center justify-center cursor-pointer"
+                aria-label="Search"
               >
-                <ChevronsRight className="w-5 h-5 text-slate-700" />
+                <Search className="w-4 h-4" />
               </Button>
+            </>
+          ) : (
+            <div className="w-8 h-8 rounded-xl bg-[#FDE8EC] border border-[#FECDD3] flex items-center justify-center text-[#FB7185] shrink-0 font-bold text-xs shadow-2xs mx-auto">
+              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+              </svg>
             </div>
           )}
 
@@ -251,7 +220,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
               size="sm"
               isIconOnly
               onPress={onCloseMobile}
-              className="lg:hidden p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
+              className="lg:hidden p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 min-h-[38px] min-w-[38px] flex items-center justify-center cursor-pointer"
               aria-label="Close navigation sidebar"
             >
               <X className="w-5 h-5" />
@@ -259,54 +228,25 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
           )}
         </div>
 
-        {/* Navigation Groups */}
-        <div className={`flex-1 overflow-y-auto ${collapsed ? 'px-2 py-4 space-y-4' : 'px-4 py-5 space-y-6'}`}>
-          {navGroups.map((group) => (
-            <div key={group.title} className="space-y-1.5">
-              {!collapsed ? (
-                <h2 className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-600 font-mono">
-                  {group.title}
-                </h2>
-              ) : (
-                <div className="w-6 mx-auto border-t border-slate-200 my-2" />
+        {/* Navigation Items */}
+        <div className={`flex-1 overflow-y-auto ${collapsed ? 'px-2 py-3 space-y-3' : 'px-3 py-3 space-y-4'}`}>
+          {navGroups.map((group, groupIdx) => (
+            <div key={group.title || `group-${groupIdx}`} className="space-y-1">
+              {!collapsed && group.title && (
+                <div className="px-3 pt-2 pb-1">
+                  <span className="text-xs font-semibold text-slate-400 block tracking-normal">
+                    {group.title}
+                  </span>
+                </div>
               )}
-              <div className="space-y-0.5">
+
+              {collapsed && group.title && (
+                <div className="w-6 mx-auto border-t border-slate-100 my-1.5" />
+              )}
+
+              <div className="space-y-1">
                 {group.items.map((item) => {
                   const Icon = item.icon;
-
-                  if (!item.isImplemented) {
-                    if (collapsed) {
-                      return (
-                        <div
-                          key={item.name}
-                          className="flex items-center justify-center w-10 h-10 mx-auto rounded-lg text-xs font-medium text-slate-300 cursor-not-allowed select-none"
-                          title={`${item.name} (Coming soon)`}
-                        >
-                          <Icon className="w-4 h-4 text-slate-300" />
-                          <span className="sr-only">{item.name}</span>
-                        </div>
-                      );
-                    }
-
-                    return (
-                      <div
-                        key={item.name}
-                        className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-slate-400 cursor-not-allowed opacity-75 select-none min-h-[44px]"
-                        title={`${item.name} module is coming in Phase 3`}
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <Icon className="w-4 h-4 text-slate-400" />
-                          <span>{item.name}</span>
-                        </div>
-                        {item.badge && (
-                          <span className="text-[9px] font-mono font-medium px-1.5 py-0.5 rounded bg-slate-100 text-slate-400 border border-slate-200">
-                            {item.badge}
-                          </span>
-                        )}
-                      </div>
-                    );
-                  }
-
                   const active = isPathActive(item.to);
 
                   if (collapsed) {
@@ -315,15 +255,15 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
                         key={item.name}
                         to={item.to}
                         title={item.name}
-                        className={`flex items-center justify-center w-10 h-10 mx-auto rounded-lg text-xs font-semibold transition-all relative ${
+                        className={`flex items-center justify-center w-10 h-10 mx-auto rounded-2xl text-xs font-semibold transition-all relative ${
                           active
-                            ? 'bg-industrial-primary text-white shadow-subtle'
-                            : 'text-slate-600 hover:text-industrial-dark hover:bg-slate-100/80'
+                            ? 'bg-[#FDE8EC] text-[#FB7185] shadow-2xs'
+                            : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/70'
                         }`}
                       >
-                        <Icon className={`w-4 h-4 ${active ? 'text-white' : 'text-slate-500'}`} />
+                        <Icon className={`w-4 h-4 ${active ? 'text-[#FB7185]' : 'text-slate-500'}`} />
                         {item.badge && (
-                          <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-industrial-primary ring-2 ring-white" />
+                          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white" />
                         )}
                         <span className="sr-only">{item.name}</span>
                       </Link>
@@ -335,24 +275,22 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
                       key={item.name}
                       to={item.to}
                       onClick={onCloseMobile}
-                      className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-all min-h-[44px] ${
+                      className={`flex items-center justify-between px-3 py-2 rounded-2xl text-sm transition-colors ${
                         active
-                          ? 'bg-industrial-primary text-white shadow-subtle'
-                          : 'text-slate-600 hover:text-industrial-dark hover:bg-slate-100/80'
+                          ? 'bg-[#FDE8EC] text-slate-900 font-semibold'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 font-medium'
                       }`}
                     >
-                      <div className="flex items-center gap-2.5">
-                        <Icon className={`w-4 h-4 ${active ? 'text-white' : 'text-slate-500'}`} />
-                        <span>{item.name}</span>
+                      <div className="flex items-center gap-3">
+                        <Icon
+                          className={`w-4 h-4 ${
+                            active ? 'text-[#FB7185]' : 'text-slate-500'
+                          } transition-colors`}
+                        />
+                        <span className="text-sm">{item.name}</span>
                       </div>
                       {item.badge && (
-                        <span
-                          className={`text-[9px] font-mono font-medium px-1.5 py-0.5 rounded ${
-                            active
-                              ? 'bg-white/20 text-white'
-                              : 'bg-slate-100 text-slate-600 border border-slate-200'
-                          }`}
-                        >
+                        <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
                           {item.badge}
                         </span>
                       )}
@@ -364,40 +302,78 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
           ))}
         </div>
 
-        {/* Footer / Quick Actions */}
-        <div
-          className={`border-t border-slate-200 bg-slate-50/50 shrink-0 ${
-            collapsed ? 'p-2 flex flex-col items-center gap-2' : 'p-4 space-y-2'
-          }`}
-        >
-          <Link
-            to="/"
-            title="Public Website"
-            className={`flex items-center rounded-lg text-xs font-medium text-slate-600 hover:text-industrial-dark hover:bg-slate-100 transition-colors ${
-              collapsed ? 'w-10 h-10 justify-center' : 'gap-2 px-3 py-2 min-h-[44px]'
-            }`}
-          >
-            <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
-            {!collapsed && <span>Public Website</span>}
-            {collapsed && <span className="sr-only">Public Website</span>}
-          </Link>
+        {/* Footer / Jordan Ellis style User Profile Card */}
+        <div className={`border-t border-slate-100 bg-white shrink-0 ${collapsed ? 'p-2 flex flex-col items-center gap-2' : 'p-3 flex items-center justify-between gap-2'}`}>
+          {!collapsed ? (
+            <>
+              <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                <Avatar
+                  size="sm"
+                  className="w-8 h-8 rounded-xl bg-[#E2EBD8] text-[#4A6B34] border border-[#C8DAC0] shrink-0 font-semibold text-xs flex items-center justify-center shadow-2xs"
+                >
+                  <Avatar.Fallback>
+                    {displayName.split(' ').map((n: string) => n[0]).join('').slice(0, 2) || 'JE'}
+                  </Avatar.Fallback>
+                </Avatar>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold text-slate-900 truncate">
+                    {displayName}
+                  </p>
+                </div>
+              </div>
 
-          <Button
-            variant="ghost"
-            aria-label="Sign Out"
-            onPress={async () => {
-              onCloseMobile();
-              await signOut();
-              navigate('/admin/login');
-            }}
-            className={`flex items-center rounded-lg text-xs font-medium text-rose-600 hover:bg-rose-50 transition-colors text-left cursor-pointer ${
-              collapsed ? 'w-10 h-10 justify-center p-0' : 'w-full gap-2 px-3 py-2 min-h-[44px] justify-start'
-            }`}
-          >
-            <LogOut className="w-3.5 h-3.5 text-rose-500 shrink-0" />
-            {!collapsed && <span>Sign Out</span>}
-            {collapsed && <span className="sr-only">Sign Out</span>}
-          </Button>
+              <div className="flex items-center gap-0.5 shrink-0">
+                <Link
+                  to="/"
+                  title="Public Website"
+                  className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+                  aria-label="Public Website"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </Link>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  isIconOnly
+                  onPress={async () => {
+                    onCloseMobile();
+                    await signOut();
+                    navigate('/admin/login');
+                  }}
+                  className="p-1.5 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer min-h-[30px] min-w-[30px]"
+                  aria-label="Sign Out"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                </Button>
+              </div>
+            </>
+          ) : (
+            <div className="flex flex-col items-center gap-2">
+              <Avatar
+                size="sm"
+                className="w-8 h-8 rounded-xl bg-[#E2EBD8] text-[#4A6B34] border border-[#C8DAC0] font-semibold text-xs flex items-center justify-center cursor-pointer shadow-2xs"
+                title={displayName}
+              >
+                <Avatar.Fallback>
+                  {displayName.split(' ').map((n: string) => n[0]).join('').slice(0, 2) || 'JE'}
+                </Avatar.Fallback>
+              </Avatar>
+              <Button
+                variant="ghost"
+                size="sm"
+                isIconOnly
+                onPress={async () => {
+                  onCloseMobile();
+                  await signOut();
+                  navigate('/admin/login');
+                }}
+                className="p-1.5 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer min-h-[28px] min-w-[28px]"
+                aria-label="Sign Out"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -407,8 +383,8 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
     <>
       {/* Desktop Sidebar (Fixed Left) */}
       <aside
-        className={`hidden lg:block h-screen sticky top-0 shrink-0 z-20 transition-all duration-300 ease-in-out ${
-          isCollapsed ? 'w-16' : 'w-64'
+        className={`hidden lg:block h-screen sticky top-0 shrink-0 z-20 transition-all duration-200 ease-in-out ${
+          isCollapsed ? 'w-16' : 'w-60'
         }`}
       >
         {renderNavContent(false)}
@@ -431,3 +407,5 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
     </>
   );
 };
+
+export default AdminSidebar;

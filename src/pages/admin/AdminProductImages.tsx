@@ -235,7 +235,7 @@ export const AdminProductImages: React.FC = () => {
         description="Dedicated product image and CAD diagram manager for Akira Precision Automation precision metrology catalogue."
       />
 
-      <div className="space-y-4 max-w-7xl mx-auto pb-12 font-sans text-gray-900">
+      <div className="space-y-4 w-full pb-12 font-sans text-gray-900">
         {/* Page Title & Top Actions */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
           <div>
@@ -395,9 +395,11 @@ export const AdminProductImages: React.FC = () => {
                         onChange={toggleSelectAll}
                         aria-label="Select all rows"
                       >
-                        <Checkbox.Control>
-                          <Checkbox.Indicator />
-                        </Checkbox.Control>
+                        <Checkbox.Content>
+                          <Checkbox.Control>
+                            <Checkbox.Indicator />
+                          </Checkbox.Control>
+                        </Checkbox.Content>
                       </Checkbox>
                     </Table.Column>
                     <Table.Column className="py-3.5 px-4 w-16">Primary Cover</Table.Column>
@@ -433,9 +435,11 @@ export const AdminProductImages: React.FC = () => {
                               isSelected={isRowSelected}
                               aria-label={`Select ${prod.name}`}
                             >
-                              <Checkbox.Control>
-                                <Checkbox.Indicator />
-                              </Checkbox.Control>
+                              <Checkbox.Content>
+                                <Checkbox.Control>
+                                  <Checkbox.Indicator />
+                                </Checkbox.Control>
+                              </Checkbox.Content>
                             </Checkbox>
                           </Table.Cell>
 

@@ -233,7 +233,7 @@ export const AdminActivity: React.FC = () => {
         description="Immutable audit trail of enquiry lifecycle events, CRM touchpoints, auth, and catalogue changes."
       />
 
-      <div className="space-y-4 max-w-7xl mx-auto pb-12 font-sans text-gray-900">
+      <div className="space-y-4 w-full pb-12 font-sans text-gray-900">
         {/* Header Row */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
           <div>

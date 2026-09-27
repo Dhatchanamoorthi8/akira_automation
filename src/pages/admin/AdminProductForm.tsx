@@ -1,35 +1,48 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import {
   ArrowLeft,
   Save,
   Trash2,
   AlertCircle,
   Check,
-  Plus,
-  X,
-  Package,
   Sliders,
   FileText,
   Layers,
   Sparkles,
   Loader2,
   ExternalLink,
-} from 'lucide-react';
-import { Button, Modal, Input, TextArea, Select, ListBox, Label, Checkbox } from '@heroui/react';
-import { CreateProductInput, UpdateProductInput, ProductImage } from '../../types/database';
-import { productService } from '../../services/productService';
-import { ProductImageManager } from '../../components/admin/ProductImageManager';
-import { PageLoader } from '../../components/common/PageLoader';
-import { SEOHead } from '../../components/layout/SEOHead';
-
+} from "lucide-react";
+import {
+  Button,
+  Modal,
+  Input,
+  TextArea,
+  Select,
+  ListBox,
+  Label,
+  Checkbox,
+  TextField,
+  InputGroup,
+  Card,
+} from "@heroui/react";
+import {
+  CreateProductInput,
+  UpdateProductInput,
+  ProductImage,
+} from "../../types/database";
+import { productService } from "../../services/productService";
+import { ProductImageManager } from "../../components/admin/ProductImageManager";
+import { PageLoader } from "../../components/common/PageLoader";
+import { SEOHead } from "../../components/layout/SEOHead";
+import { Box, Plus, TrashBin } from "@gravity-ui/icons";
 const KNOWN_CATEGORIES = [
-  'Air Gauging',
-  'Electronic Gauging',
-  'Multi-Gauging Systems',
-  'Special Gauging Fixtures',
-  'Setting Masters & Standards',
-  'Pneumatic & Electronic Displays',
+  "Air Gauging",
+  "Electronic Gauging",
+  "Multi-Gauging Systems",
+  "Special Gauging Fixtures",
+  "Setting Masters & Standards",
+  "Pneumatic & Electronic Displays",
 ];
 
 export const AdminProductForm: React.FC = () => {
@@ -43,27 +56,28 @@ export const AdminProductForm: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   // Form Fields
-  const [name, setName] = useState<string>('');
-  const [slug, setSlug] = useState<string>('');
-  const [isSlugManuallyEdited, setIsSlugManuallyEdited] = useState<boolean>(false);
-  const [category, setCategory] = useState<string>('Air Gauging');
-  const [customCategory, setCustomCategory] = useState<string>('');
-  const [tagline, setTagline] = useState<string>('');
-  const [shortDescription, setShortDescription] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
+  const [name, setName] = useState<string>("");
+  const [slug, setSlug] = useState<string>("");
+  const [isSlugManuallyEdited, setIsSlugManuallyEdited] =
+    useState<boolean>(false);
+  const [category, setCategory] = useState<string>("Air Gauging");
+  const [customCategory, setCustomCategory] = useState<string>("");
+  const [tagline, setTagline] = useState<string>("");
+  const [shortDescription, setShortDescription] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
   const [active, setActive] = useState<boolean>(true);
   const [featured, setFeatured] = useState<boolean>(false);
 
   // Lists
-  const [highlightsText, setHighlightsText] = useState<string>('');
-  const [featuresText, setFeaturesText] = useState<string>('');
-  const [applicationsText, setApplicationsText] = useState<string>('');
+  const [highlightsText, setHighlightsText] = useState<string>("");
+  const [featuresText, setFeaturesText] = useState<string>("");
+  const [applicationsText, setApplicationsText] = useState<string>("");
 
   // Specifications Key-Value Pairs
   const [specs, setSpecs] = useState<{ key: string; value: string }[]>([
-    { key: 'Diameter Range', value: '' },
-    { key: 'Accuracy / Repeatability', value: '' },
-    { key: 'Calibration Standard', value: '' },
+    { key: "Diameter Range", value: "" },
+    { key: "Accuracy / Repeatability", value: "" },
+    { key: "Calibration Standard", value: "" },
   ]);
 
   // Images (in Edit mode)
@@ -85,7 +99,7 @@ export const AdminProductForm: React.FC = () => {
       setIsLoading(false);
 
       if (result.error || !result.product) {
-        setError(result.error || 'Product could not be loaded.');
+        setError(result.error || "Product could not be loaded.");
         return;
       }
 
@@ -94,22 +108,22 @@ export const AdminProductForm: React.FC = () => {
       setSlug(p.slug);
       setIsSlugManuallyEdited(true);
 
-      if (KNOWN_CATEGORIES.includes(p.category || '')) {
-        setCategory(p.category || 'Air Gauging');
+      if (KNOWN_CATEGORIES.includes(p.category || "")) {
+        setCategory(p.category || "Air Gauging");
       } else {
-        setCategory('custom');
-        setCustomCategory(p.category || '');
+        setCategory("custom");
+        setCustomCategory(p.category || "");
       }
 
-      setTagline(p.tagline || '');
-      setShortDescription(p.short_description || '');
-      setDescription(p.description || '');
+      setTagline(p.tagline || "");
+      setShortDescription(p.short_description || "");
+      setDescription(p.description || "");
       setActive(p.active);
       setFeatured(p.featured);
 
-      setHighlightsText((p.highlights || []).join('\n'));
-      setFeaturesText((p.features || []).join('\n'));
-      setApplicationsText((p.applications || []).join('\n'));
+      setHighlightsText((p.highlights || []).join("\n"));
+      setFeaturesText((p.features || []).join("\n"));
+      setApplicationsText((p.applications || []).join("\n"));
 
       // Populate specifications key-value table
       const specEntries = Object.entries(p.specifications || {});
@@ -141,10 +155,14 @@ export const AdminProductForm: React.FC = () => {
 
   // 3. Specification Table Handlers
   const handleAddSpecRow = () => {
-    setSpecs([...specs, { key: '', value: '' }]);
+    setSpecs([...specs, { key: "", value: "" }]);
   };
 
-  const handleSpecChange = (index: number, field: 'key' | 'value', value: string) => {
+  const handleSpecChange = (
+    index: number,
+    field: "key" | "value",
+    value: string,
+  ) => {
     const updated = [...specs];
     updated[index][field] = value;
     setSpecs(updated);
@@ -162,19 +180,20 @@ export const AdminProductForm: React.FC = () => {
 
     // Basic Validations
     if (!name.trim()) {
-      setError('Product Name is required.');
+      setError("Product Name is required.");
       return;
     }
 
     const cleanSlug = slug.trim() || productService.generateSlug(name);
     if (!cleanSlug) {
-      setError('A valid URL slug is required.');
+      setError("A valid URL slug is required.");
       return;
     }
 
-    const resolvedCategory = category === 'custom' ? customCategory.trim() : category;
+    const resolvedCategory =
+      category === "custom" ? customCategory.trim() : category;
     if (!resolvedCategory) {
-      setError('Category is required.');
+      setError("Category is required.");
       return;
     }
 
@@ -189,7 +208,7 @@ export const AdminProductForm: React.FC = () => {
     // Clean multiline arrays
     const parseList = (text: string) =>
       text
-        .split('\n')
+        .split("\n")
         .map((s) => s.trim())
         .filter(Boolean);
 
@@ -218,7 +237,7 @@ export const AdminProductForm: React.FC = () => {
       if (result.error) {
         setError(result.error);
       } else {
-        setSuccessMessage('Product changes saved successfully.');
+        setSuccessMessage("Product changes saved successfully.");
         setTimeout(() => setSuccessMessage(null), 3000);
       }
     } else {
@@ -245,7 +264,9 @@ export const AdminProductForm: React.FC = () => {
         setError(result.error);
       } else if (result.product) {
         // Redirect to edit page so user can upload images immediately
-        navigate(`/admin/products/${result.product.id}/edit`, { replace: true });
+        navigate(`/admin/products/${result.product.id}/edit`, {
+          replace: true,
+        });
       }
     }
   };
@@ -263,7 +284,7 @@ export const AdminProductForm: React.FC = () => {
       setError(result.error);
       setShowDeleteModal(false);
     } else {
-      navigate('/admin/products');
+      navigate("/admin/products");
     }
   };
 
@@ -274,11 +295,11 @@ export const AdminProductForm: React.FC = () => {
   return (
     <>
       <SEOHead
-        title={`${isEditMode ? 'Edit Product' : 'Create Product'} | Akira Precision Automation Admin`}
+        title={`${isEditMode ? "Edit Product" : "Create Product"} | Akira Precision Automation Admin`}
         description="Engineering specification editor and photography asset manager."
       />
 
-      <div className="space-y-6 max-w-6xl mx-auto">
+      <div className="space-y-6 w-full">
         {/* Top Breadcrumb & Action Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200">
           <div className="flex items-center gap-3">
@@ -291,12 +312,14 @@ export const AdminProductForm: React.FC = () => {
             </Link>
             <div>
               <h1 className="text-xl sm:text-2xl font-bold text-industrial-dark font-heading tracking-tight">
-                {isEditMode ? `Edit Product: ${name}` : 'Create New Metrology Product'}
+                {isEditMode
+                  ? `Edit Product: ${name}`
+                  : "Create New Metrology Product"}
               </h1>
               <p className="text-xs text-slate-500 mt-0.5">
                 {isEditMode
-                  ? 'Update technical parameters, dimensional ranges, and visual assets.'
-                  : 'Register a new gauging instrument or custom inspection station in Supabase.'}
+                  ? "Update technical parameters, dimensional ranges, and visual assets."
+                  : "Register a new gauging instrument or custom inspection station in Supabase."}
               </p>
             </div>
           </div>
@@ -341,7 +364,7 @@ export const AdminProductForm: React.FC = () => {
               ) : (
                 <>
                   <Save className="w-3.5 h-3.5" />
-                  <span>{isEditMode ? 'Save Changes' : 'Create Product'}</span>
+                  <span>{isEditMode ? "Save Changes" : "Create Product"}</span>
                 </>
               )}
             </button>
@@ -369,193 +392,277 @@ export const AdminProductForm: React.FC = () => {
             {/* Left 2 Columns: Core Product Specifications */}
             <div className="lg:col-span-2 space-y-6">
               {/* Card 1: Identification & Overview */}
-              <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-subtle space-y-4">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 font-mono flex items-center gap-1.5 pb-2 border-b border-slate-100">
-                  <Package className="w-3.5 h-3.5 text-industrial-primary" />
-                  <span>Product Identification</span>
-                </h3>
+              <Card>
+                <Card.Header>
+                  <Card.Title className="flex items-center gap-1.5">
+                    <Box className="text-primary size-4" />
+                    Product Identification
+                  </Card.Title>
+                </Card.Header>
 
-                <div>
-                  <Label htmlFor="product-name" className="block text-xs font-semibold text-slate-700 mb-1">
-                    Official Product Name <span className="text-rose-500">*</span>
-                  </Label>
-                  <Input
-                    id="product-name"
-                    type="text"
-                    required
-                    value={name}
-                    onChange={handleNameChange}
-                    placeholder="e.g. Air Plug Gauge to Check ID Bore"
-                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 bg-white font-sans"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="product-slug" className="block text-xs font-semibold text-slate-700 mb-1">
-                    URL Slug Identifier <span className="text-rose-500">*</span>
-                  </Label>
-                  <div className="relative">
-                    <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 font-mono text-xs z-10">
-                      /products/
-                    </span>
+                <Card.Content className="space-y-2">
+                  <div>
+                    <Label
+                      htmlFor="product-name"
+                      className="block text-xs font-semibold text-slate-700 mb-1"
+                    >
+                      Official Product Name{" "}
+                      <span className="text-rose-500">*</span>
+                    </Label>
                     <Input
-                      id="product-slug"
+                      id="product-name"
                       type="text"
                       required
-                      value={slug}
-                      onChange={handleSlugChange}
-                      placeholder="air-plug-gauge"
-                      className="w-full pl-24 pr-3 py-2 text-xs font-mono border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 bg-white"
+                      value={name}
+                      onChange={handleNameChange}
+                      placeholder="e.g. Air Plug Gauge to Check ID Bore"
+                      fullWidth
+                      variant="secondary"
+                      //className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 bg-white font-sans"
                     />
                   </div>
-                  <p className="text-[11px] text-slate-400 mt-1">
-                    Unique public URL path. Use lowercase alphanumeric characters and hyphens.
-                  </p>
-                </div>
 
-                <div>
-                  <Label htmlFor="product-tagline" className="block text-xs font-semibold text-slate-700 mb-1">
-                    Technical Tagline / Subheading
-                  </Label>
-                  <Input
-                    id="product-tagline"
-                    type="text"
-                    value={tagline}
-                    onChange={(e) => setTagline(e.target.value)}
-                    placeholder="e.g. Precision Internal Diameter & Bore Measurement with Setting Rings"
-                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 bg-white font-sans"
-                  />
-                </div>
+                  <div>
+                    <Label
+                      htmlFor="product-slug"
+                      className="block text-xs font-semibold text-slate-700 mb-1"
+                    >
+                      URL Slug Identifier{" "}
+                      <span className="text-rose-500">*</span>
+                    </Label>
+                    <div className="relative">
+                      <TextField className="w-full" name="slug">
+                        <InputGroup variant="secondary">
+                          <InputGroup.Prefix> /products/ </InputGroup.Prefix>
+                          <InputGroup.Input
+                            placeholder="air-plug-gauge"
+                            id="product-slug"
+                            type="text"
+                            required
+                            value={slug}
+                            onChange={handleSlugChange}
+                          />
+                        </InputGroup>
+                      </TextField>
+                    </div>
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      Unique public URL path. Use lowercase alphanumeric
+                      characters and hyphens.
+                    </p>
+                  </div>
 
-                <div>
-                  <Label htmlFor="product-short-desc" className="block text-xs font-semibold text-slate-700 mb-1">
-                    Card Short Description
-                  </Label>
-                  <TextArea
-                    id="product-short-desc"
-                    rows={2}
-                    value={shortDescription}
-                    onChange={(e) => setShortDescription(e.target.value)}
-                    placeholder="Brief 1-2 sentence engineering overview for catalogue listings..."
-                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 font-sans"
-                  />
-                </div>
+                  <div>
+                    <Label
+                      htmlFor="product-tagline"
+                      className="block text-xs font-semibold text-slate-700 mb-1"
+                    >
+                      Technical Tagline / Subheading
+                    </Label>
+                    <Input
+                      id="product-tagline"
+                      type="text"
+                      value={tagline}
+                      onChange={(e) => setTagline(e.target.value)}
+                      placeholder="e.g. Precision Internal Diameter & Bore Measurement with Setting Rings"
+                      fullWidth
+                      variant="secondary"
+                      //className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 bg-white font-sans"
+                    />
+                  </div>
 
-                <div>
-                  <Label htmlFor="product-full-desc" className="block text-xs font-semibold text-slate-700 mb-1">
-                    Detailed Engineering Overview
-                  </Label>
-                  <TextArea
-                    id="product-full-desc"
-                    rows={4}
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Comprehensive description of measurement principles, metallurgy, and construction..."
-                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 font-sans"
-                  />
-                </div>
-              </div>
+                  <div>
+                    <Label
+                      htmlFor="product-short-desc"
+                      className="block text-xs font-semibold text-slate-700 mb-1"
+                    >
+                      Card Short Description
+                    </Label>
+                    <TextArea
+                      id="product-short-desc"
+                      rows={2}
+                      value={shortDescription}
+                      onChange={(e) => setShortDescription(e.target.value)}
+                      placeholder="Brief 1-2 sentence engineering overview for catalogue listings..."
+                      fullWidth
+                      variant="secondary"
+                      //className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 font-sans"
+                    />
+                  </div>
+
+                  <div>
+                    <Label
+                      htmlFor="product-full-desc"
+                      className="block text-xs font-semibold text-slate-700 mb-1"
+                    >
+                      Detailed Engineering Overview
+                    </Label>
+                    <TextArea
+                      id="product-full-desc"
+                      rows={4}
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      placeholder="Comprehensive description of measurement principles, metallurgy, and construction..."
+                      fullWidth
+                      variant="secondary"
+                      //className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 font-sans"
+                    />
+                  </div>
+                </Card.Content>
+              </Card>
 
               {/* Card 2: Technical Specifications Table */}
-              <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-subtle space-y-4">
-                <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 font-mono flex items-center gap-1.5">
-                    <Sliders className="w-3.5 h-3.5 text-industrial-primary" />
+              <Card className="min-w-0 overflow-hidden">
+                <Card.Header className="relative">
+                  <Card.Title className="flex items-center gap-1.5 text-sm sm:text-base pr-10">
+                    <Sliders className="text-primary size-4 shrink-0" />
                     <span>Technical Specifications Table</span>
-                  </h3>
-                  <button
-                    type="button"
+                  </Card.Title>
+                  <Button
                     onClick={handleAddSpecRow}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold bg-sky-50 text-industrial-primary hover:bg-sky-100 transition-colors"
+                    className="absolute end-3 top-3"
+                    isIconOnly
+                    size="sm"
+                    aria-label="Add Parameter"
                   >
-                    <Plus className="w-3 h-3" />
-                    <span>Add Parameter</span>
-                  </button>
-                </div>
+                    <Plus />
+                  </Button>
+                </Card.Header>
 
-                <div className="space-y-2">
-                  {specs.map((row, idx) => (
-                    <div key={idx} className="flex items-center gap-2">
-                      <Input
-                        type="text"
-                        value={row.key}
-                        onChange={(e) => handleSpecChange(idx, 'key', e.target.value)}
-                        placeholder="Parameter (e.g. Diameter Range)"
-                        className="w-1/2 px-3 py-1.5 text-xs font-mono border border-slate-200 rounded-xl focus:outline-none focus:border-industrial-primary bg-white"
-                      />
-                      <Input
-                        type="text"
-                        value={row.value}
-                        onChange={(e) => handleSpecChange(idx, 'value', e.target.value)}
-                        placeholder="Specification Value (e.g. 2 mm to 200 mm)"
-                        className="w-1/2 px-3 py-1.5 text-xs font-mono border border-slate-200 rounded-xl focus:outline-none focus:border-industrial-primary bg-white"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveSpecRow(idx)}
-                        className="p-1.5 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50"
-                        title="Delete parameter row"
+                <Card.Content className="mt-2 min-w-0">
+                  <div className="space-y-3 sm:space-y-2.5">
+                    {specs.map((row, idx) => (
+                      <div
+                        key={idx}
+                        className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-2.5 sm:p-0 rounded-xl sm:rounded-none bg-slate-50/70 sm:bg-transparent border border-slate-200/60 sm:border-none"
                       >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
+                        <div className="flex-1 min-w-0">
+                          <Input
+                            type="text"
+                            value={row.key}
+                            onChange={(e) =>
+                              handleSpecChange(idx, "key", e.target.value)
+                            }
+                            placeholder="Parameter (e.g. Diameter Range)"
+                            variant="secondary"
+                            className="w-full min-w-0"
+                            aria-label={`Parameter (row ${idx + 1})`}
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0 flex items-center gap-2">
+                          <Input
+                            type="text"
+                            value={row.value}
+                            onChange={(e) =>
+                              handleSpecChange(idx, "value", e.target.value)
+                            }
+                            placeholder="Specification Value (e.g. 2 mm to 200 mm)"
+                            variant="secondary"
+                            className="w-full flex-1 min-w-0"
+                            aria-label={`Specification value for ${row.key || `parameter ${idx + 1}`}`}
+                          />
+                          <Button
+                            onClick={() => handleRemoveSpecRow(idx)}
+                            isIconOnly
+                            variant="danger"
+                            size="md"
+                            className="shrink-0 rounded-xl cursor-pointer"
+                            aria-label={`Remove parameter ${row.key || idx + 1}`}
+                          >
+                            <TrashBin className="w-4 h-4 text-white" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                    {specs.length === 0 && (
+                      <div className="text-center py-6 border border-dashed border-slate-200 rounded-xl bg-slate-50/50">
+                        <p className="text-xs text-slate-500 mb-2">
+                          No technical specification parameters added yet.
+                        </p>
+                        <Button
+                          onClick={handleAddSpecRow}
+                          size="sm"
+                          variant="outline"
+                          className="inline-flex items-center gap-1.5 text-xs"
+                          aria-label="Add Parameter"
+                        >
+                          <Plus />
+                          <span>Add First Parameter</span>
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </Card.Content>
+              </Card>
 
               {/* Card 3: Highlights, Features & Applications */}
-              <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-subtle space-y-4">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 font-mono flex items-center gap-1.5 pb-2 border-b border-slate-100">
-                  <FileText className="w-3.5 h-3.5 text-industrial-primary" />
-                  <span>Technical Lists (One item per line)</span>
-                </h3>
+              <Card>
+                <Card.Header>
+                  <Card.Title className="flex items-center gap-1.5">
+                    <FileText className="text-primary size-4" />
+                    Technical Lists (One item per line)
+                  </Card.Title>
+                </Card.Header>
 
-                <div>
-                  <Label htmlFor="product-highlights" className="block text-xs font-semibold text-slate-700 mb-1">
-                    Key Highlights (Top Bullet Points)
-                  </Label>
-                  <TextArea
-                    id="product-highlights"
-                    rows={3}
-                    value={highlightsText}
-                    onChange={(e) => setHighlightsText(e.target.value)}
-                    placeholder="Range: 2 mm to 200 mm&#10;Supplied for through bore / blind bore&#10;Hard chrome plated gauging surface"
-                    className="w-full px-3 py-2 text-xs font-mono border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
-                  />
-                </div>
+                <Card.Content className="mt-2 space-y-2">
+                  <div>
+                    <Label
+                      htmlFor="product-highlights"
+                      className="block text-xs font-semibold text-slate-700 mb-1"
+                    >
+                      Key Highlights (Top Bullet Points)
+                    </Label>
+                    <TextArea
+                      id="product-highlights"
+                      rows={3}
+                      value={highlightsText}
+                      onChange={(e) => setHighlightsText(e.target.value)}
+                      placeholder="Range: 2 mm to 200 mm&#10;Supplied for through bore / blind bore&#10;Hard chrome plated gauging surface"
+                      variant="secondary"
+                      fullWidth
+                    />
+                  </div>
 
-                <div>
-                  <Label htmlFor="product-features" className="block text-xs font-semibold text-slate-700 mb-1">
-                    Technical Features & Capabilities
-                  </Label>
-                  <TextArea
-                    id="product-features"
-                    rows={3}
-                    value={featuresText}
-                    onChange={(e) => setFeaturesText(e.target.value)}
-                    placeholder="Adjustable depth collars for specific depth checks&#10;Two setting rings ensure precise comparative zero"
-                    className="w-full px-3 py-2 text-xs font-mono border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
-                  />
-                </div>
+                  <div>
+                    <Label
+                      htmlFor="product-features"
+                      className="block text-xs font-semibold text-slate-700 mb-1"
+                    >
+                      Technical Features & Capabilities
+                    </Label>
+                    <TextArea
+                      id="product-features"
+                      rows={3}
+                      value={featuresText}
+                      onChange={(e) => setFeaturesText(e.target.value)}
+                      placeholder="Adjustable depth collars for specific depth checks&#10;Two setting rings ensure precise comparative zero"
+                      variant="secondary"
+                      fullWidth
+                    />
+                  </div>
 
-                <div>
-                  <Label htmlFor="product-applications" className="block text-xs font-semibold text-slate-700 mb-1">
-                    Industrial Manufacturing Applications
-                  </Label>
-                  <TextArea
-                    id="product-applications"
-                    rows={3}
-                    value={applicationsText}
-                    onChange={(e) => setApplicationsText(e.target.value)}
-                    placeholder="Automotive engine cylinder and liner inspection&#10;Precision bushings, sleeves, and bearing ID checks"
-                    className="w-full px-3 py-2 text-xs font-mono border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
-                  />
-                </div>
-              </div>
+                  <div>
+                    <Label
+                      htmlFor="product-applications"
+                      className="block text-xs font-semibold text-slate-700 mb-1"
+                    >
+                      Industrial Manufacturing Applications
+                    </Label>
+                    <TextArea
+                      id="product-applications"
+                      rows={3}
+                      value={applicationsText}
+                      onChange={(e) => setApplicationsText(e.target.value)}
+                      placeholder="Automotive engine cylinder and liner inspection&#10;Precision bushings, sleeves, and bearing ID checks"
+                      variant="secondary"
+                      fullWidth
+                    />
+                  </div>
+                </Card.Content>
+              </Card>
             </div>
 
             {/* Right Column: Publishing, Category, and Media Assets */}
-            <div className="space-y-6">
+            <Card className="space-y-6">
               {/* Card 4: Publishing & Status */}
               <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-subtle space-y-4">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 font-mono flex items-center gap-1.5 pb-2 border-b border-slate-100">
@@ -564,44 +671,48 @@ export const AdminProductForm: React.FC = () => {
                 </h3>
 
                 {/* Active Toggle */}
-                <div className="flex items-center justify-between p-3 rounded-xl border border-slate-100 bg-slate-50/50">
-                  <div>
-                    <span className="text-xs font-bold text-industrial-dark block">
-                      Active on Public Website
-                    </span>
-                    <span className="text-[11px] text-slate-500 block">
-                      When active, visitors can browse and request RFQs.
-                    </span>
-                  </div>
+                <div className="p-3.5 rounded-xl border border-slate-200/80 bg-slate-50/50 hover:bg-slate-100/50 transition-colors">
                   <Checkbox
                     isSelected={active}
                     onChange={(isSelected) => setActive(isSelected)}
-                    aria-label="Active on Public Website"
+                    className="w-full cursor-pointer"
                   >
-                    <Checkbox.Control>
-                      <Checkbox.Indicator />
-                    </Checkbox.Control>
+                    <Checkbox.Content className="flex items-center justify-between w-full cursor-pointer">
+                      <div className="flex-1 pr-3">
+                        <span className="text-xs font-bold text-industrial-dark block">
+                          Active on Public Website
+                        </span>
+                        <span className="text-[11px] text-slate-500 block mt-0.5">
+                          When active, visitors can browse and request RFQs.
+                        </span>
+                      </div>
+                      <Checkbox.Control>
+                        <Checkbox.Indicator />
+                      </Checkbox.Control>
+                    </Checkbox.Content>
                   </Checkbox>
                 </div>
 
                 {/* Featured Toggle */}
-                <div className="flex items-center justify-between p-3 rounded-xl border border-slate-100 bg-slate-50/50">
-                  <div>
-                    <span className="text-xs font-bold text-industrial-dark block">
-                      Homepage Featured Showcase
-                    </span>
-                    <span className="text-[11px] text-slate-500 block">
-                      Display prominently on the website homepage.
-                    </span>
-                  </div>
+                <div className="p-3.5 rounded-xl border border-slate-200/80 bg-slate-50/50 hover:bg-slate-100/50 transition-colors">
                   <Checkbox
                     isSelected={featured}
                     onChange={(isSelected) => setFeatured(isSelected)}
-                    aria-label="Homepage Featured Showcase"
+                    className="w-full cursor-pointer"
                   >
-                    <Checkbox.Control>
-                      <Checkbox.Indicator />
-                    </Checkbox.Control>
+                    <Checkbox.Content className="flex items-center justify-between w-full cursor-pointer">
+                      <div className="flex-1 pr-3">
+                        <span className="text-xs font-bold text-industrial-dark block">
+                          Homepage Featured Showcase
+                        </span>
+                        <span className="text-[11px] text-slate-500 block mt-0.5">
+                          Display prominently on the website homepage.
+                        </span>
+                      </div>
+                      <Checkbox.Control>
+                        <Checkbox.Indicator />
+                      </Checkbox.Control>
+                    </Checkbox.Content>
                   </Checkbox>
                 </div>
               </div>
@@ -614,12 +725,15 @@ export const AdminProductForm: React.FC = () => {
                 </h3>
 
                 <div>
-                  <Label htmlFor="product-category" className="block text-xs font-semibold text-slate-700 mb-1">
+                  <Label
+                    htmlFor="product-category"
+                    className="block text-xs font-semibold text-slate-700 mb-1"
+                  >
                     Metrology Category <span className="text-rose-500">*</span>
                   </Label>
                   <Select
                     value={category}
-                    onChange={(val) => setCategory((val as string) || '')}
+                    onChange={(val) => setCategory((val as string) || "")}
                     className="w-full"
                     aria-label="Metrology Category"
                   >
@@ -653,9 +767,12 @@ export const AdminProductForm: React.FC = () => {
                   </Select>
                 </div>
 
-                {category === 'custom' && (
+                {category === "custom" && (
                   <div>
-                    <Label htmlFor="custom-category" className="block text-xs font-semibold text-slate-700 mb-1">
+                    <Label
+                      htmlFor="custom-category"
+                      className="block text-xs font-semibold text-slate-700 mb-1"
+                    >
                       Custom Category Name
                     </Label>
                     <Input
@@ -680,19 +797,26 @@ export const AdminProductForm: React.FC = () => {
                   />
                 ) : (
                   <div className="text-center py-6 space-y-2 border border-dashed border-slate-200 rounded-xl bg-slate-50/50 p-4">
-                    <p className="text-xs font-bold text-slate-700">Image Uploads</p>
+                    <p className="text-xs font-bold text-slate-700">
+                      Image Uploads
+                    </p>
                     <p className="text-[11px] text-slate-500">
-                      Save this initial product record first. You will be automatically redirected to upload factory photography, set primary cover images, and reorder gallery assets.
+                      Save this initial product record first. You will be
+                      automatically redirected to upload factory photography,
+                      set primary cover images, and reorder gallery assets.
                     </p>
                   </div>
                 )}
               </div>
-            </div>
+            </Card>
           </div>
         </form>
 
         {/* Delete Confirmation Modal */}
-        <Modal.Backdrop isOpen={showDeleteModal} onOpenChange={setShowDeleteModal}>
+        <Modal.Backdrop
+          isOpen={showDeleteModal}
+          onOpenChange={setShowDeleteModal}
+        >
           <Modal.Container>
             <Modal.Dialog className="sm:max-w-md">
               <Modal.CloseTrigger />
@@ -704,8 +828,12 @@ export const AdminProductForm: React.FC = () => {
               </Modal.Header>
               <Modal.Body>
                 <p className="text-xs text-slate-500 leading-relaxed">
-                  Are you sure you want to delete <strong className="text-slate-800 font-semibold">{name}</strong>?
-                  This action cannot be undone and will purge all associated photography from Supabase Storage.
+                  Are you sure you want to delete{" "}
+                  <strong className="text-slate-800 font-semibold">
+                    {name}
+                  </strong>
+                  ? This action cannot be undone and will purge all associated
+                  photography from Supabase Storage.
                 </p>
               </Modal.Body>
               <Modal.Footer>
@@ -725,7 +853,7 @@ export const AdminProductForm: React.FC = () => {
                   onClick={handleDeleteProduct}
                   isDisabled={isDeleting}
                 >
-                  {isDeleting ? 'Deleting...' : 'Delete Product'}
+                  {isDeleting ? "Deleting..." : "Delete Product"}
                 </Button>
               </Modal.Footer>
             </Modal.Dialog>

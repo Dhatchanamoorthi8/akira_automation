@@ -28,9 +28,9 @@ export default {
         }
       },
       fontFamily: {
-        sans: ['Manrope', 'system-ui', '-apple-system', 'sans-serif'],
-        heading: ['Manrope', 'system-ui', 'sans-serif'],
-        mono: ['Manrope', 'Consolas', 'monospace'],
+        sans: ['Inter', 'Manrope', 'system-ui', '-apple-system', 'sans-serif'],
+        heading: ['Inter', 'Manrope', 'system-ui', 'sans-serif'],
+        mono: ['Inter', 'Manrope', 'Consolas', 'monospace'],
       },
       maxWidth: {
         'site': '1380px',

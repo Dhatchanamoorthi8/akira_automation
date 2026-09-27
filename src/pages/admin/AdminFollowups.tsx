@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { Link } from "react-router-dom";
 import {
   Card,
   Button,
@@ -18,12 +18,8 @@ import {
   Calendar,
   TimeField,
   TextField,
-} from '@heroui/react';
-import {
-  DateValue,
-  getLocalTimeZone,
-  now,
-} from '@internationalized/date';
+} from "@heroui/react";
+import { DateValue, getLocalTimeZone, now } from "@internationalized/date";
 import {
   CalendarClock,
   Search,
@@ -42,18 +38,21 @@ import {
   FileText,
   RotateCw,
   SlidersHorizontal,
-} from 'lucide-react';
+} from "lucide-react";
 import {
   FollowupWithEnquiry,
   FollowupType,
   FollowupTimeframe,
   FollowupPriority,
-} from '../../types/database';
-import { followupService } from '../../services/followupService';
-import { enquiryService } from '../../services/enquiryService';
-import { attendanceService, StaffWithAttendanceStatus } from '../../services/attendanceService';
-import { formatDate } from '../../utils/date';
-import { SEOHead } from '../../components/layout/SEOHead';
+} from "../../types/database";
+import { followupService } from "../../services/followupService";
+import { enquiryService } from "../../services/enquiryService";
+import {
+  attendanceService,
+  StaffWithAttendanceStatus,
+} from "../../services/attendanceService";
+import { formatDate } from "../../utils/date";
+import { SEOHead } from "../../components/layout/SEOHead";
 
 // ─── Timeframe helpers (client-side, fixes count bug) ───────────────────────
 function getNow() {
@@ -70,45 +69,36 @@ function getTomorrowStart() {
   return d;
 }
 
-function matchesTimeframe(item: FollowupWithEnquiry, tf: FollowupTimeframe): boolean {
+function matchesTimeframe(
+  item: FollowupWithEnquiry,
+  tf: FollowupTimeframe,
+): boolean {
   const scheduledAt = new Date(item.scheduled_at);
-  const isCompleted = item.status === 'completed';
-  const isCancelled = item.status === 'cancelled';
+  const isCompleted = item.status === "completed";
+  const isCancelled = item.status === "cancelled";
   const isPending = !isCompleted && !isCancelled;
   const now = getNow();
   const todayStart = getTodayStart();
   const tomorrowStart = getTomorrowStart();
 
   switch (tf) {
-    case 'overdue':
+    case "overdue":
       return isPending && scheduledAt < now;
-    case 'today':
-      return isPending && scheduledAt >= todayStart && scheduledAt < tomorrowStart;
-    case 'upcoming':
+    case "today":
+      return (
+        isPending && scheduledAt >= todayStart && scheduledAt < tomorrowStart
+      );
+    case "upcoming":
       return isPending && scheduledAt >= tomorrowStart;
-    case 'completed':
+    case "completed":
       return isCompleted;
-    case 'cancelled':
+    case "cancelled":
       return isCancelled;
-    case 'all':
+    case "all":
     default:
       return true;
   }
 }
-
-// ─── Tab definition ──────────────────────────────────────────────────────────
-interface TabOption {
-  key: FollowupTimeframe;
-  label: string;
-}
-
-const TABS: TabOption[] = [
-  { key: 'all', label: 'All Scheduled' },
-  { key: 'overdue', label: 'Overdue' },
-  { key: 'today', label: 'Due Today' },
-  { key: 'upcoming', label: 'Upcoming' },
-  { key: 'completed', label: 'Completed' },
-];
 
 export const AdminFollowups: React.FC = () => {
   const [followups, setFollowups] = useState<FollowupWithEnquiry[]>([]);
@@ -116,30 +106,34 @@ export const AdminFollowups: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Filters
-  const [timeframe, setTimeframe] = useState<FollowupTimeframe>('all');
-  const [selectedType, setSelectedType] = useState<string>('all');
-  const [selectedStaff, setSelectedStaff] = useState<string>('all');
-  const [selectedPriority, setSelectedPriority] = useState<string>('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [timeframe, setTimeframe] = useState<FollowupTimeframe>("all");
+  const [selectedType, setSelectedType] = useState<string>("all");
+  const [selectedStaff, setSelectedStaff] = useState<string>("all");
+  const [selectedPriority, setSelectedPriority] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const [staffList, setStaffList] = useState<StaffWithAttendanceStatus[]>([]);
 
   // Modals
-  const [completingFollowup, setCompletingFollowup] = useState<FollowupWithEnquiry | null>(null);
-  const [outcomeNotes, setOutcomeNotes] = useState('');
+  const [completingFollowup, setCompletingFollowup] =
+    useState<FollowupWithEnquiry | null>(null);
+  const [outcomeNotes, setOutcomeNotes] = useState("");
   const [scheduleNext, setScheduleNext] = useState(false);
   const [nextDateValue, setNextDateValue] = useState<DateValue | null>(null);
-  const [nextType, setNextType] = useState<FollowupType>('call');
-  const [nextNotes, setNextNotes] = useState('');
+  const [nextType, setNextType] = useState<FollowupType>("call");
+  const [nextNotes, setNextNotes] = useState("");
   const [isSubmittingOutcome, setIsSubmittingOutcome] = useState(false);
   const [outcomeError, setOutcomeError] = useState<string | null>(null);
 
   // Quick Schedule Modal
   const [showScheduleModal, setShowScheduleModal] = useState(false);
-  const [recentEnquiries, setRecentEnquiries] = useState<{ id: string; name: string; company: string | null }[]>([]);
-  const [targetEnquiryId, setTargetEnquiryId] = useState('');
-  const [newScheduleDateValue, setNewScheduleDateValue] = useState<DateValue | null>(null);
-  const [newScheduleType, setNewScheduleType] = useState<FollowupType>('call');
-  const [newScheduleNotes, setNewScheduleNotes] = useState('');
+  const [recentEnquiries, setRecentEnquiries] = useState<
+    { id: string; name: string; company: string | null }[]
+  >([]);
+  const [targetEnquiryId, setTargetEnquiryId] = useState("");
+  const [newScheduleDateValue, setNewScheduleDateValue] =
+    useState<DateValue | null>(null);
+  const [newScheduleType, setNewScheduleType] = useState<FollowupType>("call");
+  const [newScheduleNotes, setNewScheduleNotes] = useState("");
   const [isScheduling, setIsScheduling] = useState(false);
   const [scheduleError, setScheduleError] = useState<string | null>(null);
 
@@ -149,9 +143,13 @@ export const AdminFollowups: React.FC = () => {
     setError(null);
     try {
       const res = await followupService.getFollowups({
-        type: selectedType !== 'all' ? (selectedType as FollowupType) : undefined,
-        assignedTo: selectedStaff !== 'all' ? selectedStaff : undefined,
-        priority: selectedPriority !== 'all' ? (selectedPriority as FollowupPriority) : undefined,
+        type:
+          selectedType !== "all" ? (selectedType as FollowupType) : undefined,
+        assignedTo: selectedStaff !== "all" ? selectedStaff : undefined,
+        priority:
+          selectedPriority !== "all"
+            ? (selectedPriority as FollowupPriority)
+            : undefined,
         limit: 500,
       });
 
@@ -161,7 +159,11 @@ export const AdminFollowups: React.FC = () => {
         setFollowups(res.followups);
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'An error occurred loading CRM follow-ups.');
+      setError(
+        err instanceof Error
+          ? err.message
+          : "An error occurred loading CRM follow-ups.",
+      );
     } finally {
       setLoading(false);
     }
@@ -179,11 +181,13 @@ export const AdminFollowups: React.FC = () => {
   const counts = useMemo<Record<FollowupTimeframe, number>>(() => {
     return {
       all: followups.length,
-      overdue: followups.filter((f) => matchesTimeframe(f, 'overdue')).length,
-      today: followups.filter((f) => matchesTimeframe(f, 'today')).length,
-      upcoming: followups.filter((f) => matchesTimeframe(f, 'upcoming')).length,
-      completed: followups.filter((f) => matchesTimeframe(f, 'completed')).length,
-      cancelled: followups.filter((f) => matchesTimeframe(f, 'cancelled')).length,
+      overdue: followups.filter((f) => matchesTimeframe(f, "overdue")).length,
+      today: followups.filter((f) => matchesTimeframe(f, "today")).length,
+      upcoming: followups.filter((f) => matchesTimeframe(f, "upcoming")).length,
+      completed: followups.filter((f) => matchesTimeframe(f, "completed"))
+        .length,
+      cancelled: followups.filter((f) => matchesTimeframe(f, "cancelled"))
+        .length,
     };
   }, [followups]);
 
@@ -220,7 +224,11 @@ export const AdminFollowups: React.FC = () => {
       const res = await enquiryService.getEnquiries({ limit: 30 });
       if (res.enquiries.length > 0) {
         setRecentEnquiries(
-          res.enquiries.map((e) => ({ id: e.id, name: e.name, company: e.company }))
+          res.enquiries.map((e) => ({
+            id: e.id,
+            name: e.name,
+            company: e.company,
+          })),
         );
         if (!targetEnquiryId) setTargetEnquiryId(res.enquiries[0].id);
       }
@@ -232,11 +240,11 @@ export const AdminFollowups: React.FC = () => {
   const handleCreateFollowup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!targetEnquiryId) {
-      setScheduleError('Please select a customer enquiry.');
+      setScheduleError("Please select a customer enquiry.");
       return;
     }
     if (!newScheduleDateValue) {
-      setScheduleError('Please select a scheduled date and time.');
+      setScheduleError("Please select a scheduled date and time.");
       return;
     }
 
@@ -246,7 +254,8 @@ export const AdminFollowups: React.FC = () => {
     try {
       const tz = getLocalTimeZone();
       const scheduledAt =
-        'toDate' in newScheduleDateValue && typeof (newScheduleDateValue as any).toDate === 'function'
+        "toDate" in newScheduleDateValue &&
+        typeof (newScheduleDateValue as any).toDate === "function"
           ? (newScheduleDateValue as any).toDate(tz).toISOString()
           : new Date(newScheduleDateValue.toString()).toISOString();
 
@@ -264,12 +273,14 @@ export const AdminFollowups: React.FC = () => {
       } else {
         setShowScheduleModal(false);
         setNewScheduleDateValue(null);
-        setNewScheduleNotes('');
+        setNewScheduleNotes("");
         fetchFollowups();
       }
     } catch (err: unknown) {
       setIsScheduling(false);
-      setScheduleError(err instanceof Error ? err.message : 'Failed to schedule follow-up.');
+      setScheduleError(
+        err instanceof Error ? err.message : "Failed to schedule follow-up.",
+      );
     }
   };
 
@@ -277,7 +288,7 @@ export const AdminFollowups: React.FC = () => {
     e.preventDefault();
     if (!completingFollowup) return;
     if (!outcomeNotes.trim()) {
-      setOutcomeError('Please enter notes or outcome for this follow-up.');
+      setOutcomeError("Please enter notes or outcome for this follow-up.");
       return;
     }
 
@@ -287,7 +298,7 @@ export const AdminFollowups: React.FC = () => {
     const res = await followupService.completeFollowup(
       completingFollowup.id,
       outcomeNotes.trim(),
-      completingFollowup.enquiry_id
+      completingFollowup.enquiry_id,
     );
 
     if (res.error) {
@@ -299,7 +310,8 @@ export const AdminFollowups: React.FC = () => {
     if (scheduleNext && nextDateValue) {
       const tz = getLocalTimeZone();
       const scheduledAt =
-        'toDate' in nextDateValue && typeof (nextDateValue as any).toDate === 'function'
+        "toDate" in nextDateValue &&
+        typeof (nextDateValue as any).toDate === "function"
           ? (nextDateValue as any).toDate(tz).toISOString()
           : new Date(nextDateValue.toString()).toISOString();
 
@@ -308,22 +320,30 @@ export const AdminFollowups: React.FC = () => {
         completingFollowup.enquiry_id,
         scheduledAt,
         nextType,
-        nextNotes.trim() || undefined
+        nextNotes.trim() || undefined,
       );
     }
 
     setIsSubmittingOutcome(false);
     setCompletingFollowup(null);
-    setOutcomeNotes('');
+    setOutcomeNotes("");
     setScheduleNext(false);
     setNextDateValue(null);
-    setNextNotes('');
+    setNextNotes("");
     fetchFollowups();
   };
 
   const handleCancelFollowup = async (followup: FollowupWithEnquiry) => {
-    if (!window.confirm('Are you sure you want to cancel this scheduled follow-up?')) return;
-    const res = await followupService.cancelFollowup(followup.id, followup.enquiry_id);
+    if (
+      !window.confirm(
+        "Are you sure you want to cancel this scheduled follow-up?",
+      )
+    )
+      return;
+    const res = await followupService.cancelFollowup(
+      followup.id,
+      followup.enquiry_id,
+    );
     if (res.error) {
       alert(`Error cancelling follow-up: ${res.error}`);
     } else {
@@ -331,43 +351,88 @@ export const AdminFollowups: React.FC = () => {
     }
   };
 
+  // ─── Filter state helpers ─────────────────────────────────────────────────
+  const hasActiveFilters = Boolean(
+    searchQuery.trim() ||
+    selectedType !== "all" ||
+    selectedPriority !== "all" ||
+    selectedStaff !== "all",
+  );
+
+  const clearAllFilters = () => {
+    setSearchQuery("");
+    setSelectedType("all");
+    setSelectedPriority("all");
+    setSelectedStaff("all");
+  };
+
   // ─── Badge helpers ────────────────────────────────────────────────────────
   const getTypeBadge = (type: FollowupType) => {
     switch (type) {
-      case 'call':
+      case "call":
         return (
-          <Chip size="sm" variant="soft" color="default" className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-blue-100 text-blue-900 border border-blue-200">
-            <Phone className="w-3 h-3" /> Call
+          <Chip
+            size="sm"
+            variant="soft"
+            color="default"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200/80"
+          >
+            <Phone className="w-3.5 h-3.5" /> Call
           </Chip>
         );
-      case 'email':
+      case "email":
         return (
-          <Chip size="sm" variant="soft" color="default" className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-            <Mail className="w-3 h-3" /> Email
+          <Chip
+            size="sm"
+            variant="soft"
+            color="default"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80"
+          >
+            <Mail className="w-3.5 h-3.5" /> Email
           </Chip>
         );
-      case 'meeting':
+      case "meeting":
         return (
-          <Chip size="sm" variant="soft" color="default" className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-purple-50 text-purple-700 border border-purple-200">
-            <CalendarIcon className="w-3 h-3" /> Meeting
+          <Chip
+            size="sm"
+            variant="soft"
+            color="default"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200/80"
+          >
+            <CalendarIcon className="w-3.5 h-3.5" /> Meeting
           </Chip>
         );
-      case 'demo':
+      case "demo":
         return (
-          <Chip size="sm" variant="soft" color="default" className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
-            <Clock className="w-3 h-3" /> Demo
+          <Chip
+            size="sm"
+            variant="soft"
+            color="default"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200/80"
+          >
+            <Clock className="w-3.5 h-3.5" /> Demo
           </Chip>
         );
-      case 'quotation':
+      case "quotation":
         return (
-          <Chip size="sm" variant="soft" color="default" className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
-            <FileText className="w-3 h-3" /> Quotation
+          <Chip
+            size="sm"
+            variant="soft"
+            color="default"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200/80"
+          >
+            <FileText className="w-3.5 h-3.5" /> Quotation
           </Chip>
         );
       default:
         return (
-          <Chip size="sm" variant="soft" color="default" className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">
-            <MessageSquare className="w-3 h-3" /> {type}
+          <Chip
+            size="sm"
+            variant="soft"
+            color="default"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200/80"
+          >
+            <MessageSquare className="w-3.5 h-3.5" /> {type}
           </Chip>
         );
     }
@@ -376,17 +441,17 @@ export const AdminFollowups: React.FC = () => {
   const getPriorityBadge = (priority?: string | null) => {
     if (!priority) return null;
     const styles: Record<string, string> = {
-      urgent: 'bg-rose-50 text-rose-700 border-rose-200',
-      high: 'bg-amber-50 text-amber-800 border-amber-200',
-      medium: 'bg-sky-50 text-sky-800 border-sky-200',
-      low: 'bg-slate-100 text-slate-700 border-slate-200',
+      urgent: "bg-rose-50 text-rose-700 border-rose-200",
+      high: "bg-amber-50 text-amber-800 border-amber-200",
+      medium: "bg-sky-50 text-sky-800 border-sky-200",
+      low: "bg-slate-100 text-slate-700 border-slate-200",
     };
     return (
       <Chip
         size="sm"
         variant="soft"
         color="default"
-        className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase font-mono border ${styles[priority] || styles.low}`}
+        className={`px-2.5 py-0.5 rounded-md text-[10px] font-bold tracking-wide uppercase font-mono border ${styles[priority] || styles.low}`}
       >
         {priority}
       </Chip>
@@ -394,7 +459,79 @@ export const AdminFollowups: React.FC = () => {
   };
 
   const isOverdue = (scheduledAt: string, status: string) =>
-    status !== 'completed' && status !== 'cancelled' && new Date(scheduledAt).getTime() < Date.now();
+    status !== "completed" &&
+    status !== "cancelled" &&
+    new Date(scheduledAt).getTime() < Date.now();
+
+  const getStatusIndicator = (scheduledAt: string, status: string) => {
+    if (status === "completed") {
+      return (
+        <Chip
+          size="sm"
+          variant="soft"
+          color="default"
+          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase tracking-wide font-mono"
+        >
+          <Check className="w-3 h-3 text-emerald-600" />
+          <span>Completed</span>
+        </Chip>
+      );
+    }
+    if (status === "cancelled") {
+      return (
+        <Chip
+          size="sm"
+          variant="soft"
+          color="default"
+          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200 uppercase tracking-wide font-mono"
+        >
+          <X className="w-3 h-3 text-slate-500" />
+          <span>Cancelled</span>
+        </Chip>
+      );
+    }
+    const schedDate = new Date(scheduledAt);
+    const currNow = getNow();
+    const todayStart = getTodayStart();
+    const tomorrowStart = getTomorrowStart();
+
+    if (schedDate < currNow) {
+      return (
+        <Chip
+          size="sm"
+          variant="soft"
+          color="default"
+          className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200 uppercase tracking-wide font-mono"
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-rose-600 animate-pulse" />
+          <span>Overdue</span>
+        </Chip>
+      );
+    }
+    if (schedDate >= todayStart && schedDate < tomorrowStart) {
+      return (
+        <Chip
+          size="sm"
+          variant="soft"
+          color="default"
+          className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200 uppercase tracking-wide font-mono"
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+          <span>Due Today</span>
+        </Chip>
+      );
+    }
+    return (
+      <Chip
+        size="sm"
+        variant="soft"
+        color="default"
+        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-sky-50 text-sky-700 border border-sky-200 uppercase tracking-wide font-mono"
+      >
+        <span>Upcoming</span>
+      </Chip>
+    );
+  };
 
   return (
     <>
@@ -403,7 +540,7 @@ export const AdminFollowups: React.FC = () => {
         description="Executive follow-up management and scheduled client communications tracking."
       />
 
-      <div className="space-y-4 max-w-7xl mx-auto pb-12 font-sans text-slate-900">
+      <div className="space-y-4 w-full pb-12 font-sans text-slate-900">
         {/* ── Header ──────────────────────────────────────────────────────── */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
           <div>
@@ -411,7 +548,8 @@ export const AdminFollowups: React.FC = () => {
               CRM Follow-ups
             </h1>
             <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-              Track customer calls, demos, quotations, and scheduled touchpoints.
+              Track customer calls, demos, quotations, and scheduled
+              touchpoints.
             </p>
           </div>
 
@@ -424,7 +562,9 @@ export const AdminFollowups: React.FC = () => {
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:text-slate-900 hover:bg-slate-50 shadow-2xs transition-all text-xs font-semibold font-sans cursor-pointer"
               aria-label="Refresh list"
             >
-              <RotateCw className={`w-3.5 h-3.5 shrink-0 ${loading ? 'animate-spin text-blue-600' : ''}`} />
+              <RotateCw
+                className={`w-3.5 h-3.5 shrink-0 ${loading ? "animate-spin text-blue-600" : ""}`}
+              />
               <span>Refresh</span>
             </Button>
             <Button
@@ -440,56 +580,176 @@ export const AdminFollowups: React.FC = () => {
           </div>
         </div>
 
-        {/* ── Status Tabs (counts computed client-side) ────────────────────── */}
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
-          {TABS.map((tab) => {
-            const isSelected = timeframe === tab.key;
-            const count = counts[tab.key] ?? 0;
-            return (
-              <Button
-                key={tab.key}
-                variant={isSelected ? 'primary' : 'outline'}
-                size="sm"
-                onPress={() => setTimeframe(tab.key)}
-                className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all shadow-2xs whitespace-nowrap shrink-0 font-sans cursor-pointer ${
-                  isSelected
-                    ? 'bg-slate-900 text-white border border-slate-900 shadow-sm'
-                    : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300'
-                }`}
-                aria-label={`Filter by ${tab.label} (${count})`}
-              >
-                {tab.key === 'overdue' && <AlertTriangle className="w-3.5 h-3.5 text-rose-500" />}
-                {tab.key === 'today' && <Clock className="w-3.5 h-3.5 text-amber-500" />}
-                {tab.key === 'upcoming' && <CalendarIcon className="w-3.5 h-3.5 text-blue-500" />}
-                {tab.key === 'completed' && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />}
-                <span>{tab.label}</span>
-                <Chip
-                  size="sm"
-                  variant="soft"
-                  color="default"
-                  className={`px-1.5 py-0.5 rounded-md text-[11px] font-mono font-bold ${
-                    isSelected ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700'
-                  }`}
-                >
-                  {count}
-                </Chip>
-              </Button>
-            );
-          })}
+        {/* ── Odoo Sales CRM KPI Overview Deck ────────────────────────────── */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          {/* All Follow-ups */}
+          <div
+            onClick={() => setTimeframe("all")}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") setTimeframe("all");
+            }}
+            className={`p-3.5 rounded-2xl border transition-all cursor-pointer bg-white ${
+              timeframe === "all"
+                ? "border-slate-900 shadow-sm ring-2 ring-slate-900/10"
+                : "border-slate-200/90 hover:border-slate-300 hover:shadow-2xs"
+            }`}
+            role="button"
+            tabIndex={0}
+            aria-label={`View all ${counts.all} follow-ups`}
+          >
+            <div className="flex items-center justify-between text-slate-500 mb-2">
+              <span className="text-[11px] font-semibold uppercase tracking-wider font-mono">
+                All Pipeline
+              </span>
+              <CalendarClock className="w-4 h-4 text-slate-400" />
+            </div>
+            <div className="text-2xl font-bold text-slate-900 font-heading">
+              {counts.all}
+            </div>
+            <div className="text-[11px] text-slate-500 mt-0.5 truncate">
+              Total logged touchpoints
+            </div>
+          </div>
+
+          {/* Overdue */}
+          <div
+            onClick={() => setTimeframe("overdue")}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") setTimeframe("overdue");
+            }}
+            className={`p-3.5 rounded-2xl border transition-all cursor-pointer bg-white ${
+              timeframe === "overdue"
+                ? "border-rose-500 shadow-sm ring-2 ring-rose-500/20 bg-rose-50/20"
+                : "border-slate-200/90 hover:border-rose-300 hover:shadow-2xs"
+            }`}
+            role="button"
+            tabIndex={0}
+            aria-label={`View ${counts.overdue} overdue follow-ups`}
+          >
+            <div className="flex items-center justify-between text-rose-600 mb-2">
+              <span className="text-[11px] font-semibold uppercase tracking-wider font-mono">
+                Overdue
+              </span>
+              <div className="p-1 rounded-lg bg-rose-50">
+                <AlertTriangle className="w-3.5 h-3.5 text-rose-600" />
+              </div>
+            </div>
+            <div className="text-2xl font-bold text-rose-600 font-heading">
+              {counts.overdue}
+            </div>
+            <div className="text-[11px] text-rose-600/80 mt-0.5 truncate">
+              {counts.overdue > 0
+                ? "Requires urgent action"
+                : "No overdue items"}
+            </div>
+          </div>
+
+          {/* Due Today */}
+          <div
+            onClick={() => setTimeframe("today")}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") setTimeframe("today");
+            }}
+            className={`p-3.5 rounded-2xl border transition-all cursor-pointer bg-white ${
+              timeframe === "today"
+                ? "border-amber-500 shadow-sm ring-2 ring-amber-500/20 bg-amber-50/20"
+                : "border-slate-200/90 hover:border-amber-300 hover:shadow-2xs"
+            }`}
+            role="button"
+            tabIndex={0}
+            aria-label={`View ${counts.today} due today follow-ups`}
+          >
+            <div className="flex items-center justify-between text-amber-600 mb-2">
+              <span className="text-[11px] font-semibold uppercase tracking-wider font-mono">
+                Due Today
+              </span>
+              <div className="p-1 rounded-lg bg-amber-50">
+                <Clock className="w-3.5 h-3.5 text-amber-600" />
+              </div>
+            </div>
+            <div className="text-2xl font-bold text-amber-600 font-heading">
+              {counts.today}
+            </div>
+            <div className="text-[11px] text-amber-700/80 mt-0.5 truncate">
+              Target for end of day
+            </div>
+          </div>
+
+          {/* Upcoming */}
+          <div
+            onClick={() => setTimeframe("upcoming")}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") setTimeframe("upcoming");
+            }}
+            className={`p-3.5 rounded-2xl border transition-all cursor-pointer bg-white ${
+              timeframe === "upcoming"
+                ? "border-sky-500 shadow-sm ring-2 ring-sky-500/20 bg-sky-50/20"
+                : "border-slate-200/90 hover:border-sky-300 hover:shadow-2xs"
+            }`}
+            role="button"
+            tabIndex={0}
+            aria-label={`View ${counts.upcoming} upcoming follow-ups`}
+          >
+            <div className="flex items-center justify-between text-sky-600 mb-2">
+              <span className="text-[11px] font-semibold uppercase tracking-wider font-mono">
+                Upcoming
+              </span>
+              <div className="p-1 rounded-lg bg-sky-50">
+                <CalendarIcon className="w-3.5 h-3.5 text-sky-600" />
+              </div>
+            </div>
+            <div className="text-2xl font-bold text-sky-600 font-heading">
+              {counts.upcoming}
+            </div>
+            <div className="text-[11px] text-sky-700/80 mt-0.5 truncate">
+              Planned schedule ahead
+            </div>
+          </div>
+
+          {/* Completed */}
+          <div
+            onClick={() => setTimeframe("completed")}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") setTimeframe("completed");
+            }}
+            className={`p-3.5 rounded-2xl border transition-all cursor-pointer bg-white ${
+              timeframe === "completed"
+                ? "border-emerald-500 shadow-sm ring-2 ring-emerald-500/20 bg-emerald-50/20"
+                : "border-slate-200/90 hover:border-emerald-300 hover:shadow-2xs"
+            }`}
+            role="button"
+            tabIndex={0}
+            aria-label={`View ${counts.completed} completed follow-ups`}
+          >
+            <div className="flex items-center justify-between text-emerald-600 mb-2">
+              <span className="text-[11px] font-semibold uppercase tracking-wider font-mono">
+                Completed
+              </span>
+              <div className="p-1 rounded-lg bg-emerald-50">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+              </div>
+            </div>
+            <div className="text-2xl font-bold text-emerald-600 font-heading">
+              {counts.completed}
+            </div>
+            <div className="text-[11px] text-emerald-700/80 mt-0.5 truncate">
+              Touchpoints closed
+            </div>
+          </div>
         </div>
 
         {/* ── Search + Filters ─────────────────────────────────────────────── */}
-        <Card className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-3.5 space-y-3">
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+        <Card className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-4 space-y-3">
+          <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
             {/* Search */}
-            <div className="relative sm:col-span-2 flex items-center">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none z-10" />
+            <div className="relative flex-1 min-w-[240px] flex items-center">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none z-10" />
               <Input
                 type="text"
-                placeholder="Search customer, company or notes..."
+                placeholder="Search customer, company, notes or outcome..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-8 py-2 text-xs bg-slate-50/60 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 placeholder:text-slate-400 font-sans transition-all text-slate-800"
+                className="w-full pl-10 pr-9 py-2 text-xs bg-slate-50/70 hover:bg-slate-50 focus:bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 placeholder:text-slate-400 font-sans transition-all text-slate-900"
                 aria-label="Search customer, company or notes"
               />
               {searchQuery && (
@@ -497,9 +757,9 @@ export const AdminFollowups: React.FC = () => {
                   isIconOnly
                   variant="ghost"
                   size="sm"
-                  onPress={() => setSearchQuery('')}
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-2 text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer z-10 min-w-0 h-auto"
+                  onPress={() => setSearchQuery("")}
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-2.5 text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer z-10 min-w-0 h-auto"
                   aria-label="Clear search query"
                 >
                   <X className="w-3.5 h-3.5" />
@@ -507,137 +767,191 @@ export const AdminFollowups: React.FC = () => {
               )}
             </div>
 
-            {/* Type Filter */}
-            <div className="flex items-center gap-1.5 min-w-0">
-              <SlidersHorizontal className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-              <Select
-                selectedKey={selectedType}
-                onSelectionChange={(key) => setSelectedType(String(key))}
-                className="w-full"
-                aria-label="Filter by activity type"
-              >
-                <Select.Trigger className="w-full h-8 px-2.5 py-1.5 text-xs rounded-xl border border-slate-200 bg-slate-50/60 text-slate-700 flex items-center justify-between shadow-2xs hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors cursor-pointer">
-                  <Select.Value className="text-xs font-medium text-slate-700 truncate" />
-                  <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
-                </Select.Trigger>
-                <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[140px]">
-                  <ListBox className="outline-none space-y-0.5">
-                    {[
-                      { key: 'all', label: 'All Types' },
-                      { key: 'call', label: 'Call' },
-                      { key: 'email', label: 'Email' },
-                      { key: 'meeting', label: 'Meeting' },
-                      { key: 'demo', label: 'Demo' },
-                      { key: 'quotation', label: 'Quotation' },
-                      { key: 'other', label: 'Other' },
-                    ].map((t) => (
-                      <ListBox.Item
-                        key={t.key}
-                        id={t.key}
-                        textValue={t.label}
-                        className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-blue-50 data-[selected=true]:text-blue-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
-                      >
-                        {t.label}
-                      </ListBox.Item>
-                    ))}
-                  </ListBox>
-                </Select.Popover>
-              </Select>
-            </div>
+            {/* Filter Dropdowns */}
+            <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5">
+              {/* Type Filter */}
+              <div className="w-full sm:w-36 min-w-[130px]">
+                <Select
+                  selectedKey={selectedType}
+                  onSelectionChange={(key) => setSelectedType(String(key))}
+                  className="w-full"
+                  aria-label="Filter by activity type"
+                >
+                  <Select.Trigger className="w-full h-9 px-3 py-1.5 text-xs rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-slate-50 text-slate-700 flex items-center justify-between shadow-2xs hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all cursor-pointer">
+                    <div className="flex items-center gap-1.5 truncate">
+                      <SlidersHorizontal className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <Select.Value className="text-xs font-medium text-slate-700 truncate" />
+                    </div>
+                    <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
+                  </Select.Trigger>
+                  <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[150px]">
+                    <ListBox className="outline-none space-y-0.5">
+                      {[
+                        { key: "all", label: "All Types" },
+                        { key: "call", label: "Call" },
+                        { key: "email", label: "Email" },
+                        { key: "meeting", label: "Meeting" },
+                        { key: "demo", label: "Demo" },
+                        { key: "quotation", label: "Quotation" },
+                        { key: "other", label: "Other" },
+                      ].map((t) => (
+                        <ListBox.Item
+                          key={t.key}
+                          id={t.key}
+                          textValue={t.label}
+                          className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-blue-50 data-[selected=true]:text-blue-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                        >
+                          {t.label}
+                        </ListBox.Item>
+                      ))}
+                    </ListBox>
+                  </Select.Popover>
+                </Select>
+              </div>
 
-            {/* Priority Filter */}
-            <div>
-              <Select
-                selectedKey={selectedPriority}
-                onSelectionChange={(key) => setSelectedPriority(String(key))}
-                className="w-full"
-                aria-label="Filter by priority"
-              >
-                <Select.Trigger className="w-full h-8 px-2.5 py-1.5 text-xs rounded-xl border border-slate-200 bg-slate-50/60 text-slate-700 flex items-center justify-between shadow-2xs hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors cursor-pointer">
-                  <Select.Value className="text-xs font-medium text-slate-700 truncate" />
-                  <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
-                </Select.Trigger>
-                <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[140px]">
-                  <ListBox className="outline-none space-y-0.5">
-                    {[
-                      { key: 'all', label: 'All Priorities' },
-                      { key: 'urgent', label: 'Urgent' },
-                      { key: 'high', label: 'High' },
-                      { key: 'medium', label: 'Medium' },
-                      { key: 'low', label: 'Low' },
-                    ].map((p) => (
+              {/* Priority Filter */}
+              <div className="w-full sm:w-36 min-w-[120px]">
+                <Select
+                  selectedKey={selectedPriority}
+                  onSelectionChange={(key) => setSelectedPriority(String(key))}
+                  className="w-full"
+                  aria-label="Filter by priority"
+                >
+                  <Select.Trigger className="w-full h-9 px-3 py-1.5 text-xs rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-slate-50 text-slate-700 flex items-center justify-between shadow-2xs hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all cursor-pointer">
+                    <Select.Value className="text-xs font-medium text-slate-700 truncate" />
+                    <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
+                  </Select.Trigger>
+                  <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[140px]">
+                    <ListBox className="outline-none space-y-0.5">
+                      {[
+                        { key: "all", label: "All Priorities" },
+                        { key: "urgent", label: "Urgent" },
+                        { key: "high", label: "High" },
+                        { key: "medium", label: "Medium" },
+                        { key: "low", label: "Low" },
+                      ].map((p) => (
+                        <ListBox.Item
+                          key={p.key}
+                          id={p.key}
+                          textValue={p.label}
+                          className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-blue-50 data-[selected=true]:text-blue-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                        >
+                          {p.label}
+                        </ListBox.Item>
+                      ))}
+                    </ListBox>
+                  </Select.Popover>
+                </Select>
+              </div>
+
+              {/* Staff Filter */}
+              <div className="w-full sm:w-48 min-w-[150px]">
+                <Select
+                  selectedKey={selectedStaff}
+                  onSelectionChange={(key) => setSelectedStaff(String(key))}
+                  className="w-full"
+                  aria-label="Filter by staff member"
+                >
+                  <Select.Trigger className="w-full h-9 px-3 py-1.5 text-xs rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-slate-50 text-slate-700 flex items-center justify-between shadow-2xs hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all cursor-pointer">
+                    <Select.Value className="text-xs font-medium text-slate-700 truncate" />
+                    <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
+                  </Select.Trigger>
+                  <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[240px] max-h-60 overflow-y-auto">
+                    <ListBox className="outline-none space-y-0.5">
                       <ListBox.Item
-                        key={p.key}
-                        id={p.key}
-                        textValue={p.label}
+                        id="all"
+                        textValue="All Staff"
                         className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-blue-50 data-[selected=true]:text-blue-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
                       >
-                        {p.label}
+                        All Staff
                       </ListBox.Item>
-                    ))}
-                  </ListBox>
-                </Select.Popover>
-              </Select>
+                      <ListBox.Item
+                        id="unassigned"
+                        textValue="Unassigned"
+                        className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-blue-50 data-[selected=true]:text-blue-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                      >
+                        Unassigned
+                      </ListBox.Item>
+                      {staffList.map((s) => {
+                        const statusPrefix =
+                          s.role === "admin"
+                            ? "👑 [Admin] "
+                            : {
+                                present: "🟢 [Present] ",
+                                on_field: "🟡 [On Field] ",
+                                clocked_out: "⚪ [Out] ",
+                                not_reported: "🔴 ",
+                              }[s.attendanceStatus];
+                        const labelText = `${statusPrefix}${s.full_name || s.email}`;
+                        return (
+                          <ListBox.Item
+                            key={s.id}
+                            id={s.id}
+                            textValue={labelText}
+                            className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-blue-50 data-[selected=true]:text-blue-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                          >
+                            {labelText}
+                          </ListBox.Item>
+                        );
+                      })}
+                    </ListBox>
+                  </Select.Popover>
+                </Select>
+              </div>
+
+              {/* Reset Filters button */}
+              {hasActiveFilters && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onPress={clearAllFilters}
+                  className="h-9 px-3 text-xs font-semibold text-rose-600 bg-rose-50/70 border border-rose-200 hover:bg-rose-100 rounded-xl transition-all cursor-pointer shrink-0 inline-flex items-center gap-1.5"
+                  aria-label="Reset all filters"
+                >
+                  <RotateCw className="w-3.5 h-3.5" />
+                  <span>Reset</span>
+                </Button>
+              )}
             </div>
           </div>
 
-          {/* Staff filter row */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-slate-100">
-            <div className="flex items-center gap-3">
-              <Select
-                selectedKey={selectedStaff}
-                onSelectionChange={(key) => setSelectedStaff(String(key))}
-                className="min-w-[200px] max-w-[280px]"
-                aria-label="Filter by staff member"
-              >
-                <Select.Trigger className="w-full h-8 px-2.5 py-1.5 text-xs rounded-xl border border-slate-200 bg-slate-50/60 text-slate-700 flex items-center justify-between shadow-2xs hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors cursor-pointer">
-                  <Select.Value className="text-xs font-medium text-slate-700 truncate" />
-                  <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
-                </Select.Trigger>
-                <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[240px] max-h-60 overflow-y-auto">
-                  <ListBox className="outline-none space-y-0.5">
-                    <ListBox.Item
-                      id="all"
-                      textValue="All Staff"
-                      className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-blue-50 data-[selected=true]:text-blue-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
-                    >
-                      All Staff
-                    </ListBox.Item>
-                    <ListBox.Item
-                      id="unassigned"
-                      textValue="Unassigned"
-                      className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-blue-50 data-[selected=true]:text-blue-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
-                    >
-                      Unassigned
-                    </ListBox.Item>
-                    {staffList.map((s) => {
-                      const statusPrefix = s.role === 'admin'
-                        ? '👑 [Admin] '
-                        : {
-                            present: '🟢 [Present] ',
-                            on_field: '🟡 [On Field] ',
-                            clocked_out: '⚪ [Out] ',
-                            not_reported: '🔴 ',
-                          }[s.attendanceStatus];
-                      const labelText = `${statusPrefix}${s.full_name || s.email}`;
-                      return (
-                        <ListBox.Item
-                          key={s.id}
-                          id={s.id}
-                          textValue={labelText}
-                          className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-blue-50 data-[selected=true]:text-blue-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
-                        >
-                          {labelText}
-                        </ListBox.Item>
-                      );
-                    })}
-                  </ListBox>
-                </Select.Popover>
-              </Select>
+          {/* Active Filters Summary row */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2.5 border-t border-slate-100 text-xs text-slate-500">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-medium text-slate-600">Active View:</span>
+              <span className="font-semibold text-slate-900 capitalize">
+                {timeframe === "all" ? "All Follow-ups" : timeframe}
+              </span>
+              {selectedType !== "all" && (
+                <span className="px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200/80 rounded-md font-medium text-[11px]">
+                  Type: {selectedType}
+                </span>
+              )}
+              {selectedPriority !== "all" && (
+                <span className="px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-200/80 rounded-md font-medium text-[11px]">
+                  Priority: {selectedPriority}
+                </span>
+              )}
+              {selectedStaff !== "all" && (
+                <span className="px-2 py-0.5 bg-purple-50 text-purple-700 border border-purple-200/80 rounded-md font-medium text-[11px]">
+                  Staff:{" "}
+                  {selectedStaff === "unassigned"
+                    ? "Unassigned"
+                    : staffList.find((s) => s.id === selectedStaff)
+                        ?.full_name || selectedStaff}
+                </span>
+              )}
             </div>
-            <div className="text-xs text-slate-500 font-mono">
-              Showing <span className="font-bold text-slate-800">{filteredFollowups.length}</span> of{' '}
-              <span className="font-bold text-slate-800">{followups.length}</span> follow-ups
+            <div className="font-mono text-[11px] text-slate-500">
+              Showing{" "}
+              <span className="font-bold text-slate-800">
+                {filteredFollowups.length}
+              </span>{" "}
+              of{" "}
+              <span className="font-bold text-slate-800">
+                {followups.length}
+              </span>{" "}
+              follow-ups
             </div>
           </div>
         </Card>
@@ -647,7 +961,9 @@ export const AdminFollowups: React.FC = () => {
           <Card className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 flex flex-row items-start gap-3">
             <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" />
             <div className="flex-1 text-xs">
-              <p className="font-bold text-slate-900 font-heading">Unable to load follow-up entries</p>
+              <p className="font-bold text-slate-900 font-heading">
+                Unable to load follow-up entries
+              </p>
               <p className="text-rose-600 mt-0.5">{error}</p>
             </div>
             <Button
@@ -666,7 +982,10 @@ export const AdminFollowups: React.FC = () => {
         {loading && (
           <Card className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden p-0">
             {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="animate-pulse flex items-center gap-4 px-6 py-4 border-b border-slate-100 last:border-0">
+              <div
+                key={i}
+                className="animate-pulse flex items-center gap-4 px-6 py-4 border-b border-slate-100 last:border-0"
+              >
                 <div className="w-9 h-9 bg-slate-100 rounded-full shrink-0" />
                 <div className="flex-1 space-y-2">
                   <div className="w-48 h-3.5 bg-slate-100 rounded" />
@@ -684,13 +1003,15 @@ export const AdminFollowups: React.FC = () => {
             <div className="w-12 h-12 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto border border-slate-200/60">
               <CalendarClock className="w-6 h-6" />
             </div>
-            <h3 className="text-base font-bold text-slate-900 font-heading">No scheduled follow-ups found</h3>
+            <h3 className="text-base font-bold text-slate-900 font-heading">
+              No scheduled follow-ups found
+            </h3>
             <p className="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
-              {timeframe === 'overdue'
-                ? 'Great work! No overdue follow-ups at this time.'
-                : timeframe === 'today'
-                ? 'No follow-ups scheduled for today.'
-                : 'No follow-ups match the selected filters.'}
+              {timeframe === "overdue"
+                ? "Great work! No overdue follow-ups at this time."
+                : timeframe === "today"
+                  ? "No follow-ups scheduled for today."
+                  : "No follow-ups match the selected filters."}
             </p>
             <Button
               variant="primary"
@@ -707,83 +1028,125 @@ export const AdminFollowups: React.FC = () => {
 
         {/* ── Follow-ups Table ──────────────────────────────────────────────── */}
         {!loading && !error && filteredFollowups.length > 0 && (
-          <Card className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden p-0">
+          <>
             <Table className="w-full">
               <Table.ScrollContainer className="overflow-x-auto">
-                <Table.Content aria-label="CRM Follow-ups Data Table" className="w-full text-left text-xs min-w-[860px]">
+                <Table.Content
+                  aria-label="CRM Follow-ups Data Table"
+                  className="w-full text-left text-xs min-w-[1240px]"
+                >
                   {/* Table head */}
-                  <Table.Header className="border-b border-slate-100 bg-slate-50/60 text-[11px] font-semibold text-slate-700 font-mono uppercase tracking-wider">
-                    <Table.Column isRowHeader className="py-3.5 px-5 text-slate-700 font-semibold">Customer</Table.Column>
-                    <Table.Column className="py-3.5 px-4 text-slate-700 font-semibold">Type</Table.Column>
-                    <Table.Column className="py-3.5 px-4 text-slate-700 font-semibold">Scheduled</Table.Column>
-                    <Table.Column className="py-3.5 px-4 text-slate-700 font-semibold">Priority</Table.Column>
-                    <Table.Column className="py-3.5 px-4 text-slate-700 font-semibold">Assigned</Table.Column>
-                    <Table.Column className="py-3.5 px-4 text-slate-700 font-semibold">Notes / Outcome</Table.Column>
-                    <Table.Column className="py-3.5 px-4 text-right text-slate-700 font-semibold">Actions</Table.Column>
+                  <Table.Header>
+                    <Table.Column
+                      isRowHeader
+                      className="py-3.5 px-4 text-slate-700 font-semibold w-[280px]"
+                    >
+                      Customer
+                    </Table.Column>
+                    <Table.Column className="py-3.5 px-4 text-slate-700 font-semibold w-[120px]">
+                      Type
+                    </Table.Column>
+                    <Table.Column className="py-3.5 px-4 text-slate-700 font-semibold w-[170px]">
+                      Scheduled
+                    </Table.Column>
+                    <Table.Column className="py-3.5 px-4 text-slate-700 font-semibold w-[110px]">
+                      Priority
+                    </Table.Column>
+                    <Table.Column className="py-3.5 px-4 text-slate-700 font-semibold w-[170px]">
+                      Assigned
+                    </Table.Column>
+                    <Table.Column className="py-3.5 px-4 text-slate-700 font-semibold w-[240px]">
+                      Notes / Outcome
+                    </Table.Column>
+                    <Table.Column className="py-3.5 px-4 text-right text-slate-700 font-semibold w-[240px]">
+                      Actions
+                    </Table.Column>
                   </Table.Header>
 
                   {/* Table body */}
-                  <Table.Body className="divide-y divide-slate-100 text-xs">
+                  <Table.Body>
                     {filteredFollowups.map((item) => {
                       const overdue = isOverdue(item.scheduled_at, item.status);
-                      const isCompleted = item.status === 'completed';
-                      const isCancelled = item.status === 'cancelled';
+                      const isCompleted = item.status === "completed";
+                      const isCancelled = item.status === "cancelled";
+                      const isDueToday =
+                        !overdue &&
+                        !isCompleted &&
+                        !isCancelled &&
+                        matchesTimeframe(item, "today");
 
                       return (
                         <Table.Row
                           key={item.id}
                           className={`transition-colors group ${
                             overdue
-                              ? 'bg-rose-50/40 hover:bg-rose-50/70'
-                              : isCompleted
-                              ? 'bg-emerald-50/20 hover:bg-emerald-50/40'
-                              : isCancelled
-                              ? 'bg-slate-50/60 hover:bg-slate-100/60'
-                              : 'hover:bg-slate-50/60'
+                              ? "bg-rose-50/30 hover:bg-rose-50/60 border-l-4 border-l-rose-500"
+                              : isDueToday
+                                ? "bg-amber-50/30 hover:bg-amber-50/60 border-l-4 border-l-amber-500"
+                                : isCompleted
+                                  ? "bg-emerald-50/20 hover:bg-emerald-50/40 border-l-4 border-l-emerald-500"
+                                  : isCancelled
+                                    ? "bg-slate-50/40 hover:bg-slate-100/50 border-l-4 border-l-slate-300 opacity-75"
+                                    : "hover:bg-slate-50/70 border-l-4 border-l-blue-400"
                           }`}
                         >
                           {/* Customer */}
-                          <Table.Cell className="py-3.5 px-5 whitespace-nowrap">
+                          <Table.Cell className="py-3.5 px-4 whitespace-nowrap">
                             <div className="flex items-center gap-3">
                               {/* Avatar */}
                               <div
-                                className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-[11px] shrink-0 font-mono ${
+                                className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 font-mono shadow-2xs ${
                                   overdue
-                                    ? 'bg-rose-100 text-rose-700'
-                                    : isCompleted
-                                    ? 'bg-emerald-100 text-emerald-700'
-                                    : isCancelled
-                                    ? 'bg-slate-100 text-slate-500'
-                                    : 'bg-blue-100 text-blue-700'
+                                    ? "bg-rose-100 text-rose-700 ring-1 ring-rose-200"
+                                    : isDueToday
+                                      ? "bg-amber-100 text-amber-800 ring-1 ring-amber-200"
+                                      : isCompleted
+                                        ? "bg-emerald-100 text-emerald-700 ring-1 ring-emerald-200"
+                                        : isCancelled
+                                          ? "bg-slate-100 text-slate-500 ring-1 ring-slate-200"
+                                          : "bg-blue-100 text-blue-700 ring-1 ring-blue-200"
                                 }`}
                               >
-                                {(item.enquiry?.name || '?').charAt(0).toUpperCase()}
+                                {(item.enquiry?.name || "?")
+                                  .charAt(0)
+                                  .toUpperCase()}
                               </div>
-                              <div className="min-w-0">
+                              <div className="min-w-0 max-w-[210px]">
                                 {item.enquiry ? (
                                   <Link
                                     to={`/admin/enquiries/${item.enquiry_id}`}
-                                    className="font-semibold text-slate-900 hover:text-blue-600 transition-colors flex items-center gap-1 group-hover:text-blue-600 text-sm"
+                                    className="font-semibold text-slate-900 hover:text-blue-600 transition-colors flex items-center gap-1 group-hover:text-blue-600 text-xs sm:text-sm truncate"
+                                    title={item.enquiry.name}
                                   >
-                                    <span>{item.enquiry.name}</span>
-                                    <ArrowUpRight className="w-3 h-3 text-slate-400 group-hover:text-blue-500 transition-colors shrink-0" />
+                                    <span className="truncate">
+                                      {item.enquiry.name}
+                                    </span>
+                                    <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-500 transition-colors shrink-0" />
                                   </Link>
                                 ) : (
-                                  <span className="font-semibold text-slate-900 text-sm">
+                                  <span className="font-semibold text-slate-900 text-xs sm:text-sm">
                                     #{item.enquiry_id.substring(0, 8)}
                                   </span>
                                 )}
-                                {item.enquiry?.company && (
-                                  <div className="flex items-center gap-1 text-[11px] text-slate-700 mt-0.5">
+                                {item.enquiry?.company ? (
+                                  <div
+                                    className="flex items-center gap-1 text-[11px] text-slate-600 mt-0.5 truncate"
+                                    title={item.enquiry.company}
+                                  >
                                     <Building2 className="w-3 h-3 text-slate-400 shrink-0" />
-                                    <span>{item.enquiry.company}</span>
+                                    <span className="truncate">
+                                      {item.enquiry.company}
+                                    </span>
                                   </div>
-                                )}
-                                {item.title && (
-                                  <div className="text-[11px] text-slate-700 mt-0.5 italic truncate max-w-[180px]">
+                                ) : null}
+                                {item.title ? (
+                                  <div
+                                    className="text-[10px] text-slate-500 mt-0.5 italic truncate font-sans"
+                                    title={item.title}
+                                  >
                                     {item.title}
                                   </div>
-                                )}
+                                ) : null}
                               </div>
                             </div>
                           </Table.Cell>
@@ -795,41 +1158,16 @@ export const AdminFollowups: React.FC = () => {
 
                           {/* Scheduled */}
                           <Table.Cell className="py-3.5 px-4 whitespace-nowrap">
-                            <div className="flex flex-col gap-1">
-                              <div className="flex items-center gap-1.5 text-[11px] text-slate-700 font-mono">
-                                <Clock className="w-3 h-3 text-slate-400 shrink-0" />
-                                <span>{formatDate(item.scheduled_at)}</span>
+                            <div className="flex flex-col gap-1.5">
+                              <div className="flex items-center gap-1.5 text-xs text-slate-800 font-medium">
+                                <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                <span className="font-mono text-[11px]">
+                                  {formatDate(item.scheduled_at)}
+                                </span>
                               </div>
-                              {/* Status badge */}
-                              {overdue && (
-                                <Chip
-                                  size="sm"
-                                  variant="soft"
-                                  color="default"
-                                  className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-600 text-white uppercase tracking-wide w-fit font-mono border-none"
-                                >
-                                  Overdue
-                                </Chip>
-                              )}
-                              {isCompleted && (
-                                <Chip
-                                  size="sm"
-                                  variant="soft"
-                                  color="default"
-                                  className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-800 text-white uppercase tracking-wide w-fit font-mono border-none"
-                                >
-                                  Completed
-                                </Chip>
-                              )}
-                              {isCancelled && (
-                                <Chip
-                                  size="sm"
-                                  variant="soft"
-                                  color="default"
-                                  className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-slate-600 text-white uppercase tracking-wide w-fit font-mono border-none"
-                                >
-                                  Cancelled
-                                </Chip>
+                              {getStatusIndicator(
+                                item.scheduled_at,
+                                item.status,
                               )}
                             </div>
                           </Table.Cell>
@@ -837,23 +1175,44 @@ export const AdminFollowups: React.FC = () => {
                           {/* Priority */}
                           <Table.Cell className="py-3.5 px-4 whitespace-nowrap">
                             {getPriorityBadge(item.priority) ?? (
-                              <span className="text-slate-400 text-[11px]">—</span>
+                              <span className="text-slate-400 text-xs font-mono">
+                                —
+                              </span>
                             )}
                           </Table.Cell>
 
                           {/* Assigned */}
                           <Table.Cell className="py-3.5 px-4 whitespace-nowrap">
                             {item.assigned_profile ? (
-                              <div className="flex items-center gap-1.5">
-                                <div className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-[10px] font-bold shrink-0 font-mono">
-                                  {(item.assigned_profile.full_name || item.assigned_profile.email).charAt(0).toUpperCase()}
+                              <div className="flex items-center gap-2">
+                                <div className="w-6 h-6 rounded-full bg-slate-900 text-white flex items-center justify-center text-[10px] font-bold shrink-0 font-mono shadow-2xs">
+                                  {(
+                                    item.assigned_profile.full_name ||
+                                    item.assigned_profile.email
+                                  )
+                                    .charAt(0)
+                                    .toUpperCase()}
                                 </div>
-                                <span className="text-[11px] font-semibold text-slate-700 truncate max-w-[120px]">
-                                  {item.assigned_profile.full_name || item.assigned_profile.email}
-                                </span>
+                                <div className="min-w-0 max-w-[130px]">
+                                  <div
+                                    className="text-xs font-medium text-slate-800 truncate"
+                                    title={
+                                      item.assigned_profile.full_name ||
+                                      item.assigned_profile.email
+                                    }
+                                  >
+                                    {item.assigned_profile.full_name ||
+                                      item.assigned_profile.email}
+                                  </div>
+                                </div>
                               </div>
                             ) : (
-                              <Chip size="sm" variant="soft" color="default" className="text-slate-700 italic text-[11px] bg-slate-50 border border-slate-200/80">
+                              <Chip
+                                size="sm"
+                                variant="soft"
+                                color="default"
+                                className="text-slate-600 text-[11px] bg-slate-100/80 border border-slate-200/90 rounded-md"
+                              >
                                 Unassigned
                               </Chip>
                             )}
@@ -862,15 +1221,26 @@ export const AdminFollowups: React.FC = () => {
                           {/* Notes / Outcome */}
                           <Table.Cell className="py-3.5 px-4 max-w-[240px]">
                             {item.outcome ? (
-                              <div className="text-[11px] text-emerald-800 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-200/70 truncate" title={item.outcome}>
-                                <span className="font-semibold">Outcome:</span> {item.outcome}
+                              <div
+                                className="text-[11px] text-emerald-900 bg-emerald-50/90 px-2.5 py-1.5 rounded-xl border border-emerald-200/80 line-clamp-2"
+                                title={item.outcome}
+                              >
+                                <span className="font-bold text-emerald-800">
+                                  Outcome:
+                                </span>{" "}
+                                {item.outcome}
                               </div>
                             ) : item.notes ? (
-                              <p className="text-[11px] text-slate-600 bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-200/70 truncate" title={item.notes}>
+                              <div
+                                className="text-[11px] text-slate-700 bg-slate-50 px-2.5 py-1.5 rounded-xl border border-slate-200/80 line-clamp-2"
+                                title={item.notes}
+                              >
                                 {item.notes}
-                              </p>
+                              </div>
                             ) : (
-                              <span className="text-slate-600 italic text-[11px]">No notes</span>
+                              <span className="text-slate-400 italic text-[11px]">
+                                No notes
+                              </span>
                             )}
                           </Table.Cell>
 
@@ -881,9 +1251,9 @@ export const AdminFollowups: React.FC = () => {
                               {item.enquiry?.phone && (
                                 <a
                                   href={`tel:${item.enquiry.phone}`}
-                                  className="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors border border-slate-200 inline-flex items-center justify-center"
+                                  className="p-1.5 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors border border-slate-200 inline-flex items-center justify-center shrink-0 shadow-2xs"
                                   title={`Call ${item.enquiry.phone}`}
-                                  aria-label={`Call ${item.enquiry.name || 'customer'} at ${item.enquiry.phone}`}
+                                  aria-label={`Call ${item.enquiry.name || "customer"} at ${item.enquiry.phone}`}
                                 >
                                   <Phone className="w-3.5 h-3.5" />
                                 </a>
@@ -893,9 +1263,9 @@ export const AdminFollowups: React.FC = () => {
                               {item.enquiry?.email && (
                                 <a
                                   href={`mailto:${item.enquiry.email}`}
-                                  className="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors border border-slate-200 inline-flex items-center justify-center"
+                                  className="p-1.5 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors border border-slate-200 inline-flex items-center justify-center shrink-0 shadow-2xs"
                                   title={`Email ${item.enquiry.email}`}
-                                  aria-label={`Email ${item.enquiry.name || 'customer'} at ${item.enquiry.email}`}
+                                  aria-label={`Email ${item.enquiry.name || "customer"} at ${item.enquiry.email}`}
                                 >
                                   <Mail className="w-3.5 h-3.5" />
                                 </a>
@@ -909,22 +1279,22 @@ export const AdminFollowups: React.FC = () => {
                                     size="sm"
                                     onPress={() => {
                                       setCompletingFollowup(item);
-                                      setOutcomeNotes('');
+                                      setOutcomeNotes("");
                                       setScheduleNext(false);
                                       setOutcomeError(null);
                                     }}
-                                    className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-[11px] font-semibold border border-emerald-200 transition-colors shadow-2xs cursor-pointer"
-                                    aria-label={`Complete follow-up for ${item.enquiry?.name || 'customer'}`}
+                                    className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl text-xs font-semibold border border-emerald-200 transition-colors shadow-2xs cursor-pointer shrink-0"
+                                    aria-label={`Complete follow-up for ${item.enquiry?.name || "customer"}`}
                                   >
-                                    <Check className="w-3 h-3 shrink-0" />
+                                    <Check className="w-3 h-3 shrink-0 text-emerald-600" />
                                     <span>Complete</span>
                                   </Button>
                                   <Button
                                     variant="outline"
                                     size="sm"
                                     onPress={() => handleCancelFollowup(item)}
-                                    className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors border border-slate-200 cursor-pointer"
-                                    aria-label={`Cancel follow-up for ${item.enquiry?.name || 'customer'}`}
+                                    className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors border border-slate-200 cursor-pointer shrink-0 shadow-2xs"
+                                    aria-label={`Cancel follow-up for ${item.enquiry?.name || "customer"}`}
                                   >
                                     <X className="w-3.5 h-3.5 shrink-0" />
                                   </Button>
@@ -934,7 +1304,7 @@ export const AdminFollowups: React.FC = () => {
                               {/* Details */}
                               <Link
                                 to={`/admin/followups/${item.id}`}
-                                className="inline-flex items-center gap-1 px-2.5 py-1 border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-lg text-[11px] font-semibold transition-colors"
+                                className="inline-flex items-center gap-1 px-2.5 py-1 border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-xl text-xs font-semibold transition-colors shrink-0 shadow-2xs"
                                 title="View full follow-up details"
                                 aria-label={`View full details for follow-up ${item.id}`}
                               >
@@ -944,8 +1314,9 @@ export const AdminFollowups: React.FC = () => {
                               {/* Dossier */}
                               <Link
                                 to={`/admin/enquiries/${item.enquiry_id}`}
-                                className="inline-flex items-center gap-1 px-2.5 py-1 border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-lg text-[11px] font-semibold transition-colors"
-                                aria-label={`View customer dossier for ${item.enquiry?.name || 'customer'}`}
+                                className="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-100 hover:bg-slate-200 border border-slate-200/80 text-slate-800 rounded-xl text-xs font-semibold transition-colors shrink-0 shadow-2xs"
+                                aria-label={`View customer dossier for ${item.enquiry?.name || "customer"}`}
+                                title="Open customer enquiry dossier"
                               >
                                 Dossier
                               </Link>
@@ -962,7 +1333,11 @@ export const AdminFollowups: React.FC = () => {
             {/* Table footer */}
             <div className="border-t border-slate-100 px-6 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-500 bg-slate-50/40">
               <span className="font-mono text-[11px]">
-                Showing <span className="font-bold text-slate-800">{filteredFollowups.length}</span> follow-ups
+                Showing{" "}
+                <span className="font-bold text-slate-800">
+                  {filteredFollowups.length}
+                </span>{" "}
+                follow-ups
               </span>
               <Button
                 variant="outline"
@@ -975,7 +1350,7 @@ export const AdminFollowups: React.FC = () => {
                 <span>Schedule new</span>
               </Button>
             </div>
-          </Card>
+          </>
         )}
 
         {/* ── MODAL: Complete Follow-up ───────────────────────────────────── */}
@@ -1016,7 +1391,8 @@ export const AdminFollowups: React.FC = () => {
                     Complete Follow-up
                   </Modal.Heading>
                   <p className="text-xs text-slate-500 mt-0.5">
-                    Record outcome for {completingFollowup?.enquiry?.name || 'Customer'}
+                    Record outcome for{" "}
+                    {completingFollowup?.enquiry?.name || "Customer"}
                   </p>
                 </div>
               </Modal.Header>
@@ -1031,8 +1407,12 @@ export const AdminFollowups: React.FC = () => {
                   )}
 
                   <div>
-                    <Label htmlFor="outcomeNotes" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono">
-                      Outcome &amp; Discussion Notes <span className="text-rose-500">*</span>
+                    <Label
+                      htmlFor="outcomeNotes"
+                      className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono"
+                    >
+                      Outcome &amp; Discussion Notes{" "}
+                      <span className="text-rose-500">*</span>
                     </Label>
                     <TextArea
                       id="outcomeNotes"
@@ -1107,7 +1487,10 @@ export const AdminFollowups: React.FC = () => {
                                     </DateField.Suffix>
                                   </DateField.Group>
                                   <DatePicker.Popover className="bg-white rounded-2xl shadow-2xl border border-slate-200 p-3 z-50 flex flex-col gap-3">
-                                    <Calendar aria-label="Next Follow-up Date" className="w-full">
+                                    <Calendar
+                                      aria-label="Next Follow-up Date"
+                                      className="w-full"
+                                    >
                                       <Calendar.Header className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
                                         <Calendar.YearPickerTrigger className="text-xs font-bold text-slate-800 flex items-center gap-1 cursor-pointer hover:text-blue-600">
                                           <Calendar.YearPickerTriggerHeading />
@@ -1153,13 +1536,17 @@ export const AdminFollowups: React.FC = () => {
                                       </Calendar.YearPickerGrid>
                                     </Calendar>
                                     <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
-                                      <span className="font-semibold text-slate-600 font-mono">Time</span>
+                                      <span className="font-semibold text-slate-600 font-mono">
+                                        Time
+                                      </span>
                                       <TimeField
                                         aria-label="Next Follow-up Time"
                                         granularity="minute"
                                         hourCycle={12}
                                         value={state.timeValue}
-                                        onChange={(v) => { if (v) state.setTimeValue(v); }}
+                                        onChange={(v) => {
+                                          if (v) state.setTimeValue(v);
+                                        }}
                                       >
                                         <TimeField.Group className="px-2 py-1 border border-slate-200 rounded-lg bg-slate-50 flex items-center font-mono text-xs">
                                           <TimeField.Input className="flex items-center gap-0.5">
@@ -1179,13 +1566,18 @@ export const AdminFollowups: React.FC = () => {
                             </DatePicker>
                           </div>
                           <div>
-                            <Label htmlFor="nextType" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono">
+                            <Label
+                              htmlFor="nextType"
+                              className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono"
+                            >
                               Activity Type
                             </Label>
                             <Select
                               id="nextType"
                               selectedKey={nextType}
-                              onSelectionChange={(key) => setNextType(String(key) as FollowupType)}
+                              onSelectionChange={(key) =>
+                                setNextType(String(key) as FollowupType)
+                              }
                               className="w-full"
                               aria-label="Next follow-up type"
                             >
@@ -1196,12 +1588,12 @@ export const AdminFollowups: React.FC = () => {
                               <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[130px]">
                                 <ListBox className="outline-none space-y-0.5">
                                   {[
-                                    { key: 'call', label: 'Call' },
-                                    { key: 'email', label: 'Email' },
-                                    { key: 'meeting', label: 'Meeting' },
-                                    { key: 'demo', label: 'Demo' },
-                                    { key: 'quotation', label: 'Quotation' },
-                                    { key: 'other', label: 'Other' },
+                                    { key: "call", label: "Call" },
+                                    { key: "email", label: "Email" },
+                                    { key: "meeting", label: "Meeting" },
+                                    { key: "demo", label: "Demo" },
+                                    { key: "quotation", label: "Quotation" },
+                                    { key: "other", label: "Other" },
                                   ].map((item) => (
                                     <ListBox.Item
                                       key={item.key}
@@ -1218,7 +1610,10 @@ export const AdminFollowups: React.FC = () => {
                           </div>
                         </div>
                         <div>
-                          <Label htmlFor="nextNotes" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono">
+                          <Label
+                            htmlFor="nextNotes"
+                            className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono"
+                          >
                             Next Agenda / Notes
                           </Label>
                           <Input
@@ -1250,7 +1645,9 @@ export const AdminFollowups: React.FC = () => {
                       isDisabled={isSubmittingOutcome}
                       className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-semibold hover:bg-emerald-700 transition-colors shadow-2xs cursor-pointer border-none"
                     >
-                      {isSubmittingOutcome ? 'Saving...' : 'Save & Mark Complete'}
+                      {isSubmittingOutcome
+                        ? "Saving..."
+                        : "Save & Mark Complete"}
                     </Button>
                   </div>
                 </Form>
@@ -1296,7 +1693,9 @@ export const AdminFollowups: React.FC = () => {
                   >
                     Schedule CRM Follow-up
                   </Modal.Heading>
-                  <p className="text-xs text-slate-500 mt-0.5">Add a new touchpoint or reminder</p>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Add a new touchpoint or reminder
+                  </p>
                 </div>
               </Modal.Header>
 
@@ -1310,8 +1709,12 @@ export const AdminFollowups: React.FC = () => {
                   )}
 
                   <div className="flex flex-col gap-1">
-                    <Label htmlFor="targetEnquiryId" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono">
-                      Select Customer / Enquiry <span className="text-rose-500">*</span>
+                    <Label
+                      htmlFor="targetEnquiryId"
+                      className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono"
+                    >
+                      Select Customer / Enquiry{" "}
+                      <span className="text-rose-500">*</span>
                     </Label>
                     <Select
                       id="targetEnquiryId"
@@ -1332,7 +1735,7 @@ export const AdminFollowups: React.FC = () => {
                       <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 max-h-60 overflow-y-auto min-w-[280px]">
                         <ListBox className="outline-none space-y-0.5">
                           {recentEnquiries.map((e) => {
-                            const label = `${e.name} ${e.company ? `(${e.company})` : ''} - #${e.id.substring(0, 8)}`;
+                            const label = `${e.name} ${e.company ? `(${e.company})` : ""} - #${e.id.substring(0, 8)}`;
                             return (
                               <ListBox.Item
                                 key={e.id}
@@ -1384,7 +1787,10 @@ export const AdminFollowups: React.FC = () => {
                               </DateField.Suffix>
                             </DateField.Group>
                             <DatePicker.Popover className="bg-white rounded-2xl shadow-2xl border border-slate-200 p-3 z-50 flex flex-col gap-3">
-                              <Calendar aria-label="Follow-up Date" className="w-full">
+                              <Calendar
+                                aria-label="Follow-up Date"
+                                className="w-full"
+                              >
                                 <Calendar.Header className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
                                   <Calendar.YearPickerTrigger className="text-xs font-bold text-slate-800 flex items-center gap-1 cursor-pointer hover:text-blue-600">
                                     <Calendar.YearPickerTriggerHeading />
@@ -1430,13 +1836,17 @@ export const AdminFollowups: React.FC = () => {
                                 </Calendar.YearPickerGrid>
                               </Calendar>
                               <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
-                                <span className="font-semibold text-slate-600 font-mono">Time</span>
+                                <span className="font-semibold text-slate-600 font-mono">
+                                  Time
+                                </span>
                                 <TimeField
                                   aria-label="Follow-up Time"
                                   granularity="minute"
                                   hourCycle={12}
                                   value={state.timeValue}
-                                  onChange={(v) => { if (v) state.setTimeValue(v); }}
+                                  onChange={(v) => {
+                                    if (v) state.setTimeValue(v);
+                                  }}
                                 >
                                   <TimeField.Group className="px-2 py-1 border border-slate-200 rounded-lg bg-slate-50 flex items-center font-mono text-xs">
                                     <TimeField.Input className="flex items-center gap-0.5">
@@ -1457,13 +1867,18 @@ export const AdminFollowups: React.FC = () => {
                     </div>
 
                     <div>
-                      <Label htmlFor="newScheduleType" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono">
+                      <Label
+                        htmlFor="newScheduleType"
+                        className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono"
+                      >
                         Activity Type
                       </Label>
                       <Select
                         id="newScheduleType"
                         selectedKey={newScheduleType}
-                        onSelectionChange={(key) => setNewScheduleType(String(key) as FollowupType)}
+                        onSelectionChange={(key) =>
+                          setNewScheduleType(String(key) as FollowupType)
+                        }
                         className="w-full"
                         aria-label="Activity Type"
                       >
@@ -1474,12 +1889,12 @@ export const AdminFollowups: React.FC = () => {
                         <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[130px]">
                           <ListBox className="outline-none space-y-0.5">
                             {[
-                              { key: 'call', label: 'Call' },
-                              { key: 'email', label: 'Email' },
-                              { key: 'meeting', label: 'Meeting' },
-                              { key: 'demo', label: 'Demo' },
-                              { key: 'quotation', label: 'Quotation' },
-                              { key: 'other', label: 'Other' },
+                              { key: "call", label: "Call" },
+                              { key: "email", label: "Email" },
+                              { key: "meeting", label: "Meeting" },
+                              { key: "demo", label: "Demo" },
+                              { key: "quotation", label: "Quotation" },
+                              { key: "other", label: "Other" },
                             ].map((item) => (
                               <ListBox.Item
                                 key={item.key}
@@ -1498,7 +1913,10 @@ export const AdminFollowups: React.FC = () => {
 
                   <div>
                     <TextField className="w-full flex flex-col gap-1">
-                      <Label htmlFor="newScheduleNotes" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono">
+                      <Label
+                        htmlFor="newScheduleNotes"
+                        className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono"
+                      >
                         Notes &amp; Discussion Goal
                       </Label>
                       <TextArea
@@ -1528,7 +1946,7 @@ export const AdminFollowups: React.FC = () => {
                       isDisabled={isScheduling}
                       className="px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-semibold hover:bg-slate-800 transition-colors shadow-2xs cursor-pointer border-none"
                     >
-                      {isScheduling ? 'Scheduling...' : 'Confirm Schedule'}
+                      {isScheduling ? "Scheduling..." : "Confirm Schedule"}
                     </Button>
                   </div>
                 </Form>

@@ -123,9 +123,8 @@ export const Hero: React.FC = () => {
                 <ArrowRight className="w-4 h-4 shrink-0" />
               </Link>
               <Button
-                variant="bordered"
+                variant="outline"
                 size="lg"
-                radius="sm"
                 onPress={() => openEnquiry()}
                 className="inline-flex items-center justify-center gap-2 px-6 py-3.5 min-h-[48px] border-slate-600 text-white font-semibold text-sm hover:border-slate-400 hover:bg-slate-800/50 transition-colors font-sans w-full sm:w-auto bg-transparent"
               >
@@ -176,8 +175,7 @@ export const Hero: React.FC = () => {
             </div>
 
             <Button
-              variant="flat"
-              radius="sm"
+              variant="secondary"
               size="sm"
               onPress={handleInspectImage}
               className="absolute bottom-4 left-4 z-20 inline-flex items-center gap-2 px-4 py-2 bg-slate-900/90 text-white text-xs font-semibold border border-slate-700 hover:bg-industrial-primary hover:border-industrial-primary hover:text-white transition-colors cursor-pointer font-sans rounded-sm"

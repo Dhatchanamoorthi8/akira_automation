@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import { Button, Chip, Tabs } from '@heroui/react';
+import { Button, Tabs } from '@heroui/react';
 import { productSummaries, productCategories } from '../../data/productSummaries';
 import { ProductCard } from '../common/ProductCard';
 import { SectionReveal } from '../animation/SectionReveal';

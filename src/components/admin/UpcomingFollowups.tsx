@@ -33,11 +33,11 @@ export const UpcomingFollowups: React.FC<UpcomingFollowupsProps> = ({ followups,
   }
 
   return (
-    <Card className="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xs flex flex-col h-full flex-1 space-y-4">
+    <Card className="bg-white border border-slate-200/70 rounded-2xl p-5 sm:p-6 shadow-[0_1px_3px_rgba(0,0,0,0.02),0_4px_16px_rgba(0,0,0,0.02)] flex flex-col h-full flex-1 space-y-4 font-sans">
       {/* Header */}
       <div className="flex items-center justify-between pb-3 border-b border-slate-100">
         <div>
-          <h2 className="text-base font-bold text-slate-900 tracking-tight font-heading">
+          <h2 className="text-base font-bold text-slate-900 tracking-tight font-sans">
             Upcoming Follow-ups
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">

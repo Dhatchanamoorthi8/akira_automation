@@ -24,36 +24,35 @@ export const AdminProfileMenu: React.FC = () => {
       <Button
         variant="ghost"
         aria-label="Admin Profile Menu"
-        className="flex items-center gap-2.5 p-1 sm:px-2.5 sm:py-1.5 rounded-lg hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-industrial-primary/20 min-h-[44px] cursor-pointer"
+        className="flex items-center gap-2.5 p-1 sm:px-2.5 sm:py-1.5 rounded-xl hover:bg-slate-100/80 transition-colors focus:outline-none min-h-[40px] cursor-pointer"
       >
-        <div className="w-8 h-8 rounded-full bg-industrial-dark text-white font-bold text-xs flex items-center justify-center border border-slate-300 shrink-0">
+        <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center border border-emerald-200/70 shrink-0">
           {initials || <User className="w-4 h-4" />}
         </div>
         <div className="hidden sm:block text-left">
-          <div className="text-xs font-bold text-industrial-dark leading-tight flex items-center gap-1">
+          <div className="text-xs font-semibold text-slate-800 leading-tight flex items-center gap-1">
             <span className="truncate max-w-[120px]">{displayName}</span>
-            <ShieldCheck className="w-3 h-3 text-sky-500 shrink-0" />
           </div>
-          <span className="text-[10px] text-slate-500 uppercase tracking-wider font-mono">
+          <span className="text-[10px] text-slate-400 capitalize">
             {roleLabel}
           </span>
         </div>
         <ChevronDown className="w-3.5 h-3.5 text-slate-400 transition-transform duration-200 hidden sm:block" />
       </Button>
 
-      <Dropdown.Popover placement="bottom end" className="w-64 rounded-xl bg-white border border-slate-200 shadow-card py-2 z-50">
+      <Dropdown.Popover placement="bottom end" className="w-64 rounded-2xl bg-white border border-slate-200/80 shadow-xl py-2 z-50 font-sans">
         <div className="px-4 py-3 border-b border-slate-100">
-          <p className="text-xs font-bold text-industrial-dark truncate">
+          <p className="text-xs font-bold text-slate-900 truncate">
             {displayName}
           </p>
-          <p className="text-[11px] text-slate-500 font-mono truncate mt-0.5">
+          <p className="text-[11px] text-slate-400 truncate mt-0.5">
             {displayEmail}
           </p>
           <Chip
             variant="soft"
             color="accent"
             size="sm"
-            className="mt-2 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-semibold uppercase bg-sky-50 text-industrial-primary border border-sky-200"
+            className="mt-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-rose-50 text-rose-700 border border-rose-200/60"
           >
             <ShieldCheck className="w-3 h-3" />
             <span>{roleLabel} Access</span>

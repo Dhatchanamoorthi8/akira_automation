@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { ArrowRight, CheckCircle2, Cpu, ZoomIn } from 'lucide-react';
-import { Button, Chip, Tabs } from '@heroui/react';
+import { Button, Tabs } from '@heroui/react';
 import { useEnquiry } from '../../context/EnquiryContext';
 import { useImageViewer } from '../../context/ImageViewerContext';
 import { SectionReveal } from '../animation/SectionReveal';

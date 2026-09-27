@@ -3,9 +3,9 @@ import { useLocation } from 'react-router-dom';
 import { Button, Breadcrumbs, Kbd, Chip, Input } from '@heroui/react';
 import {
   Menu,
+  PanelLeft,
   Search,
   Bell,
-  Database,
   LayoutDashboard,
   Users,
   CalendarClock,
@@ -19,6 +19,8 @@ import { useAuth } from '../../auth/useAuth';
 
 interface AdminHeaderProps {
   onToggleMobileSidebar: () => void;
+  isSidebarCollapsed?: boolean;
+  onToggleSidebarCollapse?: () => void;
   title?: string;
 }
 
@@ -31,7 +33,7 @@ interface BreadcrumbItem {
 
 function getAdminBreadcrumb(pathname: string): BreadcrumbItem {
   if (pathname === '/admin' || pathname === '/admin/' || pathname.startsWith('/admin/dashboard')) {
-    return { icon: LayoutDashboard, label: 'Dashboard', to: '/admin/dashboard' };
+    return { icon: LayoutDashboard, label: 'Home', to: '/admin/dashboard' };
   }
   if (pathname.startsWith('/admin/enquiries')) {
     const isDetail = pathname.replace('/admin/enquiries', '').length > 1;
@@ -75,41 +77,53 @@ function getAdminBreadcrumb(pathname: string): BreadcrumbItem {
 
 export const AdminHeader: React.FC<AdminHeaderProps> = ({
   onToggleMobileSidebar,
+  isSidebarCollapsed,
+  onToggleSidebarCollapse,
 }) => {
   const { isConfigured } = useAuth();
   const location = useLocation();
 
   const breadcrumb = getAdminBreadcrumb(location.pathname);
-  const BreadcrumbIcon = breadcrumb.icon;
 
   return (
-    <header className="h-16 bg-white border-b border-slate-200 sticky top-0 z-30 px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4 shadow-subtle">
-      {/* Left: Mobile Menu Trigger & Dynamic Breadcrumb */}
+    <header className="h-16 bg-white border-b border-slate-200/70 sticky top-0 z-30 px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
+      {/* Left: Mobile/Desktop Toggle [◫] & Breadcrumb matching reference screenshot */}
       <div className="flex items-center gap-3">
+        {/* Mobile menu trigger */}
         <Button
           variant="ghost"
           size="sm"
+          isIconOnly
           onPress={onToggleMobileSidebar}
-          className="lg:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-industrial-dark transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
+          className="lg:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors min-h-[38px] min-w-[38px] flex items-center justify-center cursor-pointer"
           aria-label="Open navigation sidebar"
         >
-          <Menu className="w-5 h-5" />
+          <Menu className="w-5 h-5 text-slate-700" />
         </Button>
 
-        {/* Dynamic Breadcrumb (Desktop & Mobile) */}
+        {/* Desktop sidebar rail collapse/expand toggle button [◫] */}
+        <Button
+          variant="ghost"
+          size="sm"
+          isIconOnly
+          onPress={onToggleSidebarCollapse}
+          className="hidden lg:flex p-2 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors min-h-[36px] min-w-[36px] items-center justify-center cursor-pointer"
+          aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          <PanelLeft className="w-4 h-4 text-slate-700" />
+        </Button>
+
+        {/* Breadcrumb matching [◫] Home */}
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-md bg-gray-100 flex items-center justify-center text-gray-700 shrink-0">
-            <BreadcrumbIcon className="w-3.5 h-3.5" />
-          </div>
-          <Breadcrumbs aria-label="Breadcrumb" className="text-xs font-medium text-gray-500">
+          <Breadcrumbs aria-label="Breadcrumb" className="text-sm font-semibold text-slate-900">
             <Breadcrumbs.Item href={breadcrumb.to}>
-              <span className={breadcrumb.subLabel ? 'text-gray-500 hover:text-gray-900 font-medium' : 'text-gray-900 font-bold text-sm'}>
+              <span className={breadcrumb.subLabel ? 'text-slate-500 hover:text-slate-900 font-medium' : 'text-slate-900 font-bold text-sm'}>
                 {breadcrumb.label}
               </span>
             </Breadcrumbs.Item>
             {breadcrumb.subLabel && (
               <Breadcrumbs.Item>
-                <span className="text-gray-900 font-bold text-sm truncate max-w-[150px] sm:max-w-[220px]">
+                <span className="text-slate-900 font-bold text-sm truncate max-w-[150px] sm:max-w-[220px]">
                   {breadcrumb.subLabel}
                 </span>
               </Breadcrumbs.Item>
@@ -119,52 +133,52 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
       </div>
 
       {/* Center: Search Bar */}
-      <div className="hidden md:flex items-center flex-1 max-w-md mx-4">
+      <div className="hidden md:flex items-center flex-1 max-w-sm mx-4">
         <div className="w-full relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 z-10">
-            <Search className="w-4 h-4" />
+            <Search className="w-3.5 h-3.5" />
           </div>
           <Input
             type="search"
             readOnly
-            placeholder="Search products, RFQ numbers, customers..."
-            className="w-full pl-9 pr-16 py-1.5 bg-slate-50 hover:bg-slate-100/80 border border-slate-200 rounded-xl text-xs text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-industrial-primary/20 cursor-pointer transition-colors"
+            placeholder="Search..."
+            className="w-full pl-9 pr-14 py-1.5 bg-slate-50 hover:bg-slate-100/70 border border-slate-200/70 rounded-xl text-xs text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500/20 cursor-pointer transition-colors"
           />
           <div className="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none z-10">
-            <Kbd className="inline-flex items-center px-1.5 py-0.5 border border-slate-200 rounded bg-white text-[10px] font-mono text-slate-600">
+            <Kbd className="inline-flex items-center px-1.5 py-0.5 border border-slate-200 rounded-md bg-white text-[10px] text-slate-500">
               ⌘ K
             </Kbd>
           </div>
         </div>
       </div>
 
-      {/* Right: Status Indicator, Notification & Profile */}
+      {/* Right: Date Indicator, Status, Notification & Profile */}
       <div className="flex items-center gap-2 sm:gap-3">
+
         {/* Backend Connection Badge */}
         <Chip
           variant="soft"
           color={isConfigured ? 'accent' : 'warning'}
           size="sm"
-          className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono font-medium border bg-slate-50 text-slate-600 border-slate-200"
+          className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium border bg-slate-50 text-slate-600 border-slate-200/60"
         >
           <span
             className={`w-2 h-2 rounded-full ${
               isConfigured ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'
             }`}
           />
-          <Database className="w-3 h-3 text-slate-400" />
-          <span>{isConfigured ? 'DB Connected' : 'Offline Mode'}</span>
+          <span>{isConfigured ? 'Online' : 'Offline'}</span>
         </Chip>
 
         {/* Notifications Icon Button */}
         <Button
           variant="ghost"
           size="sm"
-          className="relative p-2 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-industrial-dark transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
+          className="relative p-2 rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center cursor-pointer"
           aria-label="View system notifications"
         >
           <Bell className="w-4 h-4" />
-          <span className="absolute top-2 right-2 w-2 h-2 bg-sky-500 rounded-full ring-2 ring-white" />
+          <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white" />
         </Button>
 
         {/* Profile Dropdown */}

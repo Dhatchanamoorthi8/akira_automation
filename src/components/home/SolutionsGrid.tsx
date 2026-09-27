@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Cpu, Wind, Layers, Gauge, CircleDot, Disc, CheckCircle2, Crosshair, Maximize2, Circle, Wrench, Anchor } from 'lucide-react';
-import { Button, Card, Chip } from '@heroui/react';
+import { Button, Card } from '@heroui/react';
 import { company } from '../../config/company';
 import { solutions } from '../../data/solutions';
 import { SectionReveal } from '../animation/SectionReveal';

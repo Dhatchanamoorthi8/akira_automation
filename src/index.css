@@ -19,9 +19,9 @@
   --color-tolerance-amber: #F59E0B;
   --color-tolerance-green: #10B981;
 
-  --font-sans: 'Manrope', system-ui, -apple-system, sans-serif;
-  --font-heading: 'Manrope', system-ui, sans-serif;
-  --font-mono: 'Manrope', Consolas, monospace;
+  --font-sans: 'Inter', 'Manrope', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Inter', 'Manrope', system-ui, sans-serif;
+  --font-mono: 'Inter', 'Manrope', Consolas, monospace;
 
   --max-width-site: 1380px;
 
@@ -66,6 +66,18 @@
   --danger: oklch(0.6 0.22 25);
 }
 
+/* HeroUI Rose/Pink Theme for DateRangePicker matching reference */
+.heroui-rose-calendar {
+  --accent: #FB7185;
+  --accent-foreground: #0F172A;
+  --accent-hover: #F43F5E;
+  --accent-soft: #FDE8EC;
+  --accent-soft-foreground: #FB7185;
+  --accent-soft-hover: #FCE7F3;
+  --focus: #FB7185;
+}
+
+
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -74,7 +86,7 @@
 
   body {
     @apply bg-industrial-bg text-industrial-text antialiased;
-    font-family: 'Manrope', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', 'Manrope', system-ui, -apple-system, sans-serif;
     font-weight: 500;
     overflow-x: clip;
     width: 100%;
@@ -88,7 +100,7 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Manrope', system-ui, sans-serif;
+    font-family: 'Inter', 'Manrope', system-ui, sans-serif;
     letter-spacing: -0.02em;
   }
 }

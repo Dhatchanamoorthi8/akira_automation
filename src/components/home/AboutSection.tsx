@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, CheckCircle2, Award } from 'lucide-react';
-import { Card, Chip } from '@heroui/react';
+import { Card } from '@heroui/react';
 import { company } from '../../config/company';
 import { companyIntro } from '../../data/company';
 import { SectionReveal } from '../animation/SectionReveal';

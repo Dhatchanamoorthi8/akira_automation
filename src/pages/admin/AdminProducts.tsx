@@ -347,7 +347,7 @@ export const AdminProducts: React.FC = () => {
         description="Administrative control for precision metrology products, specifications, and images."
       />
 
-      <div className="space-y-4 max-w-7xl mx-auto pb-12 font-sans text-gray-900">
+      <div className="space-y-4 w-full pb-12 font-sans text-gray-900">
         {/* Page Title & Controls */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
           <div>
@@ -431,9 +431,11 @@ export const AdminProducts: React.FC = () => {
                               onChange={() => toggleColumn(col.key)}
                               aria-label={col.label}
                             >
-                              <Checkbox.Control>
-                                <Checkbox.Indicator />
-                              </Checkbox.Control>
+                              <Checkbox.Content>
+                                <Checkbox.Control>
+                                  <Checkbox.Indicator />
+                                </Checkbox.Control>
+                              </Checkbox.Content>
                             </Checkbox>
                             <span
                               onClick={() => toggleColumn(col.key)}
@@ -495,7 +497,6 @@ export const AdminProducts: React.FC = () => {
               size="sm"
               onPress={fetchProducts}
               isDisabled={isLoading}
-              className="p-2 rounded-lg bg-white border border-gray-200 text-gray-600 hover:text-gray-900 hover:bg-gray-50 shadow-2xs transition-colors flex items-center gap-1.5 text-xs font-medium cursor-pointer"
               aria-label="Refresh product list"
             >
               <RotateCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-blue-600' : ''}`} />
@@ -626,9 +627,11 @@ export const AdminProducts: React.FC = () => {
                         onChange={toggleSelectAll}
                         aria-label="Select all rows"
                       >
-                        <Checkbox.Control>
-                          <Checkbox.Indicator />
-                        </Checkbox.Control>
+                        <Checkbox.Content>
+                          <Checkbox.Control>
+                            <Checkbox.Indicator />
+                          </Checkbox.Control>
+                        </Checkbox.Content>
                       </Checkbox>
                     </Table.Column>
 
@@ -672,9 +675,11 @@ export const AdminProducts: React.FC = () => {
                             isSelected={isRowSelected}
                             aria-label={`Select ${prod.name}`}
                           >
-                            <Checkbox.Control>
-                              <Checkbox.Indicator />
-                            </Checkbox.Control>
+                            <Checkbox.Content>
+                              <Checkbox.Control>
+                                <Checkbox.Indicator />
+                              </Checkbox.Control>
+                            </Checkbox.Content>
                           </Checkbox>
                         </Table.Cell>
 

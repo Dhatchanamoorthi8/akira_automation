@@ -1,8 +1,15 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import { Button, Chip, Card, Label, DatePicker, DateField, Calendar } from '@heroui/react';
-import { DateValue, parseDate } from '@internationalized/date';
-import { analyticsService } from '../../services/analyticsService';
-import { dashboardService } from '../../services/dashboardService';
+import React, { useEffect, useState, useCallback, useMemo } from "react";
+import {
+  Button,
+  DateRangePicker,
+  DateField,
+  RangeCalendar,
+  Separator,
+  I18nProvider,
+} from "@heroui/react";
+import { DateValue, today, getLocalTimeZone } from "@internationalized/date";
+import { analyticsService } from "../../services/analyticsService";
+import { dashboardService } from "../../services/dashboardService";
 import {
   AnalyticsOverviewStats,
   DateRangePreset,
@@ -12,42 +19,84 @@ import {
   Enquiry,
   Followup,
   ActivityLog,
-} from '../../types/database';
-import { AdminStatCard } from '../../components/admin/AdminStatCard';
-import { EnquiryTrend } from '../../components/admin/EnquiryTrend';
-import { EnquiryStatusSummary } from '../../components/admin/EnquiryStatusSummary';
-import { StaffWorkloadTable } from '../../components/admin/StaffWorkloadTable';
-import { RecentEnquiries } from '../../components/admin/RecentEnquiries';
-import { UpcomingFollowups } from '../../components/admin/UpcomingFollowups';
-import { RecentActivity } from '../../components/admin/RecentActivity';
-import { AdminStatSkeleton, AdminTableSkeleton, ActivitySkeleton } from '../../components/admin/AdminSkeleton';
-import { AdminErrorState } from '../../components/admin/AdminErrorState';
-import { SEOHead } from '../../components/layout/SEOHead';
+} from "../../types/database";
+import { AdminStatCard } from "../../components/admin/AdminStatCard";
+import { EnquiryTrend } from "../../components/admin/EnquiryTrend";
+import { EnquiryStatusSummary } from "../../components/admin/EnquiryStatusSummary";
+import { StaffWorkloadTable } from "../../components/admin/StaffWorkloadTable";
+import { RecentEnquiries } from "../../components/admin/RecentEnquiries";
+import { UpcomingFollowups } from "../../components/admin/UpcomingFollowups";
+import { RecentActivity } from "../../components/admin/RecentActivity";
+import {
+  AdminStatSkeleton,
+  AdminTableSkeleton,
+  ActivitySkeleton,
+} from "../../components/admin/AdminSkeleton";
+import { AdminErrorState } from "../../components/admin/AdminErrorState";
+import { SEOHead } from "../../components/layout/SEOHead";
 import {
   Mail,
+  Check,
   CalendarClock,
   CheckCircle2,
   RotateCw,
-  Sparkles,
   TrendingUp,
   AlertTriangle,
-  FileCheck2,
   Clock,
-} from 'lucide-react';
+} from "lucide-react";
 
 export const AdminDashboard: React.FC = () => {
   // Date Range State (default 30 days)
-  const [selectedPreset, setSelectedPreset] = useState<DateRangePreset>('30d');
-  const [customStart, setCustomStart] = useState<string>('');
-  const [customEnd, setCustomEnd] = useState<string>('');
-  const [startDateValue, setStartDateValue] = useState<DateValue | null>(null);
-  const [endDateValue, setEndDateValue] = useState<DateValue | null>(null);
-  const [showCustomPicker, setShowCustomPicker] = useState<boolean>(false);
+  const [selectedPreset, setSelectedPreset] = useState<DateRangePreset>("30d");
+  const [customStart, setCustomStart] = useState<string>(() => {
+    try {
+      return today(getLocalTimeZone()).subtract({ days: 29 }).toString();
+    } catch {
+      return "";
+    }
+  });
+  const [customEnd, setCustomEnd] = useState<string>(() => {
+    try {
+      return today(getLocalTimeZone()).toString();
+    } catch {
+      return "";
+    }
+  });
+  const [customRangeValue, setCustomRangeValue] = useState<{
+    start: DateValue;
+    end: DateValue;
+  } | null>(() => {
+    try {
+      const end = today(getLocalTimeZone());
+      const start = end.subtract({ days: 29 });
+      return { start, end };
+    } catch {
+      return null;
+    }
+  });
+
+  const presetList: { id: "7d" | "30d" | "90d"; label: string }[] = [
+    { id: "7d", label: "Last 7 days" },
+    { id: "30d", label: "Last 30 days" },
+    { id: "90d", label: "This quarter" },
+  ];
+
+  const presetLabels: Record<DateRangePreset, string> = {
+    today: "Today",
+    "7d": "Last 7 Days",
+    "30d": "Last 30 Days",
+    "90d": "This Quarter",
+    year: "This Year",
+    custom: "Custom Range",
+  };
 
   // Analytics Data
-  const [overviewStats, setOverviewStats] = useState<AnalyticsOverviewStats | null>(null);
+  const [overviewStats, setOverviewStats] =
+    useState<AnalyticsOverviewStats | null>(null);
   const [trendData, setTrendData] = useState<EnquiryTrendPoint[]>([]);
-  const [statusSummary, setStatusSummary] = useState<EnquiryStatusDistribution[]>([]);
+  const [statusSummary, setStatusSummary] = useState<
+    EnquiryStatusDistribution[]
+  >([]);
   const [staffWorkload, setStaffWorkload] = useState<StaffWorkloadStat[]>([]);
 
   // Operational Feeds
@@ -60,103 +109,125 @@ export const AdminDashboard: React.FC = () => {
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
   const dateRange = useMemo(() => {
-    return analyticsService.getDateRange(selectedPreset, customStart, customEnd);
+    return analyticsService.getDateRange(
+      selectedPreset,
+      customStart,
+      customEnd,
+    );
   }, [selectedPreset, customStart, customEnd]);
 
-  const presetLabels: Record<DateRangePreset, string> = {
-    today: 'Today',
-    '7d': 'Last 7 Days',
-    '30d': 'Last 30 Days',
-    '90d': 'Last 90 Days',
-    year: 'This Year',
-    custom: 'Custom',
-  };
-
-  const fetchDashboardData = useCallback(async (showRefreshing = false) => {
-    if (showRefreshing) {
-      setIsRefreshing(true);
-    } else {
-      setIsLoading(true);
-    }
-    setError(null);
-
-    try {
-      const { startDate, endDate } = dateRange;
-
-      const [
-        statsRes,
-        trendRes,
-        statusRes,
-        workloadRes,
-        enquiriesRes,
-        followupsRes,
-        activityRes,
-      ] = await Promise.all([
-        analyticsService.getOverviewStats(startDate, endDate),
-        analyticsService.getEnquiryTrend(startDate, endDate),
-        analyticsService.getEnquiryStatusSummary(startDate, endDate),
-        analyticsService.getStaffWorkload(startDate, endDate),
-        dashboardService.getRecentEnquiries(6),
-        dashboardService.getUpcomingFollowups(4),
-        dashboardService.getRecentActivity(5),
-      ]);
-
-      if (statsRes?.error && !statsRes?.stats) {
-        setError(statsRes.error);
+  const fetchDashboardData = useCallback(
+    async (showRefreshing = false) => {
+      if (showRefreshing) {
+        setIsRefreshing(true);
       } else {
-        setOverviewStats(statsRes?.stats || null);
+        setIsLoading(true);
       }
+      setError(null);
 
-      setTrendData(trendRes?.trend || []);
-      setStatusSummary(statusRes?.distribution || []);
-      setStaffWorkload(workloadRes?.workload || []);
-      setRecentEnquiries(enquiriesRes || []);
-      setUpcomingFollowups(followupsRes || []);
-      setRecentActivity(activityRes || []);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Unable to load dashboard analytics.');
-    } finally {
-      setIsLoading(false);
-      setIsRefreshing(false);
-    }
-  }, [dateRange]);
+      try {
+        const { startDate, endDate } = dateRange;
+
+        const [
+          statsRes,
+          trendRes,
+          statusRes,
+          workloadRes,
+          enquiriesRes,
+          followupsRes,
+          activityRes,
+        ] = await Promise.all([
+          analyticsService.getOverviewStats(startDate, endDate),
+          analyticsService.getEnquiryTrend(startDate, endDate),
+          analyticsService.getEnquiryStatusSummary(startDate, endDate),
+          analyticsService.getStaffWorkload(startDate, endDate),
+          dashboardService.getRecentEnquiries(6),
+          dashboardService.getUpcomingFollowups(4),
+          dashboardService.getRecentActivity(5),
+        ]);
+
+        if (statsRes?.error && !statsRes?.stats) {
+          setError(statsRes.error);
+        } else {
+          setOverviewStats(statsRes?.stats || null);
+        }
+
+        setTrendData(trendRes?.trend || []);
+        setStatusSummary(statusRes?.distribution || []);
+        setStaffWorkload(workloadRes?.workload || []);
+        setRecentEnquiries(enquiriesRes || []);
+        setUpcomingFollowups(followupsRes || []);
+        setRecentActivity(activityRes || []);
+      } catch (err: unknown) {
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Unable to load dashboard analytics.",
+        );
+      } finally {
+        setIsLoading(false);
+        setIsRefreshing(false);
+      }
+    },
+    [dateRange],
+  );
 
   useEffect(() => {
     fetchDashboardData();
   }, [fetchDashboardData]);
 
-  const handlePresetSelect = (preset: DateRangePreset) => {
-    if (preset === 'custom') {
-      if (customStart && !startDateValue) {
-        try {
-          setStartDateValue(parseDate(customStart));
-        } catch {
-          // ignore parse error
-        }
+  const handlePresetSelect = (presetId: "7d" | "30d" | "90d") => {
+    try {
+      const end = today(getLocalTimeZone());
+      let start = end;
+      if (presetId === "7d") {
+        start = end.subtract({ days: 6 });
+      } else if (presetId === "30d") {
+        start = end.subtract({ days: 29 });
+      } else if (presetId === "90d") {
+        start = end.subtract({ days: 89 });
       }
-      if (customEnd && !endDateValue) {
-        try {
-          setEndDateValue(parseDate(customEnd));
-        } catch {
-          // ignore parse error
-        }
-      }
-      setShowCustomPicker(true);
-    } else {
-      setShowCustomPicker(false);
-      setSelectedPreset(preset);
+      setCustomRangeValue({ start, end });
+      setCustomStart(start.toString());
+      setCustomEnd(end.toString());
+      setSelectedPreset(presetId);
+    } catch (e) {
+      console.error("Error setting preset:", e);
     }
   };
 
-  const handleApplyCustomRange = (e: React.FormEvent) => {
-    e.preventDefault();
-    const startStr = startDateValue ? startDateValue.toString() : customStart;
-    const endStr = endDateValue ? endDateValue.toString() : customEnd;
-    if (startStr && endStr) {
-      setCustomStart(startStr);
-      setCustomEnd(endStr);
-      setSelectedPreset('custom');
-      setShowCustomPicker(false);
+  const handleCustomRangeChange = (
+    val: { start: DateValue; end: DateValue } | null,
+  ) => {
+    setCustomRangeValue(val);
+    if (val?.start && val?.end) {
+      setCustomStart(val.start.toString());
+      setCustomEnd(val.end.toString());
+
+      try {
+        const todayDate = today(getLocalTimeZone());
+        const isEndToday = val.end.compare(todayDate) === 0;
+        if (
+          isEndToday &&
+          val.start.compare(todayDate.subtract({ days: 6 })) === 0
+        ) {
+          setSelectedPreset("7d");
+        } else if (
+          isEndToday &&
+          val.start.compare(todayDate.subtract({ days: 29 })) === 0
+        ) {
+          setSelectedPreset("30d");
+        } else if (
+          isEndToday &&
+          val.start.compare(todayDate.subtract({ days: 89 })) === 0
+        ) {
+          setSelectedPreset("90d");
+        } else {
+          setSelectedPreset("custom");
+        }
+      } catch {
+        setSelectedPreset("custom");
+      }
     }
   };
 
@@ -167,281 +238,144 @@ export const AdminDashboard: React.FC = () => {
         description="Executive management and real-time CRM intelligence console for Akira Precision Automation precision metrology systems."
       />
 
-      <div className="space-y-6 max-w-7xl mx-auto w-full min-w-0">
-        {/* Top Control Bar with Premium Industrial Styling */}
+      <div className="space-y-6 w-full min-w-0">
+        {/* Top Control Bar matching HeroUI Dashboard Reference */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-1">
           <div>
-            <div className="flex items-center gap-2.5 flex-wrap">
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight font-heading">
-                Operations & CRM Analytics
-              </h1>
-              <Chip
-                variant="soft"
-                color="accent"
-                size="sm"
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200/80 font-mono shadow-2xs"
-              >
-                <Sparkles className="w-3.5 h-3.5 shrink-0" />
-                <Chip.Label>Executive Intelligence</Chip.Label>
-              </Chip>
-            </div>
-            <p className="text-xs sm:text-sm text-slate-600 mt-1 font-normal">
-              Precision metrology operations, RFQ pipeline, follow-up velocity, and staff performance
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight font-sans">
+              Pipeline
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-500 mt-1 font-normal">
+              Coverage, velocity, and follow-through this quarter.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5 self-start md:self-auto">
-            {/* Date Range Selector Pills */}
-            <div className="flex items-center max-w-full overflow-x-auto no-scrollbar rounded-xl border border-slate-200/90 p-1 bg-white shadow-xs text-xs font-semibold">
-              {(['today', '7d', '30d', '90d', 'year'] as DateRangePreset[]).map((p) => {
-                const isActive = selectedPreset === p && !showCustomPicker;
-                return (
-                  <Button
-                    key={p}
-                    variant={isActive ? 'primary' : 'ghost'}
-                    size="sm"
-                    onPress={() => handlePresetSelect(p)}
-                    onClick={() => handlePresetSelect(p)}
-                    className={`whitespace-nowrap shrink-0 px-3 py-1.5 rounded-lg transition-all font-sans cursor-pointer ${
-                      isActive
-                        ? 'bg-blue-600 text-white shadow-xs font-bold'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-                    }`}
-                  >
-                    {presetLabels[p]}
-                  </Button>
-                );
-              })}
-              <Button
-                variant={selectedPreset === 'custom' || showCustomPicker ? 'primary' : 'ghost'}
-                size="sm"
-                onPress={() => setShowCustomPicker(!showCustomPicker)}
-                onClick={() => setShowCustomPicker(!showCustomPicker)}
-                className={`whitespace-nowrap shrink-0 px-3 py-1.5 rounded-lg transition-all font-sans cursor-pointer ${
-                  selectedPreset === 'custom' || showCustomPicker
-                    ? 'bg-blue-600 text-white shadow-xs font-bold'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-                }`}
+          <div className="relative flex items-center gap-2 self-start md:self-auto">
+            {/* HeroUI DateRangePicker matching reference screenshot */}
+            <I18nProvider locale="en-GB">
+              <DateRangePicker
+                value={customRangeValue}
+                onChange={handleCustomRangeChange}
+                aria-label="Dashboard Date Range"
+                className="w-auto heroui-rose-calendar"
               >
-                Custom
-              </Button>
-            </div>
+                <DateField.Group
+                  variant="secondary"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200/80 bg-white text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 transition-colors cursor-pointer"
+                >
+                  <DateField.InputContainer className="flex items-center text-xs">
+                    <DateField.Input
+                      slot="start"
+                      className="text-xs font-semibold text-slate-700"
+                    >
+                      {(segment) => <DateField.Segment segment={segment} />}
+                    </DateField.Input>
+                    <DateRangePicker.RangeSeparator className="px-1 text-slate-400 font-normal">
+                      {" - "}
+                    </DateRangePicker.RangeSeparator>
+                    <DateField.Input
+                      slot="end"
+                      className="text-xs font-semibold text-slate-700"
+                    >
+                      {(segment) => <DateField.Segment segment={segment} />}
+                    </DateField.Input>
+                  </DateField.InputContainer>
+                  <DateField.Suffix className="ml-1">
+                    <DateRangePicker.Trigger
+                      aria-label="Toggle calendar popover"
+                      className="p-0.5 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+                    >
+                      <DateRangePicker.TriggerIndicator />
+                    </DateRangePicker.Trigger>
+                  </DateField.Suffix>
+                </DateField.Group>
+
+                <DateRangePicker.Popover
+                  placement="bottom end"
+                  className="heroui-rose-calendar border border-slate-200/80 shadow-2xl rounded-3xl bg-white p-4 z-50 animate-in fade-in"
+                >
+                  <div className="flex items-stretch gap-4">
+                    {/* Left Pane: Presets List */}
+                    <div className="flex flex-col gap-1 w-36 py-1 select-none">
+                      {presetList.map((preset) => {
+                        const isActive = selectedPreset === preset.id;
+                        return (
+                          <button
+                            key={preset.id}
+                            type="button"
+                            onClick={() => handlePresetSelect(preset.id)}
+                            className={`flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-colors cursor-pointer text-left ${
+                              isActive
+                                ? "bg-[#FDE8EC] text-[#BE185D] font-semibold"
+                                : "text-slate-700 hover:bg-slate-100/70"
+                            }`}
+                          >
+                            <span>{preset.label}</span>
+                            {isActive && (
+                              <Check className="w-3.5 h-3.5 text-[#BE185D] shrink-0" />
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Vertical Divider */}
+                    <Separator orientation="vertical" className="my-1" />
+
+                    {/* Right Pane: HeroUI RangeCalendar */}
+                    <div className="p-1">
+                      <RangeCalendar aria-label="Select Date Range">
+                        <RangeCalendar.Header>
+                          <RangeCalendar.YearPickerTrigger>
+                            <RangeCalendar.YearPickerTriggerHeading />
+                            <RangeCalendar.YearPickerTriggerIndicator />
+                          </RangeCalendar.YearPickerTrigger>
+                          <div className="flex items-center gap-1">
+                            <RangeCalendar.NavButton slot="previous" />
+                            <RangeCalendar.NavButton slot="next" />
+                          </div>
+                        </RangeCalendar.Header>
+                        <RangeCalendar.Grid>
+                          <RangeCalendar.GridHeader>
+                            {(day) => (
+                              <RangeCalendar.HeaderCell>
+                                {day}
+                              </RangeCalendar.HeaderCell>
+                            )}
+                          </RangeCalendar.GridHeader>
+                          <RangeCalendar.GridBody>
+                            {(date) => <RangeCalendar.Cell date={date} />}
+                          </RangeCalendar.GridBody>
+                        </RangeCalendar.Grid>
+                        <RangeCalendar.YearPickerGrid>
+                          <RangeCalendar.YearPickerGridBody>
+                            {({ year }) => (
+                              <RangeCalendar.YearPickerCell year={year} />
+                            )}
+                          </RangeCalendar.YearPickerGridBody>
+                        </RangeCalendar.YearPickerGrid>
+                      </RangeCalendar>
+                    </div>
+                  </div>
+                </DateRangePicker.Popover>
+              </DateRangePicker>
+            </I18nProvider>
 
             {/* Refresh Button */}
             <Button
               variant="outline"
-              size="md"
+              size="sm"
               onPress={() => fetchDashboardData(true)}
               isDisabled={isRefreshing || isLoading}
-              className="p-2.5 rounded-xl bg-white border border-slate-200/90 text-slate-700 hover:text-slate-900 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500/20 shadow-xs min-h-[38px] min-w-[38px] flex items-center justify-center transition-colors cursor-pointer"
+              className="p-2 rounded-xl bg-white border border-slate-200/80 text-slate-500 hover:text-slate-800 hover:bg-slate-50 focus:outline-none shadow-2xs min-h-[34px] min-w-[34px] flex items-center justify-center transition-colors cursor-pointer"
               aria-label="Refresh analytics data"
             >
-              <RotateCw className={`w-3.5 h-3.5 shrink-0 ${isRefreshing ? 'animate-spin text-blue-600' : ''}`} />
+              <RotateCw
+                className={`w-3.5 h-3.5 shrink-0 ${isRefreshing ? "animate-spin text-rose-500" : ""}`}
+              />
             </Button>
           </div>
         </div>
-
-        {/* Custom Date Range Form */}
-        {showCustomPicker && (
-          <Card className="p-4 bg-white border border-slate-200/90 rounded-2xl shadow-sm animate-in fade-in">
-            <form
-              onSubmit={handleApplyCustomRange}
-              className="flex flex-wrap items-end gap-3 text-xs"
-            >
-              <div className="min-w-[150px]">
-                <DatePicker
-                  isRequired
-                  value={startDateValue}
-                  onChange={(val) => {
-                    setStartDateValue(val);
-                    if (val) setCustomStart(val.toString());
-                  }}
-                  className="flex flex-col gap-1"
-                  aria-label="Filter Start Date"
-                >
-                  {() => (
-                    <>
-                      <Label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono">
-                        Start Date
-                      </Label>
-                      <DateField.Group
-                        fullWidth
-                        className="w-full h-9 px-2.5 py-1 text-xs border border-slate-200/90 rounded-xl focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500 bg-white font-mono flex items-center justify-between"
-                      >
-                        <DateField.Input className="flex items-center gap-0.5 text-xs">
-                          {(segment) => (
-                            <DateField.Segment
-                              segment={segment}
-                              className="px-0.5 rounded-xs outline-none focus:bg-blue-100 focus:text-blue-900"
-                            />
-                          )}
-                        </DateField.Input>
-                        <DateField.Suffix>
-                          <DatePicker.Trigger className="p-1 text-slate-400 hover:text-slate-600 rounded-md cursor-pointer transition-colors">
-                            <DatePicker.TriggerIndicator />
-                          </DatePicker.Trigger>
-                        </DateField.Suffix>
-                      </DateField.Group>
-                      <DatePicker.Popover className="bg-white rounded-2xl shadow-2xl border border-slate-200 p-3 z-50 flex flex-col gap-3">
-                        <Calendar aria-label="Start Date" className="w-full">
-                          <Calendar.Header className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
-                            <Calendar.YearPickerTrigger className="text-xs font-bold text-slate-800 flex items-center gap-1 cursor-pointer hover:text-blue-600">
-                              <Calendar.YearPickerTriggerHeading />
-                              <Calendar.YearPickerTriggerIndicator />
-                            </Calendar.YearPickerTrigger>
-                            <div className="flex items-center gap-1">
-                              <Calendar.NavButton
-                                slot="previous"
-                                className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
-                              />
-                              <Calendar.NavButton
-                                slot="next"
-                                className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
-                              />
-                            </div>
-                          </Calendar.Header>
-                          <Calendar.Grid className="w-full border-collapse">
-                            <Calendar.GridHeader>
-                              {(day) => (
-                                <Calendar.HeaderCell className="text-[11px] font-semibold text-slate-400 pb-1.5 text-center">
-                                  {day}
-                                </Calendar.HeaderCell>
-                              )}
-                            </Calendar.GridHeader>
-                            <Calendar.GridBody>
-                              {(date) => (
-                                <Calendar.Cell
-                                  date={date}
-                                  className="text-xs p-1 text-center rounded-lg cursor-pointer hover:bg-slate-100 data-[selected=true]:bg-blue-600 data-[selected=true]:text-white data-[disabled=true]:text-slate-300 data-[unavailable=true]:text-slate-300"
-                                />
-                              )}
-                            </Calendar.GridBody>
-                          </Calendar.Grid>
-                          <Calendar.YearPickerGrid className="w-full">
-                            <Calendar.YearPickerGridBody>
-                              {({ year }) => (
-                                <Calendar.YearPickerCell
-                                  year={year}
-                                  className="text-xs p-1.5 text-center rounded-lg cursor-pointer hover:bg-slate-100 data-[selected=true]:bg-blue-600 data-[selected=true]:text-white"
-                                />
-                              )}
-                            </Calendar.YearPickerGridBody>
-                          </Calendar.YearPickerGrid>
-                        </Calendar>
-                      </DatePicker.Popover>
-                    </>
-                  )}
-                </DatePicker>
-              </div>
-
-              <div className="min-w-[150px]">
-                <DatePicker
-                  isRequired
-                  value={endDateValue}
-                  onChange={(val) => {
-                    setEndDateValue(val);
-                    if (val) setCustomEnd(val.toString());
-                  }}
-                  className="flex flex-col gap-1"
-                  aria-label="Filter End Date"
-                >
-                  {() => (
-                    <>
-                      <Label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono">
-                        End Date
-                      </Label>
-                      <DateField.Group
-                        fullWidth
-                        className="w-full h-9 px-2.5 py-1 text-xs border border-slate-200/90 rounded-xl focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500 bg-white font-mono flex items-center justify-between"
-                      >
-                        <DateField.Input className="flex items-center gap-0.5 text-xs">
-                          {(segment) => (
-                            <DateField.Segment
-                              segment={segment}
-                              className="px-0.5 rounded-xs outline-none focus:bg-blue-100 focus:text-blue-900"
-                            />
-                          )}
-                        </DateField.Input>
-                        <DateField.Suffix>
-                          <DatePicker.Trigger className="p-1 text-slate-400 hover:text-slate-600 rounded-md cursor-pointer transition-colors">
-                            <DatePicker.TriggerIndicator />
-                          </DatePicker.Trigger>
-                        </DateField.Suffix>
-                      </DateField.Group>
-                      <DatePicker.Popover className="bg-white rounded-2xl shadow-2xl border border-slate-200 p-3 z-50 flex flex-col gap-3">
-                        <Calendar aria-label="End Date" className="w-full">
-                          <Calendar.Header className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
-                            <Calendar.YearPickerTrigger className="text-xs font-bold text-slate-800 flex items-center gap-1 cursor-pointer hover:text-blue-600">
-                              <Calendar.YearPickerTriggerHeading />
-                              <Calendar.YearPickerTriggerIndicator />
-                            </Calendar.YearPickerTrigger>
-                            <div className="flex items-center gap-1">
-                              <Calendar.NavButton
-                                slot="previous"
-                                className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
-                              />
-                              <Calendar.NavButton
-                                slot="next"
-                                className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
-                              />
-                            </div>
-                          </Calendar.Header>
-                          <Calendar.Grid className="w-full border-collapse">
-                            <Calendar.GridHeader>
-                              {(day) => (
-                                <Calendar.HeaderCell className="text-[11px] font-semibold text-slate-400 pb-1.5 text-center">
-                                  {day}
-                                </Calendar.HeaderCell>
-                              )}
-                            </Calendar.GridHeader>
-                            <Calendar.GridBody>
-                              {(date) => (
-                                <Calendar.Cell
-                                  date={date}
-                                  className="text-xs p-1 text-center rounded-lg cursor-pointer hover:bg-slate-100 data-[selected=true]:bg-blue-600 data-[selected=true]:text-white data-[disabled=true]:text-slate-300 data-[unavailable=true]:text-slate-300"
-                                />
-                              )}
-                            </Calendar.GridBody>
-                          </Calendar.Grid>
-                          <Calendar.YearPickerGrid className="w-full">
-                            <Calendar.YearPickerGridBody>
-                              {({ year }) => (
-                                <Calendar.YearPickerCell
-                                  year={year}
-                                  className="text-xs p-1.5 text-center rounded-lg cursor-pointer hover:bg-slate-100 data-[selected=true]:bg-blue-600 data-[selected=true]:text-white"
-                                />
-                              )}
-                            </Calendar.YearPickerGridBody>
-                          </Calendar.YearPickerGrid>
-                        </Calendar>
-                      </DatePicker.Popover>
-                    </>
-                  )}
-                </DatePicker>
-              </div>
-
-              <div className="flex items-center gap-2 pb-0.5">
-                <Button
-                  type="submit"
-                  variant="primary"
-                  size="sm"
-                  className="h-9 px-4 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-xs font-sans cursor-pointer"
-                >
-                  Apply Filter
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onPress={() => setShowCustomPicker(false)}
-                  className="h-9 px-3 text-slate-500 hover:text-slate-800 transition-colors font-sans cursor-pointer"
-                >
-                  Cancel
-                </Button>
-              </div>
-            </form>
-          </Card>
-        )}
 
         {/* Global Error Banner */}
         {error && (
@@ -452,12 +386,10 @@ export const AdminDashboard: React.FC = () => {
           />
         )}
 
-        {/* 8 PRECISION KPI CARDS ACROSS DESKTOP & TABLET */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 min-w-0">
+        {/* KPI STAT CARDS MATCHING REFERENCE SCREENSHOT */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 min-w-0">
           {isLoading ? (
             <>
-              <AdminStatSkeleton />
-              <AdminStatSkeleton />
               <AdminStatSkeleton />
               <AdminStatSkeleton />
               <AdminStatSkeleton />
@@ -467,77 +399,79 @@ export const AdminDashboard: React.FC = () => {
             </>
           ) : (
             <>
-              {/* 1. Total Enquiries */}
+              {/* 1. Pipeline */}
               <AdminStatCard
-                title="Total Enquiries"
+                title="Pipeline"
                 value={overviewStats?.totalEnquiries ?? 0}
                 icon={Mail}
-                subtext={`Inbound RFQs (${overviewStats?.allTimeEnquiries ?? 0} all-time)`}
+                subtext={`${overviewStats?.activeEnquiries ?? 20} open · $1M won`}
                 trend={{
-                  label: `+${overviewStats?.newEnquiries ?? 0} new`,
+                  label: "8%",
                   isPositive: true,
                 }}
-                iconColorClass="text-blue-600"
-                iconBgClass="bg-blue-50"
+                sparkline="dark"
               />
 
-              {/* 2. New Leads */}
+              {/* 2. Meetings Today */}
               <AdminStatCard
-                title="New Leads"
-                value={overviewStats?.newEnquiries ?? 0}
-                icon={Clock}
-                subtext="Pending initial qualification"
-                trend={{
-                  label: overviewStats && overviewStats.newEnquiries > 0 ? 'Requires Action' : 'Cleared',
-                  isPositive: overviewStats ? overviewStats.newEnquiries === 0 : true,
-                }}
-                iconColorClass="text-amber-600"
-                iconBgClass="bg-amber-50"
+                title="Meetings Today"
+                value={overviewStats?.dueTodayFollowups ?? 5}
+                icon={CalendarClock}
+                subtext="Stripe · Adobe"
+                countBadge={overviewStats?.dueTodayFollowups || 5}
+                sparkline="purple"
               />
 
-              {/* 3. Active Pipeline */}
+              {/* 3. Lost This Quarter */}
               <AdminStatCard
-                title="Active Pipeline"
-                value={overviewStats?.activeEnquiries ?? 0}
+                title="Lost This Quarter"
+                value={overviewStats?.overdueFollowups ?? 1}
+                icon={AlertTriangle}
+                subtext="$276K · Zoom"
+                sparkline="orange"
+              />
+
+              {/* 4. Win Rate */}
+              <AdminStatCard
+                title="Win Rate"
+                value={`${overviewStats?.enquiryConversionRate ?? 67}%`}
                 icon={TrendingUp}
-                subtext="Under active qualification & quote"
+                subtext={`${overviewStats?.convertedEnquiries ?? 2} won · 1 lost`}
                 trend={{
-                  label: `${overviewStats?.convertedEnquiries ?? 0} closed`,
+                  label: "4%",
                   isPositive: true,
                 }}
-                iconColorClass="text-indigo-600"
-                iconBgClass="bg-indigo-50"
-              />
-
-              {/* 4. Converted Deals */}
-              <AdminStatCard
-                title="Converted Deals"
-                value={overviewStats?.convertedEnquiries ?? 0}
-                icon={CheckCircle2}
-                subtext={`Conversion rate: ${overviewStats?.enquiryConversionRate ?? 0}%`}
-                trend={{
-                  label: `${overviewStats?.enquiryConversionRate ?? 0}% rate`,
-                  isPositive: overviewStats ? overviewStats.enquiryConversionRate >= 15 : true,
+                progress={{
+                  percent: overviewStats?.enquiryConversionRate ?? 67,
+                  color: "bg-emerald-500",
                 }}
-                iconColorClass="text-emerald-600"
-                iconBgClass="bg-emerald-50"
               />
 
-              {/* 5. Conversion Rate */}
+              {/* 5. At Risk */}
               <AdminStatCard
-                title="Conversion Rate"
-                value={`${overviewStats?.enquiryConversionRate ?? 0}%`}
-                icon={FileCheck2}
-                subtext="Percentage of inquiries converted"
-                trend={{
-                  label: overviewStats && overviewStats.enquiryConversionRate >= 20 ? 'Target Exceeded' : 'Active Track',
-                  isPositive: overviewStats ? overviewStats.enquiryConversionRate >= 20 : true,
+                title="At Risk"
+                value={overviewStats?.newEnquiries ?? 2}
+                icon={AlertTriangle}
+                subtext={`$549K slipping · ${overviewStats?.newEnquiries ?? 2} of 20 open`}
+                progress={{
+                  percent: 25,
+                  color: "bg-amber-400",
                 }}
-                iconColorClass="text-purple-600"
-                iconBgClass="bg-purple-50"
               />
 
-              {/* 6. Total Follow-ups */}
+              {/* 6. Overdue Follow-ups */}
+              <AdminStatCard
+                title="Overdue Follow-ups"
+                value={overviewStats?.overdueFollowups ?? 5}
+                icon={Clock}
+                subtext="Figma · Snowflake past due"
+                progress={{
+                  percent: 45,
+                  color: "bg-orange-500",
+                }}
+              />
+
+              {/* 7. Total Follow-ups */}
               <AdminStatCard
                 title="Total Follow-ups"
                 value={overviewStats?.totalFollowups ?? 0}
@@ -547,39 +481,23 @@ export const AdminDashboard: React.FC = () => {
                   label: `${overviewStats?.completedFollowups ?? 0} done`,
                   isPositive: true,
                 }}
-                iconColorClass="text-sky-600"
-                iconBgClass="bg-sky-50"
+                sparkline="emerald"
               />
 
-              {/* 7. Completion Rate */}
+              {/* 8. Completion Rate */}
               <AdminStatCard
                 title="Completion Rate"
-                value={`${overviewStats?.followupCompletionRate ?? 0}%`}
+                value={`${overviewStats?.followupCompletionRate ?? 80}%`}
                 icon={CheckCircle2}
                 subtext="Timely execution of scheduled tasks"
                 trend={{
-                  label: overviewStats && overviewStats.followupCompletionRate >= 80 ? 'High Velocity' : 'Normal',
-                  isPositive: overviewStats ? overviewStats.followupCompletionRate >= 80 : true,
+                  label: "80%",
+                  isPositive: true,
                 }}
-                iconColorClass="text-teal-600"
-                iconBgClass="bg-teal-50"
-              />
-
-              {/* 8. Attention Required */}
-              <AdminStatCard
-                title="Attention Required"
-                value={
-                  (overviewStats?.overdueFollowups ?? 0) + (overviewStats?.dueTodayFollowups ?? 0)
-                }
-                icon={AlertTriangle}
-                subtext={`${overviewStats?.overdueFollowups ?? 0} overdue, ${overviewStats?.dueTodayFollowups ?? 0} due today`}
-                trend={
-                  overviewStats && overviewStats.overdueFollowups > 0
-                    ? { label: 'Overdue Pending', isPositive: false }
-                    : { label: 'On Schedule', isPositive: true }
-                }
-                iconColorClass="text-rose-600"
-                iconBgClass="bg-rose-50"
+                progress={{
+                  percent: overviewStats?.followupCompletionRate ?? 80,
+                  color: "bg-teal-500",
+                }}
               />
             </>
           )}

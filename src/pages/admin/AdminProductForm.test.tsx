@@ -95,4 +95,26 @@ describe('AdminProductForm Component', () => {
       expect(mockCreate).toHaveBeenCalled();
     });
   });
+
+  it('toggles publishing control checkboxes for active status and homepage featured', () => {
+    render(
+      <MemoryRouter initialEntries={['/admin/products/new']}>
+        <Routes>
+          <Route path="/admin/products/new" element={<AdminProductForm />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const activeCheckbox = screen.getByRole('checkbox', { name: /Active on Public Website/i });
+    expect(activeCheckbox).toBeChecked();
+
+    fireEvent.click(activeCheckbox);
+    expect(activeCheckbox).not.toBeChecked();
+
+    const featuredCheckbox = screen.getByRole('checkbox', { name: /Homepage Featured Showcase/i });
+    expect(featuredCheckbox).not.toBeChecked();
+
+    fireEvent.click(featuredCheckbox);
+    expect(featuredCheckbox).toBeChecked();
+  });
 });
