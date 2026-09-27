@@ -1,82 +1,29 @@
 import React from 'react';
-import { 
-  Crosshair, 
-  Settings2, 
-  Headphones, 
-  ShieldCheck, 
-  HeartHandshake, 
-  Bot
-} from 'lucide-react';
-import { Card } from '@heroui/react';
-import { StaggerContainer } from '../animation/StaggerContainer';
-import { StaggerItem } from '../animation/StaggerItem';
-
-const strengths = [
-  {
-    icon: Crosshair,
-    title: "Precision Engineering",
-    description: "Sub-micron accuracy and rigorous standards for OEM manufacturing."
-  },
-  {
-    icon: Settings2,
-    title: "Customized Solutions",
-    description: "Tailored fixtures and gauging systems built for your unique parts."
-  },
-  {
-    icon: Headphones,
-    title: "Technical Support",
-    description: "Expert engineering assistance from design to production floor."
-  },
-  {
-    icon: ShieldCheck,
-    title: "Quality Service",
-    description: "Fast service response, operator training, and calibration support."
-  },
-  {
-    icon: HeartHandshake,
-    title: "Customer First",
-    description: "Our guiding motto: 'Keeping Customers First' in everything we build."
-  },
-  {
-    icon: Bot,
-    title: "Automation Ready",
-    description: "Standard RS-232 and optional 24V relay outputs for robotic cells."
-  }
-];
+import { SectionReveal } from '../animation/SectionReveal';
 
 export const TrustStrip: React.FC = () => {
   return (
-    <section className="bg-slate-50/60 border-b border-slate-200/80 py-5 sm:py-8 relative z-20 overflow-hidden" aria-labelledby="trust-strip-heading">
-      <h2 id="trust-strip-heading" className="sr-only">Our Core Engineering Strengths</h2>
-      <div className="industrial-container">
-        <StaggerContainer className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-          {strengths.map((item, idx) => {
-            const Icon = item.icon;
-            return (
-              <StaggerItem key={idx} className={idx >= 4 ? 'hidden md:block' : ''}>
-                <Card 
-                  variant="default"
-                  className="p-3.5 sm:p-4 rounded-xl bg-white border border-slate-200/80 shadow-subtle hover:border-industrial-primary/40 hover:shadow-card hover:-translate-y-0.5 transition-all duration-200 group text-left h-full flex flex-col justify-start"
-                >
-                  <div className="w-10 h-10 rounded-lg bg-sky-50 text-industrial-primary flex items-center justify-center mb-2.5 group-hover:bg-industrial-primary group-hover:text-white transition-colors duration-200 border border-sky-100/60">
-                    <Icon className="w-5 h-5 transition-transform duration-200 group-hover:scale-105" />
-                  </div>
-                  <Card.Header className="p-0 space-y-1">
-                    <Card.Title className="text-xs sm:text-sm font-bold text-slate-900 font-heading group-hover:text-industrial-primary transition-colors leading-snug">
-                      {item.title}
-                    </Card.Title>
-                    <Card.Description className="text-xs text-slate-600 font-medium leading-relaxed">
-                      {item.description}
-                    </Card.Description>
-                  </Card.Header>
-                </Card>
-              </StaggerItem>
-            );
-          })}
-        </StaggerContainer>
+    <SectionReveal className="bg-white pt-14 pb-8 sm:pt-20 sm:pb-12 relative z-20">
+      <div className="industrial-container max-w-3xl mx-auto text-center">
+        <div className="flex items-center justify-center gap-4 mb-5">
+          <div className="h-px bg-slate-200 flex-grow max-w-[40px]" />
+          <h2 className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest font-sans">
+            The Akira Standard
+          </h2>
+          <div className="h-px bg-slate-200 flex-grow max-w-[40px]" />
+        </div>
+        
+        <p className="text-2xl sm:text-3xl md:text-4xl font-extrabold font-heading text-industrial-dark leading-[1.2]">
+          PRECISION ENGINEERING,
+          <br className="hidden sm:block" />
+          <span className="sm:hidden"> </span>BUILT FOR PRODUCTION.
+        </p>
+        <p className="mt-5 text-[15px] sm:text-[17px] text-slate-600 font-medium leading-relaxed max-w-2xl mx-auto font-sans">
+          We engineer zero-defect manufacturing solutions. From sub-micron inline metrology to automated multi-gauging stations, our systems deliver the absolute accuracy required by tier-one automotive and OEM production lines.
+        </p>
+        
+        <div className="w-12 h-[2px] bg-industrial-primary mx-auto mt-8 sm:mt-10" />
       </div>
-    </section>
+    </SectionReveal>
   );
 };
-
-

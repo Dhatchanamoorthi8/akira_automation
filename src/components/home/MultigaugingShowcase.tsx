@@ -15,17 +15,17 @@ export const MultigaugingShowcase: React.FC = () => {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <SectionReveal className="py-10 sm:py-16 lg:py-20 bg-industrial-dark text-white relative overflow-hidden">
+    <SectionReveal className="py-12 sm:py-16 lg:py-20 bg-industrial-dark text-white relative overflow-hidden">
       <div className="absolute inset-0 bg-dark-grid opacity-20 pointer-events-none" />
       <div className="absolute top-1/2 right-0 w-96 h-96 rounded-full bg-industrial-primary/15 blur-3xl pointer-events-none" />
 
       <div className="industrial-container relative z-10">
         {/* Section Header */}
         <Reveal direction="up" className="max-w-3xl mb-5 sm:mb-10">
-          <Chip variant="soft" color="accent" size="sm" className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-xs font-mono font-semibold tracking-wider uppercase bg-industrial-primary/20 text-sky-400 border border-sky-400/30">
+          <div className="inline-flex items-center gap-2 text-[10px] sm:text-xs font-bold text-sky-400 uppercase tracking-widest font-sans mb-2">
             <Cpu className="w-3.5 h-3.5" />
-            <Chip.Label>Specialized Automated Multi-Gauging</Chip.Label>
-          </Chip>
+            <span>Specialized Automated Multi-Gauging</span>
+          </div>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-heading text-white mt-3">
             Production-Line Multigauging Stations
           </h2>
@@ -144,9 +144,9 @@ export const MultigaugingShowcase: React.FC = () => {
             {/* Right: Technical Specs & Features */}
             <div className="lg:col-span-6 space-y-6">
               <div>
-                <Chip variant="soft" color="accent" size="sm" className="px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-industrial-primary/20 text-sky-300 border border-sky-400/30">
-                  <Chip.Label>Turnkey Multi-Gauging Station</Chip.Label>
-                </Chip>
+                <div className="text-[10px] font-bold text-sky-400 uppercase tracking-widest font-sans mb-2">
+                  Turnkey Multi-Gauging Station
+                </div>
                 <h3 className="text-2xl font-bold font-heading text-white mt-2">
                   Engine Block Liner Bore Multigauging Station
                 </h3>
@@ -291,9 +291,9 @@ export const MultigaugingShowcase: React.FC = () => {
             {/* Right: Technical Specs & Features */}
             <div className="lg:col-span-6 space-y-6">
               <div>
-                <Chip variant="soft" color="accent" size="sm" className="px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-industrial-primary/20 text-sky-300 border border-sky-400/30">
-                  <Chip.Label>Dedicated Inspection Bench</Chip.Label>
-                </Chip>
+                <div className="text-[10px] font-bold text-sky-400 uppercase tracking-widest font-sans mb-2">
+                  Dedicated Inspection Bench
+                </div>
                 <h3 className="text-2xl font-bold font-heading text-white mt-2">
                   Camshaft Dia Multigauging Station
                 </h3>

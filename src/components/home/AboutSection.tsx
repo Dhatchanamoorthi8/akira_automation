@@ -10,18 +10,16 @@ import { ScaleReveal } from '../animation/ScaleReveal';
 
 export const AboutSection: React.FC = () => {
   return (
-    <SectionReveal className="py-10 sm:py-16 lg:py-20 bg-industrial-bg relative overflow-hidden">
+    <SectionReveal className="pt-8 pb-16 sm:pt-16 sm:pb-20 lg:pt-20 lg:pb-24 bg-industrial-bg relative border-t border-slate-200 overflow-hidden">
       <div className="industrial-container">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
           
           {/* Left Column: Company Introduction */}
           <div className="lg:col-span-7 space-y-4 sm:space-y-6">
             <Reveal direction="up">
-              <Chip variant="soft" color="accent" size="sm" className="bg-sky-50 text-industrial-primary border border-sky-200/80 mb-3">
-                <Chip.Label className="text-xs font-semibold uppercase tracking-wider font-mono">
-                  About {company.name}
-                </Chip.Label>
-              </Chip>
+              <div className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-widest font-sans mb-2">
+                About {company.name}
+              </div>
               <h2 className="section-title mt-2">
                 Precision Instruments & Automated Multi-Gauging Systems
               </h2>

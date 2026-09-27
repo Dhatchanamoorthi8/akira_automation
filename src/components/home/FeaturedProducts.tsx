@@ -18,16 +18,14 @@ export const FeaturedProducts: React.FC = () => {
     : productSummaries.filter(p => p.categorySlug === activeTab);
 
   return (
-    <SectionReveal className="py-10 sm:py-16 lg:py-20 bg-industrial-bg relative overflow-hidden">
+    <SectionReveal className="py-16 sm:py-20 lg:py-24 bg-industrial-bg relative overflow-hidden">
       <div className="industrial-container">
         {/* Section Header */}
         <Reveal direction="up" className="flex flex-col md:flex-row md:items-end justify-between mb-5 sm:mb-10 gap-6">
           <div>
-            <Chip variant="soft" color="accent" size="sm" className="bg-sky-50 text-industrial-primary border border-sky-200/80 mb-3">
-              <Chip.Label className="text-xs font-semibold uppercase tracking-wider font-mono">
-                Featured Metrology Products
-              </Chip.Label>
-            </Chip>
+            <div className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-widest font-sans mb-2">
+              Featured Metrology Products
+            </div>
             <h2 className="section-title mt-2">
               Precision Gauging & Multi-Gauging Systems
             </h2>

@@ -3,18 +3,38 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath, URL } from 'node:url';
 
+// Plugin to fix Safari crossorigin caching bug with CSS files
+const removeCrossoriginFromCss = () => ({
+  name: 'remove-crossorigin-from-css',
+  enforce: 'post',
+  transformIndexHtml(html) {
+    return html.replace(/<link rel="stylesheet" crossorigin(.*?)>/g, '<link rel="stylesheet"$1>');
+  }
+});
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     tailwindcss(),
     react(),
+    removeCrossoriginFromCss(),
   ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  css: {
+    transformer: 'lightningcss',
+    lightningcss: {
+      targets: {
+        safari: (15 << 16),
+        ios_saf: (15 << 16)
+      }
+    }
+  },
   build: {
+    cssMinify: 'lightningcss',
     chunkSizeWarningLimit: 600,
     modulePreload: {
       resolveDependencies(filename, deps, { hostType }) {

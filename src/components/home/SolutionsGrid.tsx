@@ -29,15 +29,13 @@ export const SolutionsGrid: React.FC = () => {
   const [showAllMobile, setShowAllMobile] = React.useState(false);
 
   return (
-    <SectionReveal className="py-10 sm:py-16 lg:py-20 bg-slate-50/70 border-y border-slate-200 overflow-hidden">
+    <SectionReveal className="py-16 sm:py-20 lg:py-24 bg-slate-50/70 border-y border-slate-200 overflow-hidden">
       <div className="industrial-container">
         {/* Section Header */}
         <Reveal direction="up" className="max-w-3xl mb-6 sm:mb-12">
-          <Chip variant="soft" color="accent" size="sm" className="bg-sky-50 text-industrial-primary border border-sky-200/80 mb-3">
-            <Chip.Label className="text-xs font-semibold uppercase tracking-wider font-mono">
-              Core Solution Capabilities
-            </Chip.Label>
-          </Chip>
+          <div className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-widest font-sans mb-2">
+            Core Solution Capabilities
+          </div>
           <h2 className="section-title mt-2">
             Comprehensive Precision Gauging & Metrology Engineering
           </h2>

@@ -118,7 +118,9 @@ export function createOrganizationSchema() {
     "foundingDate": "2021",
     "sameAs": [
       "https://www.linkedin.com/company/akira-precision-automation",
-      "https://www.indiamart.com/akira-precision-automation/"
+      "https://www.indiamart.com/akira-precision-automation/",
+      "https://www.instagram.com/akira_precision_automation?utm_source=qr&stkn=MWU5bDh0Nm15bmhxcQ==",
+      "https://www.facebook.com/profile.php?id=61594534806711"
     ],
     "knowsAbout": [
       "Precision Metrology",
