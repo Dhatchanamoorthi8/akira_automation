@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { useSearchParams, Link } from "react-router-dom";
 import {
   ImageIcon,
   Search,
@@ -11,35 +11,45 @@ import {
   ChevronRight,
   Star,
   CheckCircle2,
-  ChevronRight as ChevronRightIcon,
   AlertCircle,
-} from 'lucide-react';
-import { ProductWithImages, ProductImage } from '../../types/database';
-import { productService } from '../../services/productService';
-import { productImageService } from '../../services/productImageService';
-import { ProductImageManager } from '../../components/admin/ProductImageManager';
-import { AdminTableSkeleton } from '../../components/admin/AdminSkeleton';
-import { AdminErrorState } from '../../components/admin/AdminErrorState';
-import { SEOHead } from '../../components/layout/SEOHead';
-import { Button, Chip, Card, Table, Input, Checkbox } from '@heroui/react';
+} from "lucide-react";
+import { ProductWithImages, ProductImage } from "../../types/database";
+import { productService } from "../../services/productService";
+import { productImageService } from "../../services/productImageService";
+import { ProductImageManager } from "../../components/admin/ProductImageManager";
+import { AdminTableSkeleton } from "../../components/admin/AdminSkeleton";
+import { AdminErrorState } from "../../components/admin/AdminErrorState";
+import { SEOHead } from "../../components/layout/SEOHead";
+import type { Selection } from "@heroui/react";
+import {
+  Button,
+  Chip,
+  Table,
+  Input,
+  Checkbox,
+  Label,
+} from "@heroui/react";
 
 const ITEMS_PER_PAGE = 10;
 
 export const AdminProductImages: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const queryProductId = searchParams.get('productId') || '';
+  const queryProductId = searchParams.get("productId") || "";
 
   const [products, setProducts] = useState<ProductWithImages[]>([]);
-  const [selectedProductId, setSelectedProductId] = useState<string>(queryProductId);
-  const [selectedProductImages, setSelectedProductImages] = useState<ProductImage[]>([]);
+  const [selectedProductId, setSelectedProductId] =
+    useState<string>(queryProductId);
+  const [selectedProductImages, setSelectedProductImages] = useState<
+    ProductImage[]
+  >([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState<boolean>(true);
   const [isLoadingImages, setIsLoadingImages] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   // Filters & Search
-  const [search, setSearch] = useState<string>('');
-  const [selectedFilter, setSelectedFilter] = useState<string>('all');
-  const [selectedRowIds, setSelectedRowIds] = useState<Set<string>>(new Set());
+  const [search, setSearch] = useState<string>("");
+  const [selectedFilter, setSelectedFilter] = useState<string>("all");
+  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
 
   // Pagination
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -54,8 +64,8 @@ export const AdminProductImages: React.FC = () => {
     try {
       const result = await productService.getAdminProducts({
         limit: 150,
-        sortBy: 'name',
-        sortOrder: 'asc',
+        sortBy: "name",
+        sortOrder: "asc",
       });
       if (result.error) {
         setError(result.error);
@@ -63,7 +73,7 @@ export const AdminProductImages: React.FC = () => {
         setProducts(result.products);
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Unable to load products.');
+      setError(err instanceof Error ? err.message : "Unable to load products.");
     } finally {
       setIsLoadingProducts(false);
     }
@@ -84,7 +94,9 @@ export const AdminProductImages: React.FC = () => {
       const images = await productImageService.list(productId);
       setSelectedProductImages(images);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Failed to load product images.');
+      setError(
+        err instanceof Error ? err.message : "Failed to load product images.",
+      );
     } finally {
       setIsLoadingImages(false);
     }
@@ -107,26 +119,34 @@ export const AdminProductImages: React.FC = () => {
   const openDrawerForProduct = (prodId: string) => {
     setSelectedProductId(prodId);
     setIsDrawerOpen(true);
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      next.set('productId', prodId);
-      return next;
-    }, { replace: true });
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.set("productId", prodId);
+        return next;
+      },
+      { replace: true },
+    );
   };
 
   const closeDrawer = () => {
     setIsDrawerOpen(false);
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      next.delete('productId');
-      return next;
-    }, { replace: true });
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete("productId");
+        return next;
+      },
+      { replace: true },
+    );
   };
 
   const handleImagesChange = (updated: ProductImage[]) => {
     setSelectedProductImages(updated);
     setProducts((prev) =>
-      prev.map((p) => (p.id === selectedProductId ? { ...p, product_images: updated } : p))
+      prev.map((p) =>
+        p.id === selectedProductId ? { ...p, product_images: updated } : p,
+      ),
     );
   };
 
@@ -137,7 +157,10 @@ export const AdminProductImages: React.FC = () => {
 
   // Statistics
   const totalRegisteredImages = useMemo(() => {
-    return products.reduce((sum, p) => sum + (p.product_images?.length || 0), 0);
+    return products.reduce(
+      (sum, p) => sum + (p.product_images?.length || 0),
+      0,
+    );
   }, [products]);
 
   // Filter calculations
@@ -146,12 +169,12 @@ export const AdminProductImages: React.FC = () => {
       all: products.length,
       with_images: 0,
       missing_images: 0,
-      'Air Gauging': 0,
-      'Electronic Gauging': 0,
-      'Multi-Gauging Systems': 0,
-      'Special Gauging Fixtures': 0,
-      'Setting Masters & Standards': 0,
-      'Pneumatic & Electronic Displays': 0,
+      "Air Gauging": 0,
+      "Electronic Gauging": 0,
+      "Multi-Gauging Systems": 0,
+      "Special Gauging Fixtures": 0,
+      "Setting Masters & Standards": 0,
+      "Pneumatic & Electronic Displays": 0,
     };
 
     products.forEach((p) => {
@@ -177,55 +200,67 @@ export const AdminProductImages: React.FC = () => {
         const query = search.toLowerCase();
         const matchesName = p.name.toLowerCase().includes(query);
         const matchesSlug = p.slug.toLowerCase().includes(query);
-        const matchesCat = (p.category || '').toLowerCase().includes(query);
+        const matchesCat = (p.category || "").toLowerCase().includes(query);
         if (!matchesName && !matchesSlug && !matchesCat) return false;
       }
 
       // 2. Segmented Pill Filter
-      if (selectedFilter === 'all') return true;
-      if (selectedFilter === 'with_images') return imgCount > 0;
-      if (selectedFilter === 'missing_images') return imgCount === 0;
+      if (selectedFilter === "all") return true;
+      if (selectedFilter === "with_images") return imgCount > 0;
+      if (selectedFilter === "missing_images") return imgCount === 0;
       return p.category === selectedFilter;
     });
   }, [products, search, selectedFilter]);
 
   // Pagination
-  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / ITEMS_PER_PAGE));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredProducts.length / ITEMS_PER_PAGE),
+  );
   const paginatedProducts = useMemo(() => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
     return filteredProducts.slice(start, start + ITEMS_PER_PAGE);
   }, [filteredProducts, currentPage]);
 
-  const toggleSelectAll = () => {
-    if (selectedRowIds.size === paginatedProducts.length) {
-      setSelectedRowIds(new Set());
-    } else {
-      setSelectedRowIds(new Set(paginatedProducts.map((p) => p.id)));
-    }
-  };
-
-  const toggleSelectRow = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    const next = new Set(selectedRowIds);
-    if (next.has(id)) {
-      next.delete(id);
-    } else {
-      next.add(id);
-    }
-    setSelectedRowIds(next);
-  };
-
   // Filter options
   const filterOptions = [
-    { key: 'all', label: 'All Products', count: counts.all },
-    { key: 'with_images', label: 'With Images', count: counts.with_images },
-    { key: 'missing_images', label: 'Missing Images', count: counts.missing_images },
-    { key: 'Air Gauging', label: 'Air Gauging', count: counts['Air Gauging'] || 0 },
-    { key: 'Electronic Gauging', label: 'Electronic Gauging', count: counts['Electronic Gauging'] || 0 },
-    { key: 'Multi-Gauging Systems', label: 'Multi-Gauging', count: counts['Multi-Gauging Systems'] || 0 },
-    { key: 'Special Gauging Fixtures', label: 'Special Fixtures', count: counts['Special Gauging Fixtures'] || 0 },
-    { key: 'Setting Masters & Standards', label: 'Setting Masters', count: counts['Setting Masters & Standards'] || 0 },
-    { key: 'Pneumatic & Electronic Displays', label: 'Displays & Columns', count: counts['Pneumatic & Electronic Displays'] || 0 },
+    { key: "all", label: "All Products", count: counts.all },
+    { key: "with_images", label: "With Images", count: counts.with_images },
+    {
+      key: "missing_images",
+      label: "Missing Images",
+      count: counts.missing_images,
+    },
+    {
+      key: "Air Gauging",
+      label: "Air Gauging",
+      count: counts["Air Gauging"] || 0,
+    },
+    {
+      key: "Electronic Gauging",
+      label: "Electronic Gauging",
+      count: counts["Electronic Gauging"] || 0,
+    },
+    {
+      key: "Multi-Gauging Systems",
+      label: "Multi-Gauging",
+      count: counts["Multi-Gauging Systems"] || 0,
+    },
+    {
+      key: "Special Gauging Fixtures",
+      label: "Special Fixtures",
+      count: counts["Special Gauging Fixtures"] || 0,
+    },
+    {
+      key: "Setting Masters & Standards",
+      label: "Setting Masters",
+      count: counts["Setting Masters & Standards"] || 0,
+    },
+    {
+      key: "Pneumatic & Electronic Displays",
+      label: "Displays & Columns",
+      count: counts["Pneumatic & Electronic Displays"] || 0,
+    },
   ];
 
   return (
@@ -243,12 +278,18 @@ export const AdminProductImages: React.FC = () => {
               <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
                 Product Image Manager
               </h1>
-              <Chip size="sm" variant="soft" color="accent" className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-sky-100 text-industrial-primary border border-sky-200">
+              <Chip
+                size="sm"
+                variant="soft"
+                color="accent"
+                className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-sky-100 text-industrial-primary border border-sky-200"
+              >
                 <Chip.Label>{totalRegisteredImages} Images</Chip.Label>
               </Chip>
             </div>
             <p className="text-xs text-gray-500 mt-0.5">
-              Upload, organize, and assign high-resolution photography and technical CAD diagrams per catalogue product.
+              Upload, organize, and assign high-resolution photography and
+              technical CAD diagrams per catalogue product.
             </p>
           </div>
 
@@ -264,7 +305,9 @@ export const AdminProductImages: React.FC = () => {
               className="p-2 rounded-lg bg-white border border-gray-200 text-gray-600 hover:text-gray-900 hover:bg-gray-50 shadow-2xs transition-colors flex items-center gap-1.5 text-xs font-medium cursor-pointer"
               aria-label="Refresh Media Assets"
             >
-              <RotateCw className={`w-3.5 h-3.5 ${(isLoadingProducts || isLoadingImages) ? 'animate-spin text-blue-600' : ''}`} />
+              <RotateCw
+                className={`w-3.5 h-3.5 ${isLoadingProducts || isLoadingImages ? "animate-spin text-blue-600" : ""}`}
+              />
               <span>Refresh</span>
             </Button>
 
@@ -273,7 +316,7 @@ export const AdminProductImages: React.FC = () => {
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 shadow-2xs transition-all"
             >
               <Package className="w-3.5 h-3.5 text-gray-500" />
-              <span>Product Catalogue</span>
+              <Label>Product Catalogue</Label>
             </Link>
           </div>
         </div>
@@ -298,7 +341,7 @@ export const AdminProductImages: React.FC = () => {
             return (
               <Button
                 key={opt.key}
-                variant={isSelected ? 'primary' : 'outline'}
+                variant={isSelected ? "primary" : "outline"}
                 size="sm"
                 onPress={() => {
                   setSelectedFilter(opt.key);
@@ -306,14 +349,16 @@ export const AdminProductImages: React.FC = () => {
                 }}
                 className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all shadow-2xs whitespace-nowrap shrink-0 cursor-pointer ${
                   isSelected
-                    ? 'bg-gray-900 text-white border border-gray-900 shadow-sm'
-                    : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 hover:border-gray-300'
+                    ? "bg-gray-900 text-white border border-gray-900 shadow-sm"
+                    : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 hover:border-gray-300"
                 }`}
               >
                 <span>{opt.label}</span>
                 <span
                   className={`px-1.5 py-0.2 rounded-md text-[11px] font-mono font-bold ${
-                    isSelected ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-700'
+                    isSelected
+                      ? "bg-white/20 text-white"
+                      : "bg-gray-100 text-gray-700"
                   }`}
                 >
                   {opt.count}
@@ -340,7 +385,7 @@ export const AdminProductImages: React.FC = () => {
             <button
               type="button"
               onClick={() => {
-                setSearch('');
+                setSearch("");
                 setCurrentPage(1);
               }}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-0.5"
@@ -359,18 +404,20 @@ export const AdminProductImages: React.FC = () => {
             <div className="w-12 h-12 rounded-xl bg-gray-100 text-gray-400 flex items-center justify-center mx-auto">
               <ImageIcon className="w-6 h-6" />
             </div>
-            <h3 className="text-base font-bold text-gray-900">No products found</h3>
+            <h3 className="text-base font-bold text-gray-900">
+              No products found
+            </h3>
             <p className="text-xs text-gray-500 max-w-sm mx-auto">
-              {search || selectedFilter !== 'all'
-                ? 'No items match your active search filters. Try adjusting query parameters or reset filters.'
-                : 'No products in catalogue yet.'}
+              {search || selectedFilter !== "all"
+                ? "No items match your active search filters. Try adjusting query parameters or reset filters."
+                : "No products in catalogue yet."}
             </p>
-            {(search || selectedFilter !== 'all') && (
+            {(search || selectedFilter !== "all") && (
               <button
                 type="button"
                 onClick={() => {
-                  setSearch('');
-                  setSelectedFilter('all');
+                  setSearch("");
+                  setSelectedFilter("all");
                 }}
                 className="mt-2 text-xs font-semibold text-blue-600 hover:underline"
               >
@@ -379,22 +426,20 @@ export const AdminProductImages: React.FC = () => {
             )}
           </div>
         ) : (
-          <Card className="bg-white rounded-2xl border border-gray-200/90 shadow-2xs overflow-hidden p-0">
+          <>
             <Table className="w-full">
-              <Table.ScrollContainer className="overflow-x-auto">
-                <Table.Content aria-label="Product Media Catalogue Table" className="w-full text-left border-collapse min-w-[950px]">
+              <Table.ScrollContainer>
+                <Table.Content
+                  aria-label="Product Media Catalogue Table"
+                  className="min-w-150"
+                  selectedKeys={selectedKeys}
+                  selectionMode="multiple"
+                  onSelectionChange={setSelectedKeys}
+                >
                   {/* Table Header */}
-                  <Table.Header className="border-b border-gray-100 bg-gray-50/40 text-[12px] font-medium text-gray-500">
-                    <Table.Column className="py-3.5 pl-5 pr-3 w-10">
-                      <Checkbox
-                        slot="selection"
-                        isSelected={
-                          paginatedProducts.length > 0 &&
-                          selectedRowIds.size === paginatedProducts.length
-                        }
-                        onChange={toggleSelectAll}
-                        aria-label="Select all rows"
-                      >
+                  <Table.Header>
+                    <Table.Column className="pe-0">
+                      <Checkbox slot="selection" aria-label="Select all rows">
                         <Checkbox.Content>
                           <Checkbox.Control>
                             <Checkbox.Indicator />
@@ -402,19 +447,32 @@ export const AdminProductImages: React.FC = () => {
                         </Checkbox.Content>
                       </Checkbox>
                     </Table.Column>
-                    <Table.Column className="py-3.5 px-4 w-16">Primary Cover</Table.Column>
-                    <Table.Column isRowHeader className="py-3.5 px-4">Product Name & Identifier</Table.Column>
-                    <Table.Column className="py-3.5 px-4">Category</Table.Column>
-                    <Table.Column className="py-3.5 px-4">Gallery Previews</Table.Column>
-                    <Table.Column className="py-3.5 px-4 text-center">Total Assets</Table.Column>
-                    <Table.Column className="py-3.5 px-4 text-center">Status</Table.Column>
-                    <Table.Column className="py-3.5 px-4 text-right">Actions</Table.Column>
+                    <Table.Column className="py-3.5 px-4 w-16">
+                      Primary Cover
+                    </Table.Column>
+                    <Table.Column isRowHeader className="py-3.5 px-4">
+                      Product Name & Identifier
+                    </Table.Column>
+                    <Table.Column className="py-3.5 px-4">
+                      Category
+                    </Table.Column>
+                    <Table.Column className="py-3.5 px-4">
+                      Gallery Previews
+                    </Table.Column>
+                    <Table.Column className="py-3.5 px-4 text-center">
+                      Total Assets
+                    </Table.Column>
+                    <Table.Column className="py-3.5 px-4 text-center">
+                      Status
+                    </Table.Column>
+                    <Table.Column className="py-3.5 px-4 text-right">
+                      Actions
+                    </Table.Column>
                   </Table.Header>
 
                   {/* Table Body */}
-                  <Table.Body className="divide-y divide-gray-100 text-xs">
+                  <Table.Body>
                     {paginatedProducts.map((prod) => {
-                      const isRowSelected = selectedRowIds.has(prod.id);
                       const images = prod.product_images || [];
                       const primaryImg =
                         images.find((img) => img.is_primary)?.image_url ||
@@ -423,17 +481,14 @@ export const AdminProductImages: React.FC = () => {
                       return (
                         <Table.Row
                           key={prod.id}
-                          onClick={() => openDrawerForProduct(prod.id)}
-                          className={`transition-colors cursor-pointer group ${
-                            isRowSelected ? 'bg-blue-50/30' : 'hover:bg-gray-50/70'
-                          }`}
+                          id={prod.id}
                         >
                           {/* Row Checkbox */}
-                          <Table.Cell className="py-3.5 pl-5 pr-3 w-10" onClick={(e) => toggleSelectRow(prod.id, e)}>
+                          <Table.Cell className="pe-0">
                             <Checkbox
                               slot="selection"
-                              isSelected={isRowSelected}
                               aria-label={`Select ${prod.name}`}
+                              variant="secondary"
                             >
                               <Checkbox.Content>
                                 <Checkbox.Control>
@@ -445,7 +500,11 @@ export const AdminProductImages: React.FC = () => {
 
                           {/* Primary Image Cover */}
                           <Table.Cell className="py-3 px-4 w-16">
-                            <div className="w-12 h-12 rounded-xl border border-gray-200 bg-gray-50 flex items-center justify-center shrink-0 overflow-hidden relative group/img">
+                            <div
+                              onClick={() => openDrawerForProduct(prod.id)}
+                              className="w-12 h-12 rounded-xl border border-gray-200 bg-gray-50 flex items-center justify-center shrink-0 overflow-hidden relative group/img cursor-pointer"
+                              title="Manage product gallery"
+                            >
                               {primaryImg ? (
                                 <img
                                   src={primaryImg}
@@ -464,9 +523,13 @@ export const AdminProductImages: React.FC = () => {
 
                           {/* Name & Slug */}
                           <Table.Cell className="py-3.5 px-4 whitespace-nowrap">
-                            <div className="font-semibold text-gray-900 text-sm group-hover:text-blue-600 transition-colors">
+                            <button
+                              type="button"
+                              onClick={() => openDrawerForProduct(prod.id)}
+                              className="text-left font-semibold text-gray-900 text-sm hover:text-blue-600 transition-colors cursor-pointer block"
+                            >
                               {prod.name}
-                            </div>
+                            </button>
                             <div className="text-[11px] font-mono text-gray-400 mt-0.5">
                               /{prod.slug}
                             </div>
@@ -474,8 +537,15 @@ export const AdminProductImages: React.FC = () => {
 
                           {/* Category */}
                           <Table.Cell className="py-3.5 px-4 whitespace-nowrap">
-                            <Chip size="sm" variant="soft" color="default" className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200">
-                              <Chip.Label>{prod.category || 'General'}</Chip.Label>
+                            <Chip
+                              size="sm"
+                              variant="soft"
+                              color="default"
+                              className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200"
+                            >
+                              <Chip.Label>
+                                {prod.category || "General"}
+                              </Chip.Label>
                             </Chip>
                           </Table.Cell>
 
@@ -483,7 +553,9 @@ export const AdminProductImages: React.FC = () => {
                           <Table.Cell className="py-3.5 px-4 whitespace-nowrap">
                             <div className="flex items-center gap-1.5">
                               {images.length === 0 ? (
-                                <span className="text-gray-400 italic text-xs">No media uploaded</span>
+                                <span className="text-gray-400 italic text-xs">
+                                  No media uploaded
+                                </span>
                               ) : (
                                 <>
                                   {images.slice(0, 4).map((img) => (
@@ -493,7 +565,7 @@ export const AdminProductImages: React.FC = () => {
                                     >
                                       <img
                                         src={img.image_url}
-                                        alt={img.alt_text || 'Asset'}
+                                        alt={img.alt_text || "Asset"}
                                         className="w-full h-full object-contain p-0.5"
                                       />
                                     </div>
@@ -511,12 +583,25 @@ export const AdminProductImages: React.FC = () => {
                           {/* Total Assets Badge */}
                           <Table.Cell className="py-3.5 px-4 whitespace-nowrap text-center">
                             {images.length > 0 ? (
-                              <Chip size="sm" variant="soft" color="accent" className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-sky-50 text-blue-700 border border-sky-200">
-                                <ImageIcon className="w-3 h-3" />
-                                <Chip.Label>{images.length} {images.length === 1 ? 'Asset' : 'Assets'}</Chip.Label>
+                              <Chip
+                                size="sm"
+                                variant="soft"
+                                color="accent"
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-sky-50 text-blue-700 border border-sky-200"
+                              >
+                                <ImageIcon className="w-3.5 h-3.5" />
+                                <Chip.Label>
+                                  {images.length}{" "}
+                                  {images.length === 1 ? "Asset" : "Assets"}
+                                </Chip.Label>
                               </Chip>
                             ) : (
-                              <Chip size="sm" variant="soft" color="warning" className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                              <Chip
+                                size="sm"
+                                variant="soft"
+                                color="warning"
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200"
+                              >
                                 <AlertCircle className="w-3 h-3" />
                                 <Chip.Label>Missing Cover</Chip.Label>
                               </Chip>
@@ -528,19 +613,21 @@ export const AdminProductImages: React.FC = () => {
                             <Chip
                               size="sm"
                               variant="soft"
-                              color={prod.active ? 'success' : 'default'}
+                              color={prod.active ? "success" : "default"}
                               className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${
                                 prod.active
-                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                                  : 'bg-gray-100 text-gray-600 border-gray-200'
+                                  ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                  : "bg-gray-100 text-gray-600 border-gray-200"
                               }`}
                             >
                               <span
                                 className={`w-1.5 h-1.5 rounded-full ${
-                                  prod.active ? 'bg-emerald-500' : 'bg-gray-400'
+                                  prod.active ? "bg-emerald-500" : "bg-gray-400"
                                 }`}
                               />
-                              <Chip.Label>{prod.active ? 'Active' : 'Inactive'}</Chip.Label>
+                              <Chip.Label>
+                                {prod.active ? "Active" : "Inactive"}
+                              </Chip.Label>
                             </Chip>
                           </Table.Cell>
 
@@ -550,15 +637,11 @@ export const AdminProductImages: React.FC = () => {
                               variant="primary"
                               size="sm"
                               onPress={() => openDrawerForProduct(prod.id)}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                openDrawerForProduct(prod.id);
-                              }}
                               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-900 text-white hover:bg-gray-800 shadow-2xs transition-all cursor-pointer"
                             >
                               <ImageIcon className="w-3.5 h-3.5" />
                               <span>Manage Gallery</span>
-                              <ChevronRightIcon className="w-3 h-3 text-gray-400" />
+                              <ChevronRight className="w-3 h-3 text-gray-400" />
                             </Button>
                           </Table.Cell>
                         </Table.Row>
@@ -572,7 +655,17 @@ export const AdminProductImages: React.FC = () => {
             {/* Pagination Footer */}
             <div className="border-t border-gray-100 px-6 py-3.5 flex items-center justify-between text-xs text-gray-500">
               <div>
-                Page {currentPage} of {totalPages} ({filteredProducts.length} results)
+                Page {currentPage} of {totalPages} ({filteredProducts.length}{" "}
+                results)
+                {selectedKeys === "all" ? (
+                  <span className="ml-2 font-medium text-blue-600">
+                    · All ({filteredProducts.length}) selected
+                  </span>
+                ) : selectedKeys instanceof Set && selectedKeys.size > 0 ? (
+                  <span className="ml-2 font-medium text-blue-600">
+                    · {selectedKeys.size} selected
+                  </span>
+                ) : null}
               </div>
 
               <div className="flex items-center gap-1.5">
@@ -588,19 +681,22 @@ export const AdminProductImages: React.FC = () => {
                   <ChevronLeft className="w-3.5 h-3.5" />
                 </Button>
 
-                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => i + 1).map((pageNum) => {
+                {Array.from(
+                  { length: Math.min(5, totalPages) },
+                  (_, i) => i + 1,
+                ).map((pageNum) => {
                   const isActive = currentPage === pageNum;
                   return (
                     <Button
                       key={pageNum}
-                      variant={isActive ? 'primary' : 'ghost'}
+                      variant={isActive ? "primary" : "ghost"}
                       size="sm"
                       isIconOnly
                       onPress={() => setCurrentPage(pageNum)}
                       className={`w-7 h-7 rounded-lg text-xs font-semibold flex items-center justify-center transition-colors cursor-pointer ${
                         isActive
-                          ? 'bg-gray-900 text-white shadow-2xs'
-                          : 'text-gray-600 hover:bg-gray-100'
+                          ? "bg-gray-900 text-white shadow-2xs"
+                          : "text-gray-600 hover:bg-gray-100"
                       }`}
                     >
                       {pageNum}
@@ -612,14 +708,14 @@ export const AdminProductImages: React.FC = () => {
                   <>
                     <span className="px-1 text-gray-400 font-mono">...</span>
                     <Button
-                      variant={currentPage === totalPages ? 'primary' : 'ghost'}
+                      variant={currentPage === totalPages ? "primary" : "ghost"}
                       size="sm"
                       isIconOnly
                       onPress={() => setCurrentPage(totalPages)}
                       className={`w-7 h-7 rounded-lg text-xs font-semibold flex items-center justify-center transition-colors cursor-pointer ${
                         currentPage === totalPages
-                          ? 'bg-gray-900 text-white shadow-2xs'
-                          : 'text-gray-600 hover:bg-gray-100'
+                          ? "bg-gray-900 text-white shadow-2xs"
+                          : "text-gray-600 hover:bg-gray-100"
                       }`}
                     >
                       {totalPages}
@@ -632,7 +728,9 @@ export const AdminProductImages: React.FC = () => {
                   size="sm"
                   isIconOnly
                   isDisabled={currentPage === totalPages}
-                  onPress={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  onPress={() =>
+                    setCurrentPage((p) => Math.min(totalPages, p + 1))
+                  }
                   className="p-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                   aria-label="Next page"
                 >
@@ -640,7 +738,7 @@ export const AdminProductImages: React.FC = () => {
                 </Button>
               </div>
             </div>
-          </Card>
+          </>
         )}
       </div>
 
@@ -663,8 +761,8 @@ export const AdminProductImages: React.FC = () => {
                     {selectedProductImages.length > 0 ? (
                       <img
                         src={
-                          selectedProductImages.find((img) => img.is_primary)?.image_url ||
-                          selectedProductImages[0].image_url
+                          selectedProductImages.find((img) => img.is_primary)
+                            ?.image_url || selectedProductImages[0].image_url
                         }
                         alt={activeProduct.name}
                         className="w-full h-full object-contain p-1"
@@ -677,7 +775,7 @@ export const AdminProductImages: React.FC = () => {
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        {activeProduct.category || 'General'}
+                        {activeProduct.category || "General"}
                       </span>
                       {activeProduct.featured && (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-800 border border-amber-200">
@@ -691,7 +789,8 @@ export const AdminProductImages: React.FC = () => {
                       {activeProduct.name}
                     </h2>
                     <div className="text-xs font-mono text-gray-400 mt-0.5">
-                      /products/{activeProduct.slug} · {selectedProductImages.length} media assets
+                      /products/{activeProduct.slug} ·{" "}
+                      {selectedProductImages.length} media assets
                     </div>
                   </div>
                 </div>

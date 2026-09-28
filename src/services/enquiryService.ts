@@ -210,6 +210,41 @@ export class EnquiryService {
   }
 
   /**
+   * Fast, lightweight query for dropdown selectors (ID, name, company, email).
+   * Omits heavy joins and exact table count scans.
+   */
+  async getEnquiryOptions(limit = 100): Promise<{
+    options: { id: string; name: string; company: string | null; email: string }[];
+    error: string | null;
+  }> {
+    if (!isSupabaseConfigured()) {
+      return { options: [], error: 'Database configuration is unavailable.' };
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('enquiries')
+        .select('id, name, company, email')
+        .order('created_at', { ascending: false })
+        .limit(limit);
+
+      if (error) {
+        return { options: [], error: error.message };
+      }
+
+      return {
+        options: (data || []) as { id: string; name: string; company: string | null; email: string }[],
+        error: null,
+      };
+    } catch (err: unknown) {
+      return {
+        options: [],
+        error: err instanceof Error ? err.message : 'Failed to load enquiry options.',
+      };
+    }
+  }
+
+  /**
    * Retrieve counts across each status for top-level filter tabs.
    */
   async getStatusCounts(assignedTo?: string): Promise<StatusCounts> {

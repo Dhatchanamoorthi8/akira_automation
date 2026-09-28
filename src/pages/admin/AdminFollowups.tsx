@@ -18,8 +18,14 @@ import {
   Calendar,
   TimeField,
   TextField,
+  ComboBox,
 } from "@heroui/react";
-import { DateValue, getLocalTimeZone, now } from "@internationalized/date";
+import {
+  DateValue,
+  getLocalTimeZone,
+  now,
+  today,
+} from "@internationalized/date";
 import {
   CalendarClock,
   Search,
@@ -100,6 +106,15 @@ function matchesTimeframe(
   }
 }
 
+function getDefaultScheduleDate(): DateValue {
+  try {
+    const tz = getLocalTimeZone();
+    return now(tz).add({ hours: 1 });
+  } catch {
+    return today(getLocalTimeZone());
+  }
+}
+
 export const AdminFollowups: React.FC = () => {
   const [followups, setFollowups] = useState<FollowupWithEnquiry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -118,7 +133,9 @@ export const AdminFollowups: React.FC = () => {
     useState<FollowupWithEnquiry | null>(null);
   const [outcomeNotes, setOutcomeNotes] = useState("");
   const [scheduleNext, setScheduleNext] = useState(false);
-  const [nextDateValue, setNextDateValue] = useState<DateValue | null>(null);
+  const [nextDateValue, setNextDateValue] = useState<DateValue | null>(
+    getDefaultScheduleDate,
+  );
   const [nextType, setNextType] = useState<FollowupType>("call");
   const [nextNotes, setNextNotes] = useState("");
   const [isSubmittingOutcome, setIsSubmittingOutcome] = useState(false);
@@ -127,11 +144,15 @@ export const AdminFollowups: React.FC = () => {
   // Quick Schedule Modal
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [recentEnquiries, setRecentEnquiries] = useState<
-    { id: string; name: string; company: string | null }[]
+    { id: string; name: string; company: string | null; email?: string }[]
   >([]);
+  const [isLoadingEnquiries, setIsLoadingEnquiries] = useState(false);
+  const [enquiryFetchError, setEnquiryFetchError] = useState<string | null>(
+    null,
+  );
   const [targetEnquiryId, setTargetEnquiryId] = useState("");
   const [newScheduleDateValue, setNewScheduleDateValue] =
-    useState<DateValue | null>(null);
+    useState<DateValue | null>(getDefaultScheduleDate);
   const [newScheduleType, setNewScheduleType] = useState<FollowupType>("call");
   const [newScheduleNotes, setNewScheduleNotes] = useState("");
   const [isScheduling, setIsScheduling] = useState(false);
@@ -210,30 +231,72 @@ export const AdminFollowups: React.FC = () => {
     return list;
   }, [followups, timeframe, searchQuery]);
 
+  // ─── Enquiry options fetching & pre-loading for Quick Schedule Modal ─────
+  const fetchEnquiryOptions = useCallback(
+    async (force = false) => {
+      if (!force && recentEnquiries.length > 0) return;
+      setIsLoadingEnquiries(true);
+      setEnquiryFetchError(null);
+      try {
+        const res = await enquiryService.getEnquiryOptions(100);
+        if (res.error) {
+          setEnquiryFetchError(res.error);
+        } else if (res.options.length > 0) {
+          setRecentEnquiries(res.options);
+          setTargetEnquiryId((prev) => prev || res.options[0].id);
+        }
+      } catch (err: unknown) {
+        setEnquiryFetchError(
+          err instanceof Error
+            ? err.message
+            : "Failed to load customer enquiries.",
+        );
+      } finally {
+        setIsLoadingEnquiries(false);
+      }
+    },
+    [recentEnquiries.length],
+  );
+
+  // Pre-load enquiries in background on page load
+  useEffect(() => {
+    fetchEnquiryOptions();
+  }, [fetchEnquiryOptions]);
+
+  // Instant fallback: seed enquiries from loaded followups if options are still empty
+  useEffect(() => {
+    if (followups.length > 0 && recentEnquiries.length === 0) {
+      const map = new Map<
+        string,
+        { id: string; name: string; company: string | null; email?: string }
+      >();
+      followups.forEach((f) => {
+        if (f.enquiry?.id && !map.has(f.enquiry.id)) {
+          map.set(f.enquiry.id, {
+            id: f.enquiry.id,
+            name: f.enquiry.name,
+            company: f.enquiry.company || null,
+            email: f.enquiry.email || undefined,
+          });
+        }
+      });
+      const options = Array.from(map.values());
+      if (options.length > 0) {
+        setRecentEnquiries(options);
+        setTargetEnquiryId((prev) => prev || options[0].id);
+      }
+    }
+  }, [followups, recentEnquiries.length]);
+
   // ─── Quick Schedule Modal ─────────────────────────────────────────────────
-  const openQuickScheduleModal = async () => {
+  const openQuickScheduleModal = () => {
     setShowScheduleModal(true);
     setScheduleError(null);
-    try {
-      const tz = getLocalTimeZone();
-      setNewScheduleDateValue(now(tz).add({ hours: 1 }));
-    } catch {
-      // fallback if timezone conversion fails
-    }
-    try {
-      const res = await enquiryService.getEnquiries({ limit: 30 });
-      if (res.enquiries.length > 0) {
-        setRecentEnquiries(
-          res.enquiries.map((e) => ({
-            id: e.id,
-            name: e.name,
-            company: e.company,
-          })),
-        );
-        if (!targetEnquiryId) setTargetEnquiryId(res.enquiries[0].id);
-      }
-    } catch {
-      // ignore
+    setNewScheduleDateValue(getDefaultScheduleDate());
+    if (recentEnquiries.length === 0) {
+      fetchEnquiryOptions(true);
+    } else if (!targetEnquiryId && recentEnquiries.length > 0) {
+      setTargetEnquiryId(recentEnquiries[0].id);
     }
   };
 
@@ -272,7 +335,7 @@ export const AdminFollowups: React.FC = () => {
         setScheduleError(res.error);
       } else {
         setShowScheduleModal(false);
-        setNewScheduleDateValue(null);
+        setNewScheduleDateValue(getDefaultScheduleDate());
         setNewScheduleNotes("");
         fetchFollowups();
       }
@@ -772,8 +835,8 @@ export const AdminFollowups: React.FC = () => {
               {/* Type Filter */}
               <div className="w-full sm:w-36 min-w-[130px]">
                 <Select
-                  selectedKey={selectedType}
-                  onSelectionChange={(key) => setSelectedType(String(key))}
+                  value={selectedType}
+                  onChange={(val) => setSelectedType(String(val || "all"))}
                   className="w-full"
                   aria-label="Filter by activity type"
                 >
@@ -812,8 +875,8 @@ export const AdminFollowups: React.FC = () => {
               {/* Priority Filter */}
               <div className="w-full sm:w-36 min-w-[120px]">
                 <Select
-                  selectedKey={selectedPriority}
-                  onSelectionChange={(key) => setSelectedPriority(String(key))}
+                  value={selectedPriority}
+                  onChange={(val) => setSelectedPriority(String(val || "all"))}
                   className="w-full"
                   aria-label="Filter by priority"
                 >
@@ -847,8 +910,8 @@ export const AdminFollowups: React.FC = () => {
               {/* Staff Filter */}
               <div className="w-full sm:w-48 min-w-[150px]">
                 <Select
-                  selectedKey={selectedStaff}
-                  onSelectionChange={(key) => setSelectedStaff(String(key))}
+                  value={selectedStaff}
+                  onChange={(val) => setSelectedStaff(String(val || "all"))}
                   className="w-full"
                   aria-label="Filter by staff member"
                 >
@@ -1281,6 +1344,9 @@ export const AdminFollowups: React.FC = () => {
                                       setCompletingFollowup(item);
                                       setOutcomeNotes("");
                                       setScheduleNext(false);
+                                      setNextDateValue(
+                                        getDefaultScheduleDate(),
+                                      );
                                       setOutcomeError(null);
                                     }}
                                     className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl text-xs font-semibold border border-emerald-200 transition-colors shadow-2xs cursor-pointer shrink-0"
@@ -1425,7 +1491,7 @@ export const AdminFollowups: React.FC = () => {
                     />
                   </div>
 
-                  <div className="p-3.5 bg-slate-50/70 border border-slate-200 rounded-xl space-y-3">
+                  <Card className="p-3.5 bg-slate-50/70 border border-slate-200 rounded-xl space-y-3">
                     <Checkbox
                       id="scheduleNextCheck"
                       isSelected={scheduleNext}
@@ -1444,190 +1510,162 @@ export const AdminFollowups: React.FC = () => {
                         <Checkbox.Control className="w-4 h-4 rounded border border-slate-300 flex items-center justify-center data-[selected=true]:bg-blue-600 data-[selected=true]:border-blue-600 transition-colors">
                           <Checkbox.Indicator />
                         </Checkbox.Control>
-                        <span className="text-xs font-bold text-slate-800">
+                        <Label >
                           Schedule Next Follow-up with this customer
-                        </span>
+                        </Label>
                       </Checkbox.Content>
                     </Checkbox>
 
                     {scheduleNext && (
-                      <div className="space-y-3 pt-2 border-t border-slate-200">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <div>
-                            <DatePicker
-                              isRequired
-                              granularity="minute"
-                              hourCycle={12}
-                              value={nextDateValue}
-                              onChange={setNextDateValue}
-                              className="w-full flex flex-col gap-1"
-                              aria-label="Next Follow-up Date and Time"
-                            >
-                              {({ state }) => (
-                                <>
-                                  <Label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono">
-                                    Next Date &amp; Time
-                                  </Label>
-                                  <DateField.Group
-                                    fullWidth
-                                    className="w-full h-9 px-2.5 py-1.5 text-xs border border-slate-200 rounded-xl focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500 bg-white font-mono flex items-center justify-between"
-                                  >
-                                    <DateField.Input className="flex items-center gap-0.5 text-xs">
-                                      {(segment) => (
-                                        <DateField.Segment
-                                          segment={segment}
-                                          className="px-0.5 rounded-xs outline-none focus:bg-blue-100 focus:text-blue-900"
-                                        />
-                                      )}
-                                    </DateField.Input>
-                                    <DateField.Suffix>
-                                      <DatePicker.Trigger className="p-1 text-slate-400 hover:text-slate-600 rounded-md cursor-pointer transition-colors">
-                                        <DatePicker.TriggerIndicator />
-                                      </DatePicker.Trigger>
-                                    </DateField.Suffix>
-                                  </DateField.Group>
-                                  <DatePicker.Popover className="bg-white rounded-2xl shadow-2xl border border-slate-200 p-3 z-50 flex flex-col gap-3">
-                                    <Calendar
-                                      aria-label="Next Follow-up Date"
-                                      className="w-full"
-                                    >
-                                      <Calendar.Header className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
-                                        <Calendar.YearPickerTrigger className="text-xs font-bold text-slate-800 flex items-center gap-1 cursor-pointer hover:text-blue-600">
-                                          <Calendar.YearPickerTriggerHeading />
-                                          <Calendar.YearPickerTriggerIndicator />
-                                        </Calendar.YearPickerTrigger>
-                                        <div className="flex items-center gap-1">
-                                          <Calendar.NavButton
-                                            slot="previous"
-                                            className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
-                                          />
-                                          <Calendar.NavButton
-                                            slot="next"
-                                            className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
-                                          />
-                                        </div>
-                                      </Calendar.Header>
-                                      <Calendar.Grid className="w-full border-collapse">
-                                        <Calendar.GridHeader>
-                                          {(day) => (
-                                            <Calendar.HeaderCell className="text-[11px] font-semibold text-slate-400 pb-1.5 text-center">
-                                              {day}
-                                            </Calendar.HeaderCell>
-                                          )}
-                                        </Calendar.GridHeader>
-                                        <Calendar.GridBody>
-                                          {(date) => (
-                                            <Calendar.Cell
-                                              date={date}
-                                              className="text-xs p-1 text-center rounded-lg cursor-pointer hover:bg-slate-100 data-[selected=true]:bg-blue-600 data-[selected=true]:text-white data-[disabled=true]:text-slate-300 data-[unavailable=true]:text-slate-300"
-                                            />
-                                          )}
-                                        </Calendar.GridBody>
-                                      </Calendar.Grid>
-                                      <Calendar.YearPickerGrid className="w-full">
-                                        <Calendar.YearPickerGridBody>
-                                          {({ year }) => (
-                                            <Calendar.YearPickerCell
-                                              year={year}
-                                              className="text-xs p-1.5 text-center rounded-lg cursor-pointer hover:bg-slate-100 data-[selected=true]:bg-blue-600 data-[selected=true]:text-white"
-                                            />
-                                          )}
-                                        </Calendar.YearPickerGridBody>
-                                      </Calendar.YearPickerGrid>
-                                    </Calendar>
-                                    <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
-                                      <span className="font-semibold text-slate-600 font-mono">
-                                        Time
-                                      </span>
-                                      <TimeField
-                                        aria-label="Next Follow-up Time"
-                                        granularity="minute"
-                                        hourCycle={12}
-                                        value={state.timeValue}
-                                        onChange={(v) => {
-                                          if (v) state.setTimeValue(v);
-                                        }}
-                                      >
-                                        <TimeField.Group className="px-2 py-1 border border-slate-200 rounded-lg bg-slate-50 flex items-center font-mono text-xs">
-                                          <TimeField.Input className="flex items-center gap-0.5">
-                                            {(segment) => (
-                                              <TimeField.Segment
-                                                segment={segment}
-                                                className="px-0.5 rounded-xs outline-none focus:bg-blue-100 focus:text-blue-900"
-                                              />
-                                            )}
-                                          </TimeField.Input>
-                                        </TimeField.Group>
-                                      </TimeField>
-                                    </div>
-                                  </DatePicker.Popover>
-                                </>
-                              )}
-                            </DatePicker>
-                          </div>
-                          <div>
-                            <Label
-                              htmlFor="nextType"
-                              className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono"
-                            >
-                              Activity Type
-                            </Label>
-                            <Select
-                              id="nextType"
-                              selectedKey={nextType}
-                              onSelectionChange={(key) =>
-                                setNextType(String(key) as FollowupType)
-                              }
-                              className="w-full"
-                              aria-label="Next follow-up type"
-                            >
-                              <Select.Trigger className="w-full h-9 px-3 py-2 text-xs border border-slate-200 rounded-xl bg-white font-sans flex items-center justify-between focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500">
-                                <Select.Value className="text-xs font-medium text-slate-800 capitalize truncate" />
-                                <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
-                              </Select.Trigger>
-                              <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[130px]">
-                                <ListBox className="outline-none space-y-0.5">
-                                  {[
-                                    { key: "call", label: "Call" },
-                                    { key: "email", label: "Email" },
-                                    { key: "meeting", label: "Meeting" },
-                                    { key: "demo", label: "Demo" },
-                                    { key: "quotation", label: "Quotation" },
-                                    { key: "other", label: "Other" },
-                                  ].map((item) => (
-                                    <ListBox.Item
-                                      key={item.key}
-                                      id={item.key}
-                                      textValue={item.label}
-                                      className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-blue-50 data-[selected=true]:text-blue-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
-                                    >
-                                      {item.label}
-                                    </ListBox.Item>
-                                  ))}
-                                </ListBox>
-                              </Select.Popover>
-                            </Select>
-                          </div>
-                        </div>
+                      <div className="space-y-5">
                         <div>
-                          <Label
-                            htmlFor="nextNotes"
-                            className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono"
+                          <DatePicker
+                            isRequired
+                            granularity="minute"
+                            hourCycle={12}
+                            hideTimeZone={true}
+                            value={nextDateValue}
+                            onChange={setNextDateValue}
+                            className="w-full"
+                            aria-label="Next Follow-up Date and Time"
                           >
-                            Next Agenda / Notes
-                          </Label>
-                          <Input
-                            id="nextNotes"
-                            type="text"
-                            value={nextNotes}
-                            onChange={(e) => setNextNotes(e.target.value)}
-                            placeholder="e.g. Send formal quote revision #2"
-                            className="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl font-sans bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                          />
+                            {({ state }) => (
+                              <>
+                                <Label>Next Date &amp; Time</Label>
+                                <DateField.Group fullWidth>
+                                  <DateField.Input>
+                                    {(segment) => (
+                                      <DateField.Segment segment={segment} />
+                                    )}
+                                  </DateField.Input>
+                                  <DateField.Suffix>
+                                    <DatePicker.Trigger>
+                                      <DatePicker.TriggerIndicator />
+                                    </DatePicker.Trigger>
+                                  </DateField.Suffix>
+                                </DateField.Group>
+                                <DatePicker.Popover className="flex flex-col gap-3">
+                                  <Calendar aria-label="Next Follow-up Date">
+                                    <Calendar.Header>
+                                      <Calendar.YearPickerTrigger>
+                                        <Calendar.YearPickerTriggerHeading />
+                                        <Calendar.YearPickerTriggerIndicator />
+                                      </Calendar.YearPickerTrigger>
+
+                                      <Calendar.NavButton slot="previous" />
+                                      <Calendar.NavButton slot="next" />
+                                    </Calendar.Header>
+                                    <Calendar.Grid>
+                                      <Calendar.GridHeader>
+                                        {(day) => (
+                                          <Calendar.HeaderCell>
+                                            {day}
+                                          </Calendar.HeaderCell>
+                                        )}
+                                      </Calendar.GridHeader>
+                                      <Calendar.GridBody>
+                                        {(date) => (
+                                          <Calendar.Cell date={date} />
+                                        )}
+                                      </Calendar.GridBody>
+                                    </Calendar.Grid>
+                                    <Calendar.YearPickerGrid>
+                                      <Calendar.YearPickerGridBody>
+                                        {({ year }) => (
+                                          <Calendar.YearPickerCell
+                                            year={year}
+                                          />
+                                        )}
+                                      </Calendar.YearPickerGridBody>
+                                    </Calendar.YearPickerGrid>
+                                  </Calendar>
+                                  <div className="flex items-center justify-between">
+                                    <Label>Time</Label>
+                                    <TimeField
+                                      aria-label="Next Follow-up Time"
+                                      granularity="minute"
+                                      hourCycle={12}
+                                      hideTimeZone={true}
+                                      value={state.timeValue}
+                                      onChange={(v) => {
+                                        if (v) state.setTimeValue(v);
+                                      }}
+                                    >
+                                      <TimeField.Group>
+                                        <TimeField.Input>
+                                          {(segment) => (
+                                            <TimeField.Segment
+                                              segment={segment}
+                                            />
+                                          )}
+                                        </TimeField.Input>
+                                      </TimeField.Group>
+                                    </TimeField>
+                                  </div>
+                                </DatePicker.Popover>
+                              </>
+                            )}
+                          </DatePicker>
+                        </div>
+
+                        <div>
+                          <ComboBox
+                            id="nextType"
+                            value={nextType}
+                            onChange={(val) =>
+                              setNextType(String(val || "call") as FollowupType)
+                            }
+                            className="w-full"
+                            aria-label="Next follow-up type">
+                            <Label>Activity Type</Label>
+                            <ComboBox.InputGroup>
+                              <Input placeholder="Search animals..." />
+                              <ComboBox.Trigger />
+                            </ComboBox.InputGroup>
+                            <ComboBox.Popover>
+                              <ListBox className="outline-none space-y-0.5">
+                                {[
+                                  { key: "call", label: "Call" },
+                                  { key: "email", label: "Email" },
+                                  { key: "meeting", label: "Meeting" },
+                                  { key: "demo", label: "Demo" },
+                                  { key: "quotation", label: "Quotation" },
+                                  { key: "other", label: "Other" },
+                                ].map((item) => (
+                                  <ListBox.Item
+                                    key={item.key}
+                                    id={item.key}
+                                    textValue={item.label}
+                                    className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-blue-50 data-[selected=true]:text-blue-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                                  >
+                                    {item.label}
+                                  </ListBox.Item>
+                                ))}
+                              </ListBox>
+                            </ComboBox.Popover>
+                          </ComboBox>
+                        </div>
+
+                        <div>
+                         
+
+                          <TextField
+                            className="w-full flex flex-col gap-1">
+                            <Label htmlFor="newScheduleNotes">
+                              Next Agenda / Notes
+                            </Label>
+                            <TextArea
+                              id="nextNotes"
+                              rows={3}
+                              value={nextNotes}
+                              onChange={(e) => setNextNotes(e.target.value)}
+                              placeholder="e.g. Send formal quote revision #"
+                            />
+                          </TextField>
                         </div>
                       </div>
                     )}
-                  </div>
+                  </Card>
 
                   <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
                     <Button
@@ -1709,214 +1747,219 @@ export const AdminFollowups: React.FC = () => {
                   )}
 
                   <div className="flex flex-col gap-1">
-                    <Label
-                      htmlFor="targetEnquiryId"
-                      className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono"
-                    >
-                      Select Customer / Enquiry{" "}
-                      <span className="text-rose-500">*</span>
-                    </Label>
-                    <Select
-                      id="targetEnquiryId"
-                      name="targetEnquiryId"
-                      isRequired
-                      selectedKey={targetEnquiryId || undefined}
-                      onSelectionChange={(key) => {
-                        if (key) setTargetEnquiryId(String(key));
-                      }}
-                      className="w-full"
-                      aria-label="Select Customer or Enquiry"
-                      placeholder="-- Choose customer enquiry --"
-                    >
-                      <Select.Trigger className="w-full h-9 px-3 py-2 text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none bg-white font-sans cursor-pointer flex items-center justify-between">
-                        <Select.Value className="text-xs font-medium text-slate-800 truncate" />
-                        <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
-                      </Select.Trigger>
-                      <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 max-h-60 overflow-y-auto min-w-[280px]">
-                        <ListBox className="outline-none space-y-0.5">
-                          {recentEnquiries.map((e) => {
-                            const label = `${e.name} ${e.company ? `(${e.company})` : ""} - #${e.id.substring(0, 8)}`;
-                            return (
-                              <ListBox.Item
-                                key={e.id}
-                                id={e.id}
-                                textValue={label}
-                                className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-blue-50 data-[selected=true]:text-blue-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
-                              >
-                                {label}
-                              </ListBox.Item>
-                            );
-                          })}
-                        </ListBox>
-                      </Select.Popover>
-                    </Select>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <DatePicker
-                        isRequired
-                        granularity="minute"
-                        hourCycle={12}
-                        value={newScheduleDateValue}
-                        onChange={setNewScheduleDateValue}
-                        className="w-full flex flex-col gap-1"
-                        aria-label="Date and Time"
-                      >
-                        {({ state }) => (
-                          <>
-                            <Label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono">
-                              Date &amp; Time
-                            </Label>
-                            <DateField.Group
-                              fullWidth
-                              className="w-full h-9 px-2.5 py-1.5 text-xs border border-slate-200 rounded-xl focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500 bg-white font-mono flex items-center justify-between"
-                            >
-                              <DateField.Input className="flex items-center gap-0.5 text-xs">
-                                {(segment) => (
-                                  <DateField.Segment
-                                    segment={segment}
-                                    className="px-0.5 rounded-xs outline-none focus:bg-blue-100 focus:text-blue-900"
-                                  />
-                                )}
-                              </DateField.Input>
-                              <DateField.Suffix>
-                                <DatePicker.Trigger className="p-1 text-slate-400 hover:text-slate-600 rounded-md cursor-pointer transition-colors">
-                                  <DatePicker.TriggerIndicator />
-                                </DatePicker.Trigger>
-                              </DateField.Suffix>
-                            </DateField.Group>
-                            <DatePicker.Popover className="bg-white rounded-2xl shadow-2xl border border-slate-200 p-3 z-50 flex flex-col gap-3">
-                              <Calendar
-                                aria-label="Follow-up Date"
-                                className="w-full"
-                              >
-                                <Calendar.Header className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
-                                  <Calendar.YearPickerTrigger className="text-xs font-bold text-slate-800 flex items-center gap-1 cursor-pointer hover:text-blue-600">
-                                    <Calendar.YearPickerTriggerHeading />
-                                    <Calendar.YearPickerTriggerIndicator />
-                                  </Calendar.YearPickerTrigger>
-                                  <div className="flex items-center gap-1">
-                                    <Calendar.NavButton
-                                      slot="previous"
-                                      className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
-                                    />
-                                    <Calendar.NavButton
-                                      slot="next"
-                                      className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
-                                    />
-                                  </div>
-                                </Calendar.Header>
-                                <Calendar.Grid className="w-full border-collapse">
-                                  <Calendar.GridHeader>
-                                    {(day) => (
-                                      <Calendar.HeaderCell className="text-[11px] font-semibold text-slate-400 pb-1.5 text-center">
-                                        {day}
-                                      </Calendar.HeaderCell>
-                                    )}
-                                  </Calendar.GridHeader>
-                                  <Calendar.GridBody>
-                                    {(date) => (
-                                      <Calendar.Cell
-                                        date={date}
-                                        className="text-xs p-1 text-center rounded-lg cursor-pointer hover:bg-slate-100 data-[selected=true]:bg-blue-600 data-[selected=true]:text-white data-[disabled=true]:text-slate-300 data-[unavailable=true]:text-slate-300"
-                                      />
-                                    )}
-                                  </Calendar.GridBody>
-                                </Calendar.Grid>
-                                <Calendar.YearPickerGrid className="w-full">
-                                  <Calendar.YearPickerGridBody>
-                                    {({ year }) => (
-                                      <Calendar.YearPickerCell
-                                        year={year}
-                                        className="text-xs p-1.5 text-center rounded-lg cursor-pointer hover:bg-slate-100 data-[selected=true]:bg-blue-600 data-[selected=true]:text-white"
-                                      />
-                                    )}
-                                  </Calendar.YearPickerGridBody>
-                                </Calendar.YearPickerGrid>
-                              </Calendar>
-                              <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
-                                <span className="font-semibold text-slate-600 font-mono">
-                                  Time
-                                </span>
-                                <TimeField
-                                  aria-label="Follow-up Time"
-                                  granularity="minute"
-                                  hourCycle={12}
-                                  value={state.timeValue}
-                                  onChange={(v) => {
-                                    if (v) state.setTimeValue(v);
-                                  }}
-                                >
-                                  <TimeField.Group className="px-2 py-1 border border-slate-200 rounded-lg bg-slate-50 flex items-center font-mono text-xs">
-                                    <TimeField.Input className="flex items-center gap-0.5">
-                                      {(segment) => (
-                                        <TimeField.Segment
-                                          segment={segment}
-                                          className="px-0.5 rounded-xs outline-none focus:bg-blue-100 focus:text-blue-900"
-                                        />
-                                      )}
-                                    </TimeField.Input>
-                                  </TimeField.Group>
-                                </TimeField>
-                              </div>
-                            </DatePicker.Popover>
-                          </>
-                        )}
-                      </DatePicker>
+                    <div className="flex items-center justify-between mb-1">
+                      {isLoadingEnquiries && (
+                        <span className="text-[11px] text-blue-600 flex items-center gap-1 font-medium font-sans">
+                          <RotateCw className="w-3 h-3 animate-spin" />
+                          <span>Fetching enquiries...</span>
+                        </span>
+                      )}
                     </div>
 
-                    <div>
-                      <Label
-                        htmlFor="newScheduleType"
-                        className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono"
-                      >
-                        Activity Type
-                      </Label>
-                      <Select
-                        id="newScheduleType"
-                        selectedKey={newScheduleType}
-                        onSelectionChange={(key) =>
-                          setNewScheduleType(String(key) as FollowupType)
-                        }
-                        className="w-full"
-                        aria-label="Activity Type"
-                      >
-                        <Select.Trigger className="w-full h-9 px-3 py-2 text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none bg-white font-sans cursor-pointer flex items-center justify-between">
-                          <Select.Value className="text-xs font-medium text-slate-800 capitalize truncate" />
-                          <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
-                        </Select.Trigger>
-                        <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[130px]">
-                          <ListBox className="outline-none space-y-0.5">
-                            {[
-                              { key: "call", label: "Call" },
-                              { key: "email", label: "Email" },
-                              { key: "meeting", label: "Meeting" },
-                              { key: "demo", label: "Demo" },
-                              { key: "quotation", label: "Quotation" },
-                              { key: "other", label: "Other" },
-                            ].map((item) => (
-                              <ListBox.Item
-                                key={item.key}
-                                id={item.key}
-                                textValue={item.label}
-                                className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-blue-50 data-[selected=true]:text-blue-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
-                              >
-                                {item.label}
-                              </ListBox.Item>
-                            ))}
-                          </ListBox>
-                        </Select.Popover>
-                      </Select>
-                    </div>
+                    {enquiryFetchError ? (
+                      <div className="p-2.5 bg-amber-50 border border-amber-200 text-amber-800 rounded-xl text-xs flex items-center justify-between">
+                        <span className="truncate">{enquiryFetchError}</span>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onPress={() => fetchEnquiryOptions(true)}
+                          className="text-[11px] h-6 px-2 py-0.5 border border-amber-300 rounded-lg hover:bg-amber-100 shrink-0 font-medium"
+                        >
+                          Retry
+                        </Button>
+                      </div>
+                    ) : (
+                      <>
+                        <ComboBox
+                          id="targetEnquiryId"
+                          name="targetEnquiryId"
+                          isRequired
+                          value={targetEnquiryId || null}
+                          onChange={(val) => {
+                            if (val) setTargetEnquiryId(String(val));
+                          }}
+                          className="w-full"
+                          aria-label="Select Customer or Enquiry"
+                          isDisabled={
+                            isLoadingEnquiries && recentEnquiries.length === 0
+                          }
+                          variant="secondary"
+                        >
+                          <Label>Select Customer / Enquiry</Label>
+                          <ComboBox.InputGroup>
+                            <Input placeholder="Search animals..." />
+                            <ComboBox.Trigger />
+                          </ComboBox.InputGroup>
+                          <ComboBox.Popover>
+                            <ListBox className="outline-none space-y-0.5">
+                              {recentEnquiries.length === 0 ? (
+                                <div className="py-4 text-center text-xs text-slate-400">
+                                  {isLoadingEnquiries
+                                    ? "Loading customer enquiries..."
+                                    : "No customer enquiries found"}
+                                </div>
+                              ) : (
+                                recentEnquiries.map((e) => {
+                                  const label = `${e.name}${e.company ? ` (${e.company})` : ""} - #${e.id.substring(0, 8)}`;
+                                  return (
+                                    <ListBox.Item
+                                      key={e.id}
+                                      id={e.id}
+                                      textValue={label}
+                                      className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-blue-50 data-[selected=true]:text-blue-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                                    >
+                                      <div className="flex flex-col">
+                                        <span className="font-medium text-slate-800">
+                                          {e.name}
+                                        </span>
+                                        <span className="text-[10px] text-slate-500 font-mono">
+                                          {e.company ? `${e.company} • ` : ""}#
+                                          {e.id.substring(0, 8)}
+                                        </span>
+                                      </div>
+                                    </ListBox.Item>
+                                  );
+                                })
+                              )}
+                            </ListBox>
+                          </ComboBox.Popover>
+                        </ComboBox>
+                      </>
+                    )}
                   </div>
 
                   <div>
-                    <TextField className="w-full flex flex-col gap-1">
-                      <Label
-                        htmlFor="newScheduleNotes"
-                        className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 font-mono"
-                      >
+                    <DatePicker
+                      isRequired
+                      className="w-full"
+                      granularity="minute"
+                      hourCycle={12}
+                      hideTimeZone={true}
+                      value={newScheduleDateValue}
+                      onChange={setNewScheduleDateValue}
+                      aria-label="Date and Time"
+                    >
+                      {({ state }) => (
+                        <>
+                          <Label>Date and time</Label>
+                          <DateField.Group fullWidth variant="secondary">
+                            <DateField.Input>
+                              {(segment) => (
+                                <DateField.Segment segment={segment} />
+                              )}
+                            </DateField.Input>
+                            <DateField.Suffix>
+                              <DatePicker.Trigger>
+                                <DatePicker.TriggerIndicator />
+                              </DatePicker.Trigger>
+                            </DateField.Suffix>
+                          </DateField.Group>
+                          <DatePicker.Popover className="flex flex-col gap-3">
+                            <Calendar aria-label="Follow-up Date">
+                              <Calendar.Header>
+                                <Calendar.YearPickerTrigger>
+                                  <Calendar.YearPickerTriggerHeading />
+                                  <Calendar.YearPickerTriggerIndicator />
+                                </Calendar.YearPickerTrigger>
+                                <Calendar.NavButton slot="previous" />
+                                <Calendar.NavButton slot="next" />
+                              </Calendar.Header>
+                              <Calendar.Grid>
+                                <Calendar.GridHeader>
+                                  {(day) => (
+                                    <Calendar.HeaderCell>
+                                      {day}
+                                    </Calendar.HeaderCell>
+                                  )}
+                                </Calendar.GridHeader>
+                                <Calendar.GridBody>
+                                  {(date) => <Calendar.Cell date={date} />}
+                                </Calendar.GridBody>
+                              </Calendar.Grid>
+                              <Calendar.YearPickerGrid>
+                                <Calendar.YearPickerGridBody>
+                                  {({ year }) => (
+                                    <Calendar.YearPickerCell year={year} />
+                                  )}
+                                </Calendar.YearPickerGridBody>
+                              </Calendar.YearPickerGrid>
+                            </Calendar>
+                            <div className="flex items-center justify-between">
+                              <Label>Time</Label>
+                              <TimeField
+                                aria-label="Follow-up Time"
+                                granularity="minute"
+                                hourCycle={12}
+                                hideTimeZone={true}
+                                value={state.timeValue}
+                                onChange={(v) => {
+                                  if (v) state.setTimeValue(v);
+                                }}
+                              >
+                                <TimeField.Group variant="secondary">
+                                  <TimeField.Input>
+                                    {(segment) => (
+                                      <TimeField.Segment
+                                        segment={segment}
+                                        //className="px-0.5 rounded-xs outline-none focus:bg-blue-100 focus:text-blue-900"
+                                      />
+                                    )}
+                                  </TimeField.Input>
+                                </TimeField.Group>
+                              </TimeField>
+                            </div>
+                          </DatePicker.Popover>
+                        </>
+                      )}
+                    </DatePicker>
+                  </div>
+
+                  <div>
+                    <ComboBox
+                      className="w-full"
+                      id="newScheduleType"
+                      value={newScheduleType}
+                      onChange={(val) =>
+                        setNewScheduleType(
+                          String(val || "call") as FollowupType,
+                        )
+                      }
+                      variant="secondary"
+                    >
+                      <Label>Activity Type</Label>
+                      <ComboBox.InputGroup>
+                        <Input placeholder="Search animals..." />
+                        <ComboBox.Trigger />
+                      </ComboBox.InputGroup>
+                      <ComboBox.Popover>
+                        <ListBox className="outline-none space-y-0.5">
+                          {[
+                            { key: "call", label: "Call" },
+                            { key: "email", label: "Email" },
+                            { key: "meeting", label: "Meeting" },
+                            { key: "demo", label: "Demo" },
+                            { key: "quotation", label: "Quotation" },
+                            { key: "other", label: "Other" },
+                          ].map((item) => (
+                            <ListBox.Item
+                              key={item.key}
+                              id={item.key}
+                              textValue={item.label}
+                              className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-blue-50 data-[selected=true]:text-blue-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                            >
+                              {item.label}
+                            </ListBox.Item>
+                          ))}
+                        </ListBox>
+                      </ComboBox.Popover>
+                    </ComboBox>
+                  </div>
+                  <div>
+                    <TextField
+                      className="w-full flex flex-col gap-1"
+                      variant="secondary"
+                    >
+                      <Label htmlFor="newScheduleNotes">
                         Notes &amp; Discussion Goal
                       </Label>
                       <TextArea
@@ -1925,7 +1968,6 @@ export const AdminFollowups: React.FC = () => {
                         value={newScheduleNotes}
                         onChange={(e) => setNewScheduleNotes(e.target.value)}
                         placeholder="e.g. Call engineering manager to discuss dial gauge repeatability specs"
-                        className="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none font-sans bg-white"
                       />
                     </TextField>
                   </div>
@@ -1933,7 +1975,7 @@ export const AdminFollowups: React.FC = () => {
                   <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
                     <Button
                       variant="outline"
-                      size="sm"
+                      size="md"
                       onPress={() => setShowScheduleModal(false)}
                       className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer border-slate-200"
                     >
@@ -1941,7 +1983,7 @@ export const AdminFollowups: React.FC = () => {
                     </Button>
                     <Button
                       variant="primary"
-                      size="sm"
+                      size="md"
                       type="submit"
                       isDisabled={isScheduling}
                       className="px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-semibold hover:bg-slate-800 transition-colors shadow-2xs cursor-pointer border-none"

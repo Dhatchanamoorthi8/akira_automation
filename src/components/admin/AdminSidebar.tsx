@@ -1,22 +1,20 @@
-import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   Home,
   Clock,
   Bell,
-  Box,
-  CircleDollarSign,
+  ShoppingCart,
   Users,
-  CalendarCheck,
-  Image as ImageIcon,
-  FileText,
   Search,
   LogOut,
   X,
   ExternalLink,
-} from 'lucide-react';
-import { useAuth } from '../../auth/useAuth';
-import { Drawer, Button, Avatar } from '@heroui/react';
+} from "lucide-react";
+import { useAuth } from "../../auth/useAuth";
+import { Drawer, Button } from "@heroui/react";
+import { Calendar, CopyPicture, Envelope, Megaphone } from "@gravity-ui/icons";
+import { PersonAvatar } from "@/utils/avatarHelper";
 
 interface AdminSidebarProps {
   isMobileOpen: boolean;
@@ -40,71 +38,71 @@ interface NavGroupConfig {
 
 const navGroups: NavGroupConfig[] = [
   {
-    title: '', // Top unsectioned items
+    title: "", // Top unsectioned items
     items: [
       {
-        name: 'Home',
-        to: '/admin/dashboard',
+        name: "Home",
+        to: "/admin/dashboard",
         icon: Home,
         isImplemented: true,
       },
       {
-        name: 'Up next',
-        to: '/admin/followups',
+        name: "Up next",
+        to: "/admin/followups",
         icon: Clock,
         isImplemented: true,
       },
       {
-        name: 'Notifications',
-        to: '/admin/activity',
+        name: "Notifications",
+        to: "/admin/activity",
         icon: Bell,
         isImplemented: true,
-        badge: '2',
+        badge: "2",
       },
     ],
   },
   {
-    title: 'Records',
+    title: "Records",
     items: [
       {
-        name: 'Enquiries',
-        to: '/admin/enquiries',
-        icon: Box,
+        name: "Enquiries",
+        to: "/admin/enquiries",
+        icon: Megaphone,
         isImplemented: true,
       },
       {
-        name: 'Products',
-        to: '/admin/products',
-        icon: CircleDollarSign,
+        name: "Products",
+        to: "/admin/products",
+        icon: ShoppingCart,
         isImplemented: true,
       },
       {
-        name: 'Staff & Users',
-        to: '/admin/users',
+        name: "Staff & Users",
+        to: "/admin/users",
         icon: Users,
         isImplemented: true,
       },
     ],
   },
   {
-    title: 'Resources',
+    title: "Resources",
     items: [
       {
-        name: 'Attendance',
-        to: '/admin/attendance',
-        icon: CalendarCheck,
+        name: "Attendance",
+        to: "/admin/attendance",
+        icon: Calendar,
         isImplemented: true,
       },
       {
-        name: 'Product Images',
-        to: '/admin/product-images',
-        icon: ImageIcon,
+        name: "Product Images",
+        to: "/admin/product-images",
+        icon: CopyPicture,
         isImplemented: true,
       },
       {
-        name: 'Email Settings',
-        to: '/admin/settings/email',
-        icon: FileText,
+        name: "Email Settings",
+        to: "/admin/settings/email",
+        icon: Envelope,
         isImplemented: true,
       },
     ],
@@ -121,50 +119,78 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
   const navigate = useNavigate();
   const location = useLocation();
 
-  const displayName = profile?.full_name || user?.email?.split('@')[0] || 'Jordan Ellis';
+  const displayName =
+    profile?.full_name || user?.email?.split("@")[0] || "Jordan Ellis";
 
   const [internalCollapsed, setInternalCollapsed] = useState<boolean>(() => {
     try {
-      return localStorage.getItem('akira_admin_sidebar_collapsed') === 'true';
+      return localStorage.getItem("akira_admin_sidebar_collapsed") === "true";
     } catch {
       return false;
     }
   });
 
-  const isCollapsed = propIsCollapsed !== undefined ? propIsCollapsed : internalCollapsed;
+  const isCollapsed =
+    propIsCollapsed !== undefined ? propIsCollapsed : internalCollapsed;
   void propOnToggleCollapse;
   void setInternalCollapsed;
 
   const isPathActive = (to: string) => {
-    if (to === '/admin/dashboard') {
-      return location.pathname === '/admin/dashboard' || location.pathname === '/admin' || location.pathname === '/admin/';
-    }
-    if (to === '/admin/products') {
+    if (to === "/admin/dashboard") {
       return (
-        (location.pathname === '/admin/products' || location.pathname.startsWith('/admin/products/')) &&
-        !location.pathname.startsWith('/admin/product-images')
+        location.pathname === "/admin/dashboard" ||
+        location.pathname === "/admin" ||
+        location.pathname === "/admin/"
       );
     }
-    if (to === '/admin/product-images') {
-      return location.pathname === '/admin/product-images' || location.pathname.startsWith('/admin/product-images/');
+    if (to === "/admin/products") {
+      return (
+        (location.pathname === "/admin/products" ||
+          location.pathname.startsWith("/admin/products/")) &&
+        !location.pathname.startsWith("/admin/product-images")
+      );
     }
-    if (to === '/admin/enquiries') {
-      return location.pathname === '/admin/enquiries' || location.pathname.startsWith('/admin/enquiries/');
+    if (to === "/admin/product-images") {
+      return (
+        location.pathname === "/admin/product-images" ||
+        location.pathname.startsWith("/admin/product-images/")
+      );
     }
-    if (to === '/admin/followups') {
-      return location.pathname === '/admin/followups' || location.pathname.startsWith('/admin/followups/');
+    if (to === "/admin/enquiries") {
+      return (
+        location.pathname === "/admin/enquiries" ||
+        location.pathname.startsWith("/admin/enquiries/")
+      );
     }
-    if (to === '/admin/users') {
-      return location.pathname === '/admin/users' || location.pathname.startsWith('/admin/users/');
+    if (to === "/admin/followups") {
+      return (
+        location.pathname === "/admin/followups" ||
+        location.pathname.startsWith("/admin/followups/")
+      );
     }
-    if (to === '/admin/attendance') {
-      return location.pathname === '/admin/attendance' || location.pathname.startsWith('/admin/attendance/');
+    if (to === "/admin/users") {
+      return (
+        location.pathname === "/admin/users" ||
+        location.pathname.startsWith("/admin/users/")
+      );
     }
-    if (to === '/admin/activity') {
-      return location.pathname === '/admin/activity' || location.pathname.startsWith('/admin/activity/');
+    if (to === "/admin/attendance") {
+      return (
+        location.pathname === "/admin/attendance" ||
+        location.pathname.startsWith("/admin/attendance/")
+      );
     }
-    if (to === '/admin/settings/email') {
-      return location.pathname.startsWith('/admin/settings/email') || location.pathname.startsWith('/admin/email-settings');
+    if (to === "/admin/activity") {
+      return (
+        location.pathname === "/admin/activity" ||
+        location.pathname.startsWith("/admin/activity/")
+      );
+    }
+    if (to === "/admin/settings/email") {
+      return (
+        location.pathname.startsWith("/admin/settings/email") ||
+        location.pathname.startsWith("/admin/email-settings")
+      );
     }
     return location.pathname === to;
   };
@@ -175,7 +201,9 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
     return (
       <div className="flex flex-col h-full bg-white border-r border-slate-200/70 select-none">
         {/* Top Workspace Header (HeroUI Team style) */}
-        <div className={`p-3 border-b border-slate-100 flex items-center shrink-0 ${collapsed ? 'flex-col justify-center gap-2' : 'justify-between gap-2'}`}>
+        <div
+          className={`p-3 border-b border-slate-100 flex items-center shrink-0 ${collapsed ? "flex-col justify-center gap-2" : "justify-between gap-2"}`}
+        >
           {!collapsed ? (
             <>
               <Link
@@ -190,7 +218,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
                 </div>
                 <div className="min-w-0 flex-1">
                   <span className="text-sm font-semibold text-slate-900 block leading-tight truncate">
-                    HeroUI Team
+                    AkiRa Team
                   </span>
                 </div>
               </Link>
@@ -229,7 +257,9 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
         </div>
 
         {/* Navigation Items */}
-        <div className={`flex-1 overflow-y-auto ${collapsed ? 'px-2 py-3 space-y-3' : 'px-3 py-3 space-y-4'}`}>
+        <div
+          className={`flex-1 overflow-y-auto ${collapsed ? "px-2 py-3 space-y-3" : "px-3 py-3 space-y-4"}`}
+        >
           {navGroups.map((group, groupIdx) => (
             <div key={group.title || `group-${groupIdx}`} className="space-y-1">
               {!collapsed && group.title && (
@@ -257,11 +287,13 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
                         title={item.name}
                         className={`flex items-center justify-center w-10 h-10 mx-auto rounded-2xl text-xs font-semibold transition-all relative ${
                           active
-                            ? 'bg-[#FDE8EC] text-[#FB7185] shadow-2xs'
-                            : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/70'
+                            ? "bg-[#FDE8EC] text-[#FB7185] shadow-2xs"
+                            : "text-slate-500 hover:text-slate-900 hover:bg-slate-100/70"
                         }`}
                       >
-                        <Icon className={`w-4 h-4 ${active ? 'text-[#FB7185]' : 'text-slate-500'}`} />
+                        <Icon
+                          className={`w-4 h-4 ${active ? "text-[#FB7185]" : "text-slate-500"}`}
+                        />
                         {item.badge && (
                           <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white" />
                         )}
@@ -277,14 +309,14 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
                       onClick={onCloseMobile}
                       className={`flex items-center justify-between px-3 py-2 rounded-2xl text-sm transition-colors ${
                         active
-                          ? 'bg-[#FDE8EC] text-slate-900 font-semibold'
-                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 font-medium'
+                          ? "bg-[#FDE8EC] text-slate-900 font-semibold"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 font-medium"
                       }`}
                     >
                       <div className="flex items-center gap-3">
                         <Icon
                           className={`w-4 h-4 ${
-                            active ? 'text-[#FB7185]' : 'text-slate-500'
+                            active ? "text-[#FB7185]" : "text-slate-500"
                           } transition-colors`}
                         />
                         <span className="text-sm">{item.name}</span>
@@ -303,18 +335,17 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
         </div>
 
         {/* Footer / Jordan Ellis style User Profile Card */}
-        <div className={`border-t border-slate-100 bg-white shrink-0 ${collapsed ? 'p-2 flex flex-col items-center gap-2' : 'p-3 flex items-center justify-between gap-2'}`}>
+        <div
+          className={`border-t border-slate-100 bg-white shrink-0 ${collapsed ? "p-2 flex flex-col items-center gap-2" : "p-3 flex items-center justify-between gap-2"}`}
+        >
           {!collapsed ? (
             <>
               <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                <Avatar
-                  size="sm"
-                  className="w-8 h-8 rounded-xl bg-[#E2EBD8] text-[#4A6B34] border border-[#C8DAC0] shrink-0 font-semibold text-xs flex items-center justify-center shadow-2xs"
-                >
-                  <Avatar.Fallback>
-                    {displayName.split(' ').map((n: string) => n[0]).join('').slice(0, 2) || 'JE'}
-                  </Avatar.Fallback>
-                </Avatar>
+                <PersonAvatar
+                  name={displayName}
+                  size="lg"
+                  className="ring-2 ring-white shadow-md"
+                />  
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-semibold text-slate-900 truncate">
                     {displayName}
@@ -338,7 +369,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
                   onPress={async () => {
                     onCloseMobile();
                     await signOut();
-                    navigate('/admin/login');
+                    navigate("/admin/login");
                   }}
                   className="p-1.5 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer min-h-[30px] min-w-[30px]"
                   aria-label="Sign Out"
@@ -349,15 +380,24 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
             </>
           ) : (
             <div className="flex flex-col items-center gap-2">
-              <Avatar
+              {/* <Avatar
                 size="sm"
                 className="w-8 h-8 rounded-xl bg-[#E2EBD8] text-[#4A6B34] border border-[#C8DAC0] font-semibold text-xs flex items-center justify-center cursor-pointer shadow-2xs"
                 title={displayName}
               >
                 <Avatar.Fallback>
-                  {displayName.split(' ').map((n: string) => n[0]).join('').slice(0, 2) || 'JE'}
+                  {displayName
+                    .split(" ")
+                    .map((n: string) => n[0])
+                    .join("")
+                    .slice(0, 2) || "JE"}
                 </Avatar.Fallback>
-              </Avatar>
+              </Avatar> */}
+              <PersonAvatar
+                name={displayName}
+                size="lg"
+                className="ring-2 ring-white shadow-md"
+              />
               <Button
                 variant="ghost"
                 size="sm"
@@ -365,7 +405,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
                 onPress={async () => {
                   onCloseMobile();
                   await signOut();
-                  navigate('/admin/login');
+                  navigate("/admin/login");
                 }}
                 className="p-1.5 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer min-h-[28px] min-w-[28px]"
                 aria-label="Sign Out"
@@ -384,7 +424,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       {/* Desktop Sidebar (Fixed Left) */}
       <aside
         className={`hidden lg:block h-screen sticky top-0 shrink-0 z-20 transition-all duration-200 ease-in-out ${
-          isCollapsed ? 'w-16' : 'w-60'
+          isCollapsed ? "w-16" : "w-60"
         }`}
       >
         {renderNavContent(false)}
@@ -398,8 +438,14 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
         }}
         className="lg:hidden"
       >
-        <Drawer.Content placement="left" className="max-w-xs w-full p-0 bg-transparent shadow-none border-none">
-          <Drawer.Dialog className="h-full w-full p-0 bg-white shadow-2xl flex flex-col" aria-label="Navigation Sidebar">
+        <Drawer.Content
+          placement="left"
+          className="max-w-xs w-full p-0 bg-transparent shadow-none border-none"
+        >
+          <Drawer.Dialog
+            className="h-full w-full p-0 bg-white shadow-2xl flex flex-col"
+            aria-label="Navigation Sidebar"
+          >
             {renderNavContent(true)}
           </Drawer.Dialog>
         </Drawer.Content>

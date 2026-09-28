@@ -273,11 +273,11 @@ export const AdminAttendance: React.FC = () => {
         </Card>
 
         {/* Staff Attendance Roster Table */}
-        <Card className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden p-0">
+        
           <Table className="w-full">
-            <Table.ScrollContainer className="overflow-x-auto">
-              <Table.Content aria-label="Staff Attendance Roster" className="w-full text-left text-xs min-w-[750px]">
-                <Table.Header className="bg-slate-50/80 border-b border-slate-200 text-slate-600 uppercase font-mono text-[10px] tracking-wider">
+            <Table.ScrollContainer >
+              <Table.Content aria-label="Staff Attendance Roster" >
+                <Table.Header >
                   <Table.Column isRowHeader className="py-3 px-4">Staff Member</Table.Column>
                   <Table.Column className="py-3 px-4">Status</Table.Column>
                   <Table.Column className="py-3 px-4">Clock In (GPS / Location)</Table.Column>
@@ -285,10 +285,10 @@ export const AdminAttendance: React.FC = () => {
                   <Table.Column className="py-3 px-4">Duration</Table.Column>
                   <Table.Column className="py-3 px-4 text-right">Audit Verification</Table.Column>
                 </Table.Header>
-                <Table.Body className="divide-y divide-slate-100">
+                <Table.Body >
                   {filteredStaff.length === 0 ? (
                     <Table.Row>
-                      <Table.Cell className="py-8 text-center text-slate-400" colSpan={6}>
+                      <Table.Cell  colSpan={6}>
                         No staff attendance records matched your filter criteria.
                       </Table.Cell>
                     </Table.Row>
@@ -454,7 +454,7 @@ export const AdminAttendance: React.FC = () => {
               </Table.Content>
             </Table.ScrollContainer>
           </Table>
-        </Card>
+       
       </div>
     </>
   );

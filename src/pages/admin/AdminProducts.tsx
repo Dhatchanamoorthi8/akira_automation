@@ -23,7 +23,8 @@ import {
 import { ProductWithImages, ProductFilters } from '../../types/database';
 import { productService } from '../../services/productService';
 import { formatDateTimeDDMMYYYY } from '../../utils/date';
-import { Button, Chip, Card, Table, Modal, Input, Checkbox } from '@heroui/react';
+import type { Selection } from '@heroui/react';
+import { Button, Chip, Table, Modal, Input, Checkbox } from '@heroui/react';
 import { AdminTableSkeleton } from '../../components/admin/AdminSkeleton';
 import { AdminErrorState } from '../../components/admin/AdminErrorState';
 import { SEOHead } from '../../components/layout/SEOHead';
@@ -97,7 +98,7 @@ export const AdminProducts: React.FC = () => {
   // Filters
   const [search, setSearch] = useState<string>('');
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
-  const [selectedRowIds, setSelectedRowIds] = useState<Set<string>>(new Set());
+  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
 
   // Column customization
   const [columns, setColumns] = useState<ProductColumnConfig[]>(loadProductColumns);
@@ -306,25 +307,6 @@ export const AdminProducts: React.FC = () => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
     return filteredProducts.slice(start, start + ITEMS_PER_PAGE);
   }, [filteredProducts, currentPage]);
-
-  const toggleSelectAll = () => {
-    if (selectedRowIds.size === paginatedProducts.length) {
-      setSelectedRowIds(new Set());
-    } else {
-      setSelectedRowIds(new Set(paginatedProducts.map((p) => p.id)));
-    }
-  };
-
-  const toggleSelectRow = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    const next = new Set(selectedRowIds);
-    if (next.has(id)) {
-      next.delete(id);
-    } else {
-      next.add(id);
-    }
-    setSelectedRowIds(next);
-  };
 
   // Filter pill options
   const filterOptions = [
@@ -611,22 +593,19 @@ export const AdminProducts: React.FC = () => {
             </div>
           </div>
         ) : (
-          <Card className="bg-white rounded-2xl border border-gray-200/90 shadow-2xs overflow-hidden p-0">
+          <>
             <Table className="w-full">
-              <Table.ScrollContainer className="overflow-x-auto">
-                <Table.Content aria-label="Product Catalogue Table" className="w-full text-left border-collapse min-w-[980px]">
+              <Table.ScrollContainer>
+                <Table.Content
+                  aria-label="Product Catalogue Table"
+                  selectedKeys={selectedKeys}
+                  selectionMode="multiple"
+                  onSelectionChange={setSelectedKeys}
+                >
                   {/* Table Header */}
-                  <Table.Header className="border-b border-gray-100 bg-gray-50/40 text-[12px] font-medium text-gray-500">
-                    <Table.Column className="py-3.5 pl-5 pr-3 w-10">
-                      <Checkbox
-                        slot="selection"
-                        isSelected={
-                          paginatedProducts.length > 0 &&
-                          selectedRowIds.size === paginatedProducts.length
-                        }
-                        onChange={toggleSelectAll}
-                        aria-label="Select all rows"
-                      >
+                  <Table.Header>
+                    <Table.Column className="pe-0">
+                      <Checkbox slot="selection" aria-label="Select all rows">
                         <Checkbox.Content>
                           <Checkbox.Control>
                             <Checkbox.Indicator />
@@ -652,9 +631,8 @@ export const AdminProducts: React.FC = () => {
                   </Table.Header>
 
                   {/* Table Body */}
-                  <Table.Body className="divide-y divide-gray-100 text-xs">
+                  <Table.Body>
                   {paginatedProducts.map((prod) => {
-                    const isRowSelected = selectedRowIds.has(prod.id);
                     const primaryImg =
                       prod.product_images?.find((img) => img.is_primary)?.image_url ||
                       prod.product_images?.[0]?.image_url;
@@ -663,17 +641,14 @@ export const AdminProducts: React.FC = () => {
                     return (
                       <Table.Row
                         key={prod.id}
-                        onClick={() => setSelectedProduct(prod)}
-                        className={`transition-colors cursor-pointer group ${
-                          isRowSelected ? 'bg-blue-50/30' : 'hover:bg-gray-50/70'
-                        }`}
+                        id={prod.id}
                       >
                         {/* Row Checkbox */}
-                        <Table.Cell className="py-3.5 pl-5 pr-3 w-10" onClick={(e) => toggleSelectRow(prod.id, e)}>
+                        <Table.Cell className="pe-0">
                           <Checkbox
                             slot="selection"
-                            isSelected={isRowSelected}
                             aria-label={`Select ${prod.name}`}
+                            variant="secondary"
                           >
                             <Checkbox.Content>
                               <Checkbox.Control>
@@ -689,7 +664,11 @@ export const AdminProducts: React.FC = () => {
                             case 'image':
                               return (
                                 <Table.Cell key={col.key} className="py-3 px-4 w-16">
-                                  <div className="w-12 h-12 rounded-xl border border-gray-200 bg-gray-50 flex items-center justify-center shrink-0 overflow-hidden">
+                                  <div
+                                    onClick={() => setSelectedProduct(prod)}
+                                    className="w-12 h-12 rounded-xl border border-gray-200 bg-gray-50 flex items-center justify-center shrink-0 overflow-hidden cursor-pointer"
+                                    title="View product dossier"
+                                  >
                                     {primaryImg ? (
                                       <img
                                         src={primaryImg}
@@ -710,9 +689,13 @@ export const AdminProducts: React.FC = () => {
                             case 'name':
                               return (
                                 <Table.Cell key={col.key} className="py-3.5 px-4 whitespace-nowrap">
-                                  <div className="font-semibold text-gray-900 text-sm group-hover:text-blue-600 transition-colors">
+                                  <button
+                                    type="button"
+                                    onClick={() => setSelectedProduct(prod)}
+                                    className="text-left font-semibold text-gray-900 text-sm hover:text-blue-600 transition-colors cursor-pointer block"
+                                  >
                                     {prod.name}
-                                  </div>
+                                  </button>
                                   <div className="text-[11px] font-mono text-gray-400 mt-0.5">
                                     /{prod.slug}
                                   </div>
@@ -864,7 +847,17 @@ export const AdminProducts: React.FC = () => {
             {/* Pagination Footer */}
             <div className="border-t border-gray-100 px-6 py-3.5 flex items-center justify-between text-xs text-gray-500">
               <div>
-                Page {currentPage} of {totalPages} ({filteredProducts.length} results)
+                Page {currentPage} of {totalPages} ({filteredProducts.length}{" "}
+                results)
+                {selectedKeys === "all" ? (
+                  <span className="ml-2 font-medium text-blue-600">
+                    · All ({filteredProducts.length}) selected
+                  </span>
+                ) : selectedKeys instanceof Set && selectedKeys.size > 0 ? (
+                  <span className="ml-2 font-medium text-blue-600">
+                    · {selectedKeys.size} selected
+                  </span>
+                ) : null}
               </div>
 
               <div className="flex items-center gap-1.5">
@@ -932,7 +925,7 @@ export const AdminProducts: React.FC = () => {
                 </Button>
               </div>
             </div>
-          </Card>
+          </>
         )}
       </div>
 

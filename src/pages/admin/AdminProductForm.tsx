@@ -12,6 +12,7 @@ import {
   Sparkles,
   Loader2,
   ExternalLink,
+  Image as ImageIcon,
 } from "lucide-react";
 import {
   Button,
@@ -32,7 +33,9 @@ import {
   ProductImage,
 } from "../../types/database";
 import { productService } from "../../services/productService";
+import { productImageService } from "../../services/productImageService";
 import { ProductImageManager } from "../../components/admin/ProductImageManager";
+import { DropZone, DropZoneFile } from "../../components/common/DropZone";
 import { PageLoader } from "../../components/common/PageLoader";
 import { SEOHead } from "../../components/layout/SEOHead";
 import { Box, Plus, TrashBin } from "@gravity-ui/icons";
@@ -82,6 +85,11 @@ export const AdminProductForm: React.FC = () => {
 
   // Images (in Edit mode)
   const [images, setImages] = useState<ProductImage[]>([]);
+
+  // Staged Images (in Create mode with DropZone)
+  const [stagedFiles, setStagedFiles] = useState<DropZoneFile[]>([]);
+  const [uploadProgressStatus, setUploadProgressStatus] = useState<string | null>(null);
+  const [isGalleryFullWidth, setIsGalleryFullWidth] = useState<boolean>(false);
 
   // Delete modal
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
@@ -258,12 +266,30 @@ export const AdminProductForm: React.FC = () => {
       };
 
       const result = await productService.createProduct(createPayload);
-      setIsSaving(false);
 
       if (result.error) {
+        setIsSaving(false);
         setError(result.error);
       } else if (result.product) {
-        // Redirect to edit page so user can upload images immediately
+        // Upload staged images to the new product if any were selected in DropZone
+        if (stagedFiles.length > 0) {
+          setUploadProgressStatus(`Uploading ${stagedFiles.length} product image(s)...`);
+          for (let i = 0; i < stagedFiles.length; i++) {
+            const item = stagedFiles[i];
+            if (item.file) {
+              await productImageService.upload({
+                productId: result.product.id,
+                file: item.file,
+                altText: item.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " "),
+                isPrimary: i === 0,
+                sortOrder: i,
+              });
+            }
+          }
+        }
+
+        setIsSaving(false);
+        // Redirect to edit page so user can manage photography immediately
         navigate(`/admin/products/${result.product.id}/edit`, {
           replace: true,
         });
@@ -662,7 +688,7 @@ export const AdminProductForm: React.FC = () => {
             </div>
 
             {/* Right Column: Publishing, Category, and Media Assets */}
-            <Card className="space-y-6">
+            <div className="space-y-6">
               {/* Card 4: Publishing & Status */}
               <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-subtle space-y-4">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 font-mono flex items-center gap-1.5 pb-2 border-b border-slate-100">
@@ -788,28 +814,91 @@ export const AdminProductForm: React.FC = () => {
               </div>
 
               {/* Card 6: Visual Assets / Images */}
-              <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-subtle space-y-4">
-                {isEditMode && id ? (
-                  <ProductImageManager
-                    productId={id}
-                    images={images}
-                    onImagesChange={setImages}
-                  />
-                ) : (
-                  <div className="text-center py-6 space-y-2 border border-dashed border-slate-200 rounded-xl bg-slate-50/50 p-4">
-                    <p className="text-xs font-bold text-slate-700">
-                      Image Uploads
-                    </p>
-                    <p className="text-[11px] text-slate-500">
-                      Save this initial product record first. You will be
-                      automatically redirected to upload factory photography,
-                      set primary cover images, and reorder gallery assets.
+              {isGalleryFullWidth && isEditMode && id ? (
+                <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-subtle flex items-center justify-between gap-3">
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-700 flex items-center gap-1.5 font-mono uppercase tracking-wider">
+                      <ImageIcon className="w-3.5 h-3.5 text-industrial-primary" />
+                      <span>Gallery Expanded</span>
+                    </h4>
+                    <p className="text-[11px] text-slate-500 mt-0.5">
+                      Viewing photography in full-width below specifications.
                     </p>
                   </div>
-                )}
-              </div>
-            </Card>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onPress={() => setIsGalleryFullWidth(false)}
+                    onClick={() => setIsGalleryFullWidth(false)}
+                    className="text-xs shrink-0 cursor-pointer"
+                  >
+                    Dock to Sidebar
+                  </Button>
+                </div>
+              ) : (
+                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-subtle space-y-4">
+                  {isEditMode && id ? (
+                    <ProductImageManager
+                      productId={id}
+                      images={images}
+                      onImagesChange={setImages}
+                      isFullWidth={false}
+                      onToggleFullWidth={() => setIsGalleryFullWidth(true)}
+                    />
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-2 border-b border-slate-100">
+                        <div>
+                          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 font-mono flex items-center gap-1.5">
+                            <ImageIcon className="w-3.5 h-3.5 text-industrial-primary" />
+                            <span>Product Photography & Visual Assets</span>
+                          </h3>
+                          <p className="text-[11px] text-slate-500 mt-0.5">
+                            Drag and drop factory photography or product documentation.
+                          </p>
+                        </div>
+                        {stagedFiles.length > 0 && (
+                          <span className="text-[11px] font-semibold text-sky-700 bg-sky-50 px-2.5 py-0.5 rounded-full border border-sky-200/80 self-start sm:self-auto">
+                            {stagedFiles.length} {stagedFiles.length === 1 ? "file" : "files"} staged
+                          </span>
+                        )}
+                      </div>
+
+                      <DropZone
+                        files={stagedFiles}
+                        onFilesChange={setStagedFiles}
+                        accept="image/jpeg,image/png,image/webp,application/pdf,video/mp4"
+                        maxSizeMB={50}
+                        title="Drag files here or click to browse"
+                        subtext="Supports JPEG, PNG, PDF, and MP4 up to 50 MB."
+                        buttonText="Select File"
+                      />
+
+                      {uploadProgressStatus && (
+                        <div className="flex items-center gap-2 p-3 bg-sky-50 border border-sky-200 text-sky-800 rounded-xl text-xs animate-in fade-in duration-150">
+                          <Loader2 className="w-3.5 h-3.5 animate-spin text-sky-600" />
+                          <span>{uploadProgressStatus}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
+
+          {/* Full-Width Gallery when expanded */}
+          {isGalleryFullWidth && isEditMode && id && (
+            <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-subtle space-y-4">
+              <ProductImageManager
+                productId={id}
+                images={images}
+                onImagesChange={setImages}
+                isFullWidth={true}
+                onToggleFullWidth={() => setIsGalleryFullWidth(false)}
+              />
+            </div>
+          )}
         </form>
 
         {/* Delete Confirmation Modal */}
