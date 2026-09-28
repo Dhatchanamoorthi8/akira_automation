@@ -67,19 +67,70 @@ async function runPrerender() {
         createWebSiteSchema()
       ],
       generateBody: () => `
-        <header>
-          <nav aria-label="Main Navigation">
-            <a href="/">Home</a> | <a href="/about">About</a> | <a href="/solutions">Solutions</a> | <a href="/products">Products</a> | <a href="/contact">Contact</a>
-          </nav>
-        </header>
-        <main>
-          <h1>Precision Gauging Solutions for Modern Manufacturing</h1>
-          <p>Delivering high-quality precision instruments and automated multi-gauging systems for OEMs and automotive manufacturing, engineered for accuracy, productivity, and reliability.</p>
-          <section>
-            <h2>Core Solutions</h2>
-            <p>Automated Multi-Gauging, Air Gauges, Electronic Gauges, Fixtures, Air Plug & Ring Gauges, and Work-Holding Tooling.</p>
-          </section>
-        </main>
+        <div class="akira-hero-wrap">
+          <div class="akira-container akira-hero-grid">
+            <div class="akira-hero-content">
+              <div class="akira-eyebrow">
+                <span>ISO 9001 CERTIFIED</span>
+                <span class="akira-dot"></span>
+                <span class="text-primary">PRECISION METROLOGY</span>
+                <span class="akira-dot"></span>
+                <span>OEM / AUTOMOTIVE</span>
+              </div>
+              <h1 class="akira-hero-h1">Precision Gauging for Zero-Defect Manufacturing</h1>
+              <p class="akira-hero-sub">AKIRA PRECISION AUTOMATION delivers high-accuracy automated multi-gauging stations, pneumatic air tooling, and custom fixtures engineered for automotive and OEM production lines.</p>
+              
+              <div class="akira-hero-visual-mobile">
+                <div class="akira-visual-card">
+                  <img src="/assets/hero/desktop-hero-precision-gauging.webp" alt="Automated Multi-Gauging Station" class="akira-card-img" />
+                  <div class="akira-badge-top">
+                    <span class="akira-badge-dot"></span>
+                    <span>IN-LINE METROLOGY</span>
+                  </div>
+                  <div class="akira-badge-bottom">
+                    <span>&le; 0.0005 MM</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="akira-hero-actions">
+                <a href="/solutions" class="akira-btn-primary">
+                  <span>Explore Solutions</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </a>
+                <a href="/contact" class="akira-btn-secondary">Request an Enquiry</a>
+              </div>
+
+              <div class="akira-hero-trust">
+                <div class="akira-trust-item">
+                  <span class="akira-trust-num">0.1 µm</span>
+                  <span class="akira-trust-txt">Resolution</span>
+                </div>
+                <div class="akira-trust-item">
+                  <span class="akira-trust-num">&le; 0.5 µm</span>
+                  <span class="akira-trust-txt">Repeatability</span>
+                </div>
+                <div class="akira-trust-item">
+                  <span class="akira-trust-num">100%</span>
+                  <span class="akira-trust-txt">Gage R&amp;R Verified</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="akira-hero-visual-desktop">
+              <div class="akira-visual-card">
+                <img src="/assets/hero/desktop-hero-precision-gauging.webp" alt="Automated Multi-Gauging Station" class="akira-card-img" />
+                <div class="akira-badge-top">
+                  <span class="akira-badge-dot"></span>
+                  <span>IN-LINE METROLOGY</span>
+                </div>
+                <div class="akira-badge-bottom">
+                  <span>&le; 0.0005 MM</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       `
     },
     // 2. About Us
@@ -530,65 +581,316 @@ async function runPrerender() {
     // Critical FOUC guard CSS to ensure pre-rendered HTML renders instantly with high fidelity before JS hydration
     // Note: Scoped strictly to .akira-prerender-shell so it NEVER leaks into the React hydrated tree
     const criticalFoucGuardStyles = `  <style id="akira-critical-fouc-guard">
-    html, body {
+    html, body, body:has(.akira-prerender-shell) {
       margin: 0;
       padding: 0;
-      background-color: #0B1F33;
-      color: #F8FAFC;
-      font-family: 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #0B1F33 !important;
+      color: #F8FAFC !important;
+      font-family: 'Manrope', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       -webkit-font-smoothing: antialiased;
     }
     .akira-prerender-shell {
       min-height: 100vh;
-      background-color: #0B1F33;
-      color: #F8FAFC;
+      background-color: #0B1F33 !important;
+      color: #F8FAFC !important;
       display: flex;
       flex-direction: column;
       width: 100%;
+      box-sizing: border-box;
     }
-    .akira-prerender-shell header {
-      background: #06111C;
-      border-bottom: 1px solid rgba(51, 65, 85, 0.6);
-      padding: 12px 20px;
+    .akira-container {
+      width: 100%;
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 0 16px;
+      box-sizing: border-box;
+    }
+    .akira-topbar {
+      background: #0B1F33;
+      border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+      padding: 6px 0;
+      font-size: 12px;
+      color: #94A3B8;
+    }
+    .akira-topbar-inner {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      width: 100%;
-      box-sizing: border-box;
+      gap: 12px;
+      flex-wrap: wrap;
     }
-    .akira-prerender-shell header nav {
+    .akira-topbar a {
+      color: #CBD5E1 !important;
+      text-decoration: none !important;
+    }
+    .akira-topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .akira-topbar-right {
       display: flex;
       align-items: center;
       gap: 12px;
-      font-size: 13px;
-      font-weight: 600;
-      flex-wrap: wrap;
     }
-    .akira-prerender-shell header nav a {
-      color: #94A3B8 !important;
+    .akira-divider {
+      color: #475569;
+    }
+    .akira-badge-smart {
+      background: rgba(30, 41, 59, 0.8);
+      color: #E2E8F0;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .akira-navbar {
+      background: #FFFFFF !important;
+      border-bottom: 1px solid #E2E8F0;
+      padding: 10px 0;
+      width: 100%;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+    }
+    .akira-navbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .akira-brand {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+    }
+    .akira-logo-img {
+      height: 42px;
+      width: auto;
+      max-width: 240px;
+      object-fit: contain;
+      display: block;
+    }
+    .akira-nav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .akira-nav-item {
+      color: #0F172A !important;
       text-decoration: none !important;
+      font-size: 14px;
+      font-weight: 500;
       padding: 6px 12px;
       border-radius: 6px;
-      transition: color 0.15s, background 0.15s;
+      transition: color 0.15s;
     }
-    .akira-prerender-shell header nav a:hover {
-      color: #FFFFFF !important;
-      background: rgba(255, 255, 255, 0.08);
+    .akira-nav-item.active {
+      color: #0055A5 !important;
+      font-weight: 600;
     }
-    .akira-prerender-shell header nav a[href="/contact"] {
+    .akira-btn-enquire {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       background: #0055A5 !important;
       color: #FFFFFF !important;
-      font-weight: 700 !important;
+      font-weight: 600;
+      font-size: 13px;
+      padding: 9px 18px;
+      border-radius: 8px;
+      text-decoration: none !important;
     }
-    .akira-prerender-shell main {
+    .akira-hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 38px;
+      height: 38px;
+      background: transparent;
+      border: 1px solid #E2E8F0;
+      border-radius: 6px;
+      padding: 6px;
+      cursor: pointer;
+    }
+    .akira-hamburger span {
+      display: block;
+      width: 100%;
+      height: 2px;
+      background: #0F172A;
+      border-radius: 2px;
+    }
+    /* Hero section styles */
+    .akira-hero-wrap {
+      background: #0B1F33 !important;
+      color: #FFFFFF !important;
+      padding: 44px 0 64px;
+      border-bottom: 1px solid #1E293B;
+    }
+    .akira-hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 40px;
+      align-items: center;
+    }
+    .akira-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #94A3B8;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .akira-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #64748B;
+      display: inline-block;
+    }
+    .akira-eyebrow .text-primary {
+      color: #0284C7;
+    }
+    .akira-hero-h1 {
+      font-size: clamp(26px, 4vw, 48px);
+      font-weight: 800;
+      color: #FFFFFF !important;
+      line-height: 1.15;
+      margin: 0 0 16px;
+      letter-spacing: -0.02em;
+    }
+    .akira-hero-sub {
+      font-size: clamp(14px, 1.8vw, 17px);
+      line-height: 1.6;
+      color: #CBD5E1 !important;
+      margin: 0 0 24px;
+      max-width: 580px;
+    }
+    .akira-hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+    .akira-btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 6px;
+      background: #0055A5 !important;
+      color: #FFFFFF !important;
+      font-weight: 600;
+      font-size: 14px;
+      text-decoration: none !important;
+    }
+    .akira-btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 6px;
+      background: transparent !important;
+      color: #FFFFFF !important;
+      border: 1px solid #475569;
+      font-weight: 600;
+      font-size: 14px;
+      text-decoration: none !important;
+    }
+    .akira-hero-trust {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(51, 65, 85, 0.6);
+      max-width: 520px;
+    }
+    .akira-trust-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .akira-trust-num {
+      font-size: 18px;
+      font-weight: 800;
+      color: #38BDF8;
+    }
+    .akira-trust-txt {
+      font-size: 11px;
+      color: #94A3B8;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+    .akira-visual-card {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #1E293B;
+      background: #0F172A;
+    }
+    .akira-card-img {
+      width: 100%;
+      height: auto;
+      max-height: 380px;
+      object-fit: cover;
+      display: block;
+    }
+    .akira-badge-top {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid #0055A5;
+      padding: 4px 10px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #FFFFFF;
+      letter-spacing: 0.08em;
+    }
+    .akira-badge-dot {
+      width: 6px;
+      height: 6px;
+      background: #0055A5;
+      border-radius: 1px;
+    }
+    .akira-badge-bottom {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(51, 65, 85, 0.8);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #38BDF8;
+      font-family: monospace;
+    }
+    .akira-hero-visual-mobile {
+      display: none;
+    }
+    /* Subpage styles */
+    .akira-subpage-wrap {
       flex: 1;
       width: 100%;
       max-width: 1380px;
       margin: 0 auto;
       padding: 36px 20px 60px;
       box-sizing: border-box;
+      background: #0B1F33;
     }
-    .akira-prerender-shell nav[aria-label="Breadcrumb"] {
+    .akira-subpage-wrap nav[aria-label="Breadcrumb"] {
       font-size: 12px;
       font-weight: 500;
       color: #94A3B8;
@@ -598,47 +900,31 @@ async function runPrerender() {
       gap: 8px;
       flex-wrap: wrap;
     }
-    .akira-prerender-shell nav[aria-label="Breadcrumb"] a {
+    .akira-subpage-wrap nav[aria-label="Breadcrumb"] a {
       color: #38BDF8 !important;
       text-decoration: none !important;
     }
-    .akira-prerender-shell nav[aria-label="Breadcrumb"] span {
-      color: #E2E8F0;
-      font-weight: 600;
-    }
-    .akira-prerender-shell h1 {
+    .akira-subpage-wrap h1 {
       font-size: clamp(24px, 4vw, 42px);
       font-weight: 800;
       color: #FFFFFF !important;
       line-height: 1.18;
       margin: 0 0 16px;
-      letter-spacing: -0.02em;
     }
-    .akira-prerender-shell h2 {
+    .akira-subpage-wrap h2 {
       font-size: clamp(18px, 2.5vw, 24px);
       font-weight: 700;
       color: #38BDF8 !important;
       margin: 32px 0 12px;
-      letter-spacing: -0.01em;
     }
-    .akira-prerender-shell h3 {
-      font-size: 16px;
-      font-weight: 700;
-      color: #F1F5F9 !important;
-      margin: 20px 0 8px;
-    }
-    .akira-prerender-shell p {
+    .akira-subpage-wrap p {
       font-size: 14px;
       line-height: 1.65;
       color: #CBD5E1 !important;
       margin: 0 0 16px;
       max-width: 820px;
     }
-    .akira-prerender-shell a {
-      color: #38BDF8 !important;
-      text-decoration: underline;
-    }
-    .akira-prerender-shell ul {
+    .akira-subpage-wrap ul {
       padding-left: 20px;
       margin: 0 0 20px;
       color: #CBD5E1;
@@ -646,7 +932,7 @@ async function runPrerender() {
       font-size: 14px;
       max-width: 820px;
     }
-    .akira-prerender-shell table {
+    .akira-subpage-wrap table {
       width: 100%;
       max-width: 860px;
       border-collapse: collapse;
@@ -657,70 +943,28 @@ async function runPrerender() {
       border-radius: 8px;
       overflow: hidden;
     }
-    .akira-prerender-shell th, .akira-prerender-shell td {
+    .akira-subpage-wrap th, .akira-subpage-wrap td {
       padding: 10px 14px;
       border: 1px solid rgba(51, 65, 85, 0.6);
       text-align: left;
       color: #E2E8F0;
     }
-    .akira-prerender-shell th {
+    .akira-subpage-wrap th {
       background: rgba(30, 41, 59, 0.8);
       color: #FFFFFF;
       font-weight: 700;
     }
-    .akira-prerender-shell .tldr {
-      background: rgba(15, 23, 42, 0.8);
-      border-left: 4px solid #0055A5;
-      padding: 12px 16px;
-      border-radius: 6px;
-      margin: 16px 0 24px;
-      font-size: 13px;
-      color: #E2E8F0;
-    }
-    .akira-prerender-shell .telemetry-dock {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 12px;
-      background: rgba(15, 23, 42, 0.8);
-      border: 1px solid rgba(51, 65, 85, 0.8);
-      border-radius: 8px;
-      padding: 14px 18px;
-      margin: 20px 0;
-    }
-    .akira-prerender-shell .telemetry-dock p {
-      margin: 0;
-      font-size: 13px;
-    }
-    .akira-prerender-shell dl dt {
-      color: #38BDF8;
-      font-size: 14px;
-      font-weight: 700;
-      margin-top: 14px;
-    }
-    .akira-prerender-shell dl dd {
-      color: #CBD5E1;
-      font-size: 13px;
-      line-height: 1.6;
-      margin-left: 0;
-      margin-top: 4px;
-      margin-bottom: 14px;
-    }
-    @media (max-width: 768px) {
-      .akira-prerender-shell header {
-        flex-direction: column;
-        gap: 12px;
-        align-items: flex-start;
-      }
-      .akira-prerender-shell header nav {
-        gap: 8px;
-        font-size: 12px;
-      }
-      .akira-prerender-shell header nav a {
-        padding: 4px 8px;
-      }
-      .akira-prerender-shell main {
-        padding: 24px 16px 40px;
-      }
+    @media (max-width: 1024px) {
+      .akira-nav { display: none !important; }
+      .akira-header-cta { display: none !important; }
+      .akira-hamburger { display: flex !important; }
+      .akira-hero-grid { grid-template-columns: 1fr; gap: 24px; }
+      .akira-hero-visual-desktop { display: none; }
+      .akira-hero-visual-mobile { display: block; margin: 16px 0 24px; }
+      .akira-logo-img { height: 32px; }
+      .akira-hero-actions { width: 100%; }
+      .akira-btn-primary, .akira-btn-secondary { width: 100%; }
+      .akira-topbar-right { display: none; }
     }
   </style>`;
 
@@ -730,32 +974,57 @@ async function runPrerender() {
     // 7. Inject Semantic Pre-Rendered DOM into <div id="root">
     const rawContent = route.generateBody ? route.generateBody() : '';
 
-    const headerHtml = `
-      <header>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <a href="/" style="text-decoration:none;display:flex;align-items:center;gap:8px;">
-            <span style="color:#38BDF8;font-size:20px;font-weight:900;letter-spacing:-0.02em;">AKIRA</span>
-            <span style="color:#FFFFFF;font-size:12px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">PRECISION AUTOMATION</span>
-          </a>
+    const topBarHtml = `
+      <div class="akira-topbar">
+        <div class="akira-container akira-topbar-inner">
+          <div class="akira-topbar-left">
+            <span>Sales &amp; Service: <a href="mailto:${companyData.emails[0]}">${companyData.emails[0]}</a></span>
+          </div>
+          <div class="akira-topbar-right">
+            <a href="tel:${companyData.phones[0].replace(/\\s+/g, '')}">${companyData.phones[0]}</a>
+            <span class="akira-divider">/</span>
+            <a href="tel:${companyData.phones[1].replace(/\\s+/g, '')}">${companyData.phones[1]}</a>
+            <span class="akira-divider">|</span>
+            <span class="akira-badge-smart">SMART SOLUTIONS</span>
+          </div>
         </div>
-        <nav aria-label="Main Navigation">
-          <a href="/">Home</a>
-          <a href="/about">About Us</a>
-          <a href="/solutions">Solutions</a>
-          <a href="/products">Products</a>
-          <a href="/industries">Industries</a>
-          <a href="/services">Services</a>
-          <a href="/why-choose-us">Why Choose Us</a>
-          <a href="/contact">Contact</a>
-        </nav>
+      </div>
+    `;
+
+    const navBarHtml = `
+      <header class="akira-navbar">
+        <div class="akira-container akira-navbar-inner">
+          <a href="/" class="akira-brand" aria-label="${company.name}">
+            <img src="/assets/company/akira-automation-logo.jpeg" alt="${company.name}" class="akira-logo-img" />
+          </a>
+          <nav class="akira-nav" aria-label="Main Navigation">
+            <a href="/" class="akira-nav-item${route.path === '/' ? ' active' : ''}">Home</a>
+            <a href="/about" class="akira-nav-item${route.path === '/about' ? ' active' : ''}">About Us</a>
+            <a href="/solutions" class="akira-nav-item${route.path.startsWith('/solutions') ? ' active' : ''}">Solutions</a>
+            <a href="/products" class="akira-nav-item${route.path.startsWith('/products') ? ' active' : ''}">Products</a>
+            <a href="/industries" class="akira-nav-item${route.path === '/industries' ? ' active' : ''}">Industries</a>
+            <a href="/services" class="akira-nav-item${route.path === '/services' ? ' active' : ''}">Services</a>
+            <a href="/why-choose-us" class="akira-nav-item${route.path === '/why-choose-us' ? ' active' : ''}">Why Choose Us</a>
+            <a href="/contact" class="akira-nav-item${route.path === '/contact' ? ' active' : ''}">Contact</a>
+          </nav>
+          <div class="akira-header-cta">
+            <a href="/contact" class="akira-btn-enquire">
+              <span>Enquire Now</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </a>
+          </div>
+          <div class="akira-hamburger" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
       </header>
     `;
 
     let styledDom = rawContent;
-    if (styledDom.includes('<header>')) {
-      styledDom = styledDom.replace(/<header>[\s\S]*?<\/header>/i, headerHtml);
+    if (route.path === '/') {
+      styledDom = `${topBarHtml}\n${navBarHtml}\n${styledDom}`;
     } else {
-      styledDom = `${headerHtml}\n${styledDom}`;
+      styledDom = `${topBarHtml}\n${navBarHtml}\n<div class="akira-subpage-wrap">${styledDom}</div>`;
     }
 
     result = result.replace(

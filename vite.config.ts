@@ -39,7 +39,7 @@ export default defineConfig({
     modulePreload: {
       resolveDependencies(filename, deps, { hostType }) {
         if (hostType === 'html') {
-          return deps.filter(dep => !dep.includes('vendor-supabase'));
+          return deps.filter(dep => !dep.includes('vendor-supabase') && !dep.includes('vendor-heroui'));
         }
         return deps;
       },
@@ -47,12 +47,32 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('@supabase')) {
+          const normalizedId = id.replace(/\\/g, '/');
+          if (normalizedId.includes('node_modules')) {
+            if (normalizedId.includes('@supabase')) {
               return 'vendor-supabase';
             }
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router') || id.includes('motion')) {
-              return 'vendor-react';
+            if (
+              normalizedId.includes('@heroui') ||
+              normalizedId.includes('@internationalized') ||
+              normalizedId.includes('@react-aria') ||
+              normalizedId.includes('@react-stately')
+            ) {
+              return 'vendor-heroui';
+            }
+            if (normalizedId.includes('motion')) {
+              return 'vendor-motion';
+            }
+            if (normalizedId.includes('three')) {
+              return 'vendor-three';
+            }
+            if (
+              normalizedId.includes('/react/') ||
+              normalizedId.includes('/react-dom/') ||
+              normalizedId.includes('/react-router/') ||
+              normalizedId.includes('/react-router-dom/')
+            ) {
+              return 'vendor-react-core';
             }
           }
         },
