@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { AdminUsers } from './AdminUsers';
 import { userService } from '../../services/userService';
@@ -78,5 +78,52 @@ describe('AdminUsers Component', () => {
     await waitFor(() => {
       expect(screen.getByText('No Users Found')).toBeInTheDocument();
     });
+  });
+
+  it('opens Create Staff modal and allows clicking and editing inputs without closing the modal', async () => {
+    vi.spyOn(userService, 'getUsers').mockResolvedValue({
+      users: mockUsers,
+      total: 2,
+      error: null,
+    });
+
+    render(
+      <MemoryRouter>
+        <AdminUsers />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Create Staff User')).toBeInTheDocument();
+    });
+
+    // Open modal
+    const createBtn = screen.getByText('Create Staff User');
+    fireEvent.click(createBtn);
+
+    // Modal dialog heading should appear
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /Create Assigned Staff User/i })).toBeInTheDocument();
+    });
+
+    // Click and type in Full Name input
+    const nameInput = screen.getByPlaceholderText('e.g. Suresh Patel');
+    fireEvent.focus(nameInput);
+    fireEvent.click(nameInput);
+    fireEvent.change(nameInput, { target: { value: 'Suresh Patel' } });
+
+    // Verify modal is still open and input value updated
+    expect(screen.getByRole('heading', { name: /Create Assigned Staff User/i })).toBeInTheDocument();
+    expect(nameInput).toHaveValue('Suresh Patel');
+
+    // Click and type in Email input
+    const emailInput = screen.getByPlaceholderText('suresh@akiraautomation.com');
+    fireEvent.focus(emailInput);
+    fireEvent.click(emailInput);
+    fireEvent.change(emailInput, { target: { value: 'suresh@example.com' } });
+
+    // Verify modal remains open
+    expect(screen.getByRole('heading', { name: /Create Assigned Staff User/i })).toBeInTheDocument();
+    expect(emailInput).toHaveValue('suresh@example.com');
   });
 });
