@@ -209,9 +209,10 @@ describe('AKIRA PRECISION AUTOMATION — Senior SEO Audit Test Suite', () => {
       expect(schema.telephone).toBeTruthy();
       expect(schema.email).toBeTruthy();
 
-      // Ensure no fake ratings or certifications were injected
+      // Ensure no fake ratings, reviews, or retail priceRange are injected
       expect((schema as any).aggregateRating).toBeUndefined();
       expect((schema as any).review).toBeUndefined();
+      expect((schema as any).priceRange).toBeUndefined();
     });
 
     it('generates valid WebSite schema for homepage', () => {

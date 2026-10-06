@@ -162,8 +162,7 @@ export function createOrganizationSchema() {
         "areaServed": ["IN", "Worldwide"]
       }
     ],
-    "openingHours": "Mo-Sa 09:00-18:30",
-    "priceRange": "$$"
+    "openingHours": "Mo-Sa 09:00-18:30"
   };
 }
 
