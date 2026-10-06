@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
+import { trackClarityEvent, setClarityTag } from '../lib/clarity';
 
 interface EnquiryContextType {
   isOpen: boolean;
@@ -16,6 +17,10 @@ export const EnquiryProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const openEnquiry = (productName?: string) => {
     setSelectedProduct(productName || '');
     setIsOpen(true);
+    trackClarityEvent('enquiry_modal_opened');
+    if (productName) {
+      setClarityTag('modal_product_target', productName);
+    }
   };
 
   const closeEnquiry = () => {

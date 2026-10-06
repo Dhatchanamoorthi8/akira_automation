@@ -3,6 +3,7 @@ import { EnquiryFormData } from '../types';
 import { emailService } from '../services/emailService';
 import { enquiryService } from '../services/enquiryService';
 import { isSupabaseConfigured } from '../lib/supabase';
+import { trackClarityEvent, upgradeClaritySession, setClarityTag } from '../lib/clarity';
 
 const initialFormState: EnquiryFormData = {
   name: '',
@@ -135,6 +136,13 @@ export function useEnquiryForm(options: UseEnquiryFormOptions = {}) {
       setIsSuccess(true);
       // Pre-generate mailto link in case the client wants a direct sent copy
       setMailtoFallbackUrl(emailService.generateMailtoFallback(formData));
+
+      // Instrument Microsoft Clarity smart event and session upgrade
+      trackClarityEvent('enquiry_submitted');
+      setClarityTag('enquiry_industry', formData.industry);
+      setClarityTag('enquiry_category', formData.productCategory);
+      upgradeClaritySession('enquiry_conversion');
+
       if (onSuccess) {
         onSuccess();
       }

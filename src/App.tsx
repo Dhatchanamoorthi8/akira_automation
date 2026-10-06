@@ -46,12 +46,17 @@ const AdminEmailSettings = lazy(() => import('./pages/admin/AdminEmailSettings')
 const AdminAttendance = lazy(() => import('./pages/admin/AdminAttendance').then(m => ({ default: m.AdminAttendance })));
 const StaffWorkspace = lazy(() => import('./pages/staff/StaffWorkspace').then(m => ({ default: m.StaffWorkspace })));
 
-// Scroll to top on route navigation
+import { setClarityTag } from './lib/clarity';
+
+// Scroll to top on route navigation & update Clarity session tags
 const ScrollToTop: React.FC = () => {
   const { pathname } = useLocation();
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    const isPortal = pathname.startsWith('/admin') || pathname.startsWith('/staff');
+    setClarityTag('portal_area', isPortal ? 'internal' : 'public');
+    setClarityTag('page_path', pathname);
   }, [pathname]);
 
   return null;

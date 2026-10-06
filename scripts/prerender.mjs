@@ -32,7 +32,8 @@ async function runPrerender() {
   // Initialize Vite in SSR mode to load TypeScript data and configurations
   const vite = await createServer({
     server: { middlewareMode: true },
-    appType: 'custom'
+    appType: 'custom',
+    optimizeDeps: { noDiscovery: true }
   });
 
   const { products } = await vite.ssrLoadModule('/src/data/products.ts');

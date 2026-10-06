@@ -2,6 +2,10 @@ import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
+import { initClarity } from './lib/clarity';
+
+// Initialize Microsoft Clarity behavioral analytics & heatmaps
+initClarity();
 
 // Safely remove pre-render critical FOUC guard styles ONLY after React has mounted and painted
 const HydrationGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
