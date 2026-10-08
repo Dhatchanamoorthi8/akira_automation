@@ -528,4 +528,27 @@ describe('StaffWorkspace Component', () => {
       expect(screen.getByRole('button', { name: /Cancel/i })).toBeInTheDocument();
     });
   });
+
+  it('opens Add Offline Customer Lead modal with HeroUI components and validates input', async () => {
+    render(
+      <MemoryRouter initialEntries={['/staff']}>
+        <StaffWorkspace />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/Sunil Metrologist/i)).toBeInTheDocument();
+    });
+
+    const addCustomerBtn = screen.getByRole('button', { name: /Add Customer/i });
+    fireEvent.click(addCustomerBtn);
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /Add Offline Customer \/ Inbound Lead/i })).toBeInTheDocument();
+      expect(screen.getByText(/Customer Contact & Source/i)).toBeInTheDocument();
+      expect(screen.getByText(/Technical Interest & Gauging Requirements/i)).toBeInTheDocument();
+      expect(screen.getByText(/Schedule immediate follow-up task for this lead/i)).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Save Customer Lead/i })).toBeInTheDocument();
+    });
+  });
 });

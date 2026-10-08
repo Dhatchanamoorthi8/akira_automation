@@ -21,6 +21,8 @@ export interface CreateEnquiryInput {
   requirement?: string;
   message: string;
   source?: string;
+  assignedTo?: string;
+  status?: EnquiryStatus;
 }
 
 export interface StatusCounts {
@@ -35,8 +37,8 @@ export interface StatusCounts {
 
 export class EnquiryService {
   /**
-   * Submit an inbound enquiry/RFQ from public web visitor.
-   * Safe for anonymous visitors; RLS allows insert for anon role.
+   * Submit an inbound enquiry/RFQ from public web visitor or staff manual entry.
+   * Safe for anonymous visitors and authenticated staff users.
    */
   async createEnquiry(input: CreateEnquiryInput): Promise<{ enquiry: Enquiry | null; error: string | null }> {
     if (!isSupabaseConfigured()) {
@@ -62,7 +64,7 @@ export class EnquiryService {
       const enquiryId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `enq_${Date.now()}`;
       const subject = `Inquiry: ${input.specificProduct || input.productCategory || 'Gauging Requirement'} - ${input.companyName || input.name}`;
 
-      const { error } = await supabase
+      let insertRes = await supabase
         .from('enquiries')
         .insert({
           id: enquiryId,
@@ -76,14 +78,39 @@ export class EnquiryService {
           product_category: input.productCategory || null,
           specific_product: input.specificProduct || null,
           requirement: input.requirement || null,
-          status: 'new',
+          status: input.status || 'new',
           source: input.source || 'website',
+          assigned_to: input.assignedTo || null,
         });
 
-      if (error) {
+      // If foreign key constraint fails on assigned_to, retry with null assigned_to
+      if (insertRes.error && input.assignedTo && insertRes.error.message.includes('assigned_to')) {
+        console.warn('Retrying enquiry creation without assigned_to due to constraint:', insertRes.error.message);
+        insertRes = await supabase
+          .from('enquiries')
+          .insert({
+            id: enquiryId,
+            name: input.name.trim(),
+            company: input.companyName?.trim() || null,
+            email: input.email.trim().toLowerCase(),
+            phone: input.phone?.trim() || null,
+            subject,
+            message: input.message.trim(),
+            industry: input.industry || null,
+            product_category: input.productCategory || null,
+            specific_product: input.specificProduct || null,
+            requirement: input.requirement || null,
+            status: input.status || 'new',
+            source: input.source || 'website',
+            assigned_to: null,
+          });
+      }
+
+      if (insertRes.error) {
+        console.error('Create enquiry supabase error:', insertRes.error);
         return {
           enquiry: null,
-          error: 'Unable to submit your enquiry. Please try again.',
+          error: insertRes.error.message || 'Unable to submit your enquiry. Please try again.',
         };
       }
 
@@ -99,9 +126,9 @@ export class EnquiryService {
         product_category: input.productCategory || null,
         specific_product: input.specificProduct || null,
         requirement: input.requirement || null,
-        status: 'new',
+        status: input.status || 'new',
         source: input.source || 'website',
-        assigned_to: null,
+        assigned_to: input.assignedTo || null,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       };

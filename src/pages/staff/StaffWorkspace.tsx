@@ -59,6 +59,7 @@ import {
   Eye,
   Edit3,
   Download,
+  UserPlus,
 } from "lucide-react";
 import { InvoicePdfViewerModal } from "../../components/invoices/InvoicePdfViewerModal";
 import { useAuth } from "../../auth/useAuth";
@@ -88,6 +89,8 @@ import { formatDate } from "../../utils/date";
 import { SEOHead } from "../../components/layout/SEOHead";
 import { company } from "../../config/company";
 import { AdminEnquiryDossierDrawer } from "../../components/admin/AdminEnquiryDossierDrawer";
+import { productCategories } from "../../data/productSummaries";
+import { industries } from "../../data/industries";
 
 const PRIORITY_STYLES: Record<
   FollowupPriority,
@@ -242,6 +245,49 @@ export const StaffWorkspace: React.FC = () => {
         setIsDossierOpen(true);
       }
     }
+  };
+
+  // Add Offline Customer / Lead Modal State
+  const [showAddLeadModal, setShowAddLeadModal] = useState(false);
+  const [leadForm, setLeadForm] = useState({
+    name: "",
+    companyName: "",
+    phone: "",
+    email: "",
+    source: "offline_walkin",
+    industry: "",
+    productCategory: "",
+    specificProduct: "",
+    notes: "",
+    scheduleFollowup: true,
+    followupDate: new Date(Date.now() + 86400000).toISOString().slice(0, 10),
+    followupType: "call" as FollowupType,
+    followupPriority: "medium" as FollowupPriority,
+  });
+  const [leadFollowupDateValue, setLeadFollowupDateValue] =
+    useState<DateValue | null>(null);
+  const [isSubmittingLead, setIsSubmittingLead] = useState(false);
+  const [leadError, setLeadError] = useState<string | null>(null);
+
+  const resetLeadModal = () => {
+    setLeadForm({
+      name: "",
+      companyName: "",
+      phone: "",
+      email: "",
+      source: "offline_walkin",
+      industry: "",
+      productCategory: "",
+      specificProduct: "",
+      notes: "",
+      scheduleFollowup: true,
+      followupDate: new Date(Date.now() + 86400000).toISOString().slice(0, 10),
+      followupType: "call" as FollowupType,
+      followupPriority: "medium" as FollowupPriority,
+    });
+    setLeadFollowupDateValue(null);
+    setLeadError(null);
+    setShowAddLeadModal(false);
   };
 
   // Schedule Visit Modal State
@@ -773,6 +819,99 @@ export const StaffWorkspace: React.FC = () => {
         notes: "",
       });
       loadStaffData();
+    }
+  };
+
+  // Add Offline Lead / Customer Submit Handler
+  const handleCreateLead = async (e?: React.FormEvent) => {
+    if (e && typeof e.preventDefault === "function") {
+      e.preventDefault();
+    }
+    if (!leadForm.name.trim()) {
+      setLeadError("Customer / Contact Name is required.");
+      return;
+    }
+    if (!leadForm.phone.trim() && !leadForm.email.trim()) {
+      setLeadError("Please provide at least a Phone Number or an Email Address.");
+      return;
+    }
+
+    setIsSubmittingLead(true);
+    setLeadError(null);
+
+    try {
+      // Auto-generate fallback email if offline customer only provided mobile/phone number
+      const emailVal = leadForm.email.trim()
+        ? leadForm.email.trim().toLowerCase()
+        : `${(leadForm.phone.trim().replace(/[^0-9]/g, "") || "lead")}_${Date.now()}@offline.akira`;
+
+      const sourceLabelMap: Record<string, string> = {
+        offline_walkin: "Offline Walk-in / Facility Visit",
+        phone_call: "Inbound Phone Call / WhatsApp",
+        trade_expo: "Trade Show / Expo Exhibition",
+        referral: "Client Referral",
+        existing_client: "Existing Client Offline Re-order",
+        other_offline: "Other Offline Source",
+      };
+
+      const messageVal = leadForm.notes.trim()
+        ? leadForm.notes.trim()
+        : `Offline lead registered by staff (${profile?.full_name || user?.email || "Staff"}). Source: ${sourceLabelMap[leadForm.source] || leadForm.source}. Product interest: ${leadForm.specificProduct || leadForm.productCategory || "General Metrology"}.`;
+
+      const res = await enquiryService.createEnquiry({
+        name: leadForm.name.trim(),
+        companyName: leadForm.companyName.trim() || undefined,
+        email: emailVal,
+        phone: leadForm.phone.trim() || undefined,
+        industry: leadForm.industry || undefined,
+        productCategory: leadForm.productCategory || undefined,
+        specificProduct: leadForm.specificProduct || undefined,
+        message: messageVal,
+        source: leadForm.source,
+        assignedTo: user?.id,
+        status: "new",
+      });
+
+      if (res.error || !res.enquiry) {
+        console.error("Enquiry service returned error:", res.error);
+        setLeadError(res.error || "Failed to create customer lead.");
+        return;
+      }
+
+      // If staff chose to schedule an immediate follow-up task
+      if (leadForm.scheduleFollowup && leadForm.followupDate) {
+        try {
+          await followupService.createFollowup({
+            enquiryId: res.enquiry.id,
+            title: `Follow up with ${res.enquiry.name}`,
+            scheduledAt: `${leadForm.followupDate}T10:00:00`,
+            type: leadForm.followupType,
+            priority: leadForm.followupPriority,
+            assignedTo: user?.id,
+            createdBy: user?.id,
+            notes: `Initial follow-up for offline lead: ${leadForm.notes || "Discuss gauging requirements"}`,
+          });
+        } catch (fErr) {
+          console.warn("Followup auto-schedule error:", fErr);
+        }
+      }
+
+      const savedCustomerName = leadForm.name;
+      resetLeadModal();
+
+      setActionFeedback({
+        status: "success",
+        title: "Customer Lead Added",
+        message: `Customer "${savedCustomerName}" has been added to your CRM pipeline successfully.`,
+      });
+
+      await loadStaffData();
+    } catch (err: unknown) {
+      console.error("Create lead error:", err);
+      const errMsg = err instanceof Error ? err.message : "An unexpected error occurred while saving the offline customer.";
+      setLeadError(errMsg);
+    } finally {
+      setIsSubmittingLead(false);
     }
   };
 
@@ -1335,7 +1474,6 @@ export const StaffWorkspace: React.FC = () => {
                 variant="outline"
                 size="sm"
                 onPress={() => loadStaffData()}
-                onClick={() => loadStaffData()}
                 className="gap-1.5 text-xs font-semibold bg-white border-slate-300 text-slate-700 hover:bg-slate-50 shadow-xs"
               >
                 <RotateCw className="w-3.5 h-3.5" />
@@ -1344,8 +1482,16 @@ export const StaffWorkspace: React.FC = () => {
               <Button
                 variant="outline"
                 size="sm"
+                onPress={() => setShowAddLeadModal(true)}
+                className="gap-1.5 text-xs font-semibold bg-emerald-50 border-emerald-300 text-emerald-800 hover:bg-emerald-100 shadow-xs"
+              >
+                <UserPlus className="w-3.5 h-3.5 text-emerald-600" />
+                <span>Add Customer</span>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
                 onPress={() => setShowVisitModal(true)}
-                onClick={() => setShowVisitModal(true)}
                 className="gap-1.5 text-xs font-semibold bg-white border-slate-300 text-slate-700 hover:bg-slate-50 shadow-xs"
               >
                 <MapPin className="w-3.5 h-3.5 text-rose-600" />
@@ -1358,10 +1504,6 @@ export const StaffWorkspace: React.FC = () => {
                   resetInvoiceForm();
                   setShowInvoiceModal(true);
                 }}
-                onClick={() => {
-                  resetInvoiceForm();
-                  setShowInvoiceModal(true);
-                }}
                 className="gap-1.5 text-xs font-semibold bg-white border-slate-300 text-slate-700 hover:bg-slate-50 shadow-xs"
               >
                 <Receipt className="w-3.5 h-3.5 text-emerald-600" />
@@ -1371,7 +1513,6 @@ export const StaffWorkspace: React.FC = () => {
                 variant="primary"
                 size="sm"
                 onPress={() => setShowCreateModal(true)}
-                onClick={() => setShowCreateModal(true)}
                 className="gap-1.5 text-xs font-semibold bg-industrial-blue hover:bg-sky-700 shadow-xs text-white"
               >
                 <Plus className="w-3.5 h-3.5" />
@@ -1676,6 +1817,30 @@ export const StaffWorkspace: React.FC = () => {
           {/* TAB 2: Assigned Enquiries */}
           {activeTab === "enquiries" && (
             <div className="space-y-4">
+              {/* Inquiries Header Banner */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 bg-white border border-slate-200 rounded-2xl shadow-xs">
+                <div>
+                  <h2 className="text-sm font-bold text-slate-800 font-heading flex items-center gap-2">
+                    <span>Assigned Inquiries & Customer Pipeline</span>
+                    <Chip size="sm" variant="soft" color="accent" className="font-mono text-[10px]">
+                      {enquiries.length} Total
+                    </Chip>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Prospective client leads from website inquiries and staff offline entries (walk-ins, phone calls, expos).
+                  </p>
+                </div>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onPress={() => setShowAddLeadModal(true)}
+                  className="gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white shadow-xs font-semibold text-xs shrink-0"
+                >
+                  <UserPlus className="w-3.5 h-3.5" />
+                  <span>+ Add Offline Customer / Lead</span>
+                </Button>
+              </div>
+
               {isLoadingEnquiries ? (
                 <Card className="p-8 text-center border border-slate-200">
                   <Loader2 className="w-6 h-6 animate-spin text-sky-600 mx-auto mb-2" />
@@ -1690,9 +1855,17 @@ export const StaffWorkspace: React.FC = () => {
                     No Assigned Inquiries
                   </h3>
                   <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1">
-                    You do not currently have any prospective inquiries
-                    delegated to your account.
+                    You do not currently have any prospective inquiries delegated to your account.
                   </p>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onPress={() => setShowAddLeadModal(true)}
+                    className="mt-4 gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white shadow-xs font-semibold text-xs mx-auto"
+                  >
+                    <UserPlus className="w-3.5 h-3.5" />
+                    <span>+ Add First Offline Customer</span>
+                  </Button>
                 </Card>
               ) : (
                 <div className="space-y-3">
@@ -1703,7 +1876,7 @@ export const StaffWorkspace: React.FC = () => {
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 flex-wrap">
                             <span className="text-sm font-bold text-industrial-dark">
                               {enq.name}
                             </span>
@@ -1723,22 +1896,55 @@ export const StaffWorkspace: React.FC = () => {
                             </strong>
                           </div>
                         </div>{" "}
-                        <div className="text-right">
-                          <Chip
-                            size="sm"
-                            variant="soft"
-                            color={
-                              enq.status === "converted"
-                                ? "success"
-                                : enq.status === "closed"
-                                  ? "default"
-                                  : "accent"
-                            }
-                            className="font-bold uppercase text-[10px]"
-                          >
-                            {enq.status.replace("_", " ")}
-                          </Chip>
-                          <span className="text-[11px] text-slate-400 block font-mono mt-0.5">
+                        <div className="text-right flex flex-col items-end gap-1">
+                          <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                            {enq.source && (
+                              <span
+                                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide border ${
+                                  enq.source === "offline_walkin"
+                                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                    : enq.source === "phone_call"
+                                      ? "bg-sky-50 text-sky-700 border-sky-200"
+                                      : enq.source === "trade_expo"
+                                        ? "bg-purple-50 text-purple-700 border-purple-200"
+                                        : enq.source === "referral"
+                                          ? "bg-amber-50 text-amber-700 border-amber-200"
+                                          : enq.source === "existing_client"
+                                            ? "bg-indigo-50 text-indigo-700 border-indigo-200"
+                                            : "bg-slate-100 text-slate-600 border-slate-200"
+                                }`}
+                              >
+                                {enq.source === "offline_walkin"
+                                  ? "Walk-in"
+                                  : enq.source === "phone_call"
+                                    ? "Phone / WhatsApp"
+                                    : enq.source === "trade_expo"
+                                      ? "Trade Expo"
+                                      : enq.source === "referral"
+                                        ? "Referral"
+                                        : enq.source === "existing_client"
+                                          ? "Existing Client"
+                                          : enq.source === "website"
+                                            ? "Website RFQ"
+                                            : enq.source}
+                              </span>
+                            )}
+                            <Chip
+                              size="sm"
+                              variant="soft"
+                              color={
+                                enq.status === "converted"
+                                  ? "success"
+                                  : enq.status === "closed"
+                                    ? "default"
+                                    : "accent"
+                              }
+                              className="font-bold uppercase text-[10px]"
+                            >
+                              {enq.status.replace("_", " ")}
+                            </Chip>
+                          </div>
+                          <span className="text-[11px] text-slate-400 block font-mono">
                             {formatDate(enq.created_at)}
                           </span>
                         </div>
@@ -1812,19 +2018,6 @@ export const StaffWorkspace: React.FC = () => {
                               });
                               setShowCreateModal(true);
                             }}
-                            onClick={() => {
-                              setCreateForm({
-                                enquiryId: enq.id,
-                                title: `Follow-up: ${enq.company || enq.name}`,
-                                scheduledAt: new Date()
-                                  .toISOString()
-                                  .slice(0, 16),
-                                type: "call",
-                                priority: "high",
-                                notes: `Follow-up on inquiry: ${enq.specific_product || enq.product_category || "General requirement"}`,
-                              });
-                              setShowCreateModal(true);
-                            }}
                             className="gap-1 px-2.5 h-7 text-xs font-semibold bg-sky-50 text-sky-700 border-sky-200 hover:bg-sky-100"
                             aria-label="Schedule Follow-up"
                           >
@@ -1846,17 +2039,6 @@ export const StaffWorkspace: React.FC = () => {
                               });
                               setShowVisitModal(true);
                             }}
-                            onClick={() => {
-                              setVisitForm({
-                                enquiryId: enq.id,
-                                title: `Site Visit: ${enq.company || enq.name}`,
-                                visitPurpose: "consultation",
-                                scheduledAt: "",
-                                customerContactPerson: enq.name,
-                                notes: enq.requirement || "",
-                              });
-                              setShowVisitModal(true);
-                            }}
                             className="gap-1 px-2.5 h-7 text-xs font-semibold bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100"
                             aria-label="Schedule Customer Site Visit"
                           >
@@ -1868,31 +2050,6 @@ export const StaffWorkspace: React.FC = () => {
                             size="sm"
                             variant="outline"
                             onPress={() => {
-                              resetInvoiceForm();
-                              setInvoiceForm({
-                                enquiryId: enq.id,
-                                customerName: enq.name,
-                                customerCompany: enq.company || "",
-                                customerEmail: enq.email,
-                                customerPhone: enq.phone || "",
-                                customerAddress: "",
-                                customerGst: "",
-                                type: "quotation",
-                                items: [
-                                  {
-                                    description:
-                                      enq.specific_product ||
-                                      enq.product_category ||
-                                      "Metrology Gauging Requirement",
-                                    quantity: 1,
-                                    unitPrice: 0,
-                                    taxRate: 18,
-                                  },
-                                ],
-                              });
-                              setShowInvoiceModal(true);
-                            }}
-                            onClick={() => {
                               resetInvoiceForm();
                               setInvoiceForm({
                                 enquiryId: enq.id,
@@ -1939,15 +2096,6 @@ export const StaffWorkspace: React.FC = () => {
                                       notes: "",
                                     });
                                   }}
-                                  onClick={() => {
-                                    setConvertingEnquiry(enq);
-                                    setDealForm({
-                                      dealTitle: `${enq.company || enq.name} - ${enq.specific_product || "Gauging Requirement"}`,
-                                      dealValue: "",
-                                      expectedCloseDate: "",
-                                      notes: "",
-                                    });
-                                  }}
                                   className="gap-1 px-2.5 h-7 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white"
                                 >
                                   <TrendingUp className="w-3 h-3" />
@@ -1957,11 +2105,6 @@ export const StaffWorkspace: React.FC = () => {
                                   size="sm"
                                   variant="outline"
                                   onPress={() => {
-                                    setClosingEnquiry(enq);
-                                    setLostReason(LOST_REASONS[0]);
-                                    setLostNotes("");
-                                  }}
-                                  onClick={() => {
                                     setClosingEnquiry(enq);
                                     setLostReason(LOST_REASONS[0]);
                                     setLostNotes("");
@@ -1977,7 +2120,6 @@ export const StaffWorkspace: React.FC = () => {
                           <Button
                             size="sm"
                             onPress={() => handleOpenDossier(enq.id)}
-                            onClick={() => handleOpenDossier(enq.id)}
                             className="gap-1 px-3 h-7 text-xs font-semibold bg-industrial-dark text-white hover:bg-slate-800"
                           >
                             <span>Dossier</span>
@@ -4192,6 +4334,490 @@ export const StaffWorkspace: React.FC = () => {
             isSendingEmail={!!sendingInvoiceId}
           />
         )}
+
+        {/* Modal 9: Add Offline Customer / Lead Modal */}
+        <Modal.Backdrop
+          isOpen={showAddLeadModal}
+          isDismissable={false}
+          onOpenChange={(open) => {
+            if (!open && !isSubmittingLead) resetLeadModal();
+          }}
+          className="z-50"
+        >
+          <Modal.Container placement="center" size="lg" className="p-3 sm:p-6 flex items-center justify-center">
+            <Modal.Dialog className="bg-white rounded-3xl shadow-2xl border border-slate-200 max-w-2xl w-full max-h-[88vh] flex flex-col relative overflow-hidden my-auto">
+              <Modal.CloseTrigger
+                onPress={resetLeadModal}
+                className="absolute top-4 right-4 p-1.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer transition-colors focus:outline-none z-10"
+                aria-label="Close modal"
+              >
+                <X className="w-4 h-4" />
+              </Modal.CloseTrigger>
+
+              <Form
+                id="add-offline-lead-form"
+                validationBehavior="native"
+                onSubmit={handleCreateLead}
+                className="flex flex-col flex-1 min-h-0 overflow-hidden"
+              >
+                <Modal.Header className="px-6 py-4.5 border-b border-slate-100 flex-shrink-0 bg-white pr-12">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 shrink-0">
+                      <UserPlus className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <Modal.Heading className="text-base font-bold text-industrial-dark font-heading">
+                        Add Offline Customer / Inbound Lead
+                      </Modal.Heading>
+                      <p className="text-xs text-slate-500">
+                        Record walk-in clients, direct phone calls, WhatsApp inquiries, and trade expo contacts into your CRM.
+                      </p>
+                    </div>
+                  </div>
+                </Modal.Header>
+
+                <Modal.Body className="px-6 py-5 overflow-y-auto flex-1 space-y-4">
+                  {leadError && (
+                    <Alert status="danger">
+                      <Alert.Indicator />
+                      <Alert.Content>
+                        <Alert.Title>Submission Error</Alert.Title>
+                        <Alert.Description>{leadError}</Alert.Description>
+                      </Alert.Content>
+                    </Alert>
+                  )}
+
+                  {/* Surface 1: Customer Contact & Source */}
+                  <Surface className="p-4 sm:p-5 rounded-2xl flex flex-col gap-3.5 bg-slate-50/70 border border-slate-200/80">
+                    <h4 className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                      <UserPlus className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Customer Contact & Source</span>
+                    </h4>
+
+                    <Select
+                      fullWidth
+                      isRequired
+                      value={leadForm.source}
+                      onChange={(val) =>
+                        setLeadForm((prev) => ({
+                          ...prev,
+                          source: (val as string) || "offline_walkin",
+                        }))
+                      }
+                      aria-label="Customer / Lead Source"
+                    >
+                      <Label>Customer / Lead Source</Label>
+                      <Select.Trigger>
+                        <Select.Value />
+                        <Select.Indicator />
+                      </Select.Trigger>
+                      <Select.Popover className="min-w-[280px]">
+                        <ListBox>
+                          {[
+                            { id: "offline_walkin", label: "Facility Walk-in / Direct Customer Visit" },
+                            { id: "phone_call", label: "Inbound Phone Call / WhatsApp Inquiry" },
+                            { id: "trade_expo", label: "Trade Show / Industrial Expo Exhibition" },
+                            { id: "referral", label: "Customer / Vendor Referral" },
+                            { id: "existing_client", label: "Existing Client Offline Re-order" },
+                            { id: "other_offline", label: "Other Offline Channel" },
+                          ].map((s) => (
+                            <ListBox.Item key={s.id} id={s.id} textValue={s.label}>
+                              {s.label}
+                              <ListBox.ItemIndicator />
+                            </ListBox.Item>
+                          ))}
+                        </ListBox>
+                      </Select.Popover>
+                      <Description>Origin of customer interaction or lead source</Description>
+                      <FieldError />
+                    </Select>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <TextField
+                        isRequired
+                        fullWidth
+                        name="name"
+                        value={leadForm.name}
+                        onChange={(val) =>
+                          setLeadForm((prev) => ({ ...prev, name: val }))
+                        }
+                        validate={(value) => {
+                          if (!value || !value.trim()) {
+                            return "Contact person / customer name is required";
+                          }
+                          return null;
+                        }}
+                      >
+                        <Label>Contact Person / Customer Name</Label>
+                        <Input placeholder="e.g. Rajesh Kumar" />
+                        <Description>Primary contact person name</Description>
+                        <FieldError />
+                      </TextField>
+
+                      <TextField
+                        fullWidth
+                        name="companyName"
+                        value={leadForm.companyName}
+                        onChange={(val) =>
+                          setLeadForm((prev) => ({ ...prev, companyName: val }))
+                        }
+                      >
+                        <Label>Company / Workshop Name</Label>
+                        <Input placeholder="e.g. Precision Engineering Works" />
+                        <Description>Registered company or shop</Description>
+                        <FieldError />
+                      </TextField>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <TextField
+                        fullWidth
+                        name="phone"
+                        type="tel"
+                        value={leadForm.phone}
+                        onChange={(val) =>
+                          setLeadForm((prev) => ({ ...prev, phone: val }))
+                        }
+                        validate={(val) => {
+                          if (!leadForm.email.trim() && (!val || !val.trim())) {
+                            return "Please enter at least a phone number or email address";
+                          }
+                          return null;
+                        }}
+                      >
+                        <Label>Phone / WhatsApp Number</Label>
+                        <Input placeholder="e.g. +91 98765 43210" />
+                        <Description>WhatsApp or calling number</Description>
+                        <FieldError />
+                      </TextField>
+
+                      <TextField
+                        fullWidth
+                        name="email"
+                        type="email"
+                        value={leadForm.email}
+                        onChange={(val) =>
+                          setLeadForm((prev) => ({ ...prev, email: val }))
+                        }
+                        validate={(val) => {
+                          if (val && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+                            return "Please enter a valid email address";
+                          }
+                          return null;
+                        }}
+                      >
+                        <Label>
+                          Email Address{" "}
+                          <span className="text-slate-400 font-normal text-[11px]">
+                            (Optional for offline)
+                          </span>
+                        </Label>
+                        <Input placeholder="e.g. purchase@precisionworks.com" />
+                        <Description>Official RFQ or purchase email</Description>
+                        <FieldError />
+                      </TextField>
+                    </div>
+                  </Surface>
+
+                  {/* Surface 2: Technical Interest & Requirements */}
+                  <Surface className="p-4 sm:p-5 rounded-2xl flex flex-col gap-3.5 bg-slate-50/70 border border-slate-200/80">
+                    <h4 className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                      <FileText className="w-3.5 h-3.5 text-sky-600" />
+                      <span>Technical Interest & Gauging Requirements</span>
+                    </h4>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <Select
+                        fullWidth
+                        value={leadForm.industry}
+                        onChange={(val) =>
+                          setLeadForm((prev) => ({
+                            ...prev,
+                            industry: (val as string) || "",
+                          }))
+                        }
+                        aria-label="Industry Vertical"
+                        placeholder="-- Select Industry --"
+                      >
+                        <Label>Industry Vertical</Label>
+                        <Select.Trigger>
+                          <Select.Value />
+                          <Select.Indicator />
+                        </Select.Trigger>
+                        <Select.Popover className="max-h-60 overflow-y-auto">
+                          <ListBox>
+                            {industries.map((ind) => (
+                              <ListBox.Item key={ind.id} id={ind.name} textValue={ind.name}>
+                                {ind.name}
+                                <ListBox.ItemIndicator />
+                              </ListBox.Item>
+                            ))}
+                          </ListBox>
+                        </Select.Popover>
+                        <Description>Customer industry domain</Description>
+                      </Select>
+
+                      <Select
+                        fullWidth
+                        value={leadForm.productCategory}
+                        onChange={(val) =>
+                          setLeadForm((prev) => ({
+                            ...prev,
+                            productCategory: (val as string) || "",
+                          }))
+                        }
+                        aria-label="Product Category"
+                        placeholder="-- Select Category --"
+                      >
+                        <Label>Product Category</Label>
+                        <Select.Trigger>
+                          <Select.Value />
+                          <Select.Indicator />
+                        </Select.Trigger>
+                        <Select.Popover className="max-h-60 overflow-y-auto">
+                          <ListBox>
+                            {productCategories
+                              .filter((c) => c.slug !== "all")
+                              .map((cat) => (
+                                <ListBox.Item key={cat.slug} id={cat.name} textValue={cat.name}>
+                                  {cat.name}
+                                  <ListBox.ItemIndicator />
+                                </ListBox.Item>
+                              ))}
+                          </ListBox>
+                        </Select.Popover>
+                        <Description>Gauging product group</Description>
+                      </Select>
+                    </div>
+
+                    <TextField
+                      fullWidth
+                      name="specificProduct"
+                      value={leadForm.specificProduct}
+                      onChange={(val) =>
+                        setLeadForm((prev) => ({ ...prev, specificProduct: val }))
+                      }
+                    >
+                      <Label>Specific Gauge / Tooling Model Interest</Label>
+                      <Input placeholder="e.g. Air Plug Gauge Ø25H7, Electronic Snap Gauge, Column Unit" />
+                      <Description>Exact bore diameter, tolerance class, or unit</Description>
+                      <FieldError />
+                    </TextField>
+
+                    <TextField
+                      fullWidth
+                      name="notes"
+                      value={leadForm.notes}
+                      onChange={(val) =>
+                        setLeadForm((prev) => ({ ...prev, notes: val }))
+                      }
+                    >
+                      <Label>Customer Requirement / Discussion Notes</Label>
+                      <TextArea
+                        rows={3}
+                        placeholder="Mention tolerances, bore depths, production quantities, or specific customer requests discussed..."
+                      />
+                      <Description>Technical specifications discussed during interaction</Description>
+                      <FieldError />
+                    </TextField>
+                  </Surface>
+
+                  {/* Surface 3: Immediate Follow-up Task Scheduling */}
+                  <Surface className="p-4 sm:p-5 rounded-2xl flex flex-col gap-3.5 bg-emerald-50/50 border border-emerald-200/80">
+                    <Checkbox
+                      isSelected={leadForm.scheduleFollowup}
+                      onChange={(isSelected) =>
+                        setLeadForm((prev) => ({
+                          ...prev,
+                          scheduleFollowup: isSelected,
+                        }))
+                      }
+                    >
+                      <Checkbox.Content>
+                        <Checkbox.Control>
+                          <Checkbox.Indicator />
+                        </Checkbox.Control>
+                        <span className="text-xs sm:text-sm font-semibold text-emerald-950">
+                          Schedule immediate follow-up task for this lead
+                        </span>
+                      </Checkbox.Content>
+                      <Description className="ml-7 text-[11px] text-slate-500">
+                        Automatically creates an actionable task assigned to you in your CRM pipeline
+                      </Description>
+                    </Checkbox>
+
+                    {leadForm.scheduleFollowup && (
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                        <DatePicker
+                          granularity="day"
+                          isRequired
+                          value={leadFollowupDateValue}
+                          onChange={(val) => {
+                            setLeadFollowupDateValue(val);
+                            if (val) {
+                              try {
+                                const tz = getLocalTimeZone();
+                                const iso =
+                                  "toDate" in val && typeof (val as any).toDate === "function"
+                                    ? (val as any).toDate(tz).toISOString().slice(0, 10)
+                                    : new Date(val.toString()).toISOString().slice(0, 10);
+                                setLeadForm((prev) => ({ ...prev, followupDate: iso }));
+                              } catch {
+                                setLeadForm((prev) => ({ ...prev, followupDate: val.toString() }));
+                              }
+                            } else {
+                              setLeadForm((prev) => ({ ...prev, followupDate: "" }));
+                            }
+                          }}
+                          className="w-full"
+                          aria-label="Follow-up Date"
+                        >
+                          <Label>Follow-up Date</Label>
+                          <DateField.Group fullWidth>
+                            <DateField.Input>
+                              {(segment) => <DateField.Segment segment={segment} />}
+                            </DateField.Input>
+                            <DateField.Suffix>
+                              <DatePicker.Trigger>
+                                <DatePicker.TriggerIndicator />
+                              </DatePicker.Trigger>
+                            </DateField.Suffix>
+                          </DateField.Group>
+                          <DatePicker.Popover className="flex flex-col gap-3">
+                            <Calendar aria-label="Follow-up Date">
+                              <Calendar.Header>
+                                <Calendar.YearPickerTrigger>
+                                  <Calendar.YearPickerTriggerHeading />
+                                  <Calendar.YearPickerTriggerIndicator />
+                                </Calendar.YearPickerTrigger>
+                                <Calendar.NavButton slot="previous" />
+                                <Calendar.NavButton slot="next" />
+                              </Calendar.Header>
+                              <Calendar.Grid>
+                                <Calendar.GridHeader>
+                                  {(day) => <Calendar.HeaderCell>{day}</Calendar.HeaderCell>}
+                                </Calendar.GridHeader>
+                                <Calendar.GridBody>
+                                  {(date) => <Calendar.Cell date={date} />}
+                                </Calendar.GridBody>
+                              </Calendar.Grid>
+                              <Calendar.YearPickerGrid>
+                                <Calendar.YearPickerGridBody>
+                                  {({ year }) => <Calendar.YearPickerCell year={year} />}
+                                </Calendar.YearPickerGridBody>
+                              </Calendar.YearPickerGrid>
+                            </Calendar>
+                          </DatePicker.Popover>
+                          <FieldError />
+                        </DatePicker>
+
+                        <Select
+                          fullWidth
+                          value={leadForm.followupType}
+                          onChange={(val) =>
+                            setLeadForm((prev) => ({
+                              ...prev,
+                              followupType: (val as FollowupType) || "call",
+                            }))
+                          }
+                          aria-label="Action Type"
+                        >
+                          <Label>Action Type</Label>
+                          <Select.Trigger>
+                            <Select.Value />
+                            <Select.Indicator />
+                          </Select.Trigger>
+                          <Select.Popover>
+                            <ListBox>
+                              {[
+                                { id: "call", label: "Phone Call" },
+                                { id: "quotation", label: "Send Quotation" },
+                                { id: "meeting", label: "Customer Visit" },
+                                { id: "demo", label: "Product Demo" },
+                                { id: "email", label: "Email Catalog" },
+                              ].map((t) => (
+                                <ListBox.Item key={t.id} id={t.id} textValue={t.label}>
+                                  {t.label}
+                                  <ListBox.ItemIndicator />
+                                </ListBox.Item>
+                              ))}
+                            </ListBox>
+                          </Select.Popover>
+                        </Select>
+
+                        <Select
+                          fullWidth
+                          value={leadForm.followupPriority}
+                          onChange={(val) =>
+                            setLeadForm((prev) => ({
+                              ...prev,
+                              followupPriority: (val as FollowupPriority) || "medium",
+                            }))
+                          }
+                          aria-label="Priority"
+                        >
+                          <Label>Priority</Label>
+                          <Select.Trigger>
+                            <Select.Value />
+                            <Select.Indicator />
+                          </Select.Trigger>
+                          <Select.Popover>
+                            <ListBox>
+                              {[
+                                { id: "urgent", label: "Urgent" },
+                                { id: "high", label: "High" },
+                                { id: "medium", label: "Medium" },
+                                { id: "low", label: "Low" },
+                              ].map((p) => (
+                                <ListBox.Item key={p.id} id={p.id} textValue={p.label}>
+                                  {p.label}
+                                  <ListBox.ItemIndicator />
+                                </ListBox.Item>
+                              ))}
+                            </ListBox>
+                          </Select.Popover>
+                        </Select>
+                      </div>
+                    )}
+                  </Surface>
+                </Modal.Body>
+
+                <Modal.Footer className="px-6 py-4 border-t border-slate-100 flex-shrink-0 bg-slate-50 flex items-center justify-end gap-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="md"
+                    onPress={resetLeadModal}
+                    isDisabled={isSubmittingLead}
+                    className="border-slate-300 text-slate-700 hover:bg-slate-100 font-semibold"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    size="md"
+                    isPending={isSubmittingLead}
+                    isDisabled={isSubmittingLead}
+                    onPress={() => handleCreateLead()}
+                    className="gap-2 font-semibold bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer shadow-xs px-5"
+                  >
+                    {({ isPending }) => (
+                      <>
+                        {isPending ? (
+                          <Spinner size="sm" color="current" />
+                        ) : (
+                          <UserPlus className="w-4 h-4" />
+                        )}
+                        <span>Save Customer Lead</span>
+                      </>
+                    )}
+                  </Button>
+                </Modal.Footer>
+              </Form>
+            </Modal.Dialog>
+          </Modal.Container>
+        </Modal.Backdrop>
 
         {/* HeroUI Confirmation Dialog: Delete Invoice */}
         <AlertDialog.Backdrop
