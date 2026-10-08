@@ -44,9 +44,19 @@ export class AuthService {
 
       // Check admin or staff profile authorization
       const profile = await this.getUserProfile(data.user.id);
+
+      if (profile && profile.active === false) {
+        // Sign out deactivated user immediately
+        await supabase.auth.signOut();
+        return {
+          user: null,
+          error: 'Your account has been deactivated. Please contact your system administrator to reactivate your access.',
+        };
+      }
+
       const isAuthorizedRole =
         profile &&
-        ['admin', 'staff', 'sales', 'manager'].includes(profile.role) &&
+        ['admin', 'staff', 'sales', 'manager', 'editor'].includes(profile.role) &&
         profile.active;
 
       if (!isAuthorizedRole) {

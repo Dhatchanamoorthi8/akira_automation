@@ -5,6 +5,7 @@ import {
   EnquiryFilters,
   EnquiryWithDetails,
   StaffProfile,
+  UpdateEnquiryInput,
 } from '../types/database';
 import { activityService } from './activityService';
 import { emailService } from './emailService';
@@ -694,6 +695,106 @@ export class EnquiryService {
       return data as StaffProfile[];
     } catch {
       return [];
+    }
+  }
+
+  /**
+   * Update enquiry contact details, requirement, or notes.
+   */
+  async updateEnquiry(
+    id: string,
+    input: UpdateEnquiryInput
+  ): Promise<{ success: boolean; enquiry: Enquiry | null; error: string | null }> {
+    if (!isSupabaseConfigured()) {
+      return { success: false, enquiry: null, error: 'Database configuration is unavailable.' };
+    }
+
+    try {
+      const payload: Record<string, unknown> = {
+        updated_at: new Date().toISOString(),
+      };
+
+      if (input.name !== undefined) payload.name = input.name.trim();
+      if (input.company !== undefined) payload.company = input.company?.trim() || null;
+      if (input.email !== undefined) payload.email = input.email.trim().toLowerCase();
+      if (input.phone !== undefined) payload.phone = input.phone?.trim() || null;
+      if (input.subject !== undefined) payload.subject = input.subject?.trim() || null;
+      if (input.message !== undefined) payload.message = input.message.trim();
+      if (input.industry !== undefined) payload.industry = input.industry || null;
+      if (input.product_category !== undefined) payload.product_category = input.product_category || null;
+      if (input.specific_product !== undefined) payload.specific_product = input.specific_product || null;
+      if (input.requirement !== undefined) payload.requirement = input.requirement || null;
+      if (input.source !== undefined) payload.source = input.source;
+
+      const { data, error } = await supabase
+        .from('enquiries')
+        .update(payload)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        return { success: false, enquiry: null, error: error.message };
+      }
+
+      await activityService.recordActivity({
+        entityType: 'enquiry',
+        entityId: id,
+        action: 'ENQUIRY_UPDATED',
+        newValue: payload,
+        description: `Enquiry details updated for ${data.name}${data.company ? ` (${data.company})` : ''}`,
+      });
+
+      return { success: true, enquiry: data as Enquiry, error: null };
+    } catch (err: unknown) {
+      return {
+        success: false,
+        enquiry: null,
+        error: err instanceof Error ? err.message : 'Failed to update enquiry.',
+      };
+    }
+  }
+
+  /**
+   * Delete an enquiry and associated CRM records (admin-restricted).
+   */
+  async deleteEnquiry(id: string): Promise<{ success: boolean; error: string | null }> {
+    if (!isSupabaseConfigured()) {
+      return { success: false, error: 'Database configuration is unavailable.' };
+    }
+
+    try {
+      // 1. Fetch enquiry name/company for audit log before deletion
+      const { data: enq } = await supabase
+        .from('enquiries')
+        .select('name, company')
+        .eq('id', id)
+        .maybeSingle();
+
+      // 2. Delete the record
+      const { error } = await supabase
+        .from('enquiries')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      // 3. Record audit activity
+      await activityService.recordActivity({
+        entityType: 'enquiry',
+        entityId: id,
+        action: 'ENQUIRY_DELETED',
+        description: `Permanently deleted lead record "${enq?.name || id}"${enq?.company ? ` (${enq.company})` : ''}`,
+      });
+
+      return { success: true, error: null };
+    } catch (err: unknown) {
+      return {
+        success: false,
+        error: err instanceof Error ? err.message : 'Failed to delete enquiry.',
+      };
     }
   }
 }

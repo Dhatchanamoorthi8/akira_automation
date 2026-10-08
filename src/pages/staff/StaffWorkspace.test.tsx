@@ -269,4 +269,263 @@ describe('StaffWorkspace Component', () => {
     // Check In (GPS) button on scheduled visit
     expect(screen.getByRole('button', { name: /Check In/i })).toBeInTheDocument();
   });
+
+  it('opens Schedule Follow-up modal and clicking inputs does not dismiss modal', async () => {
+    render(
+      <MemoryRouter initialEntries={['/staff']}>
+        <StaffWorkspace />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/Sunil Metrologist/i)).toBeInTheDocument();
+    });
+
+    const followUpBtn = screen.getByRole('button', { name: /^Follow-up$/i });
+    fireEvent.click(followUpBtn);
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /Schedule New Follow-up/i })).toBeInTheDocument();
+    });
+
+    // Click inside Task Title input
+    const titleInput = screen.getByPlaceholderText(/e\.g\. Call client regarding quotation feedback/i);
+    fireEvent.click(titleInput);
+    fireEvent.change(titleInput, { target: { value: 'Call regarding air electronic gauge specs' } });
+
+    // Verify modal remains open and input has value
+    expect(screen.getByRole('heading', { name: /Schedule New Follow-up/i })).toBeInTheDocument();
+    expect(titleInput).toHaveValue('Call regarding air electronic gauge specs');
+
+    // Click inside Internal Notes textarea
+    const notesInput = screen.getByPlaceholderText(/Specific points to discuss or client requests\.\.\./i);
+    fireEvent.click(notesInput);
+    fireEvent.change(notesInput, { target: { value: 'Client requested ±0.5µm calibration' } });
+
+    // Verify modal still remains open
+    expect(screen.getByRole('heading', { name: /Schedule New Follow-up/i })).toBeInTheDocument();
+    expect(notesInput).toHaveValue('Client requested ±0.5µm calibration');
+  });
+
+  it('opens Complete CRM Follow-up modal and clicking inputs does not dismiss modal', async () => {
+    render(
+      <MemoryRouter initialEntries={['/staff']}>
+        <StaffWorkspace />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/Ramesh Patel/i)).toBeInTheDocument();
+    });
+
+    const completeBtn = screen.getByRole('button', { name: /Complete Follow-up/i });
+    fireEvent.click(completeBtn);
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /Complete CRM Follow-up/i })).toBeInTheDocument();
+    });
+
+    // Click and type in Customer Outcome & Technical Notes textarea
+    const notesArea = screen.getByPlaceholderText(/e\.g\. Discussed air plug gauge tolerances\./i);
+    fireEvent.click(notesArea);
+    fireEvent.change(notesArea, { target: { value: 'Confirmed drawing dimensions and tolerances.' } });
+
+    // Verify modal remains open
+    expect(screen.getByRole('heading', { name: /Complete CRM Follow-up/i })).toBeInTheDocument();
+    expect(notesArea).toHaveValue('Confirmed drawing dimensions and tolerances.');
+  });
+
+  it('opens Schedule Client Site Visit modal and clicking inputs does not dismiss modal', async () => {
+    render(
+      <MemoryRouter initialEntries={['/staff']}>
+        <StaffWorkspace />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/Sunil Metrologist/i)).toBeInTheDocument();
+    });
+
+    const scheduleVisitBtn = screen.getByRole('button', { name: /Schedule Visit/i });
+    fireEvent.click(scheduleVisitBtn);
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /Schedule Client Site Visit/i })).toBeInTheDocument();
+    });
+
+    // Click and type in Visit Title input
+    const titleInput = screen.getByPlaceholderText(/e\.g\. On-site Calibration & Dimension Verification/i);
+    fireEvent.click(titleInput);
+    fireEvent.change(titleInput, { target: { value: 'On-site Inspection of Air Plug Gauges' } });
+
+    // Verify modal remains open
+    expect(screen.getByRole('heading', { name: /Schedule Client Site Visit/i })).toBeInTheDocument();
+    expect(titleInput).toHaveValue('On-site Inspection of Air Plug Gauges');
+  });
+
+  it('opens Create Invoice modal and clicking inputs does not dismiss modal', async () => {
+    render(
+      <MemoryRouter initialEntries={['/staff']}>
+        <StaffWorkspace />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/Sunil Metrologist/i)).toBeInTheDocument();
+    });
+
+    const createInvoiceBtn = screen.getByRole('button', { name: /Create Invoice/i });
+    fireEvent.click(createInvoiceBtn);
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /Create Formal Quotation \/ Tax Invoice/i })).toBeInTheDocument();
+    });
+
+    // Click and type in Search customer input
+    const searchInput = screen.getByPlaceholderText(/Type name, company, or email to search past records\.\.\./i);
+    fireEvent.click(searchInput);
+    fireEvent.change(searchInput, { target: { value: 'Tata Motors' } });
+
+    // Verify modal remains open
+    expect(screen.getByRole('heading', { name: /Create Formal Quotation \/ Tax Invoice/i })).toBeInTheDocument();
+    expect(searchInput).toHaveValue('Tata Motors');
+  });
+
+  it('validates required fields in Create Invoice Form before generation', async () => {
+    render(
+      <MemoryRouter initialEntries={['/staff']}>
+        <StaffWorkspace />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/Sunil Metrologist/i)).toBeInTheDocument();
+    });
+
+    const createInvoiceBtn = screen.getByRole('button', { name: /Create Invoice/i });
+    fireEvent.click(createInvoiceBtn);
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /Create Formal Quotation \/ Tax Invoice/i })).toBeInTheDocument();
+    });
+
+    // Check Customer Name input is rendered
+    const customerNameInput = screen.getByPlaceholderText(/e\.g\. Acme Corporation or Contact Person/i);
+    expect(customerNameInput).toBeInTheDocument();
+
+    // Check Generate Document submit button is present and linked to form
+    const submitBtn = screen.getByRole('button', { name: /Generate Document/i });
+    expect(submitBtn).toBeInTheDocument();
+    expect(submitBtn).toHaveAttribute('form', 'create-invoice-form');
+    expect(submitBtn).toHaveAttribute('type', 'submit');
+
+    // Clear customer name and try to submit
+    fireEvent.change(customerNameInput, { target: { value: '' } });
+    fireEvent.click(submitBtn);
+
+    // Modal stays open and does not submit with invalid/empty fields
+    expect(screen.getByRole('heading', { name: /Create Formal Quotation \/ Tax Invoice/i })).toBeInTheDocument();
+  });
+
+  it('switches to Invoices tab, displays View PDF and Edit buttons, and opens PDF viewer and Edit modal', async () => {
+    render(
+      <MemoryRouter initialEntries={['/staff']}>
+        <StaffWorkspace />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/Sunil Metrologist/i)).toBeInTheDocument();
+    });
+
+    // Switch to Invoices & Quotes tab
+    const invoicesTab = screen.getByRole('button', { name: /Invoices & Quotes/i });
+    fireEvent.click(invoicesTab);
+
+    await waitFor(() => {
+      expect(screen.getByText('QUO-2026-012')).toBeInTheDocument();
+    });
+
+    // Verify View PDF button is rendered and opens PDF preview
+    const viewPdfBtn = screen.getByRole('button', { name: /View PDF for QUO-2026-012/i });
+    expect(viewPdfBtn).toBeInTheDocument();
+    fireEvent.click(viewPdfBtn);
+
+    await waitFor(() => {
+      expect(screen.getAllByText(/FORMAL QUOTATION/i).length).toBeGreaterThanOrEqual(1);
+      expect(screen.getByRole('button', { name: /Close Preview/i })).toBeInTheDocument();
+    });
+
+    // Close preview
+    const closePreviewBtn = screen.getByRole('button', { name: /Close Preview/i });
+    fireEvent.click(closePreviewBtn);
+
+    // Verify Edit button is rendered and opens Edit mode
+    const editBtn = screen.getByRole('button', { name: /Edit QUO-2026-012/i });
+    expect(editBtn).toBeInTheDocument();
+    fireEvent.click(editBtn);
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /Edit Quotation \(QUO-2026-012\)/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Save Changes/i })).toBeInTheDocument();
+    });
+  });
+
+  it('opens HeroUI Delete Confirmation dialog when clicking Delete button', async () => {
+    render(
+      <MemoryRouter initialEntries={['/staff']}>
+        <StaffWorkspace />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/Sunil Metrologist/i)).toBeInTheDocument();
+    });
+
+    const invoicesTab = screen.getByRole('button', { name: /Invoices & Quotes/i });
+    fireEvent.click(invoicesTab);
+
+    await waitFor(() => {
+      expect(screen.getByText('QUO-2026-012')).toBeInTheDocument();
+    });
+
+    const deleteBtn = screen.getByRole('button', { name: /Delete invoice QUO-2026-012/i });
+    fireEvent.click(deleteBtn);
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /Delete Quotation \/ Invoice/i })).toBeInTheDocument();
+      expect(screen.getByText(/Are you sure you want to permanently delete document/i)).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Delete Permanently/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Cancel/i })).toBeInTheDocument();
+    });
+  });
+
+  it('opens HeroUI Send Confirmation dialog when clicking Send to Customer button', async () => {
+    render(
+      <MemoryRouter initialEntries={['/staff']}>
+        <StaffWorkspace />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/Sunil Metrologist/i)).toBeInTheDocument();
+    });
+
+    const invoicesTab = screen.getByRole('button', { name: /Invoices & Quotes/i });
+    fireEvent.click(invoicesTab);
+
+    await waitFor(() => {
+      expect(screen.getByText('QUO-2026-012')).toBeInTheDocument();
+    });
+
+    const sendBtn = screen.getByRole('button', { name: /Send to Customer/i });
+    fireEvent.click(sendBtn);
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /Send Document to Customer/i })).toBeInTheDocument();
+      expect(screen.getByText(/You are about to dispatch formal quotation \/ invoice/i)).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Send Document/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Cancel/i })).toBeInTheDocument();
+    });
+  });
 });

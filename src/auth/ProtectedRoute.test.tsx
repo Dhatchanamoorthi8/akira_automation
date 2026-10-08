@@ -164,4 +164,68 @@ describe('ProtectedRoute Component', () => {
     expect(screen.queryByText('Admin Only Product Catalog Editor')).not.toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Go to Staff Workspace/i })).toBeInTheDocument();
   });
+
+  it('does not unmount or show PageLoader when profile is refreshing in the background with an existing profile', () => {
+    vi.spyOn(useAuthModule, 'useAuth').mockReturnValue({
+      user: { id: 'admin-1', email: 'admin@akira.com' } as any,
+      session: {} as any,
+      profile: { id: 'admin-1', role: 'admin', active: true } as any,
+      isAdmin: true,
+      isStaff: false,
+      role: 'admin',
+      isAuthenticated: true,
+      isLoading: false,
+      isProfileLoading: true, // background token / profile revalidation
+      loading: false,
+      isConfigured: true,
+      sessionExpired: false,
+      signIn: vi.fn(),
+      signOut: vi.fn(),
+      refreshProfile: vi.fn(),
+      clearSessionExpired: vi.fn(),
+    });
+
+    render(
+      <MemoryRouter>
+        <ProtectedRoute>
+          <div data-testid="persistent-content">Uninterrupted Admin Workspace</div>
+        </ProtectedRoute>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByTestId('persistent-content')).toBeInTheDocument();
+    expect(screen.queryByText(/Loading Metrology Data/i)).not.toBeInTheDocument();
+  });
+
+  it('shows PageLoader when isProfileLoading is true and profile is not yet loaded', () => {
+    vi.spyOn(useAuthModule, 'useAuth').mockReturnValue({
+      user: { id: 'admin-1', email: 'admin@akira.com' } as any,
+      session: {} as any,
+      profile: null,
+      isAdmin: false,
+      isStaff: false,
+      role: null,
+      isAuthenticated: true,
+      isLoading: false,
+      isProfileLoading: true,
+      loading: false,
+      isConfigured: true,
+      sessionExpired: false,
+      signIn: vi.fn(),
+      signOut: vi.fn(),
+      refreshProfile: vi.fn(),
+      clearSessionExpired: vi.fn(),
+    });
+
+    render(
+      <MemoryRouter>
+        <ProtectedRoute>
+          <div data-testid="persistent-content">Should Not Render Yet</div>
+        </ProtectedRoute>
+      </MemoryRouter>
+    );
+
+    expect(screen.queryByTestId('persistent-content')).not.toBeInTheDocument();
+    expect(screen.getByText(/Loading Metrology Data/i)).toBeInTheDocument();
+  });
 });

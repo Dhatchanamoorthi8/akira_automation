@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
-import { Card, Button, Chip, Table, Input, Checkbox } from "@heroui/react";
+import { useSearchParams, Link } from "react-router-dom";
+import { Card, Button, Chip, Table, Input, Checkbox, Modal } from "@heroui/react";
 import {
   Search,
   RotateCw,
@@ -14,6 +14,9 @@ import {
   ArrowUp,
   ArrowDown,
   Eye,
+  Trash2,
+  ExternalLink,
+  Loader2,
 } from "lucide-react";
 import {
   EnquiryWithDetails,
@@ -385,6 +388,30 @@ export const AdminEnquiries: React.FC = () => {
     if (!res.success) {
       fetchEnquiries();
       alert(res.error || "Failed to assign staff member");
+    }
+  };
+
+  // Delete Enquiry State & Handler
+  const [enquiryToDelete, setEnquiryToDelete] = useState<EnquiryWithDetails | null>(null);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const handleDeleteEnquiry = async () => {
+    if (!enquiryToDelete) return;
+    setIsDeleting(true);
+    setDeleteError(null);
+    try {
+      const res = await enquiryService.deleteEnquiry(enquiryToDelete.id);
+      if (res.error) {
+        setDeleteError(res.error);
+      } else {
+        setEnquiryToDelete(null);
+        fetchEnquiries();
+      }
+    } catch (err: any) {
+      setDeleteError(err.message || "Failed to delete enquiry.");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -967,17 +994,38 @@ export const AdminEnquiries: React.FC = () => {
                             }
                           })}
 
-                          {/* Quick Action Eye Button */}
+                          {/* Quick Action Buttons */}
                           <Table.Cell className="py-3.5 px-4 text-right whitespace-nowrap">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onPress={() => setSelectedDossierEnquiry(enq)}
-                              className="p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50/50 transition-colors cursor-pointer"
-                              aria-label={`View dossier for ${enq.name}`}
-                            >
-                              <Eye className="w-3.5 h-3.5" />
-                            </Button>
+                            <div className="flex items-center justify-end gap-1.5">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onPress={() => setSelectedDossierEnquiry(enq)}
+                                className="p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50/50 transition-colors cursor-pointer"
+                                aria-label={`View dossier for ${enq.name}`}
+                              >
+                                <Eye className="w-3.5 h-3.5" />
+                              </Button>
+
+                              <Link
+                                to={`/admin/enquiries/${enq.id}`}
+                                className="p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50/50 transition-colors cursor-pointer inline-flex items-center justify-center shadow-2xs"
+                                aria-label={`View full dossier page for ${enq.name}`}
+                                title="Open dedicated enquiry dossier"
+                              >
+                                <ExternalLink className="w-3.5 h-3.5" />
+                              </Link>
+
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onPress={() => setEnquiryToDelete(enq)}
+                                className="p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:text-rose-600 hover:border-rose-300 hover:bg-rose-50/50 transition-colors cursor-pointer"
+                                aria-label={`Delete enquiry for ${enq.name}`}
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </Button>
+                            </div>
                           </Table.Cell>
                         </Table.Row>
                       );
@@ -1082,8 +1130,81 @@ export const AdminEnquiries: React.FC = () => {
           );
         }}
         onAssignStaff={handleAssignStaff}
+        onEnquiryUpdated={() => {
+          fetchEnquiries();
+        }}
         staffProfiles={adminProfiles}
       />
+
+      {/* Delete Confirmation Modal */}
+      {enquiryToDelete && (
+        <Modal.Backdrop
+          isOpen={!!enquiryToDelete}
+          onOpenChange={(open) => {
+            if (!open) {
+              setEnquiryToDelete(null);
+              setDeleteError(null);
+            }
+          }}
+        >
+          <Modal.Container placement="center" className="w-full max-w-md">
+            <Modal.Dialog className="p-6 bg-white rounded-2xl shadow-xl border border-slate-200">
+              <Modal.CloseTrigger />
+              <Modal.Header className="pb-3 border-b border-slate-100 flex items-center gap-2 text-rose-600">
+                <Trash2 className="w-5 h-5 shrink-0" />
+                <Modal.Heading className="text-base font-bold text-slate-900">
+                  Delete Customer Enquiry?
+                </Modal.Heading>
+              </Modal.Header>
+
+              {deleteError && (
+                <div className="mt-3 p-3 bg-rose-50 border border-rose-200 text-rose-800 text-xs rounded-xl">
+                  {deleteError}
+                </div>
+              )}
+
+              <Modal.Body className="py-4 text-xs text-slate-600 space-y-2">
+                <p>
+                  Are you sure you want to permanently delete the enquiry from{" "}
+                  <strong className="text-slate-900">{enquiryToDelete.name}</strong>
+                  {enquiryToDelete.company ? ` (${enquiryToDelete.company})` : ""}?
+                </p>
+                <p className="text-slate-500 text-[11px]">
+                  This action will permanently delete this record and cannot be undone.
+                </p>
+              </Modal.Body>
+
+              <Modal.Footer className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onPress={() => {
+                    setEnquiryToDelete(null);
+                    setDeleteError(null);
+                  }}
+                  className="text-xs font-semibold text-slate-600 hover:bg-slate-50 cursor-pointer"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  isDisabled={isDeleting}
+                  onPress={handleDeleteEnquiry}
+                  className="text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white gap-1.5 cursor-pointer"
+                >
+                  {isDeleting ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Trash2 className="w-3.5 h-3.5" />
+                  )}
+                  <span>Delete Permanently</span>
+                </Button>
+              </Modal.Footer>
+            </Modal.Dialog>
+          </Modal.Container>
+        </Modal.Backdrop>
+      )}
     </>
   );
 };

@@ -201,6 +201,60 @@ describe('AdminLogin Component', () => {
     });
   });
 
+  it('8. blocks deactivated/inactive user with clear alert and prevents redirect to homepage', async () => {
+    const mockSignOut = vi.fn();
+    vi.spyOn(useAuthModule, 'useAuth').mockReturnValue({
+      user: null,
+      session: null,
+      profile: null,
+      isAdmin: false,
+      isStaff: false,
+      role: null,
+      isAuthenticated: false,
+      isLoading: false,
+      isProfileLoading: false,
+      loading: false,
+      isConfigured: true,
+      sessionExpired: false,
+      signIn: mockSignIn,
+      signOut: mockSignOut,
+      refreshProfile: vi.fn(),
+      clearSessionExpired: mockClearSessionExpired,
+    });
+
+    mockSignIn.mockResolvedValueOnce({
+      user: null,
+      profile: null,
+      error: 'Your account has been deactivated. Please contact your system administrator to reactivate your access.',
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/admin/login?redirect=%2Fadmin%2F']}>
+        <Routes>
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/" element={<div data-testid="home-page">Home</div>} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    fireEvent.change(screen.getByLabelText(/Authorized Email/i), {
+      target: { value: 'moorthi832002@gmail.com' },
+    });
+    fireEvent.change(screen.getByLabelText(/^Password$/i), {
+      target: { value: 'Admin@123' },
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /Sign In to Admin Portal/i }));
+
+    await waitFor(() => {
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+      expect(
+        screen.getByText(/Your account has been deactivated\. Please contact your system administrator/i)
+      ).toBeInTheDocument();
+      expect(screen.queryByTestId('home-page')).not.toBeInTheDocument();
+    });
+  });
+
   it('10. displays friendly notification when session has expired', () => {
     render(
       <MemoryRouter initialEntries={['/admin/login?error=session_expired']}>

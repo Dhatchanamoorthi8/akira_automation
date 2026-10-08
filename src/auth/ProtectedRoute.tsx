@@ -17,7 +17,10 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const { user, profile, isAdmin, isStaff, isLoading, isProfileLoading, isConfigured, signOut } = useAuth();
   const location = useLocation();
 
-  if (isLoading || isProfileLoading) {
+  // Only block the entire screen with PageLoader during initial load before profile is known.
+  // If the user and profile are already loaded into state, background token refreshes or
+  // silent profile revalidations will never unmount child routes or wipe form states.
+  if (isLoading || (isProfileLoading && !profile)) {
     return <PageLoader />;
   }
 

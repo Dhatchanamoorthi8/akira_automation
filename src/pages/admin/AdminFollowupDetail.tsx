@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
   CheckCircle2,
@@ -9,6 +9,7 @@ import {
   Loader2,
   Check,
   ExternalLink,
+  Trash2,
 } from 'lucide-react';
 import { Button, Checkbox, Input, Label, Modal, TextArea, TextField, Select, ListBox } from '@heroui/react';
 import { useAuth } from '../../auth/useAuth';
@@ -58,6 +59,30 @@ export const AdminFollowupDetail: React.FC = () => {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
   const [isSubmittingCancel, setIsSubmittingCancel] = useState(false);
+
+  // Delete Follow-up State
+  const navigate = useNavigate();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isSubmittingDelete, setIsSubmittingDelete] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const handleDeleteFollowup = async () => {
+    if (!followup) return;
+    setIsSubmittingDelete(true);
+    setDeleteError(null);
+    try {
+      const res = await followupService.deleteFollowup(followup.id, followup.enquiry_id);
+      if (res.error) {
+        setDeleteError(res.error);
+      } else {
+        navigate('/admin/followups');
+      }
+    } catch (err: any) {
+      setDeleteError(err.message || 'Failed to delete follow-up.');
+    } finally {
+      setIsSubmittingDelete(false);
+    }
+  };
 
   // Edit / Reassign State
   const [isEditing, setIsEditing] = useState(false);
@@ -260,6 +285,15 @@ export const AdminFollowupDetail: React.FC = () => {
                   <span>Mark Completed</span>
                 </button>
               </>
+            )}
+            {isAdmin && (
+              <button
+                onClick={() => setShowDeleteModal(true)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-white border border-rose-200 text-rose-700 hover:bg-rose-50 transition-colors cursor-pointer"
+              >
+                <Trash2 className="w-3.5 h-3.5 text-rose-600" />
+                <span>Delete</span>
+              </button>
             )}
           </div>
         </div>
@@ -702,6 +736,73 @@ export const AdminFollowupDetail: React.FC = () => {
             </Modal.Dialog>
           </Modal.Container>
         </Modal.Backdrop>
+
+        {/* Delete Confirmation Modal */}
+        {showDeleteModal && (
+          <Modal.Backdrop
+            isOpen={showDeleteModal}
+            onOpenChange={(open) => {
+              if (!open) {
+                setShowDeleteModal(false);
+                setDeleteError(null);
+              }
+            }}
+          >
+            <Modal.Container>
+              <Modal.Dialog className="max-w-md w-full p-6 space-y-4 bg-white rounded-2xl shadow-xl border border-slate-200">
+                <div className="flex items-center gap-2 text-rose-600 border-b border-slate-100 pb-3">
+                  <Trash2 className="w-5 h-5 shrink-0" />
+                  <h3 className="text-base font-bold text-slate-900 font-heading">
+                    Delete CRM Follow-up?
+                  </h3>
+                </div>
+
+                {deleteError && (
+                  <div className="p-3 bg-rose-50 border border-rose-200 text-rose-800 text-xs rounded-xl">
+                    {deleteError}
+                  </div>
+                )}
+
+                <div className="text-xs text-slate-600 space-y-2 py-2">
+                  <p>
+                    Are you sure you want to permanently delete this follow-up record for{" "}
+                    <strong className="text-slate-900">{followup.enquiry?.name || "customer"}</strong>?
+                  </p>
+                  <p className="text-slate-400 text-[11px]">
+                    This action will remove the record from all agenda lists and timelines.
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onPress={() => setShowDeleteModal(false)}
+                    onClick={() => setShowDeleteModal(false)}
+                    className="text-xs font-semibold text-slate-600 cursor-pointer"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    isDisabled={isSubmittingDelete}
+                    onPress={handleDeleteFollowup}
+                    onClick={handleDeleteFollowup}
+                    className="gap-1.5 text-xs font-semibold bg-rose-600 text-white hover:bg-rose-700 cursor-pointer"
+                  >
+                    {isSubmittingDelete ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <Trash2 className="w-3.5 h-3.5" />
+                    )}
+                    <span>Delete Record</span>
+                  </Button>
+                </div>
+              </Modal.Dialog>
+            </Modal.Container>
+          </Modal.Backdrop>
+        )}
       </div>
     </>
   );

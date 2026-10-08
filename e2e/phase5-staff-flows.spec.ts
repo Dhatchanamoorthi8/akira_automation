@@ -150,4 +150,87 @@ test.describe('AKIRA AUTOMATION — Phase 5: Staff & Follow-up Workflows', () =>
       await expect(page).toHaveURL(/\/admin\/login/, { timeout: 10000 });
     }
   });
+
+  test('5. Staff Workspace Modal Data Entry — Inputs keep modal open on click and typing', async ({ page }) => {
+    await loginAsAdmin(page);
+
+    // Navigate to /staff
+    await page.goto('/staff');
+    await expect(page.getByText('Staff Portal')).toBeVisible({ timeout: 15000 });
+
+    // Open Schedule New Follow-up modal
+    const followUpBtn = page.getByRole('button', { name: /^Follow-up$/i });
+    await expect(followUpBtn).toBeVisible({ timeout: 10000 });
+    await followUpBtn.click();
+
+    // Verify modal is visible
+    const modalHeading = page.getByRole('heading', { name: 'Schedule New Follow-up' });
+    await expect(modalHeading).toBeVisible();
+
+    // Click into Task Title input box
+    const titleInput = page.getByPlaceholder(/e\.g\. Call client regarding quotation feedback/i);
+    await expect(titleInput).toBeVisible();
+    await titleInput.click();
+
+    // Verify modal is STILL open! (Does NOT auto-close)
+    await expect(modalHeading).toBeVisible();
+
+    // Type inside the input
+    await titleInput.fill('Verify air ring gauge calibration tolerances');
+    await expect(modalHeading).toBeVisible();
+    await expect(titleInput).toHaveValue('Verify air ring gauge calibration tolerances');
+
+    // Click into Internal Notes textarea
+    const notesInput = page.getByPlaceholder(/Specific points to discuss or client requests\.\.\./i);
+    await expect(notesInput).toBeVisible();
+    await notesInput.click();
+    await notesInput.fill('Need dual jet sensor configuration ±0.001mm');
+
+    // Verify modal is STILL open!
+    await expect(modalHeading).toBeVisible();
+    await expect(notesInput).toHaveValue('Need dual jet sensor configuration ±0.001mm');
+
+    // Close the modal cleanly via Cancel button
+    const cancelBtn = page.getByRole('button', { name: 'Cancel' });
+    await cancelBtn.click();
+    await expect(modalHeading).not.toBeVisible();
+
+    // Next: Test Schedule Site Visit modal
+    const scheduleVisitBtn = page.getByRole('button', { name: 'Schedule Visit' });
+    await expect(scheduleVisitBtn).toBeVisible();
+    await scheduleVisitBtn.click();
+
+    const visitHeading = page.getByRole('heading', { name: 'Schedule Client Site Visit' });
+    await expect(visitHeading).toBeVisible();
+
+    // Click and fill Visit Title input
+    const visitTitleInput = page.getByPlaceholder(/e\.g\. On-site Calibration & Dimension Verification/i);
+    await visitTitleInput.click();
+    await expect(visitHeading).toBeVisible();
+    await visitTitleInput.fill('On-site Metrology Audit');
+    await expect(visitHeading).toBeVisible();
+
+    // Cancel visit modal
+    await page.getByRole('button', { name: 'Cancel' }).click();
+    await expect(visitHeading).not.toBeVisible();
+
+    // Next: Test Create Invoice modal
+    const createInvoiceBtn = page.getByRole('button', { name: 'Create Invoice' });
+    await expect(createInvoiceBtn).toBeVisible();
+    await createInvoiceBtn.click();
+
+    const invoiceHeading = page.getByRole('heading', { name: 'Create Formal Quotation / Tax Invoice' });
+    await expect(invoiceHeading).toBeVisible();
+
+    // Click and fill Customer Name input
+    const customerNameInput = page.getByPlaceholder('Type name, company, or email to search past records...');
+    await customerNameInput.click();
+    await expect(invoiceHeading).toBeVisible();
+    await customerNameInput.fill('Tata Motors Testing');
+    await expect(invoiceHeading).toBeVisible();
+
+    // Cancel invoice modal
+    await page.getByRole('button', { name: 'Cancel' }).click();
+    await expect(invoiceHeading).not.toBeVisible();
+  });
 });

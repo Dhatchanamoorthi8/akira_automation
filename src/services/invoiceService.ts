@@ -4,6 +4,7 @@ import {
   InvoiceStatus,
   InvoiceFilters,
   CreateInvoiceInput,
+  UpdateInvoiceInput,
 } from '../types/database';
 import { activityService } from './activityService';
 import { emailService } from './emailService';
@@ -29,6 +30,35 @@ const DEFAULT_INVOICE_SETTINGS: InvoiceSettings = {
   companyGst: '29ABCDE1234F1Z5',
   paymentTerms: 'Payment due within 15 days of invoice date.',
 };
+
+export const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+export const PRODUCT_SLUG_TO_UUID: Record<string, string> = {
+  'air-plug-gauge': 'a0000000-0000-0000-0000-000000000001',
+  'air-calliper-gauge': 'a0000000-0000-0000-0000-000000000002',
+  'air-ring-gauge': 'a0000000-0000-0000-0000-000000000003',
+  'electronic-calliper-gauge': 'a0000000-0000-0000-0000-000000000004',
+  'air-gauge-display-unit': 'a0000000-0000-0000-0000-000000000005',
+  'air-electronics-tri-colour-display': 'a0000000-0000-0000-0000-000000000006',
+  'tri-colour-digital-display-unit': 'a0000000-0000-0000-0000-000000000007',
+  'two-channel-tri-colour-display': 'a0000000-0000-0000-0000-000000000008',
+  'three-channel-tri-colour-display': 'a0000000-0000-0000-0000-000000000009',
+  'auto-selection-air-server-display': 'a0000000-0000-0000-0000-000000000010',
+  'four-channel-tri-colour-display': 'a0000000-0000-0000-0000-000000000011',
+  'memory-module-unit': 'a0000000-0000-0000-0000-000000000012',
+  'engine-block-liner-multigauging-station': 'a0000000-0000-0000-0000-000000000013',
+  'camshaft-multigauging-station': 'a0000000-0000-0000-0000-000000000014',
+  'instruments-measuring-equipment': 'a0000000-0000-0000-0000-000000000015',
+  'special-gauges-fixtures': 'a0000000-0000-0000-0000-000000000016',
+};
+
+export function resolveProductId(rawId?: string | null): string | null {
+  if (!rawId) return null;
+  const trimmed = rawId.trim();
+  if (UUID_REGEX.test(trimmed)) return trimmed;
+  if (PRODUCT_SLUG_TO_UUID[trimmed]) return PRODUCT_SLUG_TO_UUID[trimmed];
+  return null;
+}
 
 export class InvoiceService {
   /**
@@ -121,7 +151,7 @@ export class InvoiceService {
         totalTax += lineTax;
 
         return {
-          product_id: item.productId || null,
+          product_id: resolveProductId(item.productId),
           description: item.description.trim(),
           hsn_code: item.hsnCode || null,
           quantity: qty,
@@ -183,6 +213,9 @@ export class InvoiceService {
 
       if (itemsError) {
         console.error('[InvoiceService] Failed to insert items:', itemsError);
+        // Rollback orphan invoice header to maintain data integrity
+        await supabase.from('invoices').delete().eq('id', invoiceId);
+        return { invoice: null, error: `Failed to save invoice line items: ${itemsError.message}` };
       }
 
       const completeInvoice: Invoice = {
@@ -289,7 +322,10 @@ export class InvoiceService {
       }
 
       return {
-        invoices: (data || []) as Invoice[],
+        invoices: ((data || []) as Invoice[]).map((inv) => ({
+          ...inv,
+          items: inv.items || [],
+        })),
         total: count || 0,
         error: null,
       };
@@ -325,7 +361,13 @@ export class InvoiceService {
         return { invoice: null, error: error?.message || 'Invoice not found.' };
       }
 
-      return { invoice: data as Invoice, error: null };
+      return {
+        invoice: {
+          ...(data as Invoice),
+          items: (data as any).items || [],
+        },
+        error: null,
+      };
     } catch (err: unknown) {
       return {
         invoice: null,
@@ -395,20 +437,184 @@ export class InvoiceService {
 
     try {
       // 1. Dispatch email notification via emailService
-      const emailResult = await emailService.notifyInvoiceDispatched(invoice, invoice.customer_email);
+      let emailDispatched = false;
+      try {
+        const emailResult = await emailService.notifyInvoiceDispatched(invoice, invoice.customer_email);
+        emailDispatched = emailResult.success;
+        if (!emailResult.success) {
+          console.warn('[InvoiceService] Email dispatch notice:', emailResult.error);
+        }
+      } catch (emailErr) {
+        console.warn('[InvoiceService] Email dispatch exception:', emailErr);
+      }
 
       // 2. Mark invoice as sent
       await this.updateInvoiceStatus(id, 'sent', senderProfile?.id);
 
-      if (!emailResult.success) {
-        console.warn('[InvoiceService] Email dispatch failed, but invoice status updated:', emailResult.error);
-      }
+      // 3. Record activity
+      await activityService.recordActivity({
+        entityType: 'invoice',
+        entityId: id,
+        action: 'INVOICE_STATUS_CHANGED',
+        description: `Dispatched invoice ${invoice.invoice_number} to ${invoice.customer_email}${emailDispatched ? ' (Email confirmed)' : ''}`,
+        performedBy: senderProfile?.id || null,
+      });
 
       return { success: true, error: null };
     } catch (err: unknown) {
       return {
         success: false,
         error: err instanceof Error ? err.message : 'Failed to send invoice.',
+      };
+    }
+  }
+
+  /**
+   * Update an existing draft invoice and optionally recalculate line items.
+   */
+  async updateInvoice(
+    id: string,
+    input: UpdateInvoiceInput
+  ): Promise<{ invoice: Invoice | null; error: string | null }> {
+    if (!isSupabaseConfigured()) {
+      return { invoice: null, error: 'Database configuration is unavailable.' };
+    }
+
+    try {
+      const settings = await this.getInvoiceSettings();
+      const payload: Record<string, unknown> = {
+        updated_at: new Date().toISOString(),
+      };
+
+      if (input.customerName !== undefined) payload.customer_name = input.customerName.trim();
+      if (input.customerCompany !== undefined) payload.customer_company = input.customerCompany?.trim() || null;
+      if (input.customerEmail !== undefined) payload.customer_email = input.customerEmail.trim().toLowerCase();
+      if (input.customerPhone !== undefined) payload.customer_phone = input.customerPhone?.trim() || null;
+      if (input.customerAddress !== undefined) payload.customer_address = input.customerAddress?.trim() || null;
+      if (input.customerGst !== undefined) payload.customer_gst = input.customerGst?.trim() || null;
+      if (input.type !== undefined) payload.type = input.type;
+      if (input.currency !== undefined) payload.currency = input.currency;
+      if (input.issueDate !== undefined) payload.issue_date = input.issueDate;
+      if (input.dueDate !== undefined) payload.due_date = input.dueDate;
+      if (input.notes !== undefined) payload.notes = input.notes?.trim() || null;
+      if (input.terms !== undefined) payload.terms = input.terms?.trim() || null;
+
+      // Handle item updates if provided
+      if (input.items && input.items.length > 0) {
+        let subtotal = 0;
+        let totalTax = 0;
+
+        const processedItems = input.items.map((item) => {
+          const qty = item.quantity > 0 ? item.quantity : 1;
+          const price = item.unitPrice || 0;
+          const taxRate = item.taxRate !== undefined ? item.taxRate : settings.defaultTaxRate;
+          const lineSubtotal = qty * price;
+          const lineTax = (lineSubtotal * taxRate) / 100;
+          const lineTotal = lineSubtotal + lineTax;
+
+          subtotal += lineSubtotal;
+          totalTax += lineTax;
+
+          return {
+            invoice_id: id,
+            product_id: resolveProductId(item.productId),
+            description: item.description.trim(),
+            hsn_code: item.hsnCode || null,
+            quantity: qty,
+            unit: item.unit || 'NOS',
+            unit_price: price,
+            tax_rate: taxRate,
+            tax_amount: lineTax,
+            total_price: lineTotal,
+          };
+        });
+
+        const discount = input.discountAmount !== undefined ? input.discountAmount : 0;
+        payload.subtotal = subtotal;
+        payload.tax_amount = totalTax;
+        payload.discount_amount = discount;
+        payload.total_amount = Math.max(0, subtotal + totalTax - discount);
+
+        // Delete existing items and re-insert new items atomically
+        await supabase.from('invoice_items').delete().eq('invoice_id', id);
+        const { error: itemsError } = await supabase.from('invoice_items').insert(processedItems);
+        if (itemsError) {
+          return { invoice: null, error: `Failed to update line items: ${itemsError.message}` };
+        }
+      } else if (input.discountAmount !== undefined) {
+        payload.discount_amount = input.discountAmount;
+      }
+
+      const { data: updatedInvoice, error: updateError } = await supabase
+        .from('invoices')
+        .update(payload)
+        .eq('id', id)
+        .select(`
+          *,
+          creator_profile:profiles!invoices_created_by_fkey(id, email, full_name, role),
+          items:invoice_items(*)
+        `)
+        .single();
+
+      if (updateError || !updatedInvoice) {
+        return { invoice: null, error: updateError?.message || 'Failed to update invoice.' };
+      }
+
+      await activityService.recordActivity({
+        entityType: 'invoice',
+        entityId: id,
+        action: 'INVOICE_UPDATED',
+        description: `Updated invoice ${updatedInvoice.invoice_number} (${updatedInvoice.customer_name})`,
+      });
+
+      return { invoice: updatedInvoice as Invoice, error: null };
+    } catch (err: unknown) {
+      return {
+        invoice: null,
+        error: err instanceof Error ? err.message : 'Failed to update invoice.',
+      };
+    }
+  }
+
+  /**
+   * Delete an invoice and associated line items (admin or draft creator).
+   */
+  async deleteInvoice(id: string): Promise<{ success: boolean; error: string | null }> {
+    if (!isSupabaseConfigured()) {
+      return { success: false, error: 'Database configuration is unavailable.' };
+    }
+
+    try {
+      const { data: invoice } = await supabase
+        .from('invoices')
+        .select('invoice_number, customer_name')
+        .eq('id', id)
+        .maybeSingle();
+
+      // Delete associated line items first to prevent foreign key constraint conflicts
+      await supabase.from('invoice_items').delete().eq('invoice_id', id);
+
+      const { error } = await supabase
+        .from('invoices')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      await activityService.recordActivity({
+        entityType: 'invoice',
+        entityId: id,
+        action: 'INVOICE_DELETED',
+        description: `Deleted invoice "${invoice?.invoice_number || id}" for ${invoice?.customer_name || 'Customer'}`,
+      });
+
+      return { success: true, error: null };
+    } catch (err: unknown) {
+      return {
+        success: false,
+        error: err instanceof Error ? err.message : 'Failed to delete invoice.',
       };
     }
   }

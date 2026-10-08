@@ -7,7 +7,19 @@ import { SEOHead } from '../../components/layout/SEOHead';
 import { company } from '../../config/company';
 
 export const AdminLogin: React.FC = () => {
-  const { signIn, user, isAdmin, isStaff, isConfigured, sessionExpired, clearSessionExpired } = useAuth();
+  const {
+    signIn,
+    user,
+    profile,
+    isAdmin,
+    isStaff,
+    isConfigured,
+    isLoading,
+    isProfileLoading,
+    sessionExpired,
+    clearSessionExpired,
+    signOut,
+  } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -36,7 +48,7 @@ export const AdminLogin: React.FC = () => {
   }, [searchParams, sessionExpired, clearSessionExpired]);
 
   // Helper to compute correct destination based on user role
-  const getDestinationForRole = (isAdminUser: boolean, isStaffUser: boolean): string => {
+  const getDestinationForRole = (isAdminUser: boolean, isStaffUser: boolean): string | null => {
     if (isAdminUser) {
       // Admins should only be redirected to explicit /admin/* paths, never to /staff
       return rawTargetDestination.startsWith('/admin') && rawTargetDestination !== '/admin/login'
@@ -47,15 +59,27 @@ export const AdminLogin: React.FC = () => {
       // Operational staff always go to /staff
       return '/staff';
     }
-    return '/';
+    return null;
   };
 
   // Redirect if already logged in based on role
   useEffect(() => {
+    if (isLoading || isProfileLoading) return;
     if (user) {
-      navigate(getDestinationForRole(isAdmin, isStaff), { replace: true });
+      if (profile && !profile.active) {
+        setError('Your account has been deactivated. Please contact your system administrator to reactivate your access.');
+        signOut();
+        return;
+      }
+      const destination = getDestinationForRole(isAdmin, isStaff);
+      if (destination) {
+        navigate(destination, { replace: true });
+      } else if (profile && !isAdmin && !isStaff) {
+        setError('Access denied. You do not possess authorized staff or administrator privileges.');
+        signOut();
+      }
     }
-  }, [user, isAdmin, isStaff, navigate, rawTargetDestination]);
+  }, [user, profile, isAdmin, isStaff, isLoading, isProfileLoading, navigate, rawTargetDestination, signOut]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,13 +98,26 @@ export const AdminLogin: React.FC = () => {
       setError(result.error);
     } else {
       const userProfile = result.profile;
+      if (userProfile && !userProfile.active) {
+        setError('Your account has been deactivated. Please contact your system administrator to reactivate your access.');
+        await signOut();
+        return;
+      }
+
       const isUserAdmin = Boolean(userProfile?.role === 'admin' && userProfile?.active);
       const isUserStaff = Boolean(
-        (userProfile?.role === 'staff' || userProfile?.role === 'sales' || userProfile?.role === 'manager') &&
-        userProfile?.active
+        userProfile &&
+        ['staff', 'sales', 'manager', 'editor'].includes(userProfile.role) &&
+        userProfile.active
       );
 
-      navigate(getDestinationForRole(isUserAdmin, isUserStaff), { replace: true });
+      const destination = getDestinationForRole(isUserAdmin, isUserStaff);
+      if (destination) {
+        navigate(destination, { replace: true });
+      } else {
+        setError('Access denied. You do not possess authorized staff or administrator privileges.');
+        await signOut();
+      }
     }
   };
 

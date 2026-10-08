@@ -2,6 +2,7 @@ import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import {
   FieldVisit,
   CreateVisitInput,
+  UpdateVisitInput,
   VisitFilters,
 } from '../types/database';
 import { activityService } from './activityService';
@@ -280,6 +281,144 @@ export class VisitService {
         visits: [],
         total: 0,
         error: err instanceof Error ? err.message : 'Unable to load visits.',
+      };
+    }
+  }
+
+  /**
+   * Update details of an existing field visit.
+   */
+  async updateVisit(
+    id: string,
+    input: UpdateVisitInput
+  ): Promise<{ visit: FieldVisit | null; error: string | null }> {
+    if (!isSupabaseConfigured()) {
+      return { visit: null, error: 'Database configuration is unavailable.' };
+    }
+
+    try {
+      const payload: Record<string, unknown> = {
+        updated_at: new Date().toISOString(),
+      };
+
+      if (input.title !== undefined) payload.title = input.title.trim();
+      if (input.visitPurpose !== undefined) payload.visit_purpose = input.visitPurpose;
+      if (input.scheduledAt !== undefined) payload.scheduled_at = input.scheduledAt;
+      if (input.staffId !== undefined) payload.staff_id = input.staffId;
+      if (input.customerContactPerson !== undefined) payload.customer_contact_person = input.customerContactPerson?.trim() || null;
+      if (input.outcomeNotes !== undefined) payload.outcome_notes = input.outcomeNotes?.trim() || null;
+      if (input.status !== undefined) payload.status = input.status;
+
+      const { data, error } = await supabase
+        .from('field_visits')
+        .update(payload)
+        .eq('id', id)
+        .select(`
+          *,
+          enquiry:enquiries!field_visits_enquiry_id_fkey(id, name, company, email, phone),
+          staff_profile:profiles!field_visits_staff_id_fkey(id, email, full_name, role)
+        `)
+        .single();
+
+      if (error || !data) {
+        return { visit: null, error: error?.message || 'Failed to update visit.' };
+      }
+
+      await activityService.recordActivity({
+        entityType: 'field_visit',
+        entityId: id,
+        action: 'VISIT_UPDATED',
+        description: `Updated field visit details: "${data.title}"`,
+      });
+
+      return { visit: data as FieldVisit, error: null };
+    } catch (err: unknown) {
+      return {
+        visit: null,
+        error: err instanceof Error ? err.message : 'Failed to update field visit.',
+      };
+    }
+  }
+
+  /**
+   * Cancel an existing field visit with reason.
+   */
+  async cancelVisit(
+    id: string,
+    reason?: string
+  ): Promise<{ success: boolean; error: string | null }> {
+    if (!isSupabaseConfigured()) {
+      return { success: false, error: 'Database configuration is unavailable.' };
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('field_visits')
+        .update({
+          status: 'cancelled',
+          outcome_notes: reason ? `Cancelled: ${reason.trim()}` : 'Visit cancelled',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', id)
+        .select('title, enquiry_id')
+        .single();
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      await activityService.recordActivity({
+        entityType: 'field_visit',
+        entityId: id,
+        action: 'VISIT_CANCELLED',
+        description: `Cancelled field visit "${data?.title || id}"${reason ? `: ${reason.trim()}` : ''}`,
+      });
+
+      return { success: true, error: null };
+    } catch (err: unknown) {
+      return {
+        success: false,
+        error: err instanceof Error ? err.message : 'Failed to cancel field visit.',
+      };
+    }
+  }
+
+  /**
+   * Delete an existing field visit (admin or creator/assigned staff).
+   */
+  async deleteVisit(id: string): Promise<{ success: boolean; error: string | null }> {
+    if (!isSupabaseConfigured()) {
+      return { success: false, error: 'Database configuration is unavailable.' };
+    }
+
+    try {
+      const { data: visit } = await supabase
+        .from('field_visits')
+        .select('title')
+        .eq('id', id)
+        .maybeSingle();
+
+      const { error } = await supabase
+        .from('field_visits')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      await activityService.recordActivity({
+        entityType: 'field_visit',
+        entityId: id,
+        action: 'VISIT_DELETED',
+        description: `Permanently deleted field visit "${visit?.title || id}"`,
+      });
+
+      return { success: true, error: null };
+    } catch (err: unknown) {
+      return {
+        success: false,
+        error: err instanceof Error ? err.message : 'Failed to delete visit.',
       };
     }
   }

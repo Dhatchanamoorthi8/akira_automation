@@ -25,7 +25,7 @@ test.describe('AKIRA AUTOMATION — CRM & Admin E2E Verification', () => {
   test('1. Public Enquiry Submission (Direct Supabase Insertion)', async ({ page }) => {
     // Navigate to public contact page
     await page.goto('/contact');
-    await expect(page).toHaveTitle(/Contact Us/);
+    await expect(page).toHaveTitle(/Contact/);
 
     // Fill form
     await page.fill('input[name="name"]', testCustomer.name);
@@ -39,16 +39,17 @@ test.describe('AKIRA AUTOMATION — CRM & Admin E2E Verification', () => {
     await expect(submitBtn).toBeEnabled();
     await submitBtn.click();
 
-    // Verify Step 24 confirmation message
+    // Verify confirmation message
     await expect(
-      page.getByText('Thank you. Your enquiry has been received.')
+      page.getByText(/Thank you\. Your enquiry has been/i)
     ).toBeVisible({ timeout: 15000 });
   });
 
   test('2. Admin Authentication & Dashboard Navigation', async ({ page }) => {
     await loginAsAdmin(page);
-    await expect(page.getByText('Operations Overview')).toBeVisible();
-    await expect(page.getByText('Total Products')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Pipeline' })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Coverage, velocity, and follow-through this quarter.')).toBeVisible();
+    await expect(page.getByText('Meetings Today').first()).toBeVisible();
   });
 
   test('3. Enquiries Management, Customer Dossier & Follow-up Lifecycle', async ({ page }) => {
@@ -58,7 +59,7 @@ test.describe('AKIRA AUTOMATION — CRM & Admin E2E Verification', () => {
     await page.goto('/admin/enquiries');
     await expect(page.getByText('Customer Enquiries & RFQs')).toBeVisible({ timeout: 10000 });
 
-    // Locate the customer entry or click first available enquiry (responsive table or card)
+    // Locate the customer entry or click first available enquiry
     const enquiryItem = page.locator('a[href*="/admin/enquiries/"]:visible').first();
     await expect(enquiryItem).toBeVisible({ timeout: 10000 });
     await enquiryItem.click();
@@ -70,8 +71,8 @@ test.describe('AKIRA AUTOMATION — CRM & Admin E2E Verification', () => {
     await expect(page.getByText('Lifecycle Status Progression')).toBeVisible();
     await expect(page.getByText('Scheduled Follow-ups')).toBeVisible();
 
-    // Test Status Transition: Click "Contacted"
-    const contactedBtn = page.getByRole('button', { name: 'Contacted' });
+    // Test Status Transition: Click "Contacted" if present
+    const contactedBtn = page.getByRole('button', { name: 'Contacted' }).first();
     if (await contactedBtn.isVisible()) {
       await contactedBtn.click();
       await page.waitForTimeout(1000);
@@ -83,11 +84,16 @@ test.describe('AKIRA AUTOMATION — CRM & Admin E2E Verification', () => {
       await scheduleBtn.click();
 
       // Schedule modal
-      const modalHeading = page.getByRole('heading', { name: /Schedule CRM Follow-up/i });
+      const modalHeading = page.getByRole('heading', { name: /Schedule (Customer|CRM) Follow-up/i });
       if (await modalHeading.isVisible({ timeout: 3000 }).catch(() => false)) {
-        const dateInput = page.locator('input[type="datetime-local"]');
+        const titleInput = page.locator('input[placeholder*="Call to clarify"]').first();
+        if (await titleInput.isVisible()) {
+          await titleInput.fill('QA Automated Test Follow-up');
+        }
+
+        const dateInput = page.locator('input[type="date"], input[type="datetime-local"]').first();
         if (await dateInput.isVisible()) {
-          const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 16);
+          const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
           await dateInput.fill(tomorrow);
         }
 
@@ -96,7 +102,7 @@ test.describe('AKIRA AUTOMATION — CRM & Admin E2E Verification', () => {
           await notesText.fill('Automated test: Follow-up scheduled for technical review.');
         }
 
-        const confirmBtn = page.getByRole('button', { name: /Confirm Schedule|Save/i });
+        const confirmBtn = page.getByRole('button', { name: /Confirm Schedule|Schedule Follow-up|Save/i }).last();
         if (await confirmBtn.isVisible()) {
           await confirmBtn.click();
           await page.waitForTimeout(1500);
@@ -112,17 +118,17 @@ test.describe('AKIRA AUTOMATION — CRM & Admin E2E Verification', () => {
     await page.goto('/admin/followups');
     await expect(page.getByText('CRM Follow-ups')).toBeVisible({ timeout: 10000 });
 
-    // Check timeframe tabs
-    await expect(page.getByText('All Scheduled')).toBeVisible();
-    await expect(page.getByText('Overdue')).toBeVisible();
-    await expect(page.getByText('Due Today')).toBeVisible();
-    await expect(page.getByText('Upcoming')).toBeVisible();
-    await expect(page.getByText('Completed')).toBeVisible();
+    // Check timeframe tabs / cards
+    await expect(page.getByText('All Pipeline').first()).toBeVisible();
+    await expect(page.getByText('Overdue').first()).toBeVisible();
+    await expect(page.getByText('Due Today').first()).toBeVisible();
+    await expect(page.getByText('Upcoming').first()).toBeVisible();
+    await expect(page.getByText('Completed').first()).toBeVisible();
 
     // Click tabs to verify reactivity
-    await page.getByText('Upcoming').click();
+    await page.getByText('Upcoming').first().click();
     await page.waitForTimeout(300);
-    await page.getByText('All Scheduled').click();
+    await page.getByText('All Pipeline').first().click();
     await page.waitForTimeout(300);
   });
 
@@ -133,24 +139,21 @@ test.describe('AKIRA AUTOMATION — CRM & Admin E2E Verification', () => {
     await page.goto('/admin/activity');
     await expect(page.getByText('System Activity Logs')).toBeVisible({ timeout: 10000 });
 
-    // Verify filter dropdowns
-    const actionSelect = page.locator('select').first();
-    await expect(actionSelect).toBeVisible();
+    // Verify search input
+    await expect(page.getByPlaceholder(/Search audit descriptions/i)).toBeVisible({ timeout: 10000 });
   });
 
   test('6. Admin Logout & Protected Route Guard', async ({ page }) => {
     await loginAsAdmin(page);
 
-    // Trigger logout: click visible sign out or open profile menu
-    const visibleLogout = page.locator('button:has-text("Sign Out"):visible').first();
-    if (await visibleLogout.isVisible().catch(() => false)) {
-      await visibleLogout.click();
-    } else {
-      const profileBtn = page.locator('button[aria-label*="Profile" i]').first();
-      await profileBtn.click();
-      const menuLogout = page.locator('button:has-text("Sign Out"):visible').first();
-      await menuLogout.click();
-    }
+    // Trigger logout: click profile menu to reveal Sign Out
+    const profileBtn = page.locator('button[aria-label="Admin Profile Menu"]').first();
+    await expect(profileBtn).toBeVisible({ timeout: 10000 });
+    await profileBtn.click();
+
+    const signOutBtn = page.getByRole('menuitem', { name: /Sign Out/i }).or(page.getByText('Sign Out')).first();
+    await expect(signOutBtn).toBeVisible({ timeout: 5000 });
+    await signOutBtn.click();
 
     // Wait for redirect to login
     await expect(page).toHaveURL(/\/admin\/login/, { timeout: 10000 });

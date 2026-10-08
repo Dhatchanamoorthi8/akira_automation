@@ -94,7 +94,7 @@ const AppShell: React.FC = () => {
                 <Route
                   path="/staff"
                   element={
-                    <ProtectedRoute allowedRoles={['admin', 'staff', 'sales', 'manager']}>
+                    <ProtectedRoute allowedRoles={['admin', 'staff', 'sales', 'manager', 'editor']}>
                       <StaffWorkspace />
                     </ProtectedRoute>
                   }

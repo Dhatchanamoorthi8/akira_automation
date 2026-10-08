@@ -482,7 +482,7 @@ export class UserService {
         .from('profiles')
         .select('id, email, full_name, role')
         .eq('active', true)
-        .in('role', ['admin', 'manager', 'sales', 'staff'])
+        .in('role', ['admin', 'manager', 'sales', 'staff', 'editor'])
         .order('full_name', { ascending: true });
 
       if (error || !data) return [];

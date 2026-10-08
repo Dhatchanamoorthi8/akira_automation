@@ -577,6 +577,55 @@ export class FollowupService {
       priority: priority || 'medium',
     });
   }
+
+  /**
+   * Delete a scheduled follow-up (admin-restricted).
+   */
+  async deleteFollowup(
+    id: string,
+    enquiryId?: string
+  ): Promise<{ success: boolean; error: string | null }> {
+    if (!isSupabaseConfigured()) {
+      return { success: false, error: 'Database configuration is unavailable.' };
+    }
+
+    try {
+      // 1. Fetch details for activity logging
+      const { data: followup } = await supabase
+        .from('followups')
+        .select('title, enquiry_id, type')
+        .eq('id', id)
+        .maybeSingle();
+
+      // 2. Perform deletion
+      const { error } = await supabase
+        .from('followups')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      // 3. Record activity log
+      const targetEnquiryId = enquiryId || followup?.enquiry_id;
+      if (targetEnquiryId) {
+        await activityService.recordActivity({
+          entityType: 'enquiry',
+          entityId: targetEnquiryId,
+          action: 'FOLLOWUP_DELETED',
+          description: `Deleted follow-up task "${followup?.title || id}" (${followup?.type?.toUpperCase() || 'CALL'})`,
+        });
+      }
+
+      return { success: true, error: null };
+    } catch (err: unknown) {
+      return {
+        success: false,
+        error: err instanceof Error ? err.message : 'Failed to delete follow-up.',
+      };
+    }
+  }
 }
 
 export const followupService = new FollowupService();

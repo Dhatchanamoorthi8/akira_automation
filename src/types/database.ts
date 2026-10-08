@@ -157,6 +157,25 @@ export interface Enquiry {
   updated_at: string;
 }
 
+export interface UpdateEnquiryInput {
+  name?: string;
+  company?: string | null;
+  email?: string;
+  phone?: string | null;
+  subject?: string | null;
+  message?: string;
+  industry?: string | null;
+  product_category?: string | null;
+  specific_product?: string | null;
+  requirement?: string | null;
+  source?: string;
+  status?: EnquiryStatus;
+  assigned_to?: string | null;
+  deal_title?: string | null;
+  deal_value?: number | null;
+  expected_close_date?: string | null;
+}
+
 export interface StaffProfile {
   id: string;
   email: string;
@@ -322,6 +341,32 @@ export interface CreateInvoiceInput {
   }>;
 }
 
+export interface UpdateInvoiceInput {
+  customerName?: string;
+  customerCompany?: string | null;
+  customerEmail?: string;
+  customerPhone?: string | null;
+  customerAddress?: string | null;
+  customerGst?: string | null;
+  type?: InvoiceType;
+  discountAmount?: number;
+  currency?: string;
+  issueDate?: string;
+  dueDate?: string | null;
+  notes?: string | null;
+  terms?: string | null;
+  items?: Array<{
+    id?: string;
+    productId?: string | null;
+    description: string;
+    hsnCode?: string | null;
+    quantity: number;
+    unit?: string;
+    unitPrice: number;
+    taxRate?: number;
+  }>;
+}
+
 export interface InvoiceFilters {
   enquiryId?: string;
   status?: InvoiceStatus | 'all';
@@ -382,6 +427,16 @@ export interface CreateVisitInput {
   customerContactPerson?: string | null;
   notes?: string | null;
   createdBy?: string | null;
+}
+
+export interface UpdateVisitInput {
+  title?: string;
+  visitPurpose?: VisitPurpose;
+  scheduledAt?: string;
+  staffId?: string;
+  customerContactPerson?: string | null;
+  outcomeNotes?: string | null;
+  status?: VisitStatus;
 }
 
 export interface VisitFilters {

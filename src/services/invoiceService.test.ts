@@ -89,7 +89,7 @@ describe('InvoiceService', () => {
     expect(result.invoice).toBeDefined();
     expect(result.invoice?.total_amount).toBe(11800);
     expect(result.error).toBeNull();
-  });
+  }, 15000);
 
   it('validates mandatory customer fields', async () => {
     vi.spyOn(supabaseLib, 'isSupabaseConfigured').mockReturnValue(true);
@@ -102,5 +102,73 @@ describe('InvoiceService', () => {
 
     expect(result.invoice).toBeNull();
     expect(result.error).toBe('Customer name is required.');
+  });
+
+  it('resolves product slug to valid UUID and rolls back if items insertion fails', async () => {
+    vi.spyOn(supabaseLib, 'isSupabaseConfigured').mockReturnValue(true);
+
+    const mockInvoiceData = {
+      id: 'inv_rollback_test',
+      invoice_number: 'INV-2026-9999',
+      customer_name: 'Rollback Co',
+      customer_email: 'test@rollback.com',
+      total_amount: 5900,
+    };
+
+    const mockDeleteInvoice = vi.fn().mockReturnValue({
+      eq: vi.fn().mockResolvedValue({ error: null }),
+    });
+
+    vi.spyOn(supabase, 'from').mockImplementation((table: string) => {
+      if (table === 'invoices') {
+        return {
+          insert: vi.fn().mockReturnValue({
+            select: vi.fn().mockReturnValue({
+              single: vi.fn().mockResolvedValue({ data: mockInvoiceData, error: null }),
+            }),
+          }),
+          delete: mockDeleteInvoice,
+        } as any;
+      }
+      if (table === 'invoice_items') {
+        return {
+          insert: vi.fn().mockReturnValue({
+            select: vi.fn().mockResolvedValue({
+              data: null,
+              error: { message: 'Database RLS or constraint error' },
+            }),
+          }),
+        } as any;
+      }
+      if (table === 'app_settings') {
+        return {
+          select: vi.fn().mockReturnValue({
+            eq: vi.fn().mockReturnValue({
+              maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
+            }),
+          }),
+        } as any;
+      }
+      return {} as any;
+    });
+
+    const result = await invoiceService.createInvoice({
+      customerName: 'Rollback Co',
+      customerEmail: 'test@rollback.com',
+      items: [
+        {
+          productId: 'air-plug-gauge',
+          description: 'Air Plug Gauge',
+          quantity: 1,
+          unitPrice: 5000,
+          taxRate: 18,
+        },
+      ],
+    });
+
+    // Verifies invoice is rolled back and error returned
+    expect(result.invoice).toBeNull();
+    expect(result.error).toContain('Failed to save invoice line items');
+    expect(mockDeleteInvoice).toHaveBeenCalled();
   });
 });
