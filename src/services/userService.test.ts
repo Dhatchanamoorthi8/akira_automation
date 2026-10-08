@@ -4,6 +4,14 @@ import { supabase } from '../lib/supabase';
 import * as supabaseLib from '../lib/supabase';
 import { activityService } from './activityService';
 
+vi.mock('../lib/supabase', () => ({
+  isSupabaseConfigured: vi.fn(),
+  supabase: {
+    from: vi.fn(),
+    functions: { invoke: vi.fn() },
+  },
+}));
+
 describe('UserService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -142,6 +150,92 @@ describe('UserService', () => {
     const staffList = await userService.getAssignableStaff();
     expect(staffList).toHaveLength(2);
     expect(staffList[0].full_name).toBe('Arun Kumar');
+  });
+
+  it('includes field visits and attendance when checking deletion dependencies', async () => {
+    vi.spyOn(supabaseLib, 'isSupabaseConfigured').mockReturnValue(true);
+    vi.mocked(supabase.from).mockImplementation((table: string) => ({
+      select: () => ({
+        eq: () =>
+          Promise.resolve({
+            count: table === 'staff_attendance' ? 2 : 0,
+            error: null,
+          }),
+      }),
+    } as any));
+
+    const result = await userService.getUserDependencies('u-1');
+
+    expect(result.hasDependencies).toBe(true);
+    expect(result.attendanceCount).toBe(2);
+    expect(result.error).toBeNull();
+    expect(supabase.from).toHaveBeenCalledTimes(4);
+  });
+
+  it('blocks deletion when dependency checks return a database error', async () => {
+    vi.spyOn(supabaseLib, 'isSupabaseConfigured').mockReturnValue(true);
+    vi.mocked(supabase.from).mockImplementation((table: string) => ({
+      select: () => ({
+        eq: () =>
+          Promise.resolve({
+            count: 0,
+            error: table === 'field_visits' ? { message: 'Permission denied.' } : null,
+          }),
+      }),
+    } as any));
+
+    const result = await userService.getUserDependencies('u-1');
+
+    expect(result.hasDependencies).toBe(true);
+    expect(result.error).toBe('Permission denied.');
+  });
+
+  it('deletes the auth user through the server-side function', async () => {
+    vi.spyOn(supabaseLib, 'isSupabaseConfigured').mockReturnValue(true);
+    const invokeSpy = vi.mocked(supabase.functions.invoke).mockResolvedValue({
+      data: { success: true },
+      error: null,
+    } as any);
+
+    const result = await userService.deleteUser('u-1');
+
+    expect(result.success).toBe(true);
+    expect(result.error).toBeNull();
+    expect(invokeSpy).toHaveBeenCalledWith('delete-staff-user', {
+      body: { userId: 'u-1' },
+    });
+  });
+
+  it('returns the server-side deletion error without claiming success', async () => {
+    vi.spyOn(supabaseLib, 'isSupabaseConfigured').mockReturnValue(true);
+    vi.mocked(supabase.functions.invoke).mockResolvedValue({
+      data: null,
+      error: {
+        message: 'Edge Function returned a non-2xx status code',
+        context: new Response(JSON.stringify({ error: 'CRM assignments prevent deletion.' }), {
+          status: 409,
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      },
+    } as any);
+
+    const result = await userService.deleteUser('u-1');
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('CRM assignments prevent deletion.');
+  });
+
+  it('reports successful deletion even when server-side audit logging warns', async () => {
+    vi.spyOn(supabaseLib, 'isSupabaseConfigured').mockReturnValue(true);
+    vi.mocked(supabase.functions.invoke).mockResolvedValue({
+      data: { success: true, warning: 'Audit log could not be recorded.' },
+      error: null,
+    } as any);
+
+    const result = await userService.deleteUser('u-1');
+
+    expect(result.success).toBe(true);
+    expect(result.warning).toBe('Audit log could not be recorded.');
   });
 
   it('handles database unconfigured safely for all methods', async () => {

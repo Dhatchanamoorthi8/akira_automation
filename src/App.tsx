@@ -109,7 +109,7 @@ const AppShell: React.FC = () => {
                     </ProtectedRoute>
                   }
                 >
-                  <Route index element={<Navigate to="/admin/dashboard" replace />} />
+                  <Route index element={<AdminDashboard />} />
                   <Route path="dashboard" element={<AdminDashboard />} />
                   <Route path="enquiries" element={<AdminEnquiries />} />
                   <Route path="enquiries/:id" element={<AdminEnquiryDetail />} />

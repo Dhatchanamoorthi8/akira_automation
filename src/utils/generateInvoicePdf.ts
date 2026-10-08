@@ -12,25 +12,30 @@ export interface GenerateInvoicePdfOptions {
 }
 
 /**
- * Captures the exact rendered HTML invoice preview and downloads it as a pixel-perfect PDF.
- * Converts the preview DOM element directly into a high-res image, then inserts it into jsPDF.
- * This guarantees 100% visual parity with the preview (fonts, gradients, cards, colors, dots)
- * and bypasses html2canvas "lab" color parser incompatibilities in Tailwind CSS v4.
+ * Captures the invoice sheet in its print layout and downloads it as a high-resolution PDF.
+ * The capture uses a fixed sheet width so mobile preview styles do not create clipped or
+ * excessively tall PDF pages, while retaining the rendered fonts, gradients, cards, and colors.
  */
 export async function downloadInvoicePdfFromElement(
   element: HTMLElement,
   filename: string = "invoice.pdf"
 ): Promise<void> {
-  // 1. Temporarily unscale parent zoom transform & reset scroll during capture
+  // 1. Normalize sheet width, remove viewer zoom, and reset scroll during capture
   const zoomWrapper = element.parentElement as HTMLElement | null;
   const originalTransform = zoomWrapper?.style.transform;
   const originalTransition = zoomWrapper?.style.transition;
-  const scrollParent = element.closest(".overflow-y-auto") as HTMLElement | null;
+  const originalWidth = zoomWrapper?.style.width;
+  const originalMaxWidth = zoomWrapper?.style.maxWidth;
+  const originalFlex = zoomWrapper?.style.flex;
+  const scrollParent = element.closest(".overflow-auto, .overflow-y-auto") as HTMLElement | null;
   const originalScrollTop = scrollParent ? scrollParent.scrollTop : 0;
 
   if (zoomWrapper) {
     zoomWrapper.style.transform = "none";
     zoomWrapper.style.transition = "none";
+    zoomWrapper.style.width = "850px";
+    zoomWrapper.style.maxWidth = "850px";
+    zoomWrapper.style.flex = "none";
   }
   if (scrollParent) {
     scrollParent.scrollTop = 0;
@@ -119,6 +124,9 @@ export async function downloadInvoicePdfFromElement(
     if (zoomWrapper && originalTransform !== undefined) {
       zoomWrapper.style.transform = originalTransform;
       zoomWrapper.style.transition = originalTransition || "";
+      zoomWrapper.style.width = originalWidth || "";
+      zoomWrapper.style.maxWidth = originalMaxWidth || "";
+      zoomWrapper.style.flex = originalFlex || "";
     }
     if (scrollParent) {
       scrollParent.scrollTop = originalScrollTop;

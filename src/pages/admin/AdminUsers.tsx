@@ -141,7 +141,10 @@ export const AdminUsers: React.FC = () => {
   const [userDeps, setUserDeps] = useState<{
     enquiriesCount: number;
     followupsCount: number;
+    fieldVisitsCount: number;
+    attendanceCount: number;
     hasDependencies: boolean;
+    error: string | null;
   } | null>(null);
   const [isCheckingDeps, setIsCheckingDeps] = useState(false);
   const [isPerformingAction, setIsPerformingAction] = useState(false);
@@ -302,6 +305,12 @@ export const AdminUsers: React.FC = () => {
       return;
     }
 
+    if (userDeps?.error) {
+      setActionModalError(
+        "Unable to verify this user's assignments. The account was not deleted.",
+      );
+      return;
+    }
     if (userDeps?.hasDependencies) {
       setActionModalError(
         "Permanent deletion is blocked: historical CRM records reference this user.",
@@ -312,11 +321,7 @@ export const AdminUsers: React.FC = () => {
     setIsPerformingAction(true);
     setActionModalError(null);
 
-    const res = await userService.deleteUser(
-      managingUser.id,
-      managingUser.email,
-      managingUser.full_name || undefined,
-    );
+    const res = await userService.deleteUser(managingUser.id);
 
     setIsPerformingAction(false);
 
@@ -324,7 +329,7 @@ export const AdminUsers: React.FC = () => {
       setActionModalError(res.error);
     } else {
       setActionSuccess(
-        `User account ${managingUser.email} permanently removed.`,
+        `User account ${managingUser.email} permanently removed.${res.warning ? ` ${res.warning}` : ""}`,
       );
       setTimeout(() => setActionSuccess(null), 3500);
       setManagingUser(null);
@@ -586,7 +591,7 @@ export const AdminUsers: React.FC = () => {
           <div className="space-y-4">
             {/* Desktop Table View */}
 
-            <Table className="w-full">
+            <Table className="hidden w-full lg:block">
               <Table.ScrollContainer>
                 <Table.Content aria-label="Staff and User Accounts Table">
                   <Table.Header>
@@ -1166,6 +1171,14 @@ export const AdminUsers: React.FC = () => {
                         Inspecting database relationships & CRM assignments...
                       </p>
                     </div>
+                  ) : userDeps?.error ? (
+                    <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-xl space-y-1 text-xs text-rose-900">
+                      <div className="font-semibold">Unable to Verify User History</div>
+                      <p className="text-[11px]">
+                        {userDeps.error} Permanent deletion is unavailable until
+                        the user's CRM and attendance records can be checked.
+                      </p>
+                    </div>
                   ) : userDeps?.hasDependencies ? (
                     /* Has historical assignments: Enforce deactivation to preserve foreign keys */
                     <div className="p-3.5 bg-amber-50 border border-amber-200 rounded-xl space-y-2 text-xs text-amber-900">
@@ -1178,7 +1191,10 @@ export const AdminUsers: React.FC = () => {
                         <strong>{userDeps.enquiriesCount}</strong> enquiry
                         assignments and{" "}
                         <strong>{userDeps.followupsCount}</strong> scheduled
-                        follow-up records.
+                        follow-ups,{" "}
+                        <strong>{userDeps.fieldVisitsCount}</strong> field visits
+                        and <strong>{userDeps.attendanceCount}</strong> attendance
+                        records.
                       </p>
                       <p className="text-[11px] leading-relaxed text-amber-800/90">
                         <strong>Recommended Approach:</strong> Deactivate the
@@ -1194,9 +1210,9 @@ export const AdminUsers: React.FC = () => {
                         <span>No CRM Assignments Found</span>
                       </div>
                       <p className="text-[11px] text-slate-500">
-                        This user has 0 assigned enquiries and 0 follow-up
-                        tasks. You can safely deactivate or permanently delete
-                        this profile.
+                        This user has no enquiry, follow-up, field visit, or
+                        attendance records. You can deactivate or permanently
+                        delete this account.
                       </p>
                     </div>
                   )}
@@ -1236,7 +1252,9 @@ export const AdminUsers: React.FC = () => {
                     </Button>
 
                     {/* Secondary Action: Permanent Delete */}
-                    {managingUser.active && !userDeps?.hasDependencies && (
+                    {!isCheckingDeps &&
+                      !userDeps?.hasDependencies &&
+                      !userDeps?.error && (
                       <>
                         {!showHardDeleteConfirm ? (
                           <Button

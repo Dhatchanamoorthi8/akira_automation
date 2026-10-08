@@ -1,5 +1,17 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Card, Table, Chip, Button, Input, Select, ListBox, Label } from '@heroui/react';
+import {
+  Card,
+  Table,
+  Chip,
+  Button,
+  Input,
+  Select,
+  ListBox,
+  DatePicker,
+  DateField,
+  Calendar as HeroCalendar,
+} from '@heroui/react';
+import { getLocalTimeZone, parseDate, today } from '@internationalized/date';
 import {
   Clock,
   MapPin,
@@ -9,13 +21,54 @@ import {
   Search,
   ExternalLink,
   Users,
-  Calendar,
   Navigation,
   ShieldCheck,
 } from 'lucide-react';
+import {
+  Circle,
+  CircleCheck,
+  CircleDashed,
+  CircleExclamation,
+  LocationArrow,
+} from '@gravity-ui/icons';
 import { attendanceService, StaffWithAttendanceStatus } from '../../services/attendanceService';
 import { StaffAttendance } from '../../types/database';
 import { SEOHead } from '../../components/layout/SEOHead';
+
+const STATUS_OPTIONS = [
+  { id: 'all', label: 'All Working Statuses', Icon: CircleDashed, iconClass: 'text-slate-500' },
+  { id: 'present', label: 'Present', Icon: CircleCheck, iconClass: 'text-emerald-600' },
+  { id: 'on_field', label: 'On Field', Icon: LocationArrow, iconClass: 'text-amber-600' },
+  { id: 'clocked_out', label: 'Clocked Out', Icon: Circle, iconClass: 'text-slate-500' },
+  { id: 'not_reported', label: 'Not Reported', Icon: CircleExclamation, iconClass: 'text-rose-600' },
+] as const;
+
+const ATTENDANCE_STATUS_CONFIG = {
+  present: {
+    label: 'Present',
+    color: 'success' as const,
+    bg: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    dot: 'bg-emerald-500',
+  },
+  on_field: {
+    label: 'On Field',
+    color: 'warning' as const,
+    bg: 'bg-amber-50 text-amber-700 border-amber-200',
+    dot: 'bg-amber-500',
+  },
+  clocked_out: {
+    label: 'Clocked Out',
+    color: 'default' as const,
+    bg: 'bg-slate-100 text-slate-700 border-slate-200',
+    dot: 'bg-slate-400',
+  },
+  not_reported: {
+    label: 'Not Reported',
+    color: 'danger' as const,
+    bg: 'bg-rose-50 text-rose-700 border-rose-200',
+    dot: 'bg-rose-500',
+  },
+};
 
 export const AdminAttendance: React.FC = () => {
   const [staffData, setStaffData] = useState<StaffWithAttendanceStatus[]>([]);
@@ -27,8 +80,10 @@ export const AdminAttendance: React.FC = () => {
   const [selectedStatus, setSelectedStatus] = useState<
     'all' | 'present' | 'on_field' | 'clocked_out' | 'not_reported'
   >('all');
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0, 10));
-  const isToday = selectedDate === new Date().toISOString().slice(0, 10);
+  const [selectedDate, setSelectedDate] = useState(() =>
+    today(getLocalTimeZone()).toString(),
+  );
+  const isToday = selectedDate === today(getLocalTimeZone()).toString();
 
   const fetchAttendanceData = useCallback(async () => {
     setIsLoading(true);
@@ -196,48 +251,50 @@ export const AdminAttendance: React.FC = () => {
         </div>
 
         {/* Filters Bar */}
-        <Card className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-2 flex-1">
+        <Card className="attendance-filters grid grid-cols-1 gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-xs sm:p-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+          <div className="grid min-w-0 grid-cols-1 items-end gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(240px,288px)]">
             {/* Search Input */}
-            <div className="relative flex-1 min-w-[200px] max-w-sm flex items-center">
-              <Search className="w-3.5 h-3.5 absolute left-3 text-slate-400 pointer-events-none z-10" />
+            <div className="relative flex min-w-0 items-center">
+              <Search className="pointer-events-none absolute left-3 top-1/2 z-10 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
               <Input
                 type="text"
                 placeholder="Search staff name, email, or role..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl border border-slate-200 bg-slate-50/60 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 font-sans"
+                variant="secondary"
+                className="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/60 py-1.5 pl-8 pr-3 font-sans text-xs focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
               />
             </div>
 
             {/* Status Filter */}
-            <div className="min-w-[170px]">
+            <div className="min-w-0">
               <Select
                 value={selectedStatus}
-                onChange={(val) => setSelectedStatus((val as any) || 'all')}
+                onChange={(val) =>
+                  setSelectedStatus(
+                    (STATUS_OPTIONS.some((option) => option.id === val)
+                      ? val
+                      : 'all') as typeof selectedStatus,
+                  )
+                }
                 className="w-full"
                 aria-label="Filter by Working Status"
               >
-                <Select.Trigger className="w-full h-8 px-2.5 py-1.5 text-xs rounded-xl border border-slate-200 bg-slate-50/60 text-slate-700 flex items-center justify-between shadow-2xs hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-colors cursor-pointer">
-                  <Select.Value className="text-xs font-medium text-slate-700 truncate" />
+                <Select.Trigger className="flex h-9 w-full cursor-pointer items-center justify-between rounded-xl border border-slate-200 bg-slate-50/60 px-2.5 py-1.5 text-xs text-slate-700 shadow-2xs transition-colors hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500/20">
+                  <Select.Value className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden text-xs font-medium text-slate-700 [&>span]:min-w-0 [&>span]:truncate" />
                   <Select.Indicator className="text-slate-400 text-xs ml-1 shrink-0" />
                 </Select.Trigger>
                 <Select.Popover className="bg-white rounded-xl shadow-xl border border-slate-200 p-1 z-50 min-w-[180px]">
                   <ListBox className="outline-none space-y-0.5">
-                    {[
-                      { id: 'all', label: 'All Working Statuses' },
-                      { id: 'present', label: '🟢 Present' },
-                      { id: 'on_field', label: '🟡 On Field' },
-                      { id: 'clocked_out', label: '⚪ Clocked Out' },
-                      { id: 'not_reported', label: '🔴 Not Reported' },
-                    ].map(st => (
+                    {STATUS_OPTIONS.map(({ id, label, Icon, iconClass }) => (
                       <ListBox.Item
-                        key={st.id}
-                        id={st.id}
-                        textValue={st.label}
-                        className="px-2.5 py-1.5 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-sky-50 data-[selected=true]:text-sky-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
+                        key={id}
+                        id={id}
+                        textValue={label}
+                        className="flex items-center gap-2.5 px-2.5 py-2 text-xs rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 data-[selected=true]:bg-sky-50 data-[selected=true]:text-sky-700 data-[selected=true]:font-semibold cursor-pointer outline-none transition-colors"
                       >
-                        {st.label}
+                        <Icon className={`h-4 w-4 shrink-0 ${iconClass}`} />
+                        <span className="flex-1">{label}</span>
                         <ListBox.ItemIndicator />
                       </ListBox.Item>
                     ))}
@@ -248,23 +305,61 @@ export const AdminAttendance: React.FC = () => {
           </div>
 
           {/* Date Selector */}
-          <div className="flex items-center gap-2 self-end md:self-auto">
-            <Label className="text-xs font-semibold text-slate-500 flex items-center gap-1">
-              <Calendar className="w-3.5 h-3.5" /> Date:
-            </Label>
-            <Input
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="px-2.5 py-1.5 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 font-mono"
-            />
+          <div className="flex min-w-0 flex-col gap-2 lg:w-auto lg:flex-row lg:items-end">
+            <DatePicker
+              className="w-full min-w-0 lg:w-72"
+              value={parseDate(selectedDate)}
+              onChange={(value) => {
+                if (value) setSelectedDate(value.toString());
+              }}
+              aria-label="Attendance date"
+            >
+              {/* <Label className="flex items-center gap-1 text-xs font-semibold text-slate-500">
+                <Calendar className="h-3.5 w-3.5" /> Date
+              </Label> */}
+              <DateField.Group fullWidth variant="secondary">
+                <DateField.Input>
+                  {(segment) => <DateField.Segment segment={segment} />}
+                </DateField.Input>
+                <DateField.Suffix>
+                  <DatePicker.Trigger>
+                    <DatePicker.TriggerIndicator />
+                  </DatePicker.Trigger>
+                </DateField.Suffix>
+              </DateField.Group>
+              <DatePicker.Popover>
+                <HeroCalendar aria-label="Choose attendance date">
+                  <HeroCalendar.Header>
+                    <HeroCalendar.YearPickerTrigger>
+                      <HeroCalendar.YearPickerTriggerHeading />
+                      <HeroCalendar.YearPickerTriggerIndicator />
+                    </HeroCalendar.YearPickerTrigger>
+                    <HeroCalendar.NavButton slot="previous" />
+                    <HeroCalendar.NavButton slot="next" />
+                  </HeroCalendar.Header>
+                  <HeroCalendar.Grid>
+                    <HeroCalendar.GridHeader>
+                      {(day) => <HeroCalendar.HeaderCell>{day}</HeroCalendar.HeaderCell>}
+                    </HeroCalendar.GridHeader>
+                    <HeroCalendar.GridBody>
+                      {(date) => <HeroCalendar.Cell date={date} />}
+                    </HeroCalendar.GridBody>
+                  </HeroCalendar.Grid>
+                  <HeroCalendar.YearPickerGrid>
+                    <HeroCalendar.YearPickerGridBody>
+                      {({ year }) => <HeroCalendar.YearPickerCell year={year} />}
+                    </HeroCalendar.YearPickerGridBody>
+                  </HeroCalendar.YearPickerGrid>
+                </HeroCalendar>
+              </DatePicker.Popover>
+            </DatePicker>
             {!isToday && (
               <Button
                 variant="ghost"
                 size="sm"
-                onPress={() => setSelectedDate(new Date().toISOString().slice(0, 10))}
-                onClick={() => setSelectedDate(new Date().toISOString().slice(0, 10))}
-                className="px-2 py-1 text-xs text-sky-600 hover:text-sky-700 font-semibold cursor-pointer h-auto min-w-0"
+                onPress={() => setSelectedDate(today(getLocalTimeZone()).toString())}
+                onClick={() => setSelectedDate(today(getLocalTimeZone()).toString())}
+                className="mb-0.5 px-2 py-1 text-xs text-sky-600 hover:text-sky-700 font-semibold cursor-pointer h-auto min-w-0"
               >
                 Today
               </Button>
@@ -273,13 +368,13 @@ export const AdminAttendance: React.FC = () => {
         </Card>
 
         {/* Staff Attendance Roster Table */}
-        
+        <div className="hidden lg:block">
           <Table className="w-full">
             <Table.ScrollContainer >
               <Table.Content aria-label="Staff Attendance Roster" >
                 <Table.Header >
                   <Table.Column isRowHeader className="py-3 px-4">Staff Member</Table.Column>
-                  <Table.Column className="py-3 px-4">Status</Table.Column>
+                  <Table.Column className="min-w-[132px] whitespace-nowrap py-3 px-4">Status</Table.Column>
                   <Table.Column className="py-3 px-4">Clock In (GPS / Location)</Table.Column>
                   <Table.Column className="py-3 px-4">Clock Out (GPS / Location)</Table.Column>
                   <Table.Column className="py-3 px-4">Duration</Table.Column>
@@ -295,37 +390,12 @@ export const AdminAttendance: React.FC = () => {
                   ) : (
                     filteredStaff.map((staff) => {
                       const att = staff.todayAttendance;
-                      const statusConfig = {
-                        present: {
-                          label: 'Present',
-                          color: 'success' as const,
-                          bg: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                          dot: 'bg-emerald-500',
-                        },
-                        on_field: {
-                          label: 'On Field',
-                          color: 'warning' as const,
-                          bg: 'bg-amber-50 text-amber-700 border-amber-200',
-                          dot: 'bg-amber-500',
-                        },
-                        clocked_out: {
-                          label: 'Clocked Out',
-                          color: 'default' as const,
-                          bg: 'bg-slate-100 text-slate-700 border-slate-200',
-                          dot: 'bg-slate-400',
-                        },
-                        not_reported: {
-                          label: 'Not Reported',
-                          color: 'danger' as const,
-                          bg: 'bg-rose-50 text-rose-700 border-rose-200',
-                          dot: 'bg-rose-500',
-                        },
-                      }[staff.attendanceStatus];
+                      const statusConfig = ATTENDANCE_STATUS_CONFIG[staff.attendanceStatus];
 
                       return (
                         <Table.Row key={staff.id} className="hover:bg-slate-50/60 transition-colors">
                           {/* Staff Details */}
-                          <Table.Cell className="py-3 px-4">
+                          <Table.Cell className="whitespace-nowrap py-3 px-4">
                             <div className="font-semibold text-slate-900">{staff.full_name || 'Staff Member'}</div>
                             <div className="text-slate-500 text-[11px] flex items-center gap-1.5">
                               <span>{staff.email}</span>
@@ -341,7 +411,7 @@ export const AdminAttendance: React.FC = () => {
                               size="sm"
                               variant="soft"
                               color={statusConfig.color}
-                              className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[11px] font-semibold ${statusConfig.bg}`}
+                              className={`inline-flex max-w-full shrink-0 items-center gap-1.5 whitespace-nowrap px-2.5 py-0.5 rounded-full border text-[11px] font-semibold ${statusConfig.bg}`}
                             >
                               <span className={`w-1.5 h-1.5 rounded-full ${statusConfig.dot}`} />
                               <span>{statusConfig.label}</span>
@@ -427,7 +497,7 @@ export const AdminAttendance: React.FC = () => {
                                   size="sm"
                                   variant="soft"
                                   color="success"
-                                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200"
+                                  className="inline-flex max-w-full shrink-0 items-center gap-1 whitespace-nowrap text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200"
                                 >
                                   <ShieldCheck className="w-3 h-3 text-emerald-600 inline mr-1" />
                                   GPS Verified
@@ -437,7 +507,7 @@ export const AdminAttendance: React.FC = () => {
                                   size="sm"
                                   variant="soft"
                                   color="default"
-                                  className="inline-flex items-center gap-1 text-[11px] text-slate-600 bg-slate-100 px-2 py-0.5 rounded border border-slate-200"
+                                  className="inline-flex max-w-full shrink-0 items-center gap-1 whitespace-nowrap text-[11px] text-slate-600 bg-slate-100 px-2 py-0.5 rounded border border-slate-200"
                                 >
                                   Web Portal
                                 </Chip>
@@ -454,7 +524,142 @@ export const AdminAttendance: React.FC = () => {
               </Table.Content>
             </Table.ScrollContainer>
           </Table>
-       
+        </div>
+
+        {/* Mobile and tablet attendance cards */}
+        <div className="grid gap-3 lg:hidden">
+          {filteredStaff.length === 0 ? (
+            <Card className="p-6 text-center text-sm text-slate-500">
+              No staff attendance records matched your filter criteria.
+            </Card>
+          ) : (
+            filteredStaff.map((staff) => {
+              const att = staff.todayAttendance;
+              const statusConfig = ATTENDANCE_STATUS_CONFIG[staff.attendanceStatus];
+
+              return (
+                <Card
+                  key={staff.id}
+                  className="min-w-0 space-y-3 rounded-xl border border-slate-200 bg-white p-4 shadow-xs"
+                >
+                  <div className="flex min-w-0 items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="truncate font-semibold text-slate-900">
+                        {staff.full_name || 'Staff Member'}
+                      </p>
+                      <p className="break-all text-xs text-slate-500">{staff.email}</p>
+                      <span className="mt-1 inline-flex rounded bg-slate-100 px-1.5 py-0.5 text-[10px] uppercase text-slate-600">
+                        {staff.role}
+                      </span>
+                    </div>
+                    <Chip
+                      size="sm"
+                      variant="soft"
+                      color={statusConfig.color}
+                      className={`inline-flex max-w-[45%] shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-2 py-0.5 text-[11px] font-semibold ${statusConfig.bg}`}
+                    >
+                      <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${statusConfig.dot}`} />
+                      <span>{statusConfig.label}</span>
+                    </Chip>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 border-t border-slate-100 pt-3 text-xs">
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Clock In</p>
+                      {att?.clock_in_at ? (
+                        <>
+                          <p className="mt-1 font-mono font-semibold text-slate-800">
+                            {new Date(att.clock_in_at).toLocaleTimeString([], {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </p>
+                          {att.clock_in_lat != null && att.clock_in_lng != null ? (
+                            <a
+                              href={`https://www.google.com/maps?q=${att.clock_in_lat},${att.clock_in_lng}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="mt-1 inline-flex max-w-full items-center gap-1 text-[10px] text-sky-600"
+                            >
+                              <MapPin className="h-3 w-3 shrink-0" />
+                              <span className="truncate">
+                                {att.clock_in_lat.toFixed(4)}, {att.clock_in_lng.toFixed(4)}
+                              </span>
+                              <ExternalLink className="h-2.5 w-2.5 shrink-0" />
+                            </a>
+                          ) : (
+                            <p className="mt-1 text-[10px] text-slate-400">Office / Web Portal</p>
+                          )}
+                        </>
+                      ) : (
+                        <p className="mt-1 text-slate-400">—</p>
+                      )}
+                    </div>
+
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Clock Out</p>
+                      {att?.clock_out_at ? (
+                        <>
+                          <p className="mt-1 font-mono font-semibold text-slate-800">
+                            {new Date(att.clock_out_at).toLocaleTimeString([], {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </p>
+                          {att.clock_out_lat != null && att.clock_out_lng != null ? (
+                            <a
+                              href={`https://www.google.com/maps?q=${att.clock_out_lat},${att.clock_out_lng}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="mt-1 inline-flex max-w-full items-center gap-1 text-[10px] text-sky-600"
+                            >
+                              <MapPin className="h-3 w-3 shrink-0" />
+                              <span className="truncate">
+                                {att.clock_out_lat.toFixed(4)}, {att.clock_out_lng.toFixed(4)}
+                              </span>
+                              <ExternalLink className="h-2.5 w-2.5 shrink-0" />
+                            </a>
+                          ) : (
+                            <p className="mt-1 text-[10px] text-slate-400">Office / Web Portal</p>
+                          )}
+                        </>
+                      ) : (
+                        <p className="mt-1 text-slate-400">
+                          {staff.attendanceStatus === 'not_reported' ? '—' : 'Active'}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Duration</p>
+                      <p className="mt-1 font-mono font-medium text-slate-700">
+                        {calculateDuration(att?.clock_in_at, att?.clock_out_at)}
+                      </p>
+                    </div>
+
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Audit Verification</p>
+                      <p className="mt-1 inline-flex max-w-full items-center gap-1 text-xs text-slate-600">
+                        {att ? (
+                          att.clock_in_lat != null && att.clock_in_lng != null ? (
+                            <>
+                              <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-emerald-600" />
+                              <span className="truncate">GPS Verified</span>
+                            </>
+                          ) : (
+                            'Web Portal'
+                          )
+                        ) : (
+                          'Unrecorded'
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                </Card>
+              );
+            })
+          )}
+        </div>
       </div>
     </>
   );

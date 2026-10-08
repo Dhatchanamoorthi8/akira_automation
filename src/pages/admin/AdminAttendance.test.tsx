@@ -82,6 +82,43 @@ describe('AdminAttendance Component', () => {
     expect(screen.getByText('Staff Attendance & Field Tracking')).toBeInTheDocument();
   });
 
+  it('uses a HeroUI date picker and switches from the table to cards on small screens', async () => {
+    vi.spyOn(attendanceService, 'getActiveStaffWithAttendance').mockResolvedValue(mockStaffAttendance);
+
+    const { container } = render(
+      <MemoryRouter>
+        <AdminAttendance />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getAllByText('Karan Sharma').length).toBeGreaterThan(0);
+    });
+
+    const desktopTable = container.querySelector('.hidden.lg\\:block');
+    const mobileCards = container.querySelector('.grid.gap-3.lg\\:hidden');
+    const filters = container.querySelector('.attendance-filters');
+    const searchInput = screen.getByPlaceholderText('Search staff name, email, or role...');
+    const statusTrigger = screen.getByRole('button', { name: /Filter by Working Status/ });
+    const selectedStatus = container.querySelector('.select__value');
+    const dateInput = container.querySelector(
+      '[role="group"][aria-label*="Attendance date"]',
+    );
+
+    expect(screen.getByRole('group', { name: /Attendance date/i })).toBeInTheDocument();
+    expect(filters).toHaveClass('grid-cols-1', 'lg:grid-cols-[minmax(0,1fr)_auto]');
+    expect(filters).toHaveTextContent('All Working Statuses');
+    expect(searchInput).toHaveClass('h-9');
+    expect(statusTrigger).toHaveClass('h-9', 'items-center');
+    expect(selectedStatus).toHaveClass('flex', 'items-center');
+    expect(dateInput).toHaveClass('date-input-group--secondary');
+    expect(desktopTable).toBeInTheDocument();
+    expect(desktopTable).toHaveClass('hidden', 'lg:block');
+    expect(mobileCards).toBeInTheDocument();
+    expect(mobileCards).toHaveClass('lg:hidden');
+    expect(mobileCards).toHaveTextContent('GPS Verified');
+  });
+
   it('renders empty message when no staff match filter criteria', async () => {
     vi.spyOn(attendanceService, 'getActiveStaffWithAttendance').mockResolvedValue([]);
 
@@ -92,7 +129,7 @@ describe('AdminAttendance Component', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('No staff attendance records matched your filter criteria.')).toBeInTheDocument();
+      expect(screen.getAllByText(/No staff attendance records matched your filter criteria/).length).toBeGreaterThan(0);
     });
   });
 });

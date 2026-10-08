@@ -193,78 +193,114 @@ export class UserService {
   async getUserDependencies(id: string): Promise<{
     enquiriesCount: number;
     followupsCount: number;
+    fieldVisitsCount: number;
+    attendanceCount: number;
     hasDependencies: boolean;
+    error: string | null;
   }> {
     if (!isSupabaseConfigured()) {
-      return { enquiriesCount: 0, followupsCount: 0, hasDependencies: false };
+      return {
+        enquiriesCount: 0,
+        followupsCount: 0,
+        fieldVisitsCount: 0,
+        attendanceCount: 0,
+        hasDependencies: true,
+        error: 'Database configuration is unavailable.',
+      };
     }
 
     try {
-      const [enqRes, folRes] = await Promise.all([
+      const [enqRes, folRes, visitRes, attendanceRes] = await Promise.all([
         supabase.from('enquiries').select('id', { count: 'exact', head: true }).eq('assigned_to', id),
         supabase.from('followups').select('id', { count: 'exact', head: true }).eq('assigned_to', id),
+        supabase.from('field_visits').select('id', { count: 'exact', head: true }).eq('staff_id', id),
+        supabase.from('staff_attendance').select('id', { count: 'exact', head: true }).eq('staff_id', id),
       ]);
 
-      const enquiriesCount = enqRes.count || 0;
-      const followupsCount = folRes.count || 0;
+      const queryError = enqRes.error || folRes.error || visitRes.error || attendanceRes.error;
+      if (queryError) {
+        return {
+          enquiriesCount: 0,
+          followupsCount: 0,
+          fieldVisitsCount: 0,
+          attendanceCount: 0,
+          hasDependencies: true,
+          error: queryError.message,
+        };
+      }
+
+      const enquiriesCount = enqRes.count ?? 0;
+      const followupsCount = folRes.count ?? 0;
+      const fieldVisitsCount = visitRes.count ?? 0;
+      const attendanceCount = attendanceRes.count ?? 0;
 
       return {
         enquiriesCount,
         followupsCount,
-        hasDependencies: enquiriesCount > 0 || followupsCount > 0,
+        fieldVisitsCount,
+        attendanceCount,
+        hasDependencies:
+          enquiriesCount > 0 ||
+          followupsCount > 0 ||
+          fieldVisitsCount > 0 ||
+          attendanceCount > 0,
+        error: null,
       };
-    } catch {
-      return { enquiriesCount: 0, followupsCount: 0, hasDependencies: false };
+    } catch (err: unknown) {
+      return {
+        enquiriesCount: 0,
+        followupsCount: 0,
+        fieldVisitsCount: 0,
+        attendanceCount: 0,
+        hasDependencies: true,
+        error: err instanceof Error ? err.message : 'Unable to verify user assignments.',
+      };
     }
   }
 
   /**
-   * Safe user deletion: blocks hard deletion if historical CRM records exist.
-   * Prompts for deactivation instead to preserve database foreign keys and audit trail.
+   * Permanently delete a user through the authenticated server-side admin function.
    */
   async deleteUser(
-    id: string,
-    userEmail?: string,
-    userName?: string
-  ): Promise<{ success: boolean; error: string | null }> {
+    id: string
+  ): Promise<{ success: boolean; error: string | null; warning?: string }> {
     if (!isSupabaseConfigured()) {
       return { success: false, error: 'Database configuration is unavailable.' };
     }
 
     try {
-      // Step 1: Check dependencies
-      const deps = await this.getUserDependencies(id);
-      if (deps.hasDependencies) {
+      const { data, error } = await supabase.functions.invoke('delete-staff-user', {
+        body: { userId: id },
+      });
+
+      if (error) {
+        let message = error.message;
+        if (error.context instanceof Response) {
+          const responseBody: unknown = await error.context.clone().json().catch(() => null);
+          if (
+            responseBody &&
+            typeof responseBody === 'object' &&
+            'error' in responseBody &&
+            typeof responseBody.error === 'string'
+          ) {
+            message = responseBody.error;
+          }
+        }
+        return { success: false, error: message };
+      }
+
+      if (!data?.success) {
         return {
           success: false,
-          error: `Cannot delete user: account is associated with ${deps.enquiriesCount} enquiry assignments and ${deps.followupsCount} scheduled follow-ups. Please deactivate the user instead to preserve historical records.`,
+          error: data?.error || 'The server did not confirm user deletion.',
         };
       }
 
-      // Step 2: Delete profile row (will cascade to or clean profile data)
-      const { error } = await supabase
-        .from('profiles')
-        .delete()
-        .eq('id', id);
-
-      if (error) {
-        return { success: false, error: error.message };
-      }
-
-      // Step 3: Record audit log
-      await activityService.recordActivity({
-        entityType: 'profile',
-        entityId: id,
-        action: 'USER_DELETED',
-        oldValue: { email: userEmail, fullName: userName },
-        description: `Permanently deleted user: ${userName || userEmail || id}`,
-      });
-
-      return { success: true, error: null };
+      return { success: true, error: null, warning: data.warning };
     } catch (err: unknown) {
       return {
         success: false,
-        error: err instanceof Error ? err.message : 'Network error deleting user profile.',
+        error: err instanceof Error ? err.message : 'Network error deleting user account.',
       };
     }
   }

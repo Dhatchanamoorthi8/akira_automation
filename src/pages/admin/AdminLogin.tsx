@@ -50,10 +50,17 @@ export const AdminLogin: React.FC = () => {
   // Helper to compute correct destination based on user role
   const getDestinationForRole = (isAdminUser: boolean, isStaffUser: boolean): string | null => {
     if (isAdminUser) {
-      // Admins should only be redirected to explicit /admin/* paths, never to /staff
-      return rawTargetDestination.startsWith('/admin') && rawTargetDestination !== '/admin/login'
-        ? rawTargetDestination
-        : '/admin/dashboard';
+      // Admins should be directed to explicit /admin/* sub-paths; /admin, /admin/, or /admin/login default to dashboard
+      if (
+        !rawTargetDestination ||
+        rawTargetDestination === '/admin' ||
+        rawTargetDestination === '/admin/' ||
+        rawTargetDestination === '/admin/login' ||
+        !rawTargetDestination.startsWith('/admin')
+      ) {
+        return '/admin/dashboard';
+      }
+      return rawTargetDestination;
     }
     if (isStaffUser) {
       // Operational staff always go to /staff

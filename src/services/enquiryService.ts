@@ -110,7 +110,7 @@ export class EnquiryService {
         console.error('Create enquiry supabase error:', insertRes.error);
         return {
           enquiry: null,
-          error: insertRes.error.message || 'Unable to submit your enquiry. Please try again.',
+          error: 'Unable to submit your enquiry. Please try again.',
         };
       }
 

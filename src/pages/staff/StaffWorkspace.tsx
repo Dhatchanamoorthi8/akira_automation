@@ -23,6 +23,7 @@ import {
   Spinner,
   AlertDialog,
   Alert,
+  Dropdown,
 } from "@heroui/react";
 import { ComboBoxStateContext } from "react-aria-components";
 import type { DateValue } from "@internationalized/date";
@@ -38,7 +39,6 @@ import {
   ExternalLink,
   Plus,
   Check,
-  RotateCw,
   LogOut,
   Building2,
   Inbox,
@@ -56,9 +56,6 @@ import {
   XCircle,
   Search,
   Shield,
-  Eye,
-  Edit3,
-  Download,
   UserPlus,
 } from "lucide-react";
 import { InvoicePdfViewerModal } from "../../components/invoices/InvoicePdfViewerModal";
@@ -91,6 +88,14 @@ import { company } from "../../config/company";
 import { AdminEnquiryDossierDrawer } from "../../components/admin/AdminEnquiryDossierDrawer";
 import { productCategories } from "../../data/productSummaries";
 import { industries } from "../../data/industries";
+import {
+  EllipsisVertical,
+  Eye,
+  FileArrowDown,
+  PaperPlane,
+  PencilToSquare,
+  TrashBin,
+} from "@gravity-ui/icons";
 
 const PRIORITY_STYLES: Record<
   FollowupPriority,
@@ -421,12 +426,12 @@ export const StaffWorkspace: React.FC = () => {
       items:
         inv.items && inv.items.length > 0
           ? inv.items.map((it) => ({
-              productId: it.product_id || undefined,
-              description: it.description,
-              quantity: it.quantity,
-              unitPrice: it.unit_price,
-              taxRate: it.tax_rate,
-            }))
+            productId: it.product_id || undefined,
+            description: it.description,
+            quantity: it.quantity,
+            unitPrice: it.unit_price,
+            taxRate: it.tax_rate,
+          }))
           : [{ description: "", quantity: 1, unitPrice: 0, taxRate: 18 }],
     });
     setCustomerSearchQuery(inv.customer_name);
@@ -439,7 +444,7 @@ export const StaffWorkspace: React.FC = () => {
     productService
       .getProducts()
       .then(setProductCatalog)
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   // Customer search handler for invoice auto-fill
@@ -1310,11 +1315,10 @@ export const StaffWorkspace: React.FC = () => {
             <Card className="p-4 shadow-xs border border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div
-                  className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm ${
-                    todayAttendance && !todayAttendance.clock_out_at
-                      ? "bg-emerald-100 text-emerald-800"
-                      : "bg-slate-100 text-slate-700"
-                  }`}
+                  className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm ${todayAttendance && !todayAttendance.clock_out_at
+                    ? "bg-emerald-100 text-emerald-800"
+                    : "bg-slate-100 text-slate-700"
+                    }`}
                 >
                   <UserCheck className="w-5 h-5" />
                 </div>
@@ -1365,11 +1369,10 @@ export const StaffWorkspace: React.FC = () => {
                   </div>
                   <p className="text-xs text-slate-500 mt-0.5">
                     {todayAttendance
-                      ? `Clocked in at ${new Date(todayAttendance.clock_in_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}${
-                          todayAttendance.clock_out_at
-                            ? ` • Clocked out at ${new Date(todayAttendance.clock_out_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
-                            : ""
-                        }`
+                      ? `Clocked in at ${new Date(todayAttendance.clock_in_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}${todayAttendance.clock_out_at
+                        ? ` • Clocked out at ${new Date(todayAttendance.clock_out_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
+                        : ""
+                      }`
                       : "Record your daily punch to activate your availability for lead assignment."}
                   </p>
                   {attendanceMsg && (
@@ -1470,7 +1473,7 @@ export const StaffWorkspace: React.FC = () => {
             </div>
 
             <div className="flex flex-wrap items-center gap-2.5">
-              <Button
+              {/* <Button
                 variant="outline"
                 size="sm"
                 onPress={() => loadStaffData()}
@@ -1478,7 +1481,7 @@ export const StaffWorkspace: React.FC = () => {
               >
                 <RotateCw className="w-3.5 h-3.5" />
                 <span>Refresh</span>
-              </Button>
+              </Button> */}
               <Button
                 variant="outline"
                 size="sm"
@@ -1544,11 +1547,10 @@ export const StaffWorkspace: React.FC = () => {
             </Card>
 
             <Card
-              className={`p-3.5 border shadow-xs ${
-                stats.overdue > 0
-                  ? "bg-rose-50/50 border-rose-200"
-                  : "bg-white border-slate-200"
-              }`}
+              className={`p-3.5 border shadow-xs ${stats.overdue > 0
+                ? "bg-rose-50/50 border-rose-200"
+                : "bg-white border-slate-200"
+                }`}
             >
               <div className="flex items-center gap-1.5 text-rose-700 text-[11px] font-semibold uppercase tracking-wider">
                 <AlertTriangle className="w-3.5 h-3.5 text-rose-600" />
@@ -1585,11 +1587,10 @@ export const StaffWorkspace: React.FC = () => {
             <div className="flex items-center gap-6">
               <button
                 onClick={() => setActiveTab("followups")}
-                className={`pb-3 text-xs sm:text-sm font-bold border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${
-                  activeTab === "followups"
-                    ? "border-industrial-blue text-industrial-blue"
-                    : "border-transparent text-slate-500 hover:text-slate-800"
-                }`}
+                className={`pb-3 text-xs sm:text-sm font-bold border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${activeTab === "followups"
+                  ? "border-industrial-blue text-industrial-blue"
+                  : "border-transparent text-slate-500 hover:text-slate-800"
+                  }`}
               >
                 <Briefcase className="w-4 h-4" />
                 <span>Follow-ups ({followupTotal})</span>
@@ -1597,11 +1598,10 @@ export const StaffWorkspace: React.FC = () => {
 
               <button
                 onClick={() => setActiveTab("enquiries")}
-                className={`pb-3 text-xs sm:text-sm font-bold border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${
-                  activeTab === "enquiries"
-                    ? "border-industrial-blue text-industrial-blue"
-                    : "border-transparent text-slate-500 hover:text-slate-800"
-                }`}
+                className={`pb-3 text-xs sm:text-sm font-bold border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${activeTab === "enquiries"
+                  ? "border-industrial-blue text-industrial-blue"
+                  : "border-transparent text-slate-500 hover:text-slate-800"
+                  }`}
               >
                 <FileText className="w-4 h-4" />
                 <span>My Inquiries ({enquiryTotal})</span>
@@ -1609,11 +1609,10 @@ export const StaffWorkspace: React.FC = () => {
 
               <button
                 onClick={() => setActiveTab("visits")}
-                className={`pb-3 text-xs sm:text-sm font-bold border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${
-                  activeTab === "visits"
-                    ? "border-industrial-blue text-industrial-blue"
-                    : "border-transparent text-slate-500 hover:text-slate-800"
-                }`}
+                className={`pb-3 text-xs sm:text-sm font-bold border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${activeTab === "visits"
+                  ? "border-industrial-blue text-industrial-blue"
+                  : "border-transparent text-slate-500 hover:text-slate-800"
+                  }`}
               >
                 <MapPin className="w-4 h-4" />
                 <span>Field Visits ({visitTotal})</span>
@@ -1621,11 +1620,10 @@ export const StaffWorkspace: React.FC = () => {
 
               <button
                 onClick={() => setActiveTab("invoices")}
-                className={`pb-3 text-xs sm:text-sm font-bold border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${
-                  activeTab === "invoices"
-                    ? "border-industrial-blue text-industrial-blue"
-                    : "border-transparent text-slate-500 hover:text-slate-800"
-                }`}
+                className={`pb-3 text-xs sm:text-sm font-bold border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${activeTab === "invoices"
+                  ? "border-industrial-blue text-industrial-blue"
+                  : "border-transparent text-slate-500 hover:text-slate-800"
+                  }`}
               >
                 <Receipt className="w-4 h-4" />
                 <span>Invoices & Quotes ({invoiceTotal})</span>
@@ -1665,11 +1663,10 @@ export const StaffWorkspace: React.FC = () => {
                       variant={isActive ? "primary" : "outline"}
                       onPress={() => setTimeframe(tf)}
                       onClick={() => setTimeframe(tf)}
-                      className={`text-xs font-semibold whitespace-nowrap ${
-                        isActive
-                          ? "bg-industrial-dark text-white"
-                          : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
-                      }`}
+                      className={`text-xs font-semibold whitespace-nowrap ${isActive
+                        ? "bg-industrial-dark text-white"
+                        : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
+                        }`}
                     >
                       {label}
                     </Button>
@@ -1709,11 +1706,10 @@ export const StaffWorkspace: React.FC = () => {
                     return (
                       <Card
                         key={item.id}
-                        className={`p-4 border shadow-xs hover:shadow-md transition-shadow space-y-3 ${
-                          isOverdue
-                            ? "border-rose-300 ring-1 ring-rose-200"
-                            : "border-slate-200"
-                        }`}
+                        className={`p-4 border shadow-xs hover:shadow-md transition-shadow space-y-3 ${isOverdue
+                          ? "border-rose-300 ring-1 ring-rose-200"
+                          : "border-slate-200"
+                          }`}
                       >
                         <div className="flex items-start justify-between gap-3">
                           <div>
@@ -1900,19 +1896,18 @@ export const StaffWorkspace: React.FC = () => {
                           <div className="flex items-center gap-1.5 flex-wrap justify-end">
                             {enq.source && (
                               <span
-                                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide border ${
-                                  enq.source === "offline_walkin"
-                                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                    : enq.source === "phone_call"
-                                      ? "bg-sky-50 text-sky-700 border-sky-200"
-                                      : enq.source === "trade_expo"
-                                        ? "bg-purple-50 text-purple-700 border-purple-200"
-                                        : enq.source === "referral"
-                                          ? "bg-amber-50 text-amber-700 border-amber-200"
-                                          : enq.source === "existing_client"
-                                            ? "bg-indigo-50 text-indigo-700 border-indigo-200"
-                                            : "bg-slate-100 text-slate-600 border-slate-200"
-                                }`}
+                                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide border ${enq.source === "offline_walkin"
+                                  ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                  : enq.source === "phone_call"
+                                    ? "bg-sky-50 text-sky-700 border-sky-200"
+                                    : enq.source === "trade_expo"
+                                      ? "bg-purple-50 text-purple-700 border-purple-200"
+                                      : enq.source === "referral"
+                                        ? "bg-amber-50 text-amber-700 border-amber-200"
+                                        : enq.source === "existing_client"
+                                          ? "bg-indigo-50 text-indigo-700 border-indigo-200"
+                                          : "bg-slate-100 text-slate-600 border-slate-200"
+                                  }`}
                               >
                                 {enq.source === "offline_walkin"
                                   ? "Walk-in"
@@ -2425,63 +2420,105 @@ export const StaffWorkspace: React.FC = () => {
                           Issued: {inv.issue_date}
                         </span>
 
-                        <div className="flex flex-wrap items-center gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onPress={() => handleViewInvoice(inv)}
-                            className="gap-1 px-2.5 h-7 text-xs font-semibold bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
-                            aria-label={`View PDF for ${inv.invoice_number}`}
-                          >
-                            <Eye className="w-3 h-3" />
-                            <span>View PDF</span>
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onPress={() => handleDirectDownloadPdf(inv)}
-                            className="gap-1 px-2.5 h-7 text-xs font-semibold bg-sky-50 text-sky-700 border-sky-200 hover:bg-sky-100"
-                            aria-label={`Download PDF for ${inv.invoice_number}`}
-                          >
-                            <Download className="w-3 h-3" />
-                            <span>Download PDF</span>
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onPress={() => handleStartEditInvoice(inv)}
-                            className="gap-1 px-2.5 h-7 text-xs font-semibold bg-slate-50 text-slate-700 border-slate-300 hover:bg-slate-100"
-                            aria-label={`Edit ${inv.invoice_number}`}
-                          >
-                            <Edit3 className="w-3 h-3" />
-                            <span>Edit</span>
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onPress={() => handleDeleteInvoice(inv.id, inv.invoice_number)}
-                            onClick={() => handleDeleteInvoice(inv.id, inv.invoice_number)}
-                            className="gap-1 px-2.5 h-7 text-xs font-semibold text-rose-600 border-rose-200 hover:bg-rose-50"
-                            aria-label={`Delete invoice ${inv.invoice_number}`}
-                          >
-                            <Trash2 className="w-3 h-3" />
-                            <span>Delete</span>
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onPress={() => handleSendInvoice(inv.id)}
-                            onClick={() => handleSendInvoice(inv.id)}
-                            isDisabled={sendingInvoiceId === inv.id}
-                            className="gap-1 px-3 h-7 text-xs font-semibold bg-sky-50 text-sky-700 border-sky-200 hover:bg-sky-100"
-                          >
-                            {sendingInvoiceId === inv.id ? (
-                              <Loader2 className="w-3 h-3 animate-spin" />
-                            ) : (
-                              <Send className="w-3 h-3" />
-                            )}
-                            Send to Customer
-                          </Button>
+                        <div className="flex items-center gap-2">
+                          <Dropdown>
+                            <Button
+                              isIconOnly
+                              aria-label={`Invoice actions for ${inv.invoice_number}`}
+                              variant="secondary"
+                              className="h-9 w-9 rounded-lg border border-slate-200 bg-white p-0 text-slate-600 hover:bg-slate-50"
+                            >
+                              <EllipsisVertical className="h-4 w-4" />
+                            </Button>
+                            <Dropdown.Popover
+                              placement="bottom end"
+                              className="z-50 w-56 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl"
+                            >
+                              <Dropdown.Menu
+                                aria-label={`Actions for invoice ${inv.invoice_number}`}
+                                onAction={(key) => {
+                                  switch (key) {
+                                    case "view":
+                                      void handleViewInvoice(inv);
+                                      break;
+                                    case "download":
+                                      void handleDirectDownloadPdf(inv);
+                                      break;
+                                    case "edit":
+                                      handleStartEditInvoice(inv);
+                                      break;
+                                    case "delete":
+                                      void handleDeleteInvoice(inv.id, inv.invoice_number);
+                                      break;
+                                    case "send":
+                                      void handleSendInvoice(inv.id);
+                                      break;
+                                  }
+                                }}
+                                className="p-1"
+                              >
+                                <Dropdown.Item
+                                  id="view"
+                                  textValue="View PDF"
+                                  className="flex cursor-pointer items-center gap-3 rounded-lg px-2.5 py-2 text-xs text-slate-700 hover:bg-slate-50"
+                                >
+                                  <div className="flex h-8 w-8 shrink-0 items-center justify-center">
+                                    <Eye className="h-4 w-4 text-emerald-600" />
+                                  </div>
+                                  <div className="flex min-w-0 flex-col">
+                                    <Label className="font-semibold">View PDF</Label>
+                                    <Description className="text-[11px] text-slate-500">Open invoice preview</Description>
+                                  </div>
+                                </Dropdown.Item>
+                                <Dropdown.Item
+                                  id="download"
+                                  textValue="Download PDF"
+                                  className="flex cursor-pointer items-center gap-3 rounded-lg px-2.5 py-2 text-xs text-slate-700 hover:bg-slate-50"
+                                >
+                                  <div className="flex h-8 w-8 shrink-0 items-center justify-center">
+                                    <FileArrowDown className="h-4 w-4 text-sky-600" />
+                                  </div>
+                                  <Label className="font-semibold">Download PDF</Label>
+                                </Dropdown.Item>
+                                <Dropdown.Item
+                                  id="edit"
+                                  textValue="Edit"
+                                  className="flex cursor-pointer items-center gap-3 rounded-lg px-2.5 py-2 text-xs text-slate-700 hover:bg-slate-50"
+                                >
+                                  <div className="flex h-8 w-8 shrink-0 items-center justify-center">
+                                    <PencilToSquare className="h-4 w-4 text-slate-500" />
+                                  </div>
+                                  <Label className="font-semibold">Edit</Label>
+                                </Dropdown.Item>
+                                <Dropdown.Item
+                                  id="send"
+                                  textValue="Send to Customer"
+                                  isDisabled={sendingInvoiceId === inv.id}
+                                  className="flex cursor-pointer items-center gap-3 rounded-lg px-2.5 py-2 text-xs text-slate-700 hover:bg-slate-50"
+                                >
+                                  <div className="flex h-8 w-8 shrink-0 items-center justify-center">
+                                    {sendingInvoiceId === inv.id ? (
+                                      <Loader2 className="h-4 w-4 animate-spin text-sky-600" />
+                                    ) : (
+                                      <PaperPlane className="h-4 w-4 text-sky-600" />
+                                    )}
+                                  </div>
+                                  <Label className="font-semibold">Send to Customer</Label>
+                                </Dropdown.Item>
+                                <Dropdown.Item
+                                  id="delete"
+                                  textValue="Delete invoice"
+                                  variant="danger"
+                                  className="flex cursor-pointer items-center gap-3 rounded-lg px-2.5 py-2 text-xs"
+                                >
+                                  <div className="flex h-8 w-8 shrink-0 items-center justify-center">
+                                    <TrashBin className="h-4 w-4" />
+                                  </div>
+                                  <Label className="font-semibold">Delete</Label>
+                                </Dropdown.Item>
+                              </Dropdown.Menu>
+                            </Dropdown.Popover>
+                          </Dropdown>
                         </div>
                       </div>
                     </Card>
@@ -3280,7 +3317,7 @@ export const StaffWorkspace: React.FC = () => {
                             const tz = getLocalTimeZone();
                             const iso =
                               "toDate" in val &&
-                              typeof (val as any).toDate === "function"
+                                typeof (val as any).toDate === "function"
                                 ? (val as any).toDate(tz).toISOString()
                                 : new Date(val.toString()).toISOString();
                             setVisitForm((prev) => ({
@@ -3529,7 +3566,7 @@ export const StaffWorkspace: React.FC = () => {
           isDismissable={false}
           onOpenChange={setShowInvoiceModal}
           data-react-aria-top-layer="true"
-         
+
         >
           <Modal.Container placement="center" size="lg">
             <Modal.Dialog data-react-aria-top-layer="true">
@@ -3675,17 +3712,17 @@ export const StaffWorkspace: React.FC = () => {
                             customerSuggestions.length > 0
                               ? customerSuggestions
                               : enquiries.map(
-                                  (e): CustomerSearchResult => ({
-                                    id: e.id,
-                                    name: e.name,
-                                    company: e.company || null,
-                                    email: e.email,
-                                    phone: e.phone || null,
-                                    address: null,
-                                    gst: null,
-                                    source: "enquiry",
-                                  }),
-                                );
+                                (e): CustomerSearchResult => ({
+                                  id: e.id,
+                                  name: e.name,
+                                  company: e.company || null,
+                                  email: e.email,
+                                  phone: e.phone || null,
+                                  address: null,
+                                  gst: null,
+                                  source: "enquiry",
+                                }),
+                              );
                           const selected = pool.find(
                             (c, i) =>
                               (c.id ||
@@ -3706,28 +3743,28 @@ export const StaffWorkspace: React.FC = () => {
                         </Label>
                         {(invoiceForm.customerName ||
                           invoiceForm.customerEmail) && (
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onPress={() => {
-                              setInvoiceForm((prev) => ({
-                                ...prev,
-                                enquiryId: "",
-                                customerName: "",
-                                customerCompany: "",
-                                customerEmail: "",
-                                customerPhone: "",
-                                customerAddress: "",
-                                customerGst: "",
-                              }));
-                              setCustomerSearchQuery("");
-                              setCustomerSuggestions([]);
-                            }}
-                          >
-                            + New Customer (Clear)
-                          </Button>
-                        )}
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onPress={() => {
+                                setInvoiceForm((prev) => ({
+                                  ...prev,
+                                  enquiryId: "",
+                                  customerName: "",
+                                  customerCompany: "",
+                                  customerEmail: "",
+                                  customerPhone: "",
+                                  customerAddress: "",
+                                  customerGst: "",
+                                }));
+                                setCustomerSearchQuery("");
+                                setCustomerSuggestions([]);
+                              }}
+                            >
+                              + New Customer (Clear)
+                            </Button>
+                          )}
                       </div>
 
                       <ComboBox.InputGroup>
@@ -3770,17 +3807,17 @@ export const StaffWorkspace: React.FC = () => {
                           {(customerSuggestions.length > 0
                             ? customerSuggestions
                             : enquiries.slice(0, 8).map(
-                                (e): CustomerSearchResult => ({
-                                  id: e.id,
-                                  name: e.name,
-                                  company: e.company || null,
-                                  email: e.email,
-                                  phone: e.phone || null,
-                                  address: null,
-                                  gst: null,
-                                  source: "enquiry",
-                                }),
-                              )
+                              (e): CustomerSearchResult => ({
+                                id: e.id,
+                                name: e.name,
+                                company: e.company || null,
+                                email: e.email,
+                                phone: e.phone || null,
+                                address: null,
+                                gst: null,
+                                source: "enquiry",
+                              }),
+                            )
                           ).map((c, i) => {
                             const itemKey =
                               c.id ||

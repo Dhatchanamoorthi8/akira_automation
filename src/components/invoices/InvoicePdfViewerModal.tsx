@@ -235,29 +235,29 @@ export const InvoicePdfViewerModal: React.FC<InvoicePdfViewerModalProps> = ({
       }}
       isDismissable
       data-react-aria-top-layer="true"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 backdrop-blur-md p-2 sm:p-4 md:p-6"
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-slate-950/85 p-1 backdrop-blur-md sm:p-3 md:p-6"
     >
       <Modal.Container
         size="cover"
         scroll="inside"
-        className="w-[96vw] max-w-6xl h-[95vh] p-0 m-auto flex flex-col justify-center items-center"
+        className="m-auto flex h-[calc(100dvh-0.5rem)] w-[calc(100vw-0.5rem)] max-w-6xl flex-col items-center justify-center p-0 sm:h-[95vh] sm:w-[96vw]"
       >
         <Modal.Dialog
           data-react-aria-top-layer="true"
-          className="w-full h-full max-w-full flex flex-col bg-slate-900 text-white rounded-2xl shadow-2xl border border-slate-700/80 overflow-hidden !p-0 focus:outline-none"
+          className="flex h-full w-full max-w-full flex-col overflow-hidden rounded-xl border border-slate-700/80 bg-slate-900 text-white shadow-2xl !p-0 focus:outline-none sm:rounded-2xl"
         >
           {/* Top PDF Reader Toolbar */}
-          <Modal.Header className="px-5 py-3.5 bg-slate-950/95 text-white flex !flex-row items-center justify-between gap-4 border-b border-slate-800 shrink-0 shadow-sm !mb-0">
+          <Modal.Header className="flex !flex-row flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-slate-800 bg-slate-950/95 px-3 py-2.5 text-white shadow-sm !mb-0 sm:px-5 sm:py-3.5">
             {/* Left: Document Info */}
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="w-9 h-9 rounded-xl bg-sky-500/10 border border-sky-400/20 text-sky-400 flex items-center justify-center shrink-0">
+            <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-sky-400/20 bg-sky-500/10 text-sky-400 sm:h-9 sm:w-9 sm:rounded-xl">
                 <FileText className="w-4 h-4" />
               </div>
               <div className="min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <Modal.Heading className="text-sm font-bold text-white flex items-center gap-2 truncate">
+                <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
+                  <Modal.Heading className="flex min-w-0 flex-wrap items-center gap-x-1.5 text-xs font-bold leading-tight text-white sm:text-sm">
                     <span>{docTitle}</span>
-                    <span className="font-mono text-sky-300 font-semibold">
+                    <span className="font-mono font-semibold text-sky-300">
                       #{currentInvoice.invoice_number}
                     </span>
                   </Modal.Heading>
@@ -276,7 +276,7 @@ export const InvoicePdfViewerModal: React.FC<InvoicePdfViewerModalProps> = ({
                     {currentInvoice.status}
                   </Chip>
                 </div>
-                <p className="text-xs text-slate-400 truncate">
+                <p className="truncate text-[10px] text-slate-400 sm:text-xs">
                   {currentInvoice.customer_name}{" "}
                   {currentInvoice.customer_company
                     ? `(${currentInvoice.customer_company})`
@@ -327,13 +327,13 @@ export const InvoicePdfViewerModal: React.FC<InvoicePdfViewerModalProps> = ({
             </div>
 
             {/* Right: Actions */}
-            <div className="flex items-center gap-2">
+            <div className="flex w-full shrink-0 flex-wrap items-center justify-end gap-1.5 sm:gap-2 md:w-auto">
               <Button
                 size="sm"
                 variant="primary"
                 onPress={handleDownloadPdf}
                 isDisabled={isDownloading}
-                className="gap-1.5 h-8 px-3.5 text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm disabled:opacity-60"
+                className="h-8 w-8 shrink-0 gap-1.5 bg-emerald-600 p-0 text-xs font-bold text-white shadow-sm hover:bg-emerald-500 disabled:opacity-60 sm:w-auto sm:px-3.5"
                 aria-label="Download PDF document"
               >
                 {isDownloading ? (
@@ -343,7 +343,7 @@ export const InvoicePdfViewerModal: React.FC<InvoicePdfViewerModalProps> = ({
                 ) : (
                   <Download className="w-3.5 h-3.5" />
                 )}
-                <span>
+                <span className="hidden md:inline">
                   {isDownloading
                     ? "Generating PDF..."
                     : downloadSuccess
@@ -356,11 +356,11 @@ export const InvoicePdfViewerModal: React.FC<InvoicePdfViewerModalProps> = ({
                 size="sm"
                 variant="outline"
                 onPress={handlePrint}
-                className="gap-1.5 h-8 px-3 text-xs font-semibold bg-slate-900 border-slate-700 text-slate-200 hover:bg-slate-800 hover:text-white"
+                className="h-8 w-8 shrink-0 gap-1.5 border-slate-700 bg-slate-900 p-0 text-xs font-semibold text-slate-200 hover:bg-slate-800 hover:text-white md:w-auto md:px-3"
                 aria-label="Print document"
               >
                 <Printer className="w-3.5 h-3.5 text-sky-400" />
-                <span className="hidden sm:inline">Print</span>
+                <span className="hidden lg:inline">Print</span>
               </Button>
 
               {onEdit && (
@@ -371,11 +371,11 @@ export const InvoicePdfViewerModal: React.FC<InvoicePdfViewerModalProps> = ({
                     onClose();
                     onEdit(currentInvoice);
                   }}
-                  className="gap-1.5 h-8 px-3 text-xs font-semibold bg-slate-900 border-slate-700 text-slate-200 hover:bg-slate-800 hover:text-white"
+                  className="h-8 w-8 shrink-0 gap-1.5 border-slate-700 bg-slate-900 p-0 text-xs font-semibold text-slate-200 hover:bg-slate-800 hover:text-white md:w-auto md:px-3"
                   aria-label="Edit invoice"
                 >
                   <Edit3 className="w-3.5 h-3.5 text-amber-400" />
-                  <span className="hidden sm:inline">Edit</span>
+                  <span className="hidden lg:inline">Edit</span>
                 </Button>
               )}
 
@@ -385,7 +385,7 @@ export const InvoicePdfViewerModal: React.FC<InvoicePdfViewerModalProps> = ({
                   variant="outline"
                   onPress={handleSendAction}
                   isDisabled={isSendingEmail}
-                  className="gap-1.5 h-8 px-3 text-xs font-semibold bg-sky-950/60 border-sky-700/60 text-sky-300 hover:bg-sky-900"
+                  className="h-8 w-8 shrink-0 gap-1.5 border-sky-700/60 bg-sky-950/60 p-0 text-xs font-semibold text-sky-300 hover:bg-sky-900 md:w-auto md:px-3"
                   aria-label="Send invoice via email"
                 >
                   {isSendingEmail ? (
@@ -395,7 +395,7 @@ export const InvoicePdfViewerModal: React.FC<InvoicePdfViewerModalProps> = ({
                   ) : (
                     <Send className="w-3.5 h-3.5" />
                   )}
-                  <span className="hidden sm:inline">
+                  <span className="hidden lg:inline">
                     {sendSuccess ? "Sent!" : "Send"}
                   </span>
                 </Button>
@@ -406,11 +406,11 @@ export const InvoicePdfViewerModal: React.FC<InvoicePdfViewerModalProps> = ({
                   size="sm"
                   variant="outline"
                   onPress={handleDeleteAction}
-                  className="gap-1.5 h-8 px-3 text-xs font-semibold bg-rose-950/40 border-rose-800/60 text-rose-300 hover:bg-rose-900/60 hover:text-white"
+                  className="h-8 w-8 shrink-0 gap-1.5 border-rose-800/60 bg-rose-950/40 p-0 text-xs font-semibold text-rose-300 hover:bg-rose-900/60 hover:text-white md:w-auto md:px-3"
                   aria-label="Delete invoice"
                 >
                   <Trash2 className="w-3.5 h-3.5 text-rose-400" />
-                  <span className="hidden sm:inline">Delete</span>
+                  <span className="hidden lg:inline">Delete</span>
                 </Button>
               )}
 
@@ -419,7 +419,7 @@ export const InvoicePdfViewerModal: React.FC<InvoicePdfViewerModalProps> = ({
                 variant="ghost"
                 isIconOnly
                 onPress={onClose}
-                className="text-slate-400 hover:text-white hover:bg-slate-800 h-8 w-8 rounded-lg ml-1"
+                className="ml-1 h-8 w-8 shrink-0 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white"
                 aria-label="Close"
               >
                 <X className="w-4 h-4" />
@@ -428,7 +428,7 @@ export const InvoicePdfViewerModal: React.FC<InvoicePdfViewerModalProps> = ({
           </Modal.Header>
 
           {/* Modal Body: High-Fidelity Modern Invoice Canvas inspired by Invoice 12.png */}
-          <Modal.Body className="!p-4 sm:!p-8 bg-slate-900/80 overflow-y-auto flex justify-center items-start flex-1 min-h-0">
+          <Modal.Body className="!p-2 sm:!p-4 md:!p-8 flex min-h-0 flex-1 items-start justify-center overflow-auto bg-slate-900/80">
             {/* Zoom Wrapper */}
             <div
               style={{
@@ -436,17 +436,17 @@ export const InvoicePdfViewerModal: React.FC<InvoicePdfViewerModalProps> = ({
                 transformOrigin: "top center",
                 transition: "transform 0.15s ease-out",
               }}
-              className="w-full flex justify-center pb-8"
+              className="invoice-sheet-frame relative flex w-full min-w-0 max-w-[850px] justify-center pb-8 @container"
             >
               {/* Modern Card-Style Invoice Sheet — Exact Invoice 12.png Layout */}
               <div
                 id="printable-invoice-sheet"
                 ref={printAreaRef}
-                className="w-full max-w-[850px] bg-white text-slate-900 rounded-[2rem] shadow-2xl border border-slate-100 flex flex-col text-xs font-sans relative overflow-hidden"
+                className="relative flex w-full max-w-[850px] flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white font-sans text-xs text-slate-900 shadow-2xl sm:rounded-[2rem]"
                 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
               >
                 {/* === HEADER SECTION === */}
-                <div className="relative px-10 pt-10 pb-8 bg-white rounded-t-[2rem]">
+                <div className="relative rounded-t-2xl bg-white px-4 pb-6 pt-6 sm:px-8 sm:pb-8 sm:pt-10 md:px-10 sm:rounded-t-[2rem]">
                   {/* Top-right blue gradient aura — exactly like Invoice 12.png */}
                   <div
                     className="absolute top-0 right-0 w-64 h-44 pointer-events-none rounded-tr-[2rem]"
@@ -456,14 +456,14 @@ export const InvoicePdfViewerModal: React.FC<InvoicePdfViewerModalProps> = ({
                   />
 
                   {/* Row 1: "Invoice" title (left) + Logo+Brand (right) */}
-                  <div className="relative z-10 flex items-start justify-between mb-8">
+                  <div className="relative z-10 mb-6 flex flex-wrap items-start justify-between gap-4 sm:mb-8">
                     <div>
-                      <h1 className="text-5xl font-black text-slate-900 tracking-tight leading-none" style={{ letterSpacing: "-0.02em" }}>
+                      <h1 className="text-4xl font-black leading-none tracking-tight text-slate-900 sm:text-5xl" style={{ letterSpacing: "-0.02em" }}>
                         Invoice
                       </h1>
                     </div>
                     {/* Logo + Brand name */}
-                    <div className="flex items-center gap-2.5">
+                    <div className="flex max-w-full items-center gap-2.5">
                       <img
                         src={AKIRA_LOGO_BASE64 || company.logo}
                         alt={company.name}
@@ -482,9 +482,9 @@ export const InvoicePdfViewerModal: React.FC<InvoicePdfViewerModalProps> = ({
                   </div>
 
                   {/* Row 2: 3-column info grid */}
-                  <div className="relative z-10 grid grid-cols-3 gap-8 items-start">
+                  <div className="relative z-10 grid min-w-0 grid-cols-1 items-start gap-4 sm:gap-6 @xl:grid-cols-2 @3xl:grid-cols-3 @3xl:gap-8">
                     {/* Col 1 — Invoice Details */}
-                    <div>
+                    <div className="min-w-0 [overflow-wrap:anywhere]">
                       <p className="text-[11px] font-bold text-slate-900 mb-3">Invoice Details:</p>
                       <div className="space-y-1.5 text-[11.5px] text-slate-600">
                         <p>
@@ -511,7 +511,7 @@ export const InvoicePdfViewerModal: React.FC<InvoicePdfViewerModalProps> = ({
                     </div>
 
                     {/* Col 2 — Akira Company Info */}
-                    <div>
+                    <div className="min-w-0 [overflow-wrap:anywhere]">
                       <p className="text-[11px] font-bold text-slate-900 mb-3">{company.name}</p>
                       <div className="space-y-1.5 text-[11.5px] text-slate-600">
                         <p className="font-medium text-slate-700">
@@ -527,7 +527,7 @@ export const InvoicePdfViewerModal: React.FC<InvoicePdfViewerModalProps> = ({
                     </div>
 
                     {/* Col 3 — Invoice To card */}
-                    <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+                    <div className="min-w-0 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm [overflow-wrap:anywhere] sm:p-4 @xl:[&:last-child]:col-span-2 @3xl:[&:last-child]:col-span-1">
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2.5">
                         Invoice To:
                       </p>
@@ -537,7 +537,7 @@ export const InvoicePdfViewerModal: React.FC<InvoicePdfViewerModalProps> = ({
                             ? currentInvoice.customer_name.charAt(0).toUpperCase()
                             : "C"}
                         </div>
-                        <p className="text-sm font-extrabold text-slate-900 leading-tight">
+                        <p className="min-w-0 text-sm font-extrabold leading-tight text-slate-900 [overflow-wrap:anywhere]">
                           {currentInvoice.customer_name}
                         </p>
                       </div>
@@ -565,9 +565,9 @@ export const InvoicePdfViewerModal: React.FC<InvoicePdfViewerModalProps> = ({
                 </div>
 
                 {/* === LINE ITEMS SECTION === */}
-                <div className="px-10 py-6 bg-white">
+                <div className="bg-white px-4 py-5 sm:px-8 sm:py-6 md:px-10">
                   {/* Table Header */}
-                  <div className="grid grid-cols-12 px-4 pb-3 text-[11px] font-semibold text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                  <div className="hidden grid-cols-12 px-4 pb-3 text-[11px] font-semibold uppercase tracking-widest text-slate-400 border-b border-slate-100 @2xl:grid">
                     <div className="col-span-6">Description</div>
                     <div className="col-span-2 text-center">Qty</div>
                     <div className="col-span-2 text-right">Price</div>
@@ -580,10 +580,10 @@ export const InvoicePdfViewerModal: React.FC<InvoicePdfViewerModalProps> = ({
                       currentInvoice.items.map((it, idx) => (
                         <div
                           key={it.id || idx}
-                          className="grid grid-cols-12 items-center px-4 py-3.5 rounded-xl border border-slate-200 bg-white"
+                          className="grid grid-cols-3 items-center gap-x-2 gap-y-3 rounded-xl border border-slate-200 bg-white px-3 py-3.5 sm:px-4 @2xl:grid-cols-12"
                         >
-                          <div className="col-span-6 pr-4">
-                            <p className="font-bold text-slate-900 text-[13px] leading-snug">
+                          <div className="col-span-3 min-w-0 pr-1 @2xl:col-span-6 @2xl:pr-4">
+                            <p className="text-[13px] font-bold leading-snug text-slate-900 [overflow-wrap:anywhere]">
                               {it.description}
                             </p>
                             {it.hsn_code && (
@@ -592,19 +592,17 @@ export const InvoicePdfViewerModal: React.FC<InvoicePdfViewerModalProps> = ({
                               </p>
                             )}
                           </div>
-                          <div className="col-span-2 text-center font-medium text-slate-600 text-[13px]">
-                            {it.quantity}
-                            {it.unit && it.unit !== "NOS" ? (
-                              <span className="ml-1 text-[10px] text-slate-400">{it.unit}</span>
-                            ) : null}
+                          <div className="col-span-1 min-w-0 text-left text-[13px] font-medium text-slate-600 @2xl:col-span-2 @2xl:text-center">
+                            <span className="mb-1 block text-[9px] font-semibold uppercase tracking-wide text-slate-400 @2xl:hidden">Qty</span>
+                            <span>{it.quantity}{it.unit && it.unit !== "NOS" ? ` ${it.unit}` : ""}</span>
                           </div>
-                          <div className="col-span-2 text-right text-slate-500 font-mono text-[13px]">
-                            &#8377;&nbsp;
-                            {it.unit_price.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                          <div className="col-span-1 min-w-0 text-left font-mono text-[11px] text-slate-500 [overflow-wrap:anywhere] @2xl:col-span-2 @2xl:text-right @2xl:text-[13px]">
+                            <span className="mb-1 block font-sans text-[9px] font-semibold uppercase tracking-wide text-slate-400 @2xl:hidden">Price</span>
+                            <span>&#8377;&nbsp;{it.unit_price.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
                           </div>
-                          <div className="col-span-2 text-right font-bold text-slate-900 font-mono text-[13px]">
-                            &#8377;&nbsp;
-                            {it.total_price.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                          <div className="col-span-1 min-w-0 text-right font-mono text-[11px] font-bold text-slate-900 [overflow-wrap:anywhere] @2xl:col-span-2 @2xl:text-[13px]">
+                            <span className="mb-1 block font-sans text-[9px] font-semibold uppercase tracking-wide text-slate-400 @2xl:hidden">Total</span>
+                            <span>&#8377;&nbsp;{it.total_price.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
                           </div>
                         </div>
                       ))
@@ -617,7 +615,7 @@ export const InvoicePdfViewerModal: React.FC<InvoicePdfViewerModalProps> = ({
 
                   {/* === TOTALS — right-aligned === */}
                   <div className="flex justify-end mt-6">
-                    <div className="w-72 space-y-2">
+                    <div className="w-full max-w-72 space-y-2">
                       <div className="flex justify-between text-[11.5px] text-slate-500">
                         <span>Taxable Subtotal</span>
                         <span className="font-mono font-medium text-slate-700">
@@ -658,7 +656,7 @@ export const InvoicePdfViewerModal: React.FC<InvoicePdfViewerModalProps> = ({
                       {/* Grand Total */}
                       <div className="pt-3 border-t border-slate-200 text-right">
                         <p className="text-[11px] text-slate-400 font-medium mb-0.5">Total amount:</p>
-                        <p className="text-4xl font-extrabold text-sky-600 font-mono leading-none" style={{ letterSpacing: "-0.02em" }}>
+                        <p className="text-3xl font-extrabold leading-none text-sky-600 font-mono sm:text-4xl" style={{ letterSpacing: "-0.02em" }}>
                           &#8377;&nbsp;{totalAmount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
                         </p>
                         <p className="text-[10.5px] text-slate-400 italic mt-1">
@@ -683,11 +681,11 @@ export const InvoicePdfViewerModal: React.FC<InvoicePdfViewerModalProps> = ({
                 </div>
 
                 {/* === FOOTER BANNER — exactly like Invoice 12.png === */}
-                <div className="px-10 py-6 bg-slate-50 border-t border-slate-100 rounded-b-[2rem] flex items-center justify-between">
+                <div className="flex flex-col items-start justify-between gap-4 rounded-b-2xl border-t border-slate-100 bg-slate-50 px-4 py-5 sm:px-8 sm:py-6 md:px-10 @2xl:flex-row @2xl:items-center sm:rounded-b-[2rem]">
                   <div className="space-y-0.5">
                     <p className="font-bold text-slate-900 text-[13px]">{company.name}</p>
                     <p className="text-[11px] text-slate-500">www.akiraautomation.com</p>
-                    <p className="text-[10.5px] text-slate-400">
+                    <p className="text-[10.5px] text-slate-400 [overflow-wrap:anywhere]">
                       {company.primaryEmail} &nbsp;/&nbsp; {companyData.phones?.[0] || "+91 (44) 2476-8901"}
                     </p>
                   </div>
@@ -706,53 +704,56 @@ export const InvoicePdfViewerModal: React.FC<InvoicePdfViewerModalProps> = ({
           </Modal.Body>
 
           {/* Bottom Footer with Document Reference & Quick Actions */}
-          <Modal.Footer className="px-5 py-3 bg-slate-950/95 border-t border-slate-800 flex !flex-row items-center justify-between gap-3 text-xs shrink-0 !mt-0">
-            <div className="text-slate-400 font-mono text-[11px] flex items-center gap-2 truncate">
+          <Modal.Footer className="flex !flex-col !items-stretch gap-2 border-t border-slate-800 bg-slate-950/95 px-3 py-2.5 text-xs !mt-0 sm:px-4 md:!flex-row md:!items-center md:justify-between md:gap-3 md:px-5 md:py-3">
+            <div className="flex min-w-0 flex-wrap items-center gap-x-2 text-[10px] text-slate-400 font-mono sm:text-[11px]">
               <span>
-                Document Ref:{" "}
+                Ref:{" "}
                 <strong className="text-slate-200">
                   #{currentInvoice.invoice_number}
                 </strong>
               </span>
-              <span>•</span>
-              <span>
+              <span className="hidden lg:inline">•</span>
+              <span className="hidden lg:inline">
                 Currency:{" "}
                 <strong className="text-slate-200">
                   {currentInvoice.currency || "INR (₹)"}
                 </strong>
               </span>
-              <span>•</span>
-              <span>
+              <span className="hidden lg:inline">•</span>
+              <span className="hidden lg:inline">
                 Issued: <span className="text-slate-300">{currentInvoice.issue_date}</span>
               </span>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="grid w-full grid-cols-3 items-center gap-1.5 sm:gap-2 md:w-auto">
               <Button
                 size="sm"
                 variant="outline"
                 onPress={onClose}
-                className="h-8 px-3 text-xs font-semibold bg-slate-900 border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white"
+                className="h-9 min-w-0 gap-1 border-slate-700 bg-slate-900 px-1.5 text-[10px] font-semibold text-slate-300 hover:bg-slate-800 hover:text-white sm:px-3 sm:text-xs md:h-8"
                 aria-label="Close Preview"
               >
-                Close Preview
+                <X className="h-3.5 w-3.5 shrink-0 sm:hidden" />
+                <span className="truncate sm:hidden">Close</span>
+                <span className="hidden truncate sm:inline">Close Preview</span>
               </Button>
               <Button
                 size="sm"
                 variant="outline"
                 onPress={handlePrint}
-                className="gap-1.5 h-8 px-3 text-xs font-semibold bg-slate-900 border-slate-700 text-slate-200 hover:bg-slate-800 hover:text-white"
+                className="h-9 min-w-0 gap-1 border-slate-700 bg-slate-900 px-1.5 text-[10px] font-semibold text-slate-200 hover:bg-slate-800 hover:text-white sm:px-3 sm:text-xs md:h-8"
                 aria-label="Print or Save PDF via print dialog"
               >
                 <Printer className="w-3.5 h-3.5 text-sky-400" />
-                <span>Print Document</span>
+                <span className="truncate sm:hidden">Print</span>
+                <span className="hidden truncate sm:inline">Print Document</span>
               </Button>
               <Button
                 size="sm"
                 variant="primary"
                 onPress={handleDownloadPdf}
                 isDisabled={isDownloading}
-                className="gap-1.5 h-8 px-4 text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm disabled:opacity-60"
+                className="h-9 min-w-0 gap-1 bg-emerald-600 px-1.5 text-[10px] font-bold text-white shadow-sm hover:bg-emerald-500 disabled:opacity-60 sm:px-3 sm:text-xs md:h-8 md:px-4"
                 aria-label="Download PDF"
               >
                 {isDownloading ? (
@@ -762,12 +763,13 @@ export const InvoicePdfViewerModal: React.FC<InvoicePdfViewerModalProps> = ({
                 ) : (
                   <Download className="w-3.5 h-3.5" />
                 )}
-                <span>
+                <span className="truncate">
                   {isDownloading
                     ? "Generating PDF..."
                     : downloadSuccess
                     ? "Downloaded!"
-                    : "Download PDF"}
+                    : "Download"}
+                  {isDownloading || downloadSuccess ? null : <span className="hidden sm:inline"> PDF</span>}
                 </span>
               </Button>
             </div>

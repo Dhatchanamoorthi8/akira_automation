@@ -62,6 +62,32 @@ describe('AdminUsers Component', () => {
     expect(screen.getByText('Active Staff')).toBeInTheDocument();
   });
 
+  it('hides the desktop table below the large breakpoint while keeping mobile cards', async () => {
+    vi.spyOn(userService, 'getUsers').mockResolvedValue({
+      users: mockUsers,
+      total: 2,
+      error: null,
+    });
+
+    const { container } = render(
+      <MemoryRouter>
+        <AdminUsers />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getAllByText('John Doe').length).toBeGreaterThan(0);
+    });
+
+    const desktopTable = container.querySelector('.hidden.lg\\:block');
+    const mobileCards = container.querySelector('.lg\\:hidden');
+
+    expect(desktopTable).toBeInTheDocument();
+    expect(desktopTable).toHaveClass('hidden', 'lg:block');
+    expect(mobileCards).toBeInTheDocument();
+    expect(mobileCards).toHaveClass('lg:hidden');
+  });
+
   it('renders empty state when no users are returned', async () => {
     vi.spyOn(userService, 'getUsers').mockResolvedValue({
       users: [],

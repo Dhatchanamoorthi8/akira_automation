@@ -427,7 +427,7 @@ describe('StaffWorkspace Component', () => {
     expect(screen.getByRole('heading', { name: /Create Formal Quotation \/ Tax Invoice/i })).toBeInTheDocument();
   });
 
-  it('switches to Invoices tab, displays View PDF and Edit buttons, and opens PDF viewer and Edit modal', async () => {
+  it('opens invoice actions from the menu and can view the PDF and edit the invoice', async () => {
     render(
       <MemoryRouter initialEntries={['/staff']}>
         <StaffWorkspace />
@@ -446,9 +446,17 @@ describe('StaffWorkspace Component', () => {
       expect(screen.getByText('QUO-2026-012')).toBeInTheDocument();
     });
 
-    // Verify View PDF button is rendered and opens PDF preview
-    const viewPdfBtn = screen.getByRole('button', { name: /View PDF for QUO-2026-012/i });
-    expect(viewPdfBtn).toBeInTheDocument();
+    const actionsButton = screen.getByRole('button', {
+      name: /Invoice actions for QUO-2026-012/i,
+    });
+    fireEvent.click(actionsButton);
+
+    expect(screen.getByText('View PDF')).toBeInTheDocument();
+    expect(screen.getByText('Download PDF')).toBeInTheDocument();
+    expect(screen.getByText('Send to Customer')).toBeInTheDocument();
+    expect(screen.getByText('Delete')).toBeInTheDocument();
+
+    const viewPdfBtn = screen.getByText('View PDF');
     fireEvent.click(viewPdfBtn);
 
     await waitFor(() => {
@@ -461,9 +469,10 @@ describe('StaffWorkspace Component', () => {
     fireEvent.click(closePreviewBtn);
 
     // Verify Edit button is rendered and opens Edit mode
-    const editBtn = screen.getByRole('button', { name: /Edit QUO-2026-012/i });
-    expect(editBtn).toBeInTheDocument();
-    fireEvent.click(editBtn);
+    fireEvent.click(
+      screen.getByRole('button', { name: /Invoice actions for QUO-2026-012/i }),
+    );
+    fireEvent.click(screen.getByText('Edit'));
 
     await waitFor(() => {
       expect(screen.getByRole('heading', { name: /Edit Quotation \(QUO-2026-012\)/i })).toBeInTheDocument();
@@ -471,7 +480,7 @@ describe('StaffWorkspace Component', () => {
     });
   });
 
-  it('opens HeroUI Delete Confirmation dialog when clicking Delete button', async () => {
+  it('opens HeroUI Delete Confirmation dialog from the invoice actions menu', async () => {
     render(
       <MemoryRouter initialEntries={['/staff']}>
         <StaffWorkspace />
@@ -489,8 +498,10 @@ describe('StaffWorkspace Component', () => {
       expect(screen.getByText('QUO-2026-012')).toBeInTheDocument();
     });
 
-    const deleteBtn = screen.getByRole('button', { name: /Delete invoice QUO-2026-012/i });
-    fireEvent.click(deleteBtn);
+    fireEvent.click(
+      screen.getByRole('button', { name: /Invoice actions for QUO-2026-012/i }),
+    );
+    fireEvent.click(screen.getByText('Delete'));
 
     await waitFor(() => {
       expect(screen.getByRole('heading', { name: /Delete Quotation \/ Invoice/i })).toBeInTheDocument();
@@ -500,7 +511,7 @@ describe('StaffWorkspace Component', () => {
     });
   });
 
-  it('opens HeroUI Send Confirmation dialog when clicking Send to Customer button', async () => {
+  it('opens HeroUI Send Confirmation dialog from the invoice actions menu', async () => {
     render(
       <MemoryRouter initialEntries={['/staff']}>
         <StaffWorkspace />
@@ -518,8 +529,10 @@ describe('StaffWorkspace Component', () => {
       expect(screen.getByText('QUO-2026-012')).toBeInTheDocument();
     });
 
-    const sendBtn = screen.getByRole('button', { name: /Send to Customer/i });
-    fireEvent.click(sendBtn);
+    fireEvent.click(
+      screen.getByRole('button', { name: /Invoice actions for QUO-2026-012/i }),
+    );
+    fireEvent.click(screen.getByText('Send to Customer'));
 
     await waitFor(() => {
       expect(screen.getByRole('heading', { name: /Send Document to Customer/i })).toBeInTheDocument();
