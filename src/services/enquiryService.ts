@@ -524,6 +524,26 @@ export class EnquiryService {
       return { success: false, error: 'Database configuration is unavailable.' };
     }
 
+    // Validate transition if oldStatus is provided
+    if (oldStatus && oldStatus !== newStatus) {
+      const VALID_TRANSITIONS: Record<EnquiryStatus, EnquiryStatus[]> = {
+        new: ['contacted', 'closed'],
+        contacted: ['quotation_sent', 'follow_up', 'closed'],
+        quotation_sent: ['follow_up', 'converted', 'closed'],
+        follow_up: ['quotation_sent', 'converted', 'closed'],
+        converted: ['closed'],
+        closed: ['new', 'contacted'],
+      };
+
+      const allowed = VALID_TRANSITIONS[oldStatus] || [];
+      if (!allowed.includes(newStatus)) {
+        return {
+          success: false,
+          error: `Invalid status transition from "${oldStatus}" to "${newStatus}".`,
+        };
+      }
+    }
+
     try {
       const { error } = await supabase
         .from('enquiries')

@@ -91,3 +91,17 @@ export function formatDateTimeDDMMYYYY(dateInput: string | Date | null | undefin
     return '—';
   }
 }
+
+/**
+ * Normalizes date to Indian Standard Time (IST / Asia/Kolkata) formatted as YYYY-MM-DD.
+ * Prevents UTC midnight boundary misclassifications for Indian operations.
+ */
+export function getIndianDateString(dateInput: Date | string = new Date()): string {
+  try {
+    const d = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
+    if (isNaN(d.getTime())) return '';
+    return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(d);
+  } catch {
+    return '';
+  }
+}

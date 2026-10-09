@@ -1,4 +1,5 @@
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { getIndianDateString } from '../utils/date';
 import {
   AnalyticsOverviewStats,
   DateRangePreset,
@@ -141,7 +142,7 @@ export class AnalyticsService {
       const closedEnquiries = enqList.filter((e) => e.status === 'closed').length;
 
       const folList = followups || [];
-      const todayStr = new Date().toISOString().split('T')[0];
+      const todayStr = getIndianDateString();
       const nowIso = new Date().toISOString();
 
       let completedFollowups = 0;
@@ -151,7 +152,7 @@ export class AnalyticsService {
       let upcomingFollowups = 0;
 
       folList.forEach((f) => {
-        const schedDate = f.scheduled_at ? f.scheduled_at.split('T')[0] : '';
+        const schedDate = f.scheduled_at ? getIndianDateString(f.scheduled_at) : '';
         if (f.status === 'completed') {
           completedFollowups++;
         } else if (f.status === 'cancelled') {
@@ -240,13 +241,13 @@ export class AnalyticsService {
       const current = new Date(start);
 
       while (current <= end) {
-        const dateKey = current.toISOString().split('T')[0];
+        const dateKey = getIndianDateString(current);
         dateMap.set(dateKey, { count: 0, converted: 0 });
         current.setDate(current.getDate() + 1);
       }
 
       (data || []).forEach((row) => {
-        const dateKey = row.created_at.split('T')[0];
+        const dateKey = getIndianDateString(row.created_at);
         const entry = dateMap.get(dateKey) || { count: 0, converted: 0 };
         entry.count++;
         if (row.status === 'converted') {

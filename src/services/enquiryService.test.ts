@@ -54,4 +54,24 @@ describe('EnquiryService', () => {
     // Must NOT contain raw PostgreSQL error code or table reference
     expect(result.error).toBe('Unable to submit your enquiry. Please try again.');
   });
+
+  it('validates legal and illegal status transitions', async () => {
+    vi.spyOn(supabaseLib, 'isSupabaseConfigured').mockReturnValue(true);
+
+    const mockUpdate = vi.fn().mockReturnValue({
+      eq: vi.fn().mockResolvedValue({ error: null }),
+    });
+    vi.spyOn(supabase, 'from').mockReturnValue({ update: mockUpdate } as any);
+
+    // Invalid transition: new -> converted directly
+    const invalidResult = await enquiryService.updateEnquiryStatus('enq_1', 'converted', 'new');
+    expect(invalidResult.success).toBe(false);
+    expect(invalidResult.error).toContain('Invalid status transition');
+    expect(mockUpdate).not.toHaveBeenCalled();
+
+    // Valid transition: new -> contacted
+    const validResult = await enquiryService.updateEnquiryStatus('enq_1', 'contacted', 'new');
+    expect(validResult.success).toBe(true);
+    expect(mockUpdate).toHaveBeenCalled();
+  });
 });

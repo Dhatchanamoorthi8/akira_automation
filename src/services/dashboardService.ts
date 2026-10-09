@@ -58,7 +58,7 @@ export class DashboardService {
         supabase.from('enquiries').select('*', { count: 'exact', head: true }).eq('status', 'new'),
         supabase.from('enquiries').select('*', { count: 'exact', head: true }).eq('status', 'converted'),
         supabase.from('followups').select('*', { count: 'exact', head: true }).in('status', ['upcoming', 'due_today']),
-        supabase.from('followups').select('*', { count: 'exact', head: true }).eq('status', 'overdue').or(`status.eq.upcoming,scheduled_at.lt.${nowIso}`),
+        supabase.from('followups').select('*', { count: 'exact', head: true }).or(`status.eq.overdue,and(status.eq.upcoming,scheduled_at.lt.${nowIso})`),
         supabase.from('followups').select('*', { count: 'exact', head: true }).eq('status', 'completed'),
       ]);
 

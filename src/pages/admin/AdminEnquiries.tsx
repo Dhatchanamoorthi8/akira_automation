@@ -269,8 +269,8 @@ export const AdminEnquiries: React.FC = () => {
       status: selectedStatus !== "all" ? selectedStatus : undefined,
       sortBy: "created_at",
       sortOrder: "desc",
-      limit: 100,
-      offset: 0,
+      limit: ITEMS_PER_PAGE,
+      offset: (currentPage - 1) * ITEMS_PER_PAGE,
     };
 
     const [enquiriesRes, countsRes] = await Promise.all([
@@ -287,7 +287,7 @@ export const AdminEnquiries: React.FC = () => {
 
     setStatusCounts(countsRes);
     setIsLoading(false);
-  }, [search, selectedStatus]);
+  }, [search, selectedStatus, currentPage]);
 
   useEffect(() => {
     fetchEnquiries();
@@ -415,12 +415,9 @@ export const AdminEnquiries: React.FC = () => {
     }
   };
 
-  // Local pagination
-  const totalPages = Math.max(1, Math.ceil(enquiries.length / ITEMS_PER_PAGE));
-  const paginatedEnquiries = useMemo(() => {
-    const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    return enquiries.slice(start, start + ITEMS_PER_PAGE);
-  }, [enquiries, currentPage]);
+  // Server-side pagination
+  const totalPages = Math.max(1, Math.ceil(totalCount / ITEMS_PER_PAGE));
+  const paginatedEnquiries = enquiries;
 
   const toggleSelectAll = () => {
     if (selectedRowIds.size === paginatedEnquiries.length) {

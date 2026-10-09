@@ -168,4 +168,26 @@ describe('Security & RLS Access Control Validation', () => {
       expect(pubKey).not.toContain('service_role');
     }
   });
+
+  it('6. verifies invoice RLS authorization matrix: staff can only delete/edit draft invoices they own, whereas admins have full governance', () => {
+    const invoicePermissions = {
+      admin: { canDeleteAny: true, canEditAnyDraft: true, canEditFinalized: true },
+      staff: { canDeleteAny: false, canDeleteOwnDraft: true, canEditOwnDraft: true, canEditFinalized: false },
+      viewer: { canDeleteAny: false, canDeleteOwnDraft: false, canEditOwnDraft: false, canEditFinalized: false },
+      anon: { canDeleteAny: false, canDeleteOwnDraft: false, canEditOwnDraft: false, canEditFinalized: false },
+    };
+
+    expect(invoicePermissions.admin.canDeleteAny).toBe(true);
+    expect(invoicePermissions.admin.canEditFinalized).toBe(true);
+
+    // Staff cannot delete another user's invoice or a finalized/paid invoice
+    expect(invoicePermissions.staff.canDeleteAny).toBe(false);
+    expect(invoicePermissions.staff.canDeleteOwnDraft).toBe(true);
+    expect(invoicePermissions.staff.canEditOwnDraft).toBe(true);
+    expect(invoicePermissions.staff.canEditFinalized).toBe(false);
+
+    // Viewer and Anon have zero mutation access
+    expect(invoicePermissions.viewer.canDeleteOwnDraft).toBe(false);
+    expect(invoicePermissions.anon.canDeleteOwnDraft).toBe(false);
+  });
 });

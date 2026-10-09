@@ -100,12 +100,34 @@ export class InvoiceService {
       } catch (err) {
         console.warn('[InvoiceService] RPC invoice number generation fallback:', err);
       }
+
+      // Deterministic fallback: Query highest sequence for current prefix and year
+      try {
+        const year = new Date().getFullYear();
+        const pattern = `${prefix}-${year}-%`;
+        const { data: latest } = await supabase
+          .from('invoices')
+          .select('invoice_number')
+          .like('invoice_number', pattern)
+          .order('invoice_number', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (latest?.invoice_number) {
+          const parts = latest.invoice_number.split('-');
+          const lastNum = parseInt(parts[parts.length - 1], 10);
+          if (!isNaN(lastNum)) {
+            return `${prefix}-${year}-${String(lastNum + 1).padStart(4, '0')}`;
+          }
+        }
+        return `${prefix}-${year}-0001`;
+      } catch (seqErr) {
+        console.warn('[InvoiceService] Database sequence query fallback:', seqErr);
+      }
     }
 
-    // Client-side fallback if RPC is unavailable
     const year = new Date().getFullYear();
-    const randomSeq = Math.floor(1000 + Math.random() * 9000);
-    return `${prefix}-${year}-${randomSeq}`;
+    return `${prefix}-${year}-0001`;
   }
 
   /**
@@ -165,6 +187,41 @@ export class InvoiceService {
 
       const discount = input.discountAmount || 0;
       const grandTotal = Math.max(0, subtotal + totalTax - discount);
+
+      // Attempt atomic database transaction RPC first
+      try {
+        const { data: rpcData, error: rpcError } = await supabase.rpc('create_invoice_atomic', {
+          p_invoice: {
+            enquiry_id: input.enquiryId || null,
+            invoice_number: invoiceNumber,
+            customer_name: input.customerName.trim(),
+            customer_company: input.customerCompany?.trim() || null,
+            customer_email: input.customerEmail.trim().toLowerCase(),
+            customer_phone: input.customerPhone?.trim() || null,
+            customer_address: input.customerAddress?.trim() || null,
+            customer_gst: input.customerGst?.trim() || null,
+            type: input.type || 'quotation',
+            discount_amount: discount,
+            currency: input.currency || settings.currency || 'INR',
+            issue_date: input.issueDate || new Date().toISOString().slice(0, 10),
+            due_date: input.dueDate || null,
+            notes: input.notes?.trim() || null,
+            terms: input.terms?.trim() || settings.paymentTerms,
+          },
+          p_items: processedItems,
+        });
+
+        if (!rpcError && rpcData) {
+          const atomicInvoice: Invoice = {
+            ...(rpcData as any),
+            items: (rpcData as any).items || [],
+          };
+          return { invoice: atomicInvoice, error: null };
+        }
+      } catch (rpcErr) {
+        // Fallback to client-side insert if RPC is not yet applied
+        console.warn('[InvoiceService] create_invoice_atomic RPC fallback:', rpcErr);
+      }
 
       // 1. Insert invoice header
       const { data: invoiceData, error: invoiceError } = await supabase
@@ -535,7 +592,26 @@ export class InvoiceService {
         payload.discount_amount = discount;
         payload.total_amount = Math.max(0, subtotal + totalTax - discount);
 
-        // Delete existing items and re-insert new items atomically
+        // Attempt atomic database transaction RPC first
+        try {
+          const { data: rpcData, error: rpcError } = await supabase.rpc('update_invoice_atomic', {
+            p_invoice_id: id,
+            p_invoice: payload,
+            p_items: processedItems,
+          });
+
+          if (!rpcError && rpcData) {
+            const atomicInvoice: Invoice = {
+              ...(rpcData as any),
+              items: (rpcData as any).items || [],
+            };
+            return { invoice: atomicInvoice, error: null };
+          }
+        } catch (rpcErr) {
+          console.warn('[InvoiceService] update_invoice_atomic RPC fallback:', rpcErr);
+        }
+
+        // Fallback: Delete existing items and re-insert new items
         await supabase.from('invoice_items').delete().eq('invoice_id', id);
         const { error: itemsError } = await supabase.from('invoice_items').insert(processedItems);
         if (itemsError) {

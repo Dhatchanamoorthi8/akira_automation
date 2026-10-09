@@ -255,6 +255,108 @@ serve(async (req: Request) => {
       );
     }
 
+    // 4.1 Validate allowed event types
+    const ALLOWED_EVENT_TYPES = [
+      "new_enquiry",
+      "new_enquiry_customer",
+      "enquiry_assigned",
+      "followup_assigned",
+      "followup_reminder",
+      "admin_reply",
+      "invoice_dispatched",
+      "test",
+      "check_domain",
+    ];
+
+    if (!ALLOWED_EVENT_TYPES.includes(eventType)) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          code: "INVALID_EVENT_TYPE",
+          error: `Event type "${eventType}" is unsupported or unauthorized.`,
+        }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
+    }
+
+    // 4.2 Dual-Tier Security: Enforce authentication for privileged/internal events
+    const PUBLIC_EVENTS = ["new_enquiry", "new_enquiry_customer"];
+    let authenticatedCaller: { id: string; role: string } | null = null;
+
+    if (!PUBLIC_EVENTS.includes(eventType)) {
+      const authHeader = req.headers.get("authorization") || req.headers.get("Authorization");
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            code: "UNAUTHORIZED",
+            error: "Authentication required for internal notification operations.",
+          }),
+          {
+            status: 401,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
+
+      const token = authHeader.replace(/^Bearer\s+/i, "").trim();
+      const { data: { user: authUser }, error: authErr } = await adminClient.auth.getUser(token);
+      if (authErr || !authUser) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            code: "UNAUTHORIZED",
+            error: "Invalid or expired session token.",
+          }),
+          {
+            status: 401,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
+
+      // Check user profile status and role
+      const { data: callerProfile, error: profileErr } = await adminClient
+        .from("profiles")
+        .select("id, role, active")
+        .eq("id", authUser.id)
+        .maybeSingle();
+
+      if (profileErr || !callerProfile || !callerProfile.active) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            code: "FORBIDDEN",
+            error: "User account is inactive or unauthorized.",
+          }),
+          {
+            status: 403,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
+
+      authenticatedCaller = { id: callerProfile.id, role: callerProfile.role };
+
+      // Admin-only operations check
+      if ((eventType === "test" || eventType === "check_domain") && callerProfile.role !== "admin") {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            code: "FORBIDDEN",
+            error: "Diagnostic functions are restricted to administrators.",
+          }),
+          {
+            status: 403,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
+    }
+
     // 5. Strict Server-Side Control of Recipients & Security Authorization
     let recipientsList: string[] = [];
     let matchedEnquiryRecord: Record<string, unknown> | null = null;
@@ -262,25 +364,31 @@ serve(async (req: Request) => {
       enquiryId || (body.templateData?.enquiryId as string) || null;
 
     if (eventType === "new_enquiry") {
-      // Inbound website lead: recipient is the configured admin notification destination
-      recipientsList = recipient
-        ? Array.isArray(recipient)
-          ? recipient
-          : [recipient]
-        : [adminRecipient];
+      // Inbound website lead: recipient is strictly the server-configured admin notification destination
+      // Caller cannot override recipient to prevent using server as open relay
+      recipientsList = [adminRecipient];
       if (!replyTo && body.templateData?.email) {
         replyTo = body.templateData.email as string;
       }
     } else if (eventType === "new_enquiry_customer") {
-      // Customer acknowledgement
-      recipientsList = recipient
-        ? Array.isArray(recipient)
-          ? recipient
-          : [recipient]
-        : [];
-      if (recipientsList.length === 0 && body.templateData?.email) {
-        recipientsList = [body.templateData.email as string];
+      // Customer acknowledgement: must go to customer email from verified templateData
+      const customerEmail = (body.templateData?.email as string)?.trim().toLowerCase() ||
+        (recipient && typeof recipient === "string" ? recipient.trim().toLowerCase() : null);
+
+      if (!customerEmail || !customerEmail.includes("@")) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            code: "VALIDATION_ERROR",
+            error: "Valid customer email required for acknowledgement.",
+          }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
       }
+      recipientsList = [customerEmail];
       replyTo = supportEmail;
     } else if (eventType === "admin_reply") {
       // CRITICAL SECURITY: Recipient MUST come directly from the database enquiry record!
@@ -353,6 +461,12 @@ serve(async (req: Request) => {
 </body>
 </html>`;
       }
+    } else if (eventType === "invoice_dispatched") {
+      // Quotation or tax invoice dispatched to customer
+      recipientsList = recipient
+        ? (Array.isArray(recipient) ? recipient : [recipient])
+        : [];
+      replyTo = supportEmail;
     } else if (eventType === "test") {
       // Diagnostic test email
       recipientsList = recipient
@@ -362,7 +476,7 @@ serve(async (req: Request) => {
         : [adminRecipient];
       sanitizedSubject = sanitizedSubject || "Akira Precision Automation — Test Email";
       if (!text && !html) {
-        text = `This is a test email from the Akira Precision Automation email system.\n\nTimestamp: ${new Date().toISOString()}\nEnvironment: Production\nEdge Function: send-email-notification`;
+        text = `This is a test email from the Akira Precision Automation email system.\n\nTimestamp: ${new Date().toISOString()}\nEnvironment: Production\nEdge Function: send-email-notification\nInitiated By: ${authenticatedCaller?.id || 'Admin'}`;
       }
     } else {
       // Staff notifications (enquiry_assigned, followup_assigned, followup_reminder)
