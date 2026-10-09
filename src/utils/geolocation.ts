@@ -160,39 +160,109 @@ export async function reverseGeocodeCoords(
  *     automatically falls back to network/Wi-Fi positioning (enableHighAccuracy: false).
  *  4. Resolves human-readable street/area address asynchronously.
  */
+/**
+ * Attempts to acquire approximate location via client IP network triangulation.
+ * Useful when mobile browser blocks hardware GPS due to HTTP or when satellite lock is unavailable indoors.
+ */
+async function getNetworkIpLocation(): Promise<ExactLocation | null> {
+  if (typeof window === 'undefined' || !navigator.onLine) return null;
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 4000);
+    const res = await fetch('https://api.bigdatacloud.net/data/reverse-geocode-client', {
+      signal: controller.signal,
+    });
+    clearTimeout(timer);
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (typeof data.latitude === 'number' && typeof data.longitude === 'number') {
+      const lat = data.latitude;
+      const lng = data.longitude;
+      const locality = [data.locality, data.city, data.principalSubdivision, data.countryName]
+        .filter(Boolean)
+        .join(', ');
+      return {
+        lat,
+        lng,
+        accuracy: 1000,
+        timestamp: Date.now(),
+        address: locality ? `${locality} (Approximate Network Location)` : 'Approximate Network Location',
+        formattedCoords: formatCoordinates(lat, lng),
+        mapsUrl: getGoogleMapsUrl(lat, lng),
+      };
+    }
+  } catch {
+    // Graceful fallback
+  }
+  return null;
+}
+
+/**
+ * Acquires the user's exact current location using a resilient multi-tier strategy.
+ * 
+ * Strategy:
+ *  1. Checks for secure context (HTTPS) or falls back to network IP location for mobile dev.
+ *  2. Tier 1: Requests high-accuracy hardware GPS with recent fix tolerance.
+ *  3. Tier 2: If Tier 1 times out or GPS hardware is unavailable indoors,
+ *     automatically falls back to network/Wi-Fi positioning (enableHighAccuracy: false).
+ *  4. Tier 3: If hardware positioning is unavailable, falls back to IP-based location.
+ *  5. Resolves human-readable street/area address asynchronously.
+ */
 export async function getExactCurrentPosition(options: {
   timeoutMs?: number;
   highAccuracyTimeoutMs?: number;
   maximumAge?: number;
 } = {}): Promise<GeolocationResult> {
   const {
-    timeoutMs = 12000,
-    highAccuracyTimeoutMs = 8000,
+    timeoutMs = 15000,
+    highAccuracyTimeoutMs = 10000,
     maximumAge = 30000,
   } = options;
 
-  if (typeof window === 'undefined' || !navigator.geolocation) {
-    return {
-      success: false,
-      location: null,
-      error: 'Geolocation is not supported by your browser or device.',
-      errorCode: 'NOT_SUPPORTED',
-      source: 'none',
-    };
-  }
-
-  // Check secure context in production (non-localhost)
+  // Insecure context check (e.g. testing mobile over local network HTTP: http://192.168.x.x:3000)
   if (
     typeof window !== 'undefined' &&
     window.isSecureContext === false &&
     window.location.hostname !== 'localhost' &&
     window.location.hostname !== '127.0.0.1'
   ) {
+    const ipLocation = await getNetworkIpLocation();
+    if (ipLocation) {
+      return {
+        success: true,
+        location: ipLocation,
+        error: null,
+        source: 'network',
+        warning: 'Mobile browsers require HTTPS for hardware GPS. Used approximate network location.',
+      };
+    }
+
     return {
       success: false,
       location: null,
-      error: 'Geolocation requires a secure HTTPS connection. Please access Akira over HTTPS.',
+      error: 'Mobile browsers require a secure HTTPS connection for GPS hardware access. Please open over HTTPS.',
       errorCode: 'INSECURE_CONTEXT',
+      source: 'none',
+    };
+  }
+
+  if (typeof window === 'undefined' || !navigator.geolocation) {
+    const ipLocation = await getNetworkIpLocation();
+    if (ipLocation) {
+      return {
+        success: true,
+        location: ipLocation,
+        error: null,
+        source: 'network',
+        warning: 'Hardware GPS not supported; acquired approximate network location.',
+      };
+    }
+
+    return {
+      success: false,
+      location: null,
+      error: 'Geolocation is not supported by your browser or device.',
+      errorCode: 'NOT_SUPPORTED',
       source: 'none',
     };
   }
@@ -203,7 +273,7 @@ export async function getExactCurrentPosition(options: {
       navigator.geolocation.getCurrentPosition(resolve, reject, {
         enableHighAccuracy: true,
         timeout: highAccuracyTimeoutMs,
-        maximumAge: 0,
+        maximumAge: Math.min(maximumAge, 15000), // Permit recent 15s fix for fast mobile lock
       });
     });
 
@@ -237,7 +307,7 @@ export async function getExactCurrentPosition(options: {
         success: false,
         location: null,
         error:
-          'Location access is blocked by your browser. Please allow location permissions in your browser or device settings to accurately record attendance and site visits.',
+          'Location access is blocked by your browser. Please tap the lock/settings icon in your browser address bar and allow Location permissions.',
         errorCode: 'PERMISSION_DENIED',
         source: 'none',
       };
@@ -249,7 +319,7 @@ export async function getExactCurrentPosition(options: {
         navigator.geolocation.getCurrentPosition(resolve, reject, {
           enableHighAccuracy: false,
           timeout: timeoutMs,
-          maximumAge: maximumAge,
+          maximumAge: 60000,
         });
       });
 
@@ -276,6 +346,18 @@ export async function getExactCurrentPosition(options: {
         warning: 'Hardware GPS satellite lock timed out; captured approximate location via cellular/Wi-Fi network.',
       };
     } catch (fallbackErr: unknown) {
+      // Tier 3 Fallback: IP-based network location if hardware/Wi-Fi positioning timed out
+      const ipLocation = await getNetworkIpLocation();
+      if (ipLocation) {
+        return {
+          success: true,
+          location: ipLocation,
+          error: null,
+          source: 'network',
+          warning: 'Hardware GPS unavailable indoors; captured approximate site location via network.',
+        };
+      }
+
       const finalErr = fallbackErr as GeolocationPositionError | undefined;
       const errorCode: GeolocationErrorCode =
         finalErr?.code === 1
@@ -288,11 +370,11 @@ export async function getExactCurrentPosition(options: {
 
       const errorMsg =
         finalErr?.code === 1
-          ? 'Location access was denied. Please allow location permissions in browser settings.'
+          ? 'Location access was denied. Please allow location permissions in your mobile browser settings.'
           : finalErr?.code === 2
-            ? 'Location is temporarily unavailable on this device. Please check GPS or network connection.'
+            ? 'Location is temporarily unavailable. Please verify your phone GPS toggle is turned ON.'
             : finalErr?.code === 3
-              ? 'Location acquisition timed out. Please verify device GPS is enabled and try again.'
+              ? 'Location acquisition timed out. Please check that GPS is enabled and try again.'
               : 'Unable to capture location coordinates.';
 
       return {

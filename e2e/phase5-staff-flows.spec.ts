@@ -129,21 +129,17 @@ test.describe('AKIRA AUTOMATION — Phase 5: Staff & Follow-up Workflows', () =>
       await expect(page.getByText('Upcoming')).toBeVisible();
       await expect(page.getByText('Completed')).toBeVisible();
 
-      // Test Security Boundary: Try navigating to /admin/products
+      // Test Security Boundary: Try navigating to /admin/products -> automatically redirected to /staff
       await page.goto('/admin/products');
-      await expect(page.getByText(/Administrative Access Restricted/i)).toBeVisible({ timeout: 10000 });
-      const returnToStaffBtn = page.getByRole('link', { name: /Go to Staff Workspace/i });
-      await expect(returnToStaffBtn).toBeVisible();
-      await returnToStaffBtn.click();
-      await expect(page).toHaveURL(/\/staff/);
+      await expect(page).toHaveURL(/\/staff/, { timeout: 10000 });
 
-      // Test Security Boundary: Try navigating to /admin/users
+      // Test Security Boundary: Try navigating to /admin/users -> automatically redirected to /staff
       await page.goto('/admin/users');
-      await expect(page.getByText(/Administrative Access Restricted/i)).toBeVisible({ timeout: 10000 });
+      await expect(page).toHaveURL(/\/staff/, { timeout: 10000 });
 
-      // Test Security Boundary: Try navigating to /admin/dashboard
+      // Test Security Boundary: Try navigating to /admin/dashboard -> automatically redirected to /staff
       await page.goto('/admin/dashboard');
-      await expect(page.getByText(/Administrative Access Restricted/i)).toBeVisible({ timeout: 10000 });
+      await expect(page).toHaveURL(/\/staff/, { timeout: 10000 });
     } else {
       // If test staff credentials aren't seeded in remote DB yet, test unauthenticated guard
       await page.goto('/admin/products');

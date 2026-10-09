@@ -39,11 +39,13 @@ export const AdminLogin: React.FC = () => {
     ? fromState.pathname + (fromState.search || '')
     : '/admin/dashboard';
 
-  // Check for expired session flag
+  // Check for expired or unauthorized session flag
   useEffect(() => {
     if (searchParams.get('error') === 'session_expired' || sessionExpired) {
       setError('Your session has expired. Please sign in again.');
       clearSessionExpired();
+    } else if (searchParams.get('error') === 'unauthorized') {
+      setError('Access denied. You do not possess authorized privileges for this area.');
     }
   }, [searchParams, sessionExpired, clearSessionExpired]);
 

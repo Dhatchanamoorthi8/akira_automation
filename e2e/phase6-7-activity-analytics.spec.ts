@@ -142,13 +142,13 @@ test.describe('AKIRA AUTOMATION — Phase 6 & 7: Historical Activity & Dashboard
       await expect(page.getByText('Operations & CRM Analytics')).not.toBeVisible();
       await expect(page.getByText('Executive Intelligence')).not.toBeVisible();
 
-      // Attempt direct navigation to admin analytics console
+      // Attempt direct navigation to admin analytics console -> auto redirected to /staff
       await page.goto('/admin/dashboard');
-      await expect(page.getByText(/Administrative Access Restricted/i)).toBeVisible({ timeout: 10000 });
+      await expect(page).toHaveURL(/\/staff/, { timeout: 10000 });
 
-      // Attempt direct navigation to system activity logs
+      // Attempt direct navigation to system activity logs -> auto redirected to /staff
       await page.goto('/admin/activity');
-      await expect(page.getByText(/Administrative Access Restricted/i)).toBeVisible({ timeout: 10000 });
+      await expect(page).toHaveURL(/\/staff/, { timeout: 10000 });
     } else {
       // Unauthenticated security guard check
       await page.goto('/admin/dashboard');

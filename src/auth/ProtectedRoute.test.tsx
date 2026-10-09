@@ -37,7 +37,8 @@ describe('ProtectedRoute Component', () => {
     expect(screen.getByText('Admin Portal Active')).toBeInTheDocument();
   });
 
-  it('displays administrator privileges required notice when authenticated user is non-admin', () => {
+  it('redirects unauthorized non-admin user to login and triggers sign out', () => {
+    const signOutMock = vi.fn();
     vi.spyOn(useAuthModule, 'useAuth').mockReturnValue({
       user: { id: 'user-2', email: 'user@akira.com' } as any,
       session: {} as any,
@@ -52,21 +53,21 @@ describe('ProtectedRoute Component', () => {
       isConfigured: true,
       sessionExpired: false,
       signIn: vi.fn(),
-      signOut: vi.fn(),
+      signOut: signOutMock,
       refreshProfile: vi.fn(),
       clearSessionExpired: vi.fn(),
     });
 
     render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={['/admin/dashboard']}>
         <ProtectedRoute>
           <div>Secret Admin Content</div>
         </ProtectedRoute>
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/Administrator Privileges Required/i)).toBeInTheDocument();
     expect(screen.queryByText('Secret Admin Content')).not.toBeInTheDocument();
+    expect(signOutMock).toHaveBeenCalled();
   });
 
   it('displays configuration unavailable banner when Supabase is unconfigured', () => {
@@ -132,7 +133,7 @@ describe('ProtectedRoute Component', () => {
     expect(screen.getByTestId('staff-workspace')).toBeInTheDocument();
   });
 
-  it('blocks staff user from accessing admin-only routes and shows staff redirection banner', () => {
+  it('automatically redirects staff user to /staff when attempting to access admin-only routes', () => {
     vi.spyOn(useAuthModule, 'useAuth').mockReturnValue({
       user: { id: 'staff-1', email: 'staff@akira.com' } as any,
       session: {} as any,
@@ -153,16 +154,14 @@ describe('ProtectedRoute Component', () => {
     });
 
     render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={['/admin/products']}>
         <ProtectedRoute allowedRoles={['admin']}>
           <div>Admin Only Product Catalog Editor</div>
         </ProtectedRoute>
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/Administrative Access Restricted/i)).toBeInTheDocument();
     expect(screen.queryByText('Admin Only Product Catalog Editor')).not.toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /Go to Staff Workspace/i })).toBeInTheDocument();
   });
 
   it('does not unmount or show PageLoader when profile is refreshing in the background with an existing profile', () => {

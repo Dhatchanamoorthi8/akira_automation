@@ -128,17 +128,17 @@ test.describe('AKIRA AUTOMATION — Phase 8 & 9 Correction & Hardening Suite', (
     if (redirectedToStaff) {
       await expect(page.getByText('Staff Workspace')).toBeVisible({ timeout: 10000 });
 
-      // Staff attempts to access admin dashboard -> restricted
+      // Staff attempts to access admin dashboard -> automatically redirected to /staff
       await page.goto('/admin/dashboard');
-      await expect(page.getByText(/Administrative Access Restricted/i)).toBeVisible({ timeout: 10000 });
+      await expect(page).toHaveURL(/\/staff/, { timeout: 10000 });
 
-      // Staff attempts to access admin user management -> restricted
+      // Staff attempts to access admin user management -> automatically redirected to /staff
       await page.goto('/admin/users');
-      await expect(page.getByText(/Administrative Access Restricted/i)).toBeVisible({ timeout: 10000 });
+      await expect(page).toHaveURL(/\/staff/, { timeout: 10000 });
 
-      // Staff attempts to access product management -> restricted
+      // Staff attempts to access product management -> automatically redirected to /staff
       await page.goto('/admin/products');
-      await expect(page.getByText(/Administrative Access Restricted/i)).toBeVisible({ timeout: 10000 });
+      await expect(page).toHaveURL(/\/staff/, { timeout: 10000 });
     }
   });
 
