@@ -6,19 +6,23 @@ import {
   ChevronDown,
   ShieldCheck,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Dropdown, Button, Label, Separator, Chip } from "@heroui/react";
 import { PersonAvatar } from "@/utils/avatarHelper";
 
 export const AdminProfileMenu: React.FC = () => {
   const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const displayName =
-    profile?.full_name || user?.email?.split("@")[0] || "Administrator";
-  const displayEmail = user?.email || "admin@akiraautomation.com";
+    profile?.full_name || user?.email?.split("@")[0] || "Staff Member";
+  const displayEmail = user?.email || "staff@akiraautomation.com";
   const roleLabel =
     profile?.role === "admin" ? "Administrator" : profile?.role || "Staff";
+
+  const isStaffPortal =
+    location.pathname.startsWith("/staff") || location.pathname.startsWith("/stafft");
 
   return (
     <Dropdown>
@@ -27,19 +31,15 @@ export const AdminProfileMenu: React.FC = () => {
         aria-label="Admin Profile Menu"
         className="flex items-center gap-2.5 p-1 sm:px-2.5 sm:py-1.5 rounded-xl hover:bg-slate-100/80 transition-colors focus:outline-none min-h-[40px] cursor-pointer"
       >
-        {/* <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center border border-emerald-200/70 shrink-0">
-          {initials || <User className="w-4 h-4" />}
-        </div> */}
-         <PersonAvatar
-            name={displayName}
-            size="sm"
-            className="ring-2 ring-white shadow-md"
-          />
+        <PersonAvatar
+          name={displayName}
+          size="sm"
+          className="ring-2 ring-white shadow-md"
+        />
         <div className="hidden sm:block text-left">
           <div className="text-xs font-semibold text-slate-800 leading-tight flex items-center gap-1">
             <span className="truncate max-w-[120px] uppercase">{displayName}</span>
           </div>
-         
           <span className="text-[10px] text-slate-400 capitalize">
             {roleLabel}
           </span>
@@ -74,6 +74,12 @@ export const AdminProfileMenu: React.FC = () => {
           onAction={async (key) => {
             if (key === "public-site") {
               navigate("/");
+            } else if (key === "switch-portal") {
+              if (isStaffPortal) {
+                navigate("/admin/dashboard");
+              } else {
+                navigate("/staff/overview");
+              }
             } else if (key === "sign-out") {
               await signOut();
               navigate("/admin/login");
@@ -91,6 +97,21 @@ export const AdminProfileMenu: React.FC = () => {
               <Label>Return to Public Website</Label>
             </div>
           </Dropdown.Item>
+
+          {profile?.role === "admin" && (
+            <Dropdown.Item
+              id="switch-portal"
+              textValue={isStaffPortal ? "Switch to Admin Console" : "Switch to Staff Workspace"}
+              className="rounded-lg px-3 py-2 cursor-pointer hover:bg-slate-50"
+            >
+              <div className="flex items-center gap-2 text-xs text-slate-700">
+                <ShieldCheck className="w-4 h-4 text-sky-600" />
+                <Label>
+                  {isStaffPortal ? "Switch to Admin Console" : "Switch to Staff Workspace"}
+                </Label>
+              </div>
+            </Dropdown.Item>
+          )}
 
           <Separator className="my-1 border-slate-100" />
 

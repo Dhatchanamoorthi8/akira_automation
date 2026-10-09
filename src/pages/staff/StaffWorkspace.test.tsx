@@ -564,4 +564,48 @@ describe('StaffWorkspace Component', () => {
       expect(screen.getByRole('button', { name: /Save Customer Lead/i })).toBeInTheDocument();
     });
   });
+
+  it('dismisses active form screen when user navigates to another tab or sidebar item', async () => {
+    render(
+      <MemoryRouter initialEntries={['/staff/overview']}>
+        <StaffWorkspace />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/Sunil Metrologist/i)).toBeInTheDocument();
+    });
+
+    // 1. Open Create Invoice form screen
+    const createInvoiceBtn = screen.getByRole('button', { name: /Create Invoice/i });
+    fireEvent.click(createInvoiceBtn);
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /Create Formal Quotation \/ Tax Invoice/i })).toBeInTheDocument();
+    });
+
+    // 2. Click Follow-ups tab in sidebar or workspace tabs
+    const followupsLink = screen.getByRole('link', { name: /Follow-ups/i });
+    fireEvent.click(followupsLink);
+
+    // 3. Form screen must be dismissed and Follow-ups related content displayed!
+    await waitFor(() => {
+      expect(screen.queryByRole('heading', { name: /Create Formal Quotation \/ Tax Invoice/i })).not.toBeInTheDocument();
+      expect(screen.getByText(/Follow-up Call/i)).toBeInTheDocument();
+    });
+  });
+
+  it('renders tab-specific content when accessed directly via URL', async () => {
+    // Test Visits direct URL
+    render(
+      <MemoryRouter initialEntries={['/staff/visits']}>
+        <StaffWorkspace />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /Customer Site Visits & Inspections/i })).toBeInTheDocument();
+    });
+  });
 });
+

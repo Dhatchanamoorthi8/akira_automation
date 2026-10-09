@@ -1,5 +1,5 @@
 import React, { useEffect, lazy, Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate, useParams } from 'react-router-dom';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
 import { EnquiryProvider } from './context/EnquiryContext';
@@ -54,7 +54,7 @@ const ScrollToTop: React.FC = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const isPortal = pathname.startsWith('/admin') || pathname.startsWith('/staff');
+    const isPortal = pathname.startsWith('/admin') || pathname.startsWith('/staff') || pathname.startsWith('/stafft');
     setClarityTag('portal_area', isPortal ? 'internal' : 'public');
     setClarityTag('page_path', pathname);
   }, [pathname]);
@@ -62,9 +62,15 @@ const ScrollToTop: React.FC = () => {
   return null;
 };
 
+// Seamless redirect helper for /stafft or /stafft/:tab
+const StafftRedirect: React.FC = () => {
+  const { tab } = useParams<{ tab?: string }>();
+  return <Navigate to={tab ? `/staff/${tab}` : '/staff'} replace />;
+};
+
 const AppShell: React.FC = () => {
   const { pathname } = useLocation();
-  const isPortalRoute = pathname.startsWith('/admin') || pathname.startsWith('/staff');
+  const isPortalRoute = pathname.startsWith('/admin') || pathname.startsWith('/staff') || pathname.startsWith('/stafft');
   const MainTag = isPortalRoute ? 'div' : 'main';
 
   return (
@@ -99,6 +105,16 @@ const AppShell: React.FC = () => {
                     </ProtectedRoute>
                   }
                 />
+                <Route
+                  path="/staff/:tab"
+                  element={
+                    <ProtectedRoute allowedRoles={['admin', 'staff', 'sales', 'manager', 'editor']}>
+                      <StaffWorkspace />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="/stafft" element={<Navigate to="/staff" replace />} />
+                <Route path="/stafft/:tab" element={<StafftRedirect />} />
 
                 <Route path="/admin/login" element={<AdminLogin />} />
                 <Route

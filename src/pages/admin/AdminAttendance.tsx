@@ -429,18 +429,25 @@ export const AdminAttendance: React.FC = () => {
                                   })}
                                 </div>
                                 {att.clock_in_lat && att.clock_in_lng ? (
-                                  <a
-                                    href={`https://www.google.com/maps?q=${att.clock_in_lat},${att.clock_in_lng}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-[11px] text-sky-600 hover:text-sky-800 flex items-center gap-1 font-mono"
-                                  >
-                                    <MapPin className="w-3 h-3 shrink-0 text-sky-500" />
-                                    <span>
-                                      {att.clock_in_lat.toFixed(4)}, {att.clock_in_lng.toFixed(4)}
-                                    </span>
-                                    <ExternalLink className="w-2.5 h-2.5" />
-                                  </a>
+                                  <div>
+                                    <a
+                                      href={`https://www.google.com/maps?q=${att.clock_in_lat},${att.clock_in_lng}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-[11px] text-sky-600 hover:text-sky-800 flex items-center gap-1 font-mono"
+                                    >
+                                      <MapPin className="w-3 h-3 shrink-0 text-sky-500" />
+                                      <span>
+                                        {att.clock_in_lat.toFixed(4)}, {att.clock_in_lng.toFixed(4)}
+                                      </span>
+                                      <ExternalLink className="w-2.5 h-2.5" />
+                                    </a>
+                                    {att.clock_in_address && (
+                                      <p className="text-[10px] text-slate-500 truncate max-w-[200px]" title={att.clock_in_address}>
+                                        {att.clock_in_address}
+                                      </p>
+                                    )}
+                                  </div>
                                 ) : (
                                   <span className="text-[11px] text-slate-400">Office / Web Portal</span>
                                 )}
@@ -461,18 +468,25 @@ export const AdminAttendance: React.FC = () => {
                                   })}
                                 </div>
                                 {att.clock_out_lat && att.clock_out_lng ? (
-                                  <a
-                                    href={`https://www.google.com/maps?q=${att.clock_out_lat},${att.clock_out_lng}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-[11px] text-sky-600 hover:text-sky-800 flex items-center gap-1 font-mono"
-                                  >
-                                    <MapPin className="w-3 h-3 shrink-0 text-sky-500" />
-                                    <span>
-                                      {att.clock_out_lat.toFixed(4)}, {att.clock_out_lng.toFixed(4)}
-                                    </span>
-                                    <ExternalLink className="w-2.5 h-2.5" />
-                                  </a>
+                                  <div>
+                                    <a
+                                      href={`https://www.google.com/maps?q=${att.clock_out_lat},${att.clock_out_lng}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-[11px] text-sky-600 hover:text-sky-800 flex items-center gap-1 font-mono"
+                                    >
+                                      <MapPin className="w-3 h-3 shrink-0 text-sky-500" />
+                                      <span>
+                                        {att.clock_out_lat.toFixed(4)}, {att.clock_out_lng.toFixed(4)}
+                                      </span>
+                                      <ExternalLink className="w-2.5 h-2.5" />
+                                    </a>
+                                    {att.clock_out_address && (
+                                      <p className="text-[10px] text-slate-500 truncate max-w-[200px]" title={att.clock_out_address}>
+                                        {att.clock_out_address}
+                                      </p>
+                                    )}
+                                  </div>
                                 ) : (
                                   <span className="text-[11px] text-slate-400">Office / Web Portal</span>
                                 )}
@@ -575,18 +589,25 @@ export const AdminAttendance: React.FC = () => {
                             })}
                           </p>
                           {att.clock_in_lat != null && att.clock_in_lng != null ? (
-                            <a
-                              href={`https://www.google.com/maps?q=${att.clock_in_lat},${att.clock_in_lng}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="mt-1 inline-flex max-w-full items-center gap-1 text-[10px] text-sky-600"
-                            >
-                              <MapPin className="h-3 w-3 shrink-0" />
-                              <span className="truncate">
-                                {att.clock_in_lat.toFixed(4)}, {att.clock_in_lng.toFixed(4)}
-                              </span>
-                              <ExternalLink className="h-2.5 w-2.5 shrink-0" />
-                            </a>
+                            <div>
+                              <a
+                                href={`https://www.google.com/maps?q=${att.clock_in_lat},${att.clock_in_lng}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="mt-1 inline-flex max-w-full items-center gap-1 text-[10px] text-sky-600"
+                              >
+                                <MapPin className="h-3 w-3 shrink-0" />
+                                <span className="truncate">
+                                  {att.clock_in_lat.toFixed(4)}, {att.clock_in_lng.toFixed(4)}
+                                </span>
+                                <ExternalLink className="h-2.5 w-2.5 shrink-0" />
+                              </a>
+                              {att.clock_in_address && (
+                                <p className="text-[10px] text-slate-500 truncate" title={att.clock_in_address}>
+                                  {att.clock_in_address}
+                                </p>
+                              )}
+                            </div>
                           ) : (
                             <p className="mt-1 text-[10px] text-slate-400">Office / Web Portal</p>
                           )}
@@ -607,18 +628,25 @@ export const AdminAttendance: React.FC = () => {
                             })}
                           </p>
                           {att.clock_out_lat != null && att.clock_out_lng != null ? (
-                            <a
-                              href={`https://www.google.com/maps?q=${att.clock_out_lat},${att.clock_out_lng}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="mt-1 inline-flex max-w-full items-center gap-1 text-[10px] text-sky-600"
-                            >
-                              <MapPin className="h-3 w-3 shrink-0" />
-                              <span className="truncate">
-                                {att.clock_out_lat.toFixed(4)}, {att.clock_out_lng.toFixed(4)}
-                              </span>
-                              <ExternalLink className="h-2.5 w-2.5 shrink-0" />
-                            </a>
+                            <div>
+                              <a
+                                href={`https://www.google.com/maps?q=${att.clock_out_lat},${att.clock_out_lng}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="mt-1 inline-flex max-w-full items-center gap-1 text-[10px] text-sky-600"
+                              >
+                                <MapPin className="h-3 w-3 shrink-0" />
+                                <span className="truncate">
+                                  {att.clock_out_lat.toFixed(4)}, {att.clock_out_lng.toFixed(4)}
+                                </span>
+                                <ExternalLink className="h-2.5 w-2.5 shrink-0" />
+                              </a>
+                              {att.clock_out_address && (
+                                <p className="text-[10px] text-slate-500 truncate" title={att.clock_out_address}>
+                                  {att.clock_out_address}
+                                </p>
+                              )}
+                            </div>
                           ) : (
                             <p className="mt-1 text-[10px] text-slate-400">Office / Web Portal</p>
                           )}
